@@ -93,7 +93,7 @@ describe('Part search:', function() {
     it('should filter \'Inactive\' parts', function() {
       expect(rows.count()).toBe(10);
       browser._selectDropdownbyNum(fltrState, 2);
-      expect(rows.count()).toBe(1);
+      expect(rows.count()).toBe(2);
     });
 
   });

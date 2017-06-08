@@ -87,6 +87,9 @@ exports.config = {
 
     by.addLocator('tiButton',
       function(buttonText, parentElement, rootSelector) {
+        if (!buttonText) {
+          throw 'Label of a button must be specified.';
+        }
         var using = parentElement || document,
           buttons = using.querySelectorAll('button.btn');
         var escapedBttnText = buttonText.replace(

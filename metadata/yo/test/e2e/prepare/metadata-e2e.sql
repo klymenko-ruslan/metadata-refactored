@@ -4591,6 +4591,20 @@ CREATE TABLE `kit` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `kit`
+--
+
+LOCK TABLES `kit` WRITE;
+/*!40000 ALTER TABLE `kit` DISABLE KEYS */;
+INSERT INTO `kit` VALUES (42112,12);
+INSERT INTO `kit` VALUES (42119,12);
+INSERT INTO `kit` VALUES (41892,7);
+INSERT INTO `kit` VALUES (42030,12);
+INSERT INTO `kit` VALUES (42038,12);
+/*!40000 ALTER TABLE `kit` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `kit_part_common_component`
 --
 
@@ -4886,6 +4900,17 @@ CREATE TABLE `misc_minor_component` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `misc_minor_component`
+--
+
+LOCK TABLES `misc_minor_component` WRITE;
+/*!40000 ALTER TABLE `misc_minor_component` DISABLE KEYS */;
+INSERT INTO `misc_minor_component` VALUES (64956);
+/*!40000 ALTER TABLE `misc_minor_component` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+--
 -- Table structure for table `nozzle_ring`
 --
 
@@ -5145,6 +5170,14 @@ INSERT INTO `part` VALUES (47934,'8-A-3134',11,35,'DRIVE SCREW, TV, T/BRG','DRIV
 INSERT INTO `part` VALUES (49654,'5-A-3163',11,34,NULL,'BACKPLATE SUB-ASSY, TV',0,NULL,2,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `part` VALUES (67933,'13-D-5990',11,31,NULL,'*ND* COMPRESSOR COVER, K03',0,NULL,0,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `part` VALUES (67932,'13-D-5987',11,31,NULL,'*ND* COMPRESSOR COVER, K03',0,NULL,0,NULL,NULL,NULL,NULL,NULL);
+
+INSERT INTO `part` VALUES (42119,'7-K-3421',11,3,'Nissan P/Up','KIT, SERVICE, HT12, Nissan P/U',0,6020,2,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `part` VALUES (42112,'7-K-1132',11,3,NULL,'KIT, MAJOR, HT12',0,4217,2,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `part` VALUES (41892,'7-D-1328',11,3,NULL,'KIT, SERVICE, K24',0,4802,2,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `part` VALUES (42038,'7-G-1657',11,3,'Carbon Seal','KIT, BASIC, CT20',1,NULL,3,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `part` VALUES (42030,'7-G-0665',11,3,'Carbon Seal','KIT, MINOR, CT20, C/SEAL',0,NULL,3,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `part` VALUES (64956,'9-A-6397',11,21,'APEXi Full Auto Turbo Timer','The Apex Auto Timer allows the vehicle to idle for a preset amount of time after the ignition key has been removed. This prevents hot oil in the engine from solidifying in the lines or center section of a turbo.',0,NULL,5,NULL,NULL,NULL,NULL,NULL);
+
 /*!40000 ALTER TABLE `part` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -5268,6 +5301,20 @@ CREATE TABLE `part_turbo_type` (
   CONSTRAINT `part_turbo_type_ibfk_2` FOREIGN KEY (`turbo_type_id`) REFERENCES `turbo_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `part_turbo_type` WRITE;
+/*!40000 ALTER TABLE `part_turbo_type` DISABLE KEYS */;
+INSERT INTO `part_turbo_type` VALUES (42030,143);
+INSERT INTO `part_turbo_type` VALUES (42038,143);
+INSERT INTO `part_turbo_type` VALUES (42038,146);
+INSERT INTO `part_turbo_type` VALUES (42112,317);
+INSERT INTO `part_turbo_type` VALUES (42112,319);
+INSERT INTO `part_turbo_type` VALUES (42119,319);
+INSERT INTO `part_turbo_type` VALUES (41892,383);
+INSERT INTO `part_turbo_type` VALUES (41892,385);
+INSERT INTO `part_turbo_type` VALUES (41892,388);
+/*!40000 ALTER TABLE `part_turbo_type` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 --
@@ -5468,6 +5515,29 @@ CREATE TABLE `product_image` (
   CONSTRAINT `product_image_ibfk_1` FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15236 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `product_image`
+--
+
+LOCK TABLES `product_image` WRITE;
+/*!40000 ALTER TABLE `product_image` DISABLE KEYS */;
+INSERT INTO `product_image` VALUES (1554,42038,'7-G-1657 D.JPG',1,0);
+INSERT INTO `product_image` VALUES (1629,42038,'7-G-1657 C.JPG',1,0);
+INSERT INTO `product_image` VALUES (1932,42038,'7-G-1657 B.JPG',1,0);
+INSERT INTO `product_image` VALUES (2252,42038,'7-G-1657 A.JPG',1,0);
+INSERT INTO `product_image` VALUES (12423,64956,'64956_1463693245933.jpg',1,0);
+INSERT INTO `product_image` VALUES (12424,64956,'64956_1463693283071.jpg',1,0);
+INSERT INTO `product_image` VALUES (14170,41892,'41892_1487368637211.jpg',1,0);
+INSERT INTO `product_image` VALUES (14171,41892,'41892_1487368655740.jpg',1,0);
+INSERT INTO `product_image` VALUES (14220,42030,'42030_1487628250807.jpg',1,0);
+INSERT INTO `product_image` VALUES (14221,42030,'42030_1487628270797.jpg',1,0);
+INSERT INTO `product_image` VALUES (14230,42112,'42112_1487969386285.jpg',1,0);
+INSERT INTO `product_image` VALUES (14231,42112,'42112_1487969411300.jpg',1,0);
+INSERT INTO `product_image` VALUES (14236,42119,'42119_1487969644613.jpg',1,0);
+INSERT INTO `product_image` VALUES (14237,42119,'42119_1487969673283.jpg',1,0);
+/*!40000 ALTER TABLE `product_image` ENABLE KEYS */;
+UNLOCK TABLES;
 
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -5682,6 +5752,25 @@ CREATE TABLE `sales_note` (
 ) ENGINE=InnoDB AUTO_INCREMENT=579 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `sales_note`
+--
+
+LOCK TABLES `sales_note` WRITE;
+/*!40000 ALTER TABLE `sales_note` DISABLE KEYS */;
+INSERT INTO `sales_note` VALUES (381,'2016-05-19 21:28:48','2016-05-20 15:27:04',15,13,'rejected','A\'PEXi Full Auto Turbo Timer is a compact pen shaped turbo timer that makes mounting this turbo timer a snap. This compact design allows for a clean and stylish installation virtually anywhere inside the cabin. This turbo timer is equipped with a multi angle joystick button that allows users easy navigation through many of its feature. This turbo is equipped with an auto timer function, manual time function, Air/Fuel ratio, O2 sensor voltage, and battery voltage. This tiny gadget has many features for its size. Turbo timers allows vehicles to idle for a preset amount of time after the ignition key is removed to prevent hot oil from clogging or chocking in lines, especially after hard driving. Adequate cool down is essential for a long lasting, healthy motor.');
+INSERT INTO `sales_note` VALUES (382,'2016-05-20 15:27:12','2016-07-25 18:48:33',13,2,'published','A\'PEXi Full Auto Turbo Timer, with its compact design, allows for a clean and stylish installation virtually anywhere. It uses a multi angle joystick that allows easy control. It comes equipped with an auto and manual timer, Air/Fuel ratio, oxygen, and battery sensors. Turbo timers allows vehicles to idle for a preset amount of time after the ignition key is removed to prevent oil chocking the lines, especially after hard driving. Adequate cool down is essential for a long lasting, healthy motor.');
+INSERT INTO `sales_note` VALUES (383,'2016-05-23 16:48:06','2016-07-25 18:47:38',15,2,'rejected','The Apex Auto Timer allows the vehicle to idle for a preset amount of time after the ignition key has been removed. This prevents hot oil in the engine from solidifying in the lines or center section of a turbo. Proper cool down is essential for a healthy engine.\n\nThe Auto Timer stands as a technological marvel. The pen shaped, compact size makes the Auto Timer one of the smallest turbo timers on the market. This allows a clean and stylish installation virtually anywhere inside the car. The unique multi angle joystick button allows easy navigation through the many feature menus.\n\nUpgraded in every way from the previous model, the new Auto Timer can automatically determine the necessary amount of idle time. A Manual Mode allows the user to preset desired idling times from 0 sec.~10 minutes in 16 increments. By inputting O2 sensor voltage, the Timer can also display theoretical air fuel ratio. Since the Auto Timer uses the factory O2 sensor which is primarily designed for emissions, the readings may not be as accurate as facing air fuel ratio monitors, however Timer readings are very close. The Timer can also display critical data such as O2 sensor voltage and Battery Voltage.es here');
+INSERT INTO `sales_note` VALUES (529,'2017-01-19 18:06:50','2017-01-19 18:06:53',20,20,'approved','Carbon seal applications');
+INSERT INTO `sales_note` VALUES (530,'2017-01-19 18:07:57','2017-01-19 18:07:59',20,20,'approved','Carbon seal applications');
+INSERT INTO `sales_note` VALUES (534,'2017-01-19 18:18:21','2017-01-19 18:18:24',20,20,'published','Seal plate flange thickness of 0.24\"/6.1 mm');
+INSERT INTO `sales_note` VALUES (535,'2017-01-19 18:18:50','2017-01-19 18:18:54',20,20,'published','Seal plate flange thickness of 0.24\"/6.1 mm');
+INSERT INTO `sales_note` VALUES (562,'2017-01-20 16:48:08','2017-01-20 16:48:18',20,20,'published','HT12 carbon seal with 0.469\"/11.93 mm journal bearing OD, Mazda RX7 twin turbo application.');
+INSERT INTO `sales_note` VALUES (565,'2017-01-20 17:18:22','2017-01-20 17:18:25',20,20,'published','HT12 Nissan pick up application, 39.87 mm thrust bearing.');
+
+/*!40000 ALTER TABLE `sales_note` ENABLE KEYS */;
+UNLOCK TABLES;
+
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -5769,6 +5858,20 @@ CREATE TABLE `sales_note_part` (
   CONSTRAINT `sales_note_part_user_write_uid` FOREIGN KEY (`write_uid`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `sales_note_part` WRITE;
+/*!40000 ALTER TABLE `sales_note_part` DISABLE KEYS */;
+INSERT INTO `sales_note_part` VALUES (381,64956,'2016-05-19 21:28:48','2016-05-20 15:27:04',15,15,1);
+INSERT INTO `sales_note_part` VALUES (382,64956,'2016-05-20 15:27:12','2016-07-25 18:48:33',13,13,1);
+INSERT INTO `sales_note_part` VALUES (383,64956,'2016-05-23 16:48:06','2016-07-25 18:47:38',15,15,1);
+INSERT INTO `sales_note_part` VALUES (529,42030,'2017-01-19 18:06:50','2017-01-19 18:06:53',20,20,1);
+INSERT INTO `sales_note_part` VALUES (530,42038,'2017-01-19 18:07:57','2017-01-19 18:07:59',20,20,1);
+INSERT INTO `sales_note_part` VALUES (534,42030,'2017-01-19 18:18:21','2017-01-19 18:18:24',20,20,1);
+INSERT INTO `sales_note_part` VALUES (535,42038,'2017-01-19 18:18:50','2017-01-19 18:18:54',20,20,1);
+INSERT INTO `sales_note_part` VALUES (562,42112,'2017-01-20 16:48:08','2017-01-20 16:48:18',20,20,1);
+INSERT INTO `sales_note_part` VALUES (565,42119,'2017-01-20 17:18:22','2017-01-20 17:18:25',20,20,1);
+/*!40000 ALTER TABLE `sales_note_part` ENABLE KEYS */;
+UNLOCK TABLES;
 
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
