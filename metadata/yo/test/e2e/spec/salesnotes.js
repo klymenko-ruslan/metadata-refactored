@@ -3,10 +3,14 @@
 
 'use strict';
 
+var _ = require('underscore');
+
 fdescribe('Sales notes:', function() {
 
   var rows, firstRowTds, fltrDraft, fltrSubmitted, fltrApproved, fltrRejected,
-    fltrPublished, fltrPrimary, fltrRelated, fltrPrimaryPart, fltrComment;
+    fltrPublished, fltrPrimary, fltrRelated, fltrPrimaryPart, fltrComment,
+    bttnViewNote, bttnRetract, bttnReject, bttnPublish, bttnSubmit,
+    bttnApprove;
 
   beforeAll(function() {
     rows = element.all(by.repeater('row in $data'));
@@ -24,6 +28,13 @@ fdescribe('Sales notes:', function() {
     var fltrGrpOther = element(by.id('fltrOther')).all(by.tagName('input'));
     fltrPrimaryPart = fltrGrpOther.first();
     fltrComment = fltrGrpOther.last();
+    var actionsTd = firstRowTds.last();
+    bttnViewNote = actionsTd.element(by.partialLinkText('View Note'));
+    bttnRetract = actionsTd.element(by.partialLinkText('Retract'));
+    bttnReject = actionsTd.element(by.partialLinkText('Reject'));
+    bttnPublish = actionsTd.element(by.partialLinkText('Publish'));
+    bttnSubmit = actionsTd.element(by.partialLinkText('Submit'));
+    bttnApprove = actionsTd.element(by.partialLinkText('Approve'));
   });
 
   beforeEach(function() {
@@ -36,10 +47,9 @@ fdescribe('Sales notes:', function() {
     expect(firstRowTds.count()).toBe(5);
   });
 
-  fit('should open a view to edit a sale note when button ' +
+  it('should open a view to edit a sale note when button ' +
     '\'View Note\' is clicked',
     function() {
-      var bttnViewNote = firstRowTds.last().element(by.tiButton('View Note'));
       expect(bttnViewNote.isPresent()).toBeTruthy();
       expect(bttnViewNote.isDisplayed()).toBeTruthy();
       expect(bttnViewNote.isEnabled()).toBeTruthy();
@@ -152,5 +162,47 @@ fdescribe('Sales notes:', function() {
     });
 
   });
+
+  fdescribe('Buttons state in the \'Actions\' column are changed ' +
+    'when they are clicked',
+
+    function() {
+
+      beforeEach(function() {
+        // In initial state only button 'rejected' is checked.
+        // Code belove unchecks this button, so filter will have
+        // no any checked buttons and all records are displayed.
+        fltrRejected.click();
+      });
+
+      function groupStates
+
+      it('should has sales notes with expected states', function() {
+        // Calculate how many sales notes are for each state.
+        var states = [];
+        rows.count().then(function(numRows) {
+          for(var i = 0; i < numRows; i++) {
+            rows.get(i).all(by.tagName('td')).get(3).getText().then(function(state) {
+              states.push(state);
+            });
+          }
+        }).then(function() {
+          var countedStates = _.countBy(states, function(state) {
+            return state;
+          });
+          console.log('countedStates: ' + JSON.stringify(countedStates));
+        });
+      });
+
+/*
+bttnViewNote
+bttnRetract
+bttnReject
+bttnPublish
+bttnSubmit
+bttnApprove
+*/
+    }
+  );
 
 });
