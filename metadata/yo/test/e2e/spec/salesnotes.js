@@ -4,13 +4,14 @@
 'use strict';
 
 var _ = require('underscore');
+var path = require('path');
 
-fdescribe('Sales notes:', function() {
+describe('Sales notes:', function() {
 
   var rows, firstRowTds, fltrDraft, fltrSubmitted, fltrApproved, fltrRejected,
     fltrPublished, fltrPrimary, fltrRelated, fltrPrimaryPart, fltrComment,
     bttnViewNote, bttnRetract, bttnReject, bttnPublish, bttnSubmit,
-    bttnApprove;
+    bttnApprove, dlg;
 
   beforeAll(function() {
     rows = element.all(by.repeater('row in $data'));
@@ -29,12 +30,14 @@ fdescribe('Sales notes:', function() {
     fltrPrimaryPart = fltrGrpOther.first();
     fltrComment = fltrGrpOther.last();
     var actionsTd = firstRowTds.last();
+    // Buttons below are for a <TD> cell in the first row.
     bttnViewNote = actionsTd.element(by.partialLinkText('View Note'));
-    bttnRetract = actionsTd.element(by.partialLinkText('Retract'));
-    bttnReject = actionsTd.element(by.partialLinkText('Reject'));
-    bttnPublish = actionsTd.element(by.partialLinkText('Publish'));
-    bttnSubmit = actionsTd.element(by.partialLinkText('Submit'));
-    bttnApprove = actionsTd.element(by.partialLinkText('Approve'));
+    bttnRetract = actionsTd.element(by.tiButton('Retract'));
+    bttnReject = actionsTd.element(by.tiButton('Reject'));
+    bttnPublish = actionsTd.element(by.tiButton('Publish'));
+    bttnSubmit = actionsTd.element(by.tiButton('Submit'));
+    bttnApprove = actionsTd.element(by.tiButton('Approve'));
+    dlg = element(by.css('.modal-dialog'));
   });
 
   beforeEach(function() {
@@ -163,8 +166,8 @@ fdescribe('Sales notes:', function() {
 
   });
 
-  fdescribe('Buttons state in the \'Actions\' column are changed ' +
-    'when they are clicked',
+  describe('Buttons state in the \'Actions\' column are changed ' +
+    'when they are clicked:',
 
     function() {
 
@@ -175,34 +178,374 @@ fdescribe('Sales notes:', function() {
         fltrRejected.click();
       });
 
-      function groupStates
-
-      it('should has sales notes with expected states', function() {
-        // Calculate how many sales notes are for each state.
+      // Calculate how many sales notes are for each state.
+      //
+      // @return object like {"published":5,"approved":2,"rejected":2}
+      function getCurrentStates() {
         var states = [];
-        rows.count().then(function(numRows) {
+        return rows.count().then(function(numRows) {
           for(var i = 0; i < numRows; i++) {
             rows.get(i).all(by.tagName('td')).get(3).getText().then(function(state) {
               states.push(state);
             });
           }
         }).then(function() {
-          var countedStates = _.countBy(states, function(state) {
-            return state;
-          });
-          console.log('countedStates: ' + JSON.stringify(countedStates));
+          return _.countBy(states, function(state) { return state; });
         });
+      }
+
+      it('should has sales notes with expected states', function() {
+        expect(getCurrentStates())
+          .toEqual({ published: 5, approved: 2, rejected: 2 });
       });
 
-/*
-bttnViewNote
-bttnRetract
-bttnReject
-bttnPublish
-bttnSubmit
-bttnApprove
-*/
+      it('Buttons: >>Retract<< -> ( >>Publish<< , Reject) -> Retract, ' +
+        'State: published -> approved -> published',
+        function() {
+          expect(bttnRetract.isPresent()).toBeTruthy();
+          expect(bttnRetract.isDisplayed()).toBeTruthy();
+          expect(bttnRetract.isEnabled()).toBeTruthy();
+          expect(bttnPublish.isPresent()).toBeFalsy();
+          expect(bttnReject.isPresent()).toBeFalsy();
+          expect(bttnSubmit.isPresent()).toBeFalsy();
+          expect(bttnApprove.isPresent()).toBeFalsy();
+          expect(getCurrentStates())
+            .toEqual({ published: 5, approved: 2, rejected: 2 });
+          // Click a button 'Retract' and expect that:
+          // 1. The button 'Retract' is disappeared.
+          // 2. Buttons 'Publish' and 'Reject' are displayed.
+          // 3. State is changed: published -> approved
+          // 4. Number of the sales notes with status 'published'
+          //    is decreased by 1 and number notes with status
+          //    'approved' is increased by 1. Numbers for other
+          //    states are not changed.
+          bttnRetract.click();
+          expect(bttnRetract.isPresent()).toBeFalsy();
+          expect(bttnPublish.isPresent()).toBeTruthy();
+          expect(bttnPublish.isDisplayed()).toBeTruthy();
+          expect(bttnPublish.isEnabled()).toBeTruthy();
+          expect(bttnReject.isPresent()).toBeTruthy();
+          expect(bttnReject.isDisplayed()).toBeTruthy();
+          expect(bttnReject.isEnabled()).toBeTruthy();
+          expect(bttnSubmit.isPresent()).toBeFalsy();
+          expect(bttnApprove.isPresent()).toBeFalsy();
+          expect(getCurrentStates())
+            .toEqual({ published: 5 - 1, approved: 2 + 1, rejected: 2 });
+          // Click a button 'Publish' and check that state
+          // returns to the initial state -- state at the beginning of the test.
+          bttnPublish.click();
+          expect(bttnRetract.isPresent()).toBeTruthy();
+          expect(bttnRetract.isDisplayed()).toBeTruthy();
+          expect(bttnRetract.isEnabled()).toBeTruthy();
+          expect(bttnPublish.isPresent()).toBeFalsy();
+          expect(bttnReject.isPresent()).toBeFalsy();
+          expect(bttnSubmit.isPresent()).toBeFalsy();
+          expect(bttnApprove.isPresent()).toBeFalsy();
+          expect(getCurrentStates())
+            .toEqual({ published: 5, approved: 2, rejected: 2 });
+        }
+      );
+
+      it('Buttons: >>Retract<< -> ( Publish , >>Reject<<) -> >>Submit<< -> ' +
+        '(>>Approve<<, Reject) -> (>>Publish<<, Reject) -> Retract, ' +
+        'State: published -> approved -> rejected -> submitted -> ' +
+        'approved -> published',
+        function() {
+          // Repeat test above but instead of clicking the button 'Publish'
+          // we are clicking a button 'Reject'.
+          expect(bttnRetract.isPresent()).toBeTruthy();
+          expect(bttnRetract.isDisplayed()).toBeTruthy();
+          expect(bttnRetract.isEnabled()).toBeTruthy();
+          expect(bttnPublish.isPresent()).toBeFalsy();
+          expect(bttnReject.isPresent()).toBeFalsy();
+          expect(bttnSubmit.isPresent()).toBeFalsy();
+          expect(bttnApprove.isPresent()).toBeFalsy();
+          expect(getCurrentStates())
+            .toEqual({ published: 5, approved: 2, rejected: 2 });
+          bttnRetract.click();  // clicked 'Retract'
+          bttnReject.click();   // clicked 'Reject'
+          expect(bttnRetract.isPresent()).toBeFalsy();
+          expect(bttnPublish.isPresent()).toBeFalsy();
+          expect(bttnReject.isPresent()).toBeFalsy();
+          expect(bttnSubmit.isPresent()).toBeTruthy();
+          expect(bttnSubmit.isDisplayed()).toBeTruthy();
+          expect(bttnSubmit.isEnabled()).toBeTruthy();
+          expect(bttnApprove.isPresent()).toBeFalsy();
+          expect(getCurrentStates())
+            .toEqual({ published: 5 - 1, approved: 2, rejected: 2 + 1});
+          bttnSubmit.click(); // clicked 'Submit'
+          expect(bttnRetract.isPresent()).toBeFalsy();
+          expect(bttnPublish.isPresent()).toBeFalsy();
+          expect(bttnReject.isPresent()).toBeTruthy();
+          expect(bttnReject.isDisplayed()).toBeTruthy();
+          expect(bttnReject.isEnabled()).toBeTruthy();
+          expect(bttnSubmit.isPresent()).toBeFalsy();
+          expect(bttnApprove.isPresent()).toBeTruthy();
+          expect(bttnApprove.isDisplayed()).toBeTruthy();
+          expect(bttnApprove.isEnabled()).toBeTruthy();
+          expect(getCurrentStates()).toEqual({ published: 5 - 1,
+            approved: 2, rejected: 2, submitted: 1});
+          bttnApprove.click(); // clicked 'Approve'
+          expect(bttnRetract.isPresent()).toBeFalsy();
+          expect(bttnPublish.isPresent()).toBeTruthy();
+          expect(bttnPublish.isDisplayed()).toBeTruthy();
+          expect(bttnPublish.isEnabled()).toBeTruthy();
+          expect(bttnReject.isPresent()).toBeTruthy();
+          expect(bttnReject.isDisplayed()).toBeTruthy();
+          expect(bttnReject.isEnabled()).toBeTruthy();
+          expect(bttnSubmit.isPresent()).toBeFalsy();
+          expect(bttnApprove.isPresent()).toBeFalsy();
+          expect(getCurrentStates())
+            .toEqual({ published: 5 - 1, approved: 2 + 1, rejected: 2 });
+          bttnPublish.click();  // click publish
+          expect(bttnRetract.isPresent()).toBeTruthy();
+          expect(bttnRetract.isDisplayed()).toBeTruthy();
+          expect(bttnRetract.isEnabled()).toBeTruthy();
+          expect(bttnPublish.isPresent()).toBeFalsy();
+          expect(bttnReject.isPresent()).toBeFalsy();
+          expect(bttnSubmit.isPresent()).toBeFalsy();
+          expect(bttnApprove.isPresent()).toBeFalsy();
+          expect(getCurrentStates())
+            .toEqual({ published: 5, approved: 2, rejected: 2 });
+        }
+      );
+
     }
   );
+
+  describe('View Note:', function() {
+
+    var bttnViewPart, bttnSalesNotes, bttnEditNote, bttnRemove, bttnRetract,
+      bttnReject, bttnPublish, bttnSubmit, bttnApprove, lblStatus, bttnUpload,
+      bttnAddRelatedPart, bttnViewPrimary, inputFile,
+      rowsAttachments, rowsRelatedParts, bttnSave, bttnCancel;
+
+    beforeAll(function() {
+      bttnViewPart = element(by.partialLinkText('View Part'));
+      bttnSalesNotes = element(by.partialLinkText('Sales Notes'));
+      bttnEditNote = element(by.partialLinkText('Edit Note'));
+      bttnRemove = element(by.partialLinkText('Remove'));
+      bttnRetract = element(by.partialLinkText('Retract'));
+      bttnReject = element(by.partialLinkText('Reject'));
+      bttnPublish = element(by.partialLinkText('Publish'));
+      bttnSubmit = element(by.partialLinkText('Submit'));
+      bttnApprove = element(by.partialLinkText('Approve'));
+      lblStatus = element(by.id('salenote-state'));
+      bttnUpload = element(by.tiButton('Upload'));
+      bttnAddRelatedPart = element(by.partialLinkText('Add Related Part'));
+      inputFile = element(by.name('file'));
+      rowsRelatedParts = element.all(by.repeater('relatedPart in $data'));
+      rowsAttachments = element.all(by.repeater('attachment in $data'));
+      bttnSave = element(by.partialLinkText('Save'));
+      bttnCancel = element(by.partialLinkText('Cancel'));
+    });
+
+    beforeEach(function() {
+      bttnViewNote.click();
+    });
+
+    it('shuld have a correct initial state', function() {
+      expect(bttnViewPart.isPresent()).toBeTruthy();
+      expect(bttnViewPart.isDisplayed()).toBeTruthy();
+      expect(bttnViewPart.isEnabled()).toBeTruthy();
+      expect(bttnSalesNotes.isPresent()).toBeTruthy();
+      expect(bttnSalesNotes.isDisplayed()).toBeTruthy();
+      expect(bttnSalesNotes.isEnabled()).toBeTruthy();
+      expect(bttnEditNote.isPresent()).toBeTruthy();
+      expect(bttnEditNote.isDisplayed()).toBeTruthy();
+      expect(bttnEditNote.isEnabled()).toBeTruthy();
+      expect(bttnRemove.isPresent()).toBeTruthy();
+      expect(bttnRemove.isDisplayed()).toBeTruthy();
+      expect(bttnRemove.isEnabled()).toBeTruthy();
+      expect(bttnRetract.isPresent()).toBeTruthy();
+      expect(bttnRetract.isDisplayed()).toBeTruthy();
+      expect(bttnRetract.isEnabled()).toBeTruthy();
+      expect(bttnReject.isPresent()).toBeFalsy();
+      expect(bttnPublish.isPresent()).toBeFalsy();
+      expect(bttnSubmit.isPresent()).toBeFalsy();
+      expect(bttnApprove.isPresent()).toBeFalsy();
+      expect(lblStatus.getText()).toBe('published');
+      expect(inputFile.isPresent()).toBeTruthy();
+      expect(inputFile.isDisplayed()).toBeTruthy();
+      expect(inputFile.isEnabled()).toBeTruthy();
+      expect(bttnUpload.isPresent()).toBeTruthy();
+      expect(bttnUpload.isDisplayed()).toBeTruthy();
+      expect(bttnUpload.isEnabled()).toBeFalsy();
+      expect(bttnAddRelatedPart.isPresent()).toBeTruthy();
+      expect(bttnAddRelatedPart.isDisplayed()).toBeTruthy();
+      expect(bttnAddRelatedPart.isEnabled()).toBeTruthy();
+      expect(bttnViewPart.isPresent()).toBeTruthy();
+      expect(bttnViewPart.isDisplayed()).toBeTruthy();
+      expect(bttnViewPart.isEnabled()).toBeTruthy();
+      expect(rowsAttachments.count()).toBe(0);
+      expect(rowsRelatedParts.count()).toBe(1);
+    });
+
+    it('should open part details view when a button \'View Part\' ' +
+      'is clicked',
+      function() {
+        bttnViewPart.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/part/42119');
+      }
+    );
+
+    it('should open sales note details view when a button ' +
+      '\'Sales Notes ...\' is clicked',
+      function() {
+        bttnSalesNotes.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/part/42119/sales_notes');
+      }
+    );
+
+    it('should open a confirmation dialog when a button \'Remove\' ' +
+      'is clicked',
+      function() {
+        expect(dlg.isPresent()).toBeFalsy();
+        bttnRemove.click();
+        expect(dlg.isDisplayed()).toBeTruthy();
+      }
+    );
+
+    describe('Changing of a status:', function() {
+
+      it('published -> approved -> rejected -> submitted -> rejected -> ' +
+        'submitted -> approved -> published', function() {
+        expect(lblStatus.getText()).toBe('published');
+        expect(bttnRetract.isPresent()).toBeTruthy();
+        expect(bttnRetract.isDisplayed()).toBeTruthy();
+        expect(bttnRetract.isEnabled()).toBeTruthy();
+        expect(bttnReject.isPresent()).toBeFalsy();
+        expect(bttnPublish.isPresent()).toBeFalsy();
+        expect(bttnSubmit.isPresent()).toBeFalsy();
+        expect(bttnApprove.isPresent()).toBeFalsy();
+        bttnRetract.click();
+        expect(lblStatus.getText()).toBe('approved');
+        expect(bttnRetract.isPresent()).toBeFalsy();
+        expect(bttnReject.isPresent()).toBeTruthy();
+        expect(bttnReject.isDisplayed()).toBeTruthy();
+        expect(bttnReject.isEnabled()).toBeTruthy();
+        expect(bttnPublish.isPresent()).toBeTruthy();
+        expect(bttnPublish.isDisplayed()).toBeTruthy();
+        expect(bttnPublish.isEnabled()).toBeTruthy();
+        expect(bttnSubmit.isPresent()).toBeFalsy();
+        expect(bttnApprove.isPresent()).toBeFalsy();
+        bttnReject.click();
+        expect(lblStatus.getText()).toBe('rejected');
+        expect(bttnSubmit.isPresent()).toBeTruthy();
+        expect(bttnSubmit.isDisplayed()).toBeTruthy();
+        expect(bttnSubmit.isEnabled()).toBeTruthy();
+        expect(bttnReject.isPresent()).toBeFalsy();
+        expect(bttnPublish.isPresent()).toBeFalsy();
+        expect(bttnRetract.isPresent()).toBeFalsy();
+        expect(bttnApprove.isPresent()).toBeFalsy();
+        bttnSubmit.click();
+        expect(lblStatus.getText()).toBe('submitted');
+        expect(bttnSubmit.isPresent()).toBeFalsy();
+        expect(bttnReject.isPresent()).toBeTruthy();
+        expect(bttnReject.isDisplayed()).toBeTruthy();
+        expect(bttnReject.isEnabled()).toBeTruthy();
+        expect(bttnPublish.isPresent()).toBeFalsy();
+        expect(bttnRetract.isPresent()).toBeFalsy();
+        expect(bttnApprove.isPresent()).toBeTruthy();
+        expect(bttnApprove.isDisplayed()).toBeTruthy();
+        expect(bttnApprove.isEnabled()).toBeTruthy();
+        bttnReject.click();
+        expect(lblStatus.getText()).toBe('rejected');
+        expect(bttnSubmit.isPresent()).toBeTruthy();
+        expect(bttnSubmit.isDisplayed()).toBeTruthy();
+        expect(bttnSubmit.isEnabled()).toBeTruthy();
+        expect(bttnReject.isPresent()).toBeFalsy();
+        expect(bttnPublish.isPresent()).toBeFalsy();
+        expect(bttnRetract.isPresent()).toBeFalsy();
+        expect(bttnApprove.isPresent()).toBeFalsy();
+        bttnSubmit.click();
+        expect(lblStatus.getText()).toBe('submitted');
+        expect(bttnSubmit.isPresent()).toBeFalsy();
+        expect(bttnReject.isPresent()).toBeTruthy();
+        expect(bttnReject.isDisplayed()).toBeTruthy();
+        expect(bttnReject.isEnabled()).toBeTruthy();
+        expect(bttnPublish.isPresent()).toBeFalsy();
+        expect(bttnRetract.isPresent()).toBeFalsy();
+        expect(bttnApprove.isPresent()).toBeTruthy();
+        expect(bttnApprove.isDisplayed()).toBeTruthy();
+        expect(bttnApprove.isEnabled()).toBeTruthy();
+        bttnApprove.click();
+        expect(lblStatus.getText()).toBe('approved');
+        expect(bttnRetract.isPresent()).toBeFalsy();
+        expect(bttnReject.isPresent()).toBeTruthy();
+        expect(bttnReject.isDisplayed()).toBeTruthy();
+        expect(bttnReject.isEnabled()).toBeTruthy();
+        expect(bttnPublish.isPresent()).toBeTruthy();
+        expect(bttnPublish.isDisplayed()).toBeTruthy();
+        expect(bttnPublish.isEnabled()).toBeTruthy();
+        expect(bttnSubmit.isPresent()).toBeFalsy();
+        expect(bttnApprove.isPresent()).toBeFalsy();
+        bttnPublish.click();
+        expect(lblStatus.getText()).toBe('published');
+        expect(bttnRetract.isPresent()).toBeTruthy();
+        expect(bttnRetract.isDisplayed()).toBeTruthy();
+        expect(bttnRetract.isEnabled()).toBeTruthy();
+        expect(bttnReject.isPresent()).toBeFalsy();
+        expect(bttnPublish.isPresent()).toBeFalsy();
+        expect(bttnSubmit.isPresent()).toBeFalsy();
+        expect(bttnApprove.isPresent()).toBeFalsy();
+      });
+    });
+
+    describe('Editing:', function() {
+
+      var saleNoteComment, textareaComment;
+
+      beforeAll(function() {
+        saleNoteComment = element(by.binding('salesNote.comment'));
+        textareaComment = element(by.model('editedSalesNote.comment'));
+      });
+
+      beforeEach(function() {
+        bttnEditNote.click();
+      });
+
+      it('should rever all changes when button \'Cancel\' is pressed',
+        function() {
+          expect(bttnSave.isPresent()).toBeTruthy();
+          expect(bttnSave.isDisplayed()).toBeTruthy();
+          expect(bttnSave.isEnabled()).toBeTruthy();
+          expect(bttnCancel.isPresent()).toBeTruthy();
+          expect(bttnCancel.isDisplayed()).toBeTruthy();
+          expect(bttnCancel.isEnabled()).toBeTruthy();
+          textareaComment.sendKeys('foo');
+          bttnCancel.click();
+          expect(saleNoteComment.getText())
+            .toBe('HT12 Nissan pick up application, 39.87 mm thrust bearing.');
+        }
+      );
+
+    });
+
+    fdescribe('Attachments:', function() {
+
+      it('should have expected initial state', function() {
+        expect(rowsAttachments.count()).toBe(0);
+        expect(bttnUpload.isPresent()).toBeTruthy();
+        expect(bttnUpload.isDisplayed()).toBeTruthy();
+        expect(bttnUpload.isEnabled()).toBeFalsy();
+        expect(inputFile.isPresent()).toBeTruthy();
+      });
+
+      it('should upload and remove an attachment', function() {
+        var image2upload = path.resolve(__dirname, '../resources/washer.jpg');
+        expect(bttnUpload.isEnabled()).toBeFalsy();
+        inputFile.sendKeys(image2upload);
+        expect(bttnUpload.isEnabled()).toBeTruthy();
+        bttnUpload.click();
+        expect(rowsAttachments.count()).toBe(1);
+        expect(bttnUpload.isEnabled()).toBeFalsy();
+      });
+
+    });
+
+  });
 
 });
