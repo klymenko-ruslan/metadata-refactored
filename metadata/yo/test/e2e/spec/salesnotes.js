@@ -3,6 +3,7 @@
 
 'use strict';
 
+var EC = protractor.ExpectedConditions;
 var _ = require('underscore');
 var path = require('path');
 
@@ -333,6 +334,7 @@ describe('Sales notes:', function() {
       lblStatus = element(by.id('salenote-state'));
       bttnUpload = element(by.tiButton('Upload'));
       bttnAddRelatedPart = element(by.partialLinkText('Add Related Part'));
+      bttnViewPrimary = element(by.partialLinkText('View Primary'));
       inputFile = element(by.name('file'));
       rowsRelatedParts = element.all(by.repeater('relatedPart in $data'));
       rowsAttachments = element.all(by.repeater('attachment in $data'));
@@ -524,7 +526,7 @@ describe('Sales notes:', function() {
 
     });
 
-    fdescribe('Attachments:', function() {
+    describe('Attachments:', function() {
 
       it('should have expected initial state', function() {
         expect(rowsAttachments.count()).toBe(0);
@@ -532,18 +534,135 @@ describe('Sales notes:', function() {
         expect(bttnUpload.isDisplayed()).toBeTruthy();
         expect(bttnUpload.isEnabled()).toBeFalsy();
         expect(inputFile.isPresent()).toBeTruthy();
+        expect(inputFile.isDisplayed()).toBeTruthy();
+        expect(inputFile.isEnabled()).toBeTruthy();
       });
 
       it('should upload and remove an attachment', function() {
         var image2upload = path.resolve(__dirname, '../resources/washer.jpg');
         expect(bttnUpload.isEnabled()).toBeFalsy();
         inputFile.sendKeys(image2upload);
+        browser.wait(EC.elementToBeClickable(bttnUpload), 5000,
+          'The attachment was not uploaded in expected time period.');
         expect(bttnUpload.isEnabled()).toBeTruthy();
         bttnUpload.click();
         expect(rowsAttachments.count()).toBe(1);
         expect(bttnUpload.isEnabled()).toBeFalsy();
+        var bttnRemoveAttachment = rowsAttachments.all(by.tiButton('Remove'))
+          .first();
+        expect(bttnRemoveAttachment.isPresent()).toBeTruthy();
+        expect(bttnRemoveAttachment.isDisplayed()).toBeTruthy();
+        expect(bttnRemoveAttachment.isEnabled()).toBeTruthy();
+        bttnRemoveAttachment.click();
+        expect(dlg.isDisplayed()).toBeTruthy(); // displayed a confirmation dialog
+        var bttnYes = dlg.element(by.buttonText('Yes'));
+        expect(bttnYes.isPresent()).toBeTruthy();
+        expect(bttnYes.isDisplayed()).toBeTruthy();
+        expect(bttnYes.isEnabled()).toBeTruthy();
+        bttnYes.click(); // confirm
+        browser.wait(EC.invisibilityOf(dlg), 3000, 'The confirmation dialog ' +
+          'was not closed in an expected time period.');
+        expect(rowsAttachments.count()).toBe(0);
       });
 
+    });
+
+    describe('Related Parts:', function() {
+
+      it('should have an expected intial state', function() {
+        expect(bttnAddRelatedPart.isPresent());
+        expect(bttnAddRelatedPart.isDisplayed());
+        expect(bttnAddRelatedPart.isEnabled());
+        expect(rowsRelatedParts.count()).toBe(1);
+        expect(bttnViewPrimary.isPresent());
+        expect(bttnViewPrimary.isDisplayed());
+        expect(bttnViewPrimary.isEnabled());
+      });
+
+      it('should display a view to add related part(s) when a button ' +
+        '\'Add Related Part\' is clicked',
+        function() {
+          bttnAddRelatedPart.click();
+          expect(browser.getCurrentUrl()).toBe('http://localhost:8080' +
+            '/part/42119/sales_note/565/related_part/search');
+        }
+      );
+
+      it('should display a view with a part details when a button ' +
+        '\'View Primary\' is clicked',
+        function() {
+          bttnViewPrimary.click();
+          expect(browser.getCurrentUrl())
+            .toBe('http://localhost:8080/part/42119');
+        }
+      );
+
+    });
+
+  });
+
+  describe('Add Related Part:', function() {
+
+    var bttnViewPart, bttnViewSalesNote, bttnAddRelatedPart, bttnViewPrimary,
+      rowsRelatedParts;
+
+    beforeAll(function() {
+      bttnViewPart = element(by.partialLinkText('View Part'));
+      bttnViewSalesNote = element(by.partialLinkText('View Sales Note'));
+      bttnAddRelatedPart = element(by.partialLinkText('Add Related Part'));
+      bttnViewPrimary = element(by.partialLinkText('View Primary'));
+      rowsRelatedParts = element.all(by.repeater('relatedPart in $data'));
+    });
+
+    beforeEach(function() {
+      browser.get('http://localhost:8080/part/42119/sales_note/565/' +
+        'related_part/search');
+    });
+
+    it('should have an expected initial state', function() {
+      expect(bttnViewPart.isPresent()).toBeTruthy();
+      expect(bttnViewPart.isDisplayed()).toBeTruthy();
+      expect(bttnViewPart.isEnabled()).toBeTruthy();
+      expect(bttnViewSalesNote.isPresent()).toBeTruthy();
+      expect(bttnViewSalesNote.isDisplayed()).toBeTruthy();
+      expect(bttnViewSalesNote.isEnabled()).toBeTruthy();
+      expect(bttnAddRelatedPart.isPresent()).toBeTruthy();
+      expect(bttnAddRelatedPart.isDisplayed()).toBeTruthy();
+      //expect(bttnAddRelatedPart.isEnabled()).toBeFalsy();
+      expect(rowsRelatedParts.count()).toBe(1);
+      expect(bttnViewPrimary.isPresent()).toBeTruthy();
+      expect(bttnViewPrimary.isDisplayed()).toBeTruthy();
+      expect(bttnViewPrimary.isEnabled()).toBeTruthy();
+    });
+
+    it('should open a view with part details when a button \'View Part\' ' +
+      'is clicked',
+      function() {
+        bttnViewPart.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/part/42119');
+      }
+    );
+
+    it('should open a view with part details when a button \'View Primary\' ' +
+      'is clicked',
+      function() {
+        bttnViewPrimary.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/part/42119');
+      }
+    );
+
+    fit('should be possible to pick a part', function() {
+      // A condition below means that message
+      // 'Pick a part to add to the sales note.' is displayed.
+      expect(bttnViewPart.evaluate('pickedPart')).toBeFalsy();
+      var bttnPick = element.all(by.partialLinkText('Pick')).first();
+      bttnPick.click(); // pick any part
+      // Make sure that message 'Pick a part to add to the sales note.'
+      // is replaced by the picked part.
+      expect(bttnViewPart.evaluate('pickedPart')).toBeTruthy();
+      expect(bttnAddRelatedPart.isEnabled()).toBeTruthy();
     });
 
   });
