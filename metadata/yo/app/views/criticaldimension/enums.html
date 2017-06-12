@@ -4,11 +4,11 @@
 <div class="row">
   <div class="col-md-6 col-xs-12">
     <h3>Enumerations</h3>
-    <button class="btn btn-primary pull-right tool-control" data-ng-disabled="critDimEnumValsPending || cdeIsModifying()" data-ng-click="showAddEnumDlg()">
+    <button id="bttn-add-enum" class="btn btn-primary pull-right tool-control" data-ng-disabled="critDimEnumValsPending || cdeIsModifying()" data-ng-click="showAddEnumDlg()">
       <i class="fa fa-plus"></i> Add
     </button>
     <form name="rowCdeForm">
-      <table data-ng-table="critDimEnumsTableParams" class="table table-condensed table-bordered table-striped table-hover">
+      <table id="tbl-enums" data-ng-table="critDimEnumsTableParams" class="table table-condensed table-bordered table-striped table-hover">
         <tbody>
           <tr name="name" data-ng-repeat="row in $data" data-ng-class="{'warning': isSelected(row), 'clicked-row': !cdeIsModifying()}" data-ng-click="selectRow(row)">
             <td title="'Name'" data-sortable="'name'" class="col-xs-11">
@@ -56,10 +56,10 @@
     </div>
     <div data-ng-hide="critDimEnumValsPending">
       <h3>Items in [{{selectedRow.id | number}}]&mdash;"{{selectedRow.name}}"</h3>
-      <button class="btn btn-primary pull-right tool-control" data-ng-disabled="cdevIsModifying()" data-ng-click="showAddEnumItmDlg()">
+      <button id="bttn-add-enum-item" class="btn btn-primary pull-right tool-control" data-ng-disabled="cdevIsModifying()" data-ng-click="showAddEnumItmDlg()">
         <i class="fa fa-plus"></i> Add
       </button>
-      <table data-ng-table="critDimEnumValsTableParams" class="table table-condensed table-bordered table-striped table-hover">
+      <table id="tbl-enum-items" data-ng-table="critDimEnumValsTableParams" class="table table-condensed table-bordered table-striped table-hover">
         <tbody>
           <tr data-ng-form="rowCdevForm" data-ng-repeat="row in $data">
             <td title="'Value'" data-sortable="'val'" class="col-xs-11">

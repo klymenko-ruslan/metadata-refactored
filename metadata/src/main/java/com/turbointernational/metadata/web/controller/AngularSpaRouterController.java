@@ -35,6 +35,7 @@ public class AngularSpaRouterController {
         "/changelog/source/create",
         "/changelog/source/{id:\\d+}/form",
         "/changelog/source/{id:\\d+}",
+        "/criticaldimension/enums"
 //        "/",
 //        "/part/\\d+",
 //        "/part/\\d+/component/search",

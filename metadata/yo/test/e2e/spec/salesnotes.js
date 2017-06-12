@@ -554,7 +554,8 @@ describe('Sales notes:', function() {
         expect(bttnRemoveAttachment.isDisplayed()).toBeTruthy();
         expect(bttnRemoveAttachment.isEnabled()).toBeTruthy();
         bttnRemoveAttachment.click();
-        expect(dlg.isDisplayed()).toBeTruthy(); // displayed a confirmation dialog
+        expect(dlg.isDisplayed())
+          .toBeTruthy(); // displayed a confirmation dialog
         var bttnYes = dlg.element(by.buttonText('Yes'));
         expect(bttnYes.isPresent()).toBeTruthy();
         expect(bttnYes.isDisplayed()).toBeTruthy();
@@ -653,7 +654,7 @@ describe('Sales notes:', function() {
       }
     );
 
-    fit('should be possible to pick a part', function() {
+    it('should be possible to pick a part', function() {
       // A condition below means that message
       // 'Pick a part to add to the sales note.' is displayed.
       expect(bttnViewPart.evaluate('pickedPart')).toBeFalsy();
