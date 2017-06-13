@@ -5,7 +5,7 @@
 
 var EC = protractor.ExpectedConditions;
 
-fdescribe('Turbo Models:', function() {
+describe('Turbo Models:', function() {
 
   var elmManufacturer, elmClear, elmTurboType, elmTurboModel;
 
@@ -50,7 +50,7 @@ fdescribe('Turbo Models:', function() {
     expect(elmTurboModel.evaluate('turboModels')).toBeNull();
   });
 
-  fdescribe('turbo type:', function() {
+  describe('turbo type:', function() {
 
     var fltrTurboType, bttnCreateType, bttnRenameType, bttnDeleteType;
 
@@ -161,7 +161,7 @@ fdescribe('Turbo Models:', function() {
         bttnCreate.click();
         // The dialog should be hidden.
         browser.wait(EC.invisibilityOf(dlgCreateTurboType), 1000,
-          'A dialog to create a new turbo type was not hided.');
+          'A dialog to create a new turbo type was not hidden.');
         elmTurboType.evaluate('turboTypes').then(function(turboTypes) {
           var found =  false;
           for(var tt of turboTypes) {
@@ -197,6 +197,13 @@ fdescribe('Turbo Models:', function() {
         bttnRenameType.click();
       });
 
+      it('should close the dilog when button \'Cancel\' is clicked',
+        function() {
+          bttnCancel.click();
+          expect(dlgRenameTurboType.isPresent()).toBeFalsy();
+        }
+      );
+
       it('should have an initial state', function() {
         // Check that a dialog to create a new turbo type is displayed.
         expect(dlgRenameTurboType.isPresent()).toBeTruthy();
@@ -210,19 +217,113 @@ fdescribe('Turbo Models:', function() {
         expect(bttnRename.isPresent()).toBeTruthy();
         expect(bttnRename.isDisplayed()).toBeTruthy();
         expect(bttnRename.isEnabled()).toBeTruthy();
+        expect(elmTurboType.evaluate('selection.turboType.name')).toBe('FOO');
       });
 
       it('should rename a turbo type', function() {
+        inputName.clear(); // clear 'FOO'
+        inputName.sendKeys('FO');
+        bttnRename.click();
+        // The dialog should be hidden.
+        browser.wait(EC.invisibilityOf(dlgRenameTurboType), 1000,
+          'A dialog to rename a turbo type was not hidden.');
+        elmTurboType.evaluate('turboTypes').then(function(turboTypes) {
+          var found =  false;
+          for(var tt of turboTypes) {
+            if (tt.name === 'FO') {
+              found = true;
+              break;
+            }
+          }
+          expect(found).toBeTruthy();
+        });
       });
 
       // TODO: validators
 
     });
 
-    it('should not allow to delete a turbo type which is in use', function() {
-    });
+    describe('delete:', function() {
 
-    it('should not allow to delete a turbo type', function() {
+      var dlgDeleteTurboType, bttnNo, bttnYes, dlgDeleteTurboTypeFailure,
+        bttnClose;
+
+      beforeAll(function() {
+        dlgDeleteTurboType = element(by.css('.modal-dialog'));
+        bttnNo = dlgDeleteTurboType.element(
+          by.partialButtonText('No'));
+        bttnYes = dlgDeleteTurboType.element(
+          by.partialButtonText('Yes'));
+        dlgDeleteTurboTypeFailure = element(by.css('.modal-dialog'));
+        bttnClose = dlgDeleteTurboTypeFailure.element(
+          by.partialButtonText('Close'));
+      });
+
+      beforeEach(function() {
+        browser._selectDropdownbyNum(elmManufacturer, 3); // Holset
+      });
+
+      it('should close the dilog when button \'No\' is clicked',
+        function() {
+          browser._selectDropdownbyNum(elmTurboType, 1); // FO
+          expect(bttnDeleteType.isEnabled()).toBeTruthy();
+          bttnDeleteType.click();
+          expect(dlgDeleteTurboType.isDisplayed()).toBeTruthy();
+          bttnNo.click();
+          expect(dlgDeleteTurboType.isPresent()).toBeFalsy();
+        }
+      );
+
+      it('should allow to delete a turbo type', function() {
+        browser._selectDropdownbyNum(elmTurboType, 1); // FO
+        expect(elmTurboType.evaluate('selection.turboType.name')).toBe('FO');
+        expect(bttnDeleteType.isEnabled()).toBeTruthy();
+        bttnDeleteType.click();
+        expect(dlgDeleteTurboType.isDisplayed()).toBeTruthy();
+        bttnYes.click();
+        // The dialog should be hidden.
+        browser.wait(EC.invisibilityOf(dlgDeleteTurboType), 1000,
+          'A dialog to delete a turbo type was not hidden.');
+        elmTurboType.evaluate('turboTypes').then(function(turboTypes) {
+          var found =  false;
+          for(var tt of turboTypes) {
+            if (tt.name === 'FO') {
+              found = true;
+              break;
+            }
+          }
+          expect(found).toBeFalsy();
+        });
+      });
+
+      it('should not allow to delete a turbo type which is in use',
+        function() {
+          browser._selectDropdownbyNum(elmTurboType, 1); // H1C
+          expect(elmTurboType.evaluate('selection.turboType.name')).toBe('H1C');
+          expect(bttnDeleteType.isEnabled()).toBeTruthy();
+          bttnDeleteType.click();
+          expect(dlgDeleteTurboType.isDisplayed()).toBeTruthy();
+          bttnYes.click();
+          // A dialog with message:
+          //   Turbo type must not be used for any parts or turbo models.
+          //   Check server log for details.
+          // should be displayed.
+          expect(dlgDeleteTurboTypeFailure.isDisplayed()).toBeTruthy();
+          bttnClose.click();
+          expect(dlgDeleteTurboTypeFailure.isPresent()).toBeFalsy();
+          elmTurboType.evaluate('turboTypes').then(function(turboTypes) {
+            var found =  false;
+            for(var tt of turboTypes) {
+              if (tt.name === 'H1C') {
+                found = true;
+                break;
+              }
+            }
+            expect(found).toBeTruthy();
+          });
+        }
+      );
+
     });
   });
 
