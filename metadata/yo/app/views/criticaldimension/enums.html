@@ -85,7 +85,7 @@
               <button data-ng-click="cdevModifyCancel($event)" data-ng-show="cdevIsModifying(row)" class="btn btn-warning btn-xs">
                 <i class="fa fa-minus-circle"></i> Cancel
               </button>
-              <button class="btn btn-danger btn-xs" data-ng-click="showDeleteEnumItmDlg($event, row)">
+              <button class="btn btn-danger btn-xs" data-ng-click="showDeleteEnumItmDlg($event, row)" data-ng-hide="cdevIsModifying(row)">
                 <i class="fa fa-trash-o" aria-hidden="true"></i> Delete
               </button>
             </td>
@@ -178,7 +178,7 @@
         </ng-form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-ng-disabled="formAddItmEnum.$invalid" data-ng-click="addEnumItm()">Add</button>
+        <button type="button" class="btn btn-primary" data-ng-disabled="formAddItmEnum.$invalid" data-ng-click="addEnumItm()">Create</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
       </div>
     </div>
