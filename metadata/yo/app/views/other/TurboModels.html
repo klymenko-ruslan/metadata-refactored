@@ -1,79 +1,83 @@
-<metanav>
-</metanav>
+<metanav></metanav>
 
+<h1>Turbo Models</h1>
 
-<h4>Manufacturer</h4>
-<div class="row">
-    <picker class="col-xs-12 col-md-6"
-            data-ng-model="selection.manufacturer"
-            item-type="other/manufacturer"
-            required></picker>
+<div class="form-group">
+ <label for="mnfr-selector">Manufacturer</label>
+ <picker id="mnfr-selector" data-ng-model="selection.manufacturer"
+   item-type="other/manufacturer" required></picker>
 </div>
 
-<hr/>
+<form name="turboModelMappingForm">
 
-<div class="row">
+  <div class="row">
 
     <div class="col-xs-12 col-md-6">
-        <h4>Turbo Type</h4>
 
-        <input data-ng-model="turboTypeFilter" class="form-control input-sm" placeholder="Turbo type filter..."/>
-
+      <div class="form-group">
+        <label for="">Turbo Type</label>
+        <input data-ng-model="turboTypeFilter" class="form-control input-sm"
+          placeholder="Turbo type filter..."/>
         <select data-ng-model="selection.turboType"
-                data-ng-options="turboType as turboType.name for turboType in turboTypes | filter:{name:turboTypeFilter}"
-                data-ng-disabled="turboTypes.length == 0"
-                size="15" class="select-large required form-control">
+          data-ng-options="turboType as turboType.name for turboType in turboTypes | filter:{name:turboTypeFilter}"
+          data-ng-disabled="turboTypes.length == 0" size="15"
+          class="select-large required form-control">
         </select>
+      </div>
 
-        <div>
-            <a data-ng-click="createTurboType()" class="btn btn-success"
-               data-ng-disabled="!selection.manufacturer.id">
-                <i class="fa fa-wrench"></i>
-                Create Type
-            </a>
-            <a data-ng-click="renameTurboType(selection.turboType)" class="btn btn-warning"
-               data-ng-disabled="!selection.turboType">
-                <i class="fa fa-pencil"></i>
-                Rename Type
-            </a>
-            <a data-ng-click="deleteTurboType(selection.turboType)" class="btn btn-danger"
-               data-ng-disabled="!selection.turboType">
-                <i class="fa fa-trash-o"></i>
-                Delete Type
-            </a>
-        </div>
+      <div style="padding-bottom:1.3em">
+        <button data-ng-click="createTurboType()" class="btn btn-success"
+          data-ng-disabled="!selection.manufacturer.id">
+          <i class="fa fa-wrench"></i>
+          Create Type
+        </button>
+        <button data-ng-click="renameTurboType(selection.turboType)"
+          class="btn btn-warning" data-ng-disabled="!selection.turboType">
+          <i class="fa fa-pencil"></i>
+          Rename Type
+        </button>
+        <button data-ng-click="deleteTurboType(selection.turboType)"
+          class="btn btn-danger" data-ng-disabled="!selection.turboType">
+          <i class="fa fa-trash-o"></i>
+          Delete Type
+        </button>
+      </div>
 
-        <hr/>
     </div>
 
     <div class="col-xs-12 col-md-6">
-        <h4>Turbo Model</h4>
-        <input data-ng-model="turboModelFilter" class="form-control input-sm" placeholder="Turbo model filter..."/>
 
+      <div class="form-group">
+        <label for="turbomodel-selector">Turbo Model</label>
+        <input id="turbomodel-selector" data-ng-model="turboModelFilter"
+          class="form-control input-sm" placeholder="Turbo model filter..."/>
         <select data-ng-model="selection.turboModel"
-                data-ng-options="turboModel as turboModel.name for turboModel in turboModels | filter:{name:turboModelFilter}"
-                data-ng-disabled="turboModels.length == 0"
-                size="15" class="select-large required form-control">
+          data-ng-options="turboModel as turboModel.name for turboModel in turboModels | filter:{name:turboModelFilter}"
+          data-ng-disabled="turboModels.length == 0" size="15"
+          class="select-large required form-control">
         </select>
+      </div>
 
-        <div>
-            <a data-ng-click="createTurboModel()" class="btn btn-success"
-               data-ng-disabled="!selection.turboType">
-                <i class="fa fa-wrench"></i>
-                Create Model
-            </a>
-            <a data-ng-click="renameTurboModel(selection.turboModel)" class="btn btn-warning"
-               data-ng-disabled="!selection.turboModel">
-                <i class="fa fa-pencil"></i>
-                Rename Model
-            </a>
-            <a data-ng-click="deleteTurboModel(selection.turboModel)" class="btn btn-danger"
-               data-ng-disabled="!selection.turboModel">
-                <i class="fa fa-trash-o"></i>
-                Delete Model
-            </a>
-        </div>
+      <div style="padding-bottom:1.3em">
+        <button data-ng-click="createTurboModel()" class="btn btn-success"
+           data-ng-disabled="!selection.turboType">
+            <i class="fa fa-wrench"></i>
+            Create Model
+        </button>
+        <button data-ng-click="renameTurboModel(selection.turboModel)"
+          class="btn btn-warning" data-ng-disabled="!selection.turboModel">
+          <i class="fa fa-pencil"></i>
+          Rename Model
+        </button>
+        <button data-ng-click="deleteTurboModel(selection.turboModel)"
+          class="btn btn-danger" data-ng-disabled="!selection.turboModel">
+          <i class="fa fa-trash-o"></i>
+          Delete Model
+        </button>
+      </div>
 
-        <hr/>
     </div>
-</div>
+
+  </div>
+
+</form>

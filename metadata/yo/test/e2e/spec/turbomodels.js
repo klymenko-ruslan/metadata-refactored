@@ -5,7 +5,7 @@
 
 var EC = protractor.ExpectedConditions;
 
-describe('Turbo Models:', function() {
+fdescribe('Turbo Models:', function() {
 
   var elmManufacturer, elmClear, elmTurboType, elmTurboModel;
 
@@ -56,9 +56,9 @@ describe('Turbo Models:', function() {
 
     beforeAll(function() {
       fltrTurboType = element(by.model('turboTypeFilter'));
-      bttnCreateType = element(by.partialLinkText('Create Type'));
-      bttnRenameType = element(by.partialLinkText('Rename Type'));
-      bttnDeleteType = element(by.partialLinkText('Delete Type'));
+      bttnCreateType = element(by.tiButton('Create Type'));
+      bttnRenameType = element(by.tiButton('Rename Type'));
+      bttnDeleteType = element(by.tiButton('Delete Type'));
     });
 
     it('should have an initial state', function() {
@@ -68,13 +68,13 @@ describe('Turbo Models:', function() {
       expect(elmTurboType.evaluate('turboTypes.length')).toBeNull();
       expect(bttnCreateType.isPresent()).toBeTruthy();
       expect(bttnCreateType.isDisplayed()).toBeTruthy();
-      expect(bttnCreateType.isEnabled()).toBeTruthy();
+      expect(bttnCreateType.isEnabled()).toBeFalsy();
       expect(bttnRenameType.isPresent()).toBeTruthy();
       expect(bttnRenameType.isDisplayed()).toBeTruthy();
-      //expect(bttnRenameType.isEnabled()).toBeFalsy();
+      expect(bttnRenameType.isEnabled()).toBeFalsy();
       expect(bttnDeleteType.isPresent()).toBeTruthy();
       expect(bttnDeleteType.isDisplayed()).toBeTruthy();
-      //expect(bttnDeleteType .isEnabled()).toBeFalsy();
+      expect(bttnDeleteType .isEnabled()).toBeFalsy();
     });
 
     describe('filter by name:', function() {
@@ -334,9 +334,9 @@ describe('Turbo Models:', function() {
 
     beforeAll(function() {
       fltrTurboModel = element(by.model('turboModelFilter'));
-      bttnCreateModel = element(by.partialLinkText('Create Model'));
-      bttnRenameModel = element(by.partialLinkText('Rename Model'));
-      bttnDeleteModel = element(by.partialLinkText('Delete Model'));
+      bttnCreateModel = element(by.tiButton('Create Model'));
+      bttnRenameModel = element(by.tiButton('Rename Model'));
+      bttnDeleteModel = element(by.tiButton('Delete Model'));
     });
 
     it('should have an initial state', function() {
@@ -346,13 +346,13 @@ describe('Turbo Models:', function() {
       expect(elmTurboModel.evaluate('turboModels.length')).toBeNull();
       expect(bttnCreateModel.isPresent()).toBeTruthy();
       expect(bttnCreateModel.isDisplayed()).toBeTruthy();
-      expect(bttnCreateModel.isEnabled()).toBeTruthy();
+      expect(bttnCreateModel.isEnabled()).toBeFalsy();
       expect(bttnRenameModel.isPresent()).toBeTruthy();
       expect(bttnRenameModel.isDisplayed()).toBeTruthy();
-      //expect(bttnRenameModel.isEnabled()).toBeFalsy();
+      expect(bttnRenameModel.isEnabled()).toBeFalsy();
       expect(bttnDeleteModel.isPresent()).toBeTruthy();
       expect(bttnDeleteModel.isDisplayed()).toBeTruthy();
-      //expect(bttnDeleteModel.isEnabled()).toBeFalsy();
+      expect(bttnDeleteModel.isEnabled()).toBeFalsy();
     });
 
     describe('filter by name:', function() {
