@@ -5,7 +5,7 @@
 
 var EC = protractor.ExpectedConditions;
 
-fdescribe('Turbo Models:', function() {
+describe('Turbo Models:', function() {
 
   var elmManufacturer, elmClear, elmTurboType, elmTurboModel;
 
@@ -149,7 +149,8 @@ fdescribe('Turbo Models:', function() {
       it('should close the dilog when button \'Cancel\' is clicked',
         function() {
           bttnCancel.click();
-          expect(dlgCreateTurboType.isPresent()).toBeFalsy();
+          browser.wait(EC.invisibilityOf(dlgCreateTurboType), 1000,
+            'A dialog to create a new turbo type was not hidden.');
         }
       );
 
@@ -200,7 +201,8 @@ fdescribe('Turbo Models:', function() {
       it('should close the dilog when button \'Cancel\' is clicked',
         function() {
           bttnCancel.click();
-          expect(dlgRenameTurboType.isPresent()).toBeFalsy();
+          browser.wait(EC.invisibilityOf(dlgRenameTurboType), 1000,
+            'A dialog to rename a turbo type was not hidden.');
         }
       );
 
@@ -270,7 +272,9 @@ fdescribe('Turbo Models:', function() {
           bttnDeleteType.click();
           expect(dlgDeleteTurboType.isDisplayed()).toBeTruthy();
           bttnNo.click();
-          expect(dlgDeleteTurboType.isPresent()).toBeFalsy();
+          browser.wait(EC.invisibilityOf(dlgDeleteTurboType), 1000,
+            'A confirmation dialog to delete a turbo type was not hidden ' +
+            'when button \'No\' is clicked.');
         }
       );
 
@@ -429,7 +433,8 @@ fdescribe('Turbo Models:', function() {
       it('should close the dilog when button \'Cancel\' is clicked',
         function() {
           bttnCancel.click();
-          expect(dlgCreateTurboModel.isPresent()).toBeFalsy();
+          browser.wait(EC.invisibilityOf(dlgCreateTurboModel), 1000,
+            'A dialog to create a new turbo model was not hidden.');
         }
       );
 
@@ -481,7 +486,8 @@ fdescribe('Turbo Models:', function() {
       it('should close the dilog when button \'Cancel\' is clicked',
         function() {
           bttnCancel.click();
-          expect(dlgRenameTurboModel.isPresent()).toBeFalsy();
+          browser.wait(EC.invisibilityOf(dlgRenameTurboModel), 1000,
+            'A dialog to rename a turbo model was not hidden.');
         }
       );
 
@@ -552,7 +558,9 @@ fdescribe('Turbo Models:', function() {
           bttnDeleteModel.click();
           expect(dlgDeleteTurboModel.isDisplayed()).toBeTruthy();
           bttnNo.click();
-          expect(dlgDeleteTurboModel.isPresent()).toBeFalsy();
+          browser.wait(EC.invisibilityOf(dlgDeleteTurboModel), 1000,
+            'A confirmation dialog to delete a turbo model was not hidden ' +
+            'when button \'No\' is clicked.');
         }
       );
 
