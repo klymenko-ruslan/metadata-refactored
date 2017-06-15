@@ -118,12 +118,12 @@ describe('Turbo Models:', function() {
       var dlgCreateTurboType, bttnCancel, bttnCreate, inputName;
 
       beforeAll(function() {
-        dlgCreateTurboType = element(by.css('.modal-dialog'));
+        dlgCreateTurboType = element(by.id('createTurboTypeDlg'));
         bttnCancel = dlgCreateTurboType.element(
           by.partialButtonText('Cancel'));
         bttnCreate = dlgCreateTurboType.element(
           by.partialButtonText('Create'));
-        inputName = dlgCreateTurboType.element(by.model('name'));
+        inputName = dlgCreateTurboType.element(by.model('turbotype.name'));
       });
 
       beforeEach(function() {
@@ -143,7 +143,7 @@ describe('Turbo Models:', function() {
         expect(bttnCancel.isEnabled()).toBeTruthy();
         expect(bttnCreate.isPresent()).toBeTruthy();
         expect(bttnCreate.isDisplayed()).toBeTruthy();
-        expect(bttnCreate.isEnabled()).toBeTruthy();
+        expect(bttnCreate.isEnabled()).toBeFalsy();
       });
 
       it('should close the dilog when button \'Cancel\' is clicked',
@@ -175,7 +175,31 @@ describe('Turbo Models:', function() {
         });
       });
 
-      // TODO: validators
+      describe('validation:', function() {
+
+        describe('\'name\':', function() {
+
+          it('is required', function() {
+            inputName.clear();
+            expect(bttnCreate.isEnabled()).toBeFalsy();
+          });
+
+          it('is limited by length', function() {
+            inputName.clear();
+            var longString = (new Array(257)).join('x');
+            inputName.sendKeys(longString);
+            expect(bttnCreate.isEnabled()).toBeFalsy();
+          });
+
+          it('is unique', function() {
+            inputName.clear();
+            inputName.sendKeys('H1C');
+            expect(bttnCreate.isEnabled()).toBeFalsy();
+          });
+
+        });
+
+      });
 
     });
 
@@ -184,12 +208,12 @@ describe('Turbo Models:', function() {
       var dlgRenameTurboType, bttnCancel, bttnRename, inputName;
 
       beforeAll(function() {
-        dlgRenameTurboType = element(by.css('.modal-dialog'));
+        dlgRenameTurboType = element(by.id('renameTurboTypeDlg'));
         bttnCancel = dlgRenameTurboType.element(
           by.partialButtonText('Cancel'));
         bttnRename = dlgRenameTurboType.element(
           by.partialButtonText('Rename'));
-        inputName = element(by.model('name'));
+        inputName = dlgRenameTurboType.element(by.model('turbotype.name'));
       });
 
       beforeEach(function() {
@@ -218,7 +242,7 @@ describe('Turbo Models:', function() {
         expect(bttnCancel.isEnabled()).toBeTruthy();
         expect(bttnRename.isPresent()).toBeTruthy();
         expect(bttnRename.isDisplayed()).toBeTruthy();
-        expect(bttnRename.isEnabled()).toBeTruthy();
+        expect(bttnRename.isEnabled()).toBeFalsy();
         expect(elmTurboType.evaluate('selection.turboType.name')).toBe('FOO');
       });
 
@@ -241,7 +265,31 @@ describe('Turbo Models:', function() {
         });
       });
 
-      // TODO: validators
+      describe('validation:', function() {
+
+        describe('\'name\':', function() {
+
+          it('is required', function() {
+            inputName.clear();
+            expect(bttnRename.isEnabled()).toBeFalsy();
+          });
+
+          it('is limited by length', function() {
+            inputName.clear();
+            var longString = (new Array(257)).join('x');
+            inputName.sendKeys(longString);
+            expect(bttnRename.isEnabled()).toBeFalsy();
+          });
+
+          it('is unique', function() {
+            inputName.clear();
+            inputName.sendKeys('H1C');
+            expect(bttnRename.isEnabled()).toBeFalsy();
+          });
+
+        });
+
+      });
 
     });
 
@@ -251,12 +299,13 @@ describe('Turbo Models:', function() {
         bttnClose;
 
       beforeAll(function() {
-        dlgDeleteTurboType = element(by.css('.modal-dialog'));
+        dlgDeleteTurboType = element(by.css('.delete-turbo-type-dlg'));
         bttnNo = dlgDeleteTurboType.element(
           by.partialButtonText('No'));
         bttnYes = dlgDeleteTurboType.element(
           by.partialButtonText('Yes'));
-        dlgDeleteTurboTypeFailure = element(by.css('.modal-dialog'));
+        dlgDeleteTurboTypeFailure = element(
+          by.css('.delete-turbo-type-failure-dlg'));
         bttnClose = dlgDeleteTurboTypeFailure.element(
           by.partialButtonText('Close'));
       });
@@ -401,12 +450,12 @@ describe('Turbo Models:', function() {
       var dlgCreateTurboModel, bttnCancel, bttnCreate, inputName;
 
       beforeAll(function() {
-        dlgCreateTurboModel = element(by.css('.modal-dialog'));
+        dlgCreateTurboModel = element(by.id('createTurboModelDlg'));
         bttnCancel = dlgCreateTurboModel.element(
           by.partialButtonText('Cancel'));
         bttnCreate = dlgCreateTurboModel.element(
           by.partialButtonText('Create'));
-        inputName = dlgCreateTurboModel.element(by.model('name'));
+        inputName = dlgCreateTurboModel.element(by.model('turbomodel.name'));
       });
 
       beforeEach(function() {
@@ -427,7 +476,7 @@ describe('Turbo Models:', function() {
         expect(bttnCancel.isEnabled()).toBeTruthy();
         expect(bttnCreate.isPresent()).toBeTruthy();
         expect(bttnCreate.isDisplayed()).toBeTruthy();
-        expect(bttnCreate.isEnabled()).toBeTruthy();
+        expect(bttnCreate.isEnabled()).toBeFalsy();
       });
 
       it('should close the dilog when button \'Cancel\' is clicked',
@@ -459,7 +508,31 @@ describe('Turbo Models:', function() {
         });
       });
 
-      // TODO: validators
+      describe('validation:', function() {
+
+        describe('\'name\':', function() {
+
+          it('is required', function() {
+            inputName.clear();
+            expect(bttnCreate.isEnabled()).toBeFalsy();
+          });
+
+          it('is limited by length', function() {
+            inputName.clear();
+            var longString = (new Array(257)).join('x');
+            inputName.sendKeys(longString);
+            expect(bttnCreate.isEnabled()).toBeFalsy();
+          });
+
+          it('is unique', function() {
+            inputName.clear();
+            inputName.sendKeys('H1C');
+            expect(bttnCreate.isEnabled()).toBeFalsy();
+          });
+
+        });
+
+      });
 
     });
 
@@ -468,12 +541,12 @@ describe('Turbo Models:', function() {
       var dlgRenameTurboModel, bttnCancel, bttnRename, inputName;
 
       beforeAll(function() {
-        dlgRenameTurboModel = element(by.css('.modal-dialog'));
+        dlgRenameTurboModel = element(by.id('renameTurboModelDlg'));
         bttnCancel = dlgRenameTurboModel.element(
           by.partialButtonText('Cancel'));
         bttnRename = dlgRenameTurboModel.element(
           by.partialButtonText('Rename'));
-        inputName = dlgRenameTurboModel.element(by.model('name'));
+        inputName = dlgRenameTurboModel.element(by.model('turbomodel.name'));
       });
 
       beforeEach(function() {
@@ -503,7 +576,7 @@ describe('Turbo Models:', function() {
         expect(bttnCancel.isEnabled()).toBeTruthy();
         expect(bttnRename.isPresent()).toBeTruthy();
         expect(bttnRename.isDisplayed()).toBeTruthy();
-        expect(bttnRename.isEnabled()).toBeTruthy();
+        expect(bttnRename.isEnabled()).toBeFalsy();
         expect(elmTurboType.evaluate('selection.turboModel.name')).toBe('FOO');
       });
 
@@ -526,7 +599,31 @@ describe('Turbo Models:', function() {
         });
       });
 
-      // TODO: validators
+      describe('validation:', function() {
+
+        describe('\'name\':', function() {
+
+          it('is required', function() {
+            inputName.clear();
+            expect(bttnRename.isEnabled()).toBeFalsy();
+          });
+
+          it('is limited by length', function() {
+            inputName.clear();
+            var longString = (new Array(257)).join('x');
+            inputName.sendKeys(longString);
+            expect(bttnRename.isEnabled()).toBeFalsy();
+          });
+
+          it('is unique', function() {
+            inputName.clear();
+            inputName.sendKeys('H1C');
+            expect(bttnRename.isEnabled()).toBeFalsy();
+          });
+
+        });
+
+      });
 
     });
 
@@ -536,12 +633,13 @@ describe('Turbo Models:', function() {
         bttnClose;
 
       beforeAll(function() {
-        dlgDeleteTurboModel = element(by.css('.modal-dialog'));
+        dlgDeleteTurboModel = element(by.css('.delete-turbo-model-dlg'));
         bttnNo = dlgDeleteTurboModel.element(
           by.partialButtonText('No'));
         bttnYes = dlgDeleteTurboModel.element(
           by.partialButtonText('Yes'));
-        dlgDeleteTurboModelFailure = element(by.css('.modal-dialog'));
+        dlgDeleteTurboModelFailure = element(
+          by.css('.delete-turbo-model-failure-dlg'));
         bttnClose = dlgDeleteTurboModelFailure.element(
           by.partialButtonText('Close'));
       });

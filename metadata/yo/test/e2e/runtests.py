@@ -45,7 +45,7 @@ if re.search(r'Elasticsearch', jpsout) is None:
 
 if re.search(r'metadata-e2e.jar', jpsout) is None:
     print('Running instance of \'metadata\' webapp not found. '
-          'Please run \'metadata.py\'.', file=sys.stderr)
+          'Please run \'./metadata.py\'.', file=sys.stderr)
     sys.exit(1)
 
 if not args.skip_indexing:

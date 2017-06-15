@@ -57,8 +57,7 @@ public class TurboModelController {
         return turboModel;
     }
     
-    @RequestMapping(value="/{turboModelId}", method = DELETE,
-                    produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value="/{turboModelId}", method = DELETE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_TURBO_MODEL_CRUD")
     @Transactional
@@ -67,12 +66,19 @@ public class TurboModelController {
         turboModelDao.remove(turboModel);
         changelogService.log(TURBOMODEL, "Removed turbo model", turboModel.toJson(), null);
     }
-    
-    @RequestMapping(method = GET,
-                    produces = APPLICATION_JSON_VALUE)
+   
+    @RequestMapping(value="/list", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
     protected List<TurboModel> listByTurboTypeIdJson(@RequestParam Long turboTypeId) {
         return turboModelDao.findTurboModelsByTurboTypeId(turboTypeId);
     }
+    
+    @RequestMapping(method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    public TurboModel find(@RequestParam("turboTypeId") Long turboTypeId, @RequestParam("name") String name) {
+        return turboModelDao.findTurboModel(turboTypeId, name);
+    }
+
 }

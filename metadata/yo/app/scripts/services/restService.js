@@ -626,7 +626,7 @@ angular.module('ngMetaCrudApp')
       };
 
       this.listTurboModelsForTurboTypeId = function(turboTypeId) {
-        return Restangular.one('other').getList('turboModel', {'turboTypeId': turboTypeId});
+        return Restangular.one('other/turboModel').getList('list', {'turboTypeId': turboTypeId});
       };
 
       this.createTurboType = function(manufacturerId, name) {
@@ -651,6 +651,14 @@ angular.module('ngMetaCrudApp')
       this.removeTurboType = function(partId, turboTypeId) {
         Restangular.setParentless(false);
         return Restangular.one('part', partId).one('turboType', turboTypeId).remove();
+      };
+
+      this.findTurboModelByTurboTypeAndName = function(turboTypeId, name) {
+        return Restangular.one('other/turboModel').get({'turboTypeId': turboTypeId, 'name': name});
+      };
+
+      this.listTurboModelsForTurboTypeId = function(turboTypeId) {
+        return Restangular.one('other/turboModel').getList('list', {'turboTypeId': turboTypeId});
       };
 
       this.createTurboModel = function(ttId, name) {

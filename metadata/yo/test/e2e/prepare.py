@@ -177,6 +177,6 @@ try:
     print('3. Start in a separate window the \'metadata\' webapp with '
           'profile \'e2e\':')
     print('\t$ ./metadata.py\n')
-    print('4. Run in this window the e2e test suites:\n\n\t$ runtests.py\n')
+    print('4. Run in this window the e2e test suites:\n\n\t$ ./runtests.py\n')
 finally:
     dbaCnx.close()

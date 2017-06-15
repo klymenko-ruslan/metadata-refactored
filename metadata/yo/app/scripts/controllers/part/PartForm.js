@@ -387,7 +387,7 @@ angular.module('ngMetaCrudApp').controller('PartFormCtrl',
     };
 
 }])
-.directive('uniqueTurbotypeName', ['$log', '$q', 'restService', function($log, $q, restService) {
+.directive('uniquePartTurbotypeName', ['$log', '$q', 'restService', function($log, $q, restService) {
   return {
     require: 'ngModel',
     link: function($scope, elm, attr, ctrl) {
