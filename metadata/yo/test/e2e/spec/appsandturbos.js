@@ -5,7 +5,7 @@
 
 var EC = protractor.ExpectedConditions;
 
-fdescribe('Applications & Turbos:', function() {
+describe('Applications & Turbos:', function() {
 
   var bttnDoit, tabHeaderTurbos, tabTurbos, rowsTurbos,
     tabHeaderApps, tabApps, rowsApps,
@@ -201,7 +201,7 @@ fdescribe('Applications & Turbos:', function() {
 
     });
 
-    fit('should allow to pick/unpick turbos', function() {
+    it('should allow to pick/unpick turbos', function() {
       browser._selectDropdownbyNum(fltrPartType, 42); // Turbos
       expect(rowsTurbos.count()).toBe(4);
       rowsTurbos.get(0).element(by.tiButton('Pick')).click();
@@ -234,7 +234,7 @@ fdescribe('Applications & Turbos:', function() {
   });
 
 
-  xdescribe('Application Finder', function() {
+  describe('Application Finder', function() {
 
     var bttnClear, fltrApp, fltrYear, fltrMake, fltrModel,
       fltrEngine, fltrFuelType;
@@ -254,29 +254,32 @@ fdescribe('Applications & Turbos:', function() {
     });
 
     it('should have an initial state', function() {
-      //expect(tabApps.isDisplayed()).toBeTruthy();
-      expect(bttnClear.isPresent()).toBeTruthy();
-      //expect(bttnClear.isDisplayed()).toBeTruthy();
-      expect(bttnClear.isEnabled()).toBeTruthy();
-      expect(fltrApp.isPresent()).toBeTruthy();
-      //expect(fltrApp.isDisplayed()).toBeTruthy();
-      expect(fltrApp.isEnabled()).toBeTruthy();
-      expect(fltrYear.isPresent()).toBeTruthy();
-      //expect(fltrYear.isDisplayed()).toBeTruthy();
-      expect(fltrYear.isEnabled()).toBeTruthy();
-      expect(fltrMake.isPresent()).toBeTruthy();
-      //expect(fltrMake.isDisplayed()).toBeTruthy();
-      expect(fltrMake.isEnabled()).toBeTruthy();
-      expect(fltrModel.isPresent()).toBeTruthy();
-      //expect(fltrModel.isDisplayed()).toBeTruthy();
-      expect(fltrModel.isEnabled()).toBeTruthy();
-      expect(fltrEngine.isPresent()).toBeTruthy();
-      //expect(fltrEngine.isDisplayed()).toBeTruthy();
-      expect(fltrEngine.isEnabled()).toBeTruthy();
-      expect(fltrFuelType.isPresent()).toBeTruthy();
-      //expect(fltrFuelType.isDisplayed()).toBeTruthy();
-      expect(fltrFuelType.isEnabled()).toBeTruthy();
-      expect(rowsApps.count()).toBe(8);
+      tabHeaderApps.click().then(function() {
+        expect(tabTurbos.isDisplayed()).toBeFalsy();
+        expect(tabApps.isDisplayed()).toBeTruthy();
+        expect(bttnClear.isPresent()).toBeTruthy();
+        expect(bttnClear.isDisplayed()).toBeTruthy();
+        expect(bttnClear.isEnabled()).toBeTruthy();
+        expect(fltrApp.isPresent()).toBeTruthy();
+        expect(fltrApp.isDisplayed()).toBeTruthy();
+        expect(fltrApp.isEnabled()).toBeTruthy();
+        expect(fltrYear.isPresent()).toBeTruthy();
+        expect(fltrYear.isDisplayed()).toBeTruthy();
+        expect(fltrYear.isEnabled()).toBeTruthy();
+        expect(fltrMake.isPresent()).toBeTruthy();
+        expect(fltrMake.isDisplayed()).toBeTruthy();
+        expect(fltrMake.isEnabled()).toBeTruthy();
+        expect(fltrModel.isPresent()).toBeTruthy();
+        expect(fltrModel.isDisplayed()).toBeTruthy();
+        expect(fltrModel.isEnabled()).toBeTruthy();
+        expect(fltrEngine.isPresent()).toBeTruthy();
+        expect(fltrEngine.isDisplayed()).toBeTruthy();
+        expect(fltrEngine.isEnabled()).toBeTruthy();
+        expect(fltrFuelType.isPresent()).toBeTruthy();
+        expect(fltrFuelType.isDisplayed()).toBeTruthy();
+        expect(fltrFuelType.isEnabled()).toBeTruthy();
+        expect(rowsApps.count()).toBe(8);
+      });
     });
 
     describe('Filter:', function() {
