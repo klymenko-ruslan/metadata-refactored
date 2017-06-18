@@ -10,7 +10,7 @@ describe('Applications & Turbos:', function() {
   var bttnDoit, tabHeaderTurbos, tabTurbos, rowsTurbos,
     tabHeaderApps, tabApps, rowsApps,
     pickedPartsPane, pickedTurbosRows, pickedAppsRows, bttnUnpickAllTurbos,
-    bttnUnpickAllApps;
+    bttnUnpickAllApps, fltrPartType;
 
   beforeAll(function() {
     bttnDoit = element(by.tiButton('Do it!'));
@@ -28,6 +28,7 @@ describe('Applications & Turbos:', function() {
     pickedAppsRows = pickedAppsPane.all(by.repeater('rec in $data'));
     bttnUnpickAllTurbos = element(by.id('unpickAllTurbos'));
     bttnUnpickAllApps = element(by.id('unpickAllApps'));
+    fltrPartType = tabTurbos.element(by.id('fltrPartType'));
   });
 
   beforeEach(function() {
@@ -59,8 +60,7 @@ describe('Applications & Turbos:', function() {
 
   describe('Turbo Finder:', function() {
 
-    var bttnClear, fltrPartNumber, fltrState, fltrManufacturer, fltrName,
-      fltrPartType;
+    var bttnClear, fltrPartNumber, fltrState, fltrManufacturer, fltrName;
 
     beforeAll(function() {
       bttnClear = tabTurbos.element(by.tiButton('Clear'));
@@ -68,7 +68,6 @@ describe('Applications & Turbos:', function() {
       fltrState = tabTurbos.element(by.id('fltrState'));
       fltrManufacturer = tabTurbos.element(by.id('fltrManufacturer'));
       fltrName = tabTurbos.element(by.id('fltrName'));
-      fltrPartType = tabTurbos.element(by.id('fltrPartType'));
     });
 
     it('should have an initial state', function() {
@@ -298,10 +297,144 @@ describe('Applications & Turbos:', function() {
         expect(rowsApps.count()).toBe(1);
         bttnClear.click();
         expect(rowsApps.count()).toBe(8);
+        expect(fltrApp.evaluate('fltrCmey.cmey')).toBeNull();
+        expect(fltrYear.evaluate('fltrCmey.year')).toBeNull();
+        expect(fltrMake.evaluate('fltrCmey.make')).toBeNull();
+        expect(fltrModel.evaluate('fltrCmey.model')).toBeNull();
+        expect(fltrEngine.evaluate('fltrCmey.engine')).toBeNull();
+        expect(fltrFuelType.evaluate('fltrCmey.fueltype')).toBeNull();
+      });
+
+      describe('Application:', function() {
+
+        it('should search by exact value', function() {
+          fltrApp.sendKeys('Volvo');
+          expect(rowsApps.count()).toBe(4);
+        });
+
+        it('should search by partial value, case sensitive', function() {
+          fltrApp.sendKeys('Vol');
+          expect(rowsApps.count()).toBe(4);
+        });
+
+        it('should search by partial value, case insensitive', function() {
+          fltrApp.sendKeys('vol');
+          expect(rowsApps.count()).toBe(4);
+        });
+
+      });
+
+      it('Year', function() {
+        browser._selectDropdownbyNum(fltrYear, 1);
+        expect(rowsApps.count()).toBe(1);
+        browser._selectReset(fltrYear);
+        browser._selectDropdownbyNum(fltrYear, 2);
+        expect(rowsApps.count()).toBe(1);
+        browser._selectReset(fltrYear);
+        browser._selectDropdownbyNum(fltrYear, 3);
+        expect(rowsApps.count()).toBe(1);
+      });
+
+      it('Make', function() {
+        browser._selectDropdownbyNum(fltrMake, 1);
+        expect(rowsApps.count()).toBe(1);
+        browser._selectReset(fltrMake);
+        browser._selectDropdownbyNum(fltrMake, 2);
+        expect(rowsApps.count()).toBe(4);
+      });
+
+      it('Model', function() {
+        browser._selectDropdownbyNum(fltrModel, 1);
+        expect(rowsApps.count()).toBe(1);
+        browser._selectReset(fltrModel);
+        browser._selectDropdownbyNum(fltrModel, 2);
+        expect(rowsApps.count()).toBe(1);
+        browser._selectReset(fltrModel);
+        browser._selectDropdownbyNum(fltrModel, 3);
+        expect(rowsApps.count()).toBe(1);
+        browser._selectReset(fltrModel);
+        browser._selectDropdownbyNum(fltrModel, 4);
+        expect(rowsApps.count()).toBe(1);
+        browser._selectReset(fltrModel);
+        browser._selectDropdownbyNum(fltrModel, 5);
+        expect(rowsApps.count()).toBe(1);
+      });
+
+      it('Engine', function() {
+        browser._selectDropdownbyNum(fltrEngine, 1);
+        expect(rowsApps.count()).toBe(1);
+        browser._selectReset(fltrEngine);
+        browser._selectDropdownbyNum(fltrEngine, 2);
+        expect(rowsApps.count()).toBe(1);
+        browser._selectReset(fltrEngine);
+        browser._selectDropdownbyNum(fltrEngine, 3);
+        expect(rowsApps.count()).toBe(1);
+        browser._selectReset(fltrEngine);
+        browser._selectDropdownbyNum(fltrEngine, 4);
+        expect(rowsApps.count()).toBe(1);
+        browser._selectReset(fltrEngine);
+        browser._selectDropdownbyNum(fltrEngine, 5);
+        expect(rowsApps.count()).toBe(1);
+        browser._selectReset(fltrEngine);
+        browser._selectDropdownbyNum(fltrEngine, 6);
+        expect(rowsApps.count()).toBe(1);
+      });
+
+      it('Fuel Type', function() {
+        browser._selectDropdownbyNum(fltrFuelType, 1);
+        expect(rowsApps.count()).toBe(1);
       });
 
     });
 
+    it('should allow to pick/unpick applications', function() {
+      expect(rowsApps.count()).toBe(8);
+      rowsApps.get(0).element(by.tiButton('Pick')).click();
+      rowsApps.get(1).element(by.tiButton('Pick')).click();
+      rowsApps.get(2).element(by.tiButton('Pick')).click();
+      rowsApps.get(3).element(by.tiButton('Pick')).click();
+      rowsApps.get(4).element(by.tiButton('Pick')).click();
+      rowsApps.get(5).element(by.tiButton('Pick')).click();
+      rowsApps.get(6).element(by.tiButton('Pick')).click();
+      rowsApps.get(7).element(by.tiButton('Pick')).click();
+      expect(pickedPartsPane.isDisplayed()).toBeTruthy();
+      expect(pickedAppsRows.count()).toBe(8);
+      expect(bttnUnpickAllApps.isDisplayed()).toBeTruthy();
+      expect(bttnUnpickAllApps.isEnabled()).toBeTruthy();
+      expect(pickedTurbosRows.count()).toBe(0);
+      expect(bttnUnpickAllTurbos.isDisplayed()).toBeFalsy();
+      // Unpick a picked app in the first row.
+      var bttnUnpick = pickedAppsRows.first().element(by.tiButton('Unpick'));
+      expect(bttnUnpick.isPresent()).toBeTruthy();
+      expect(bttnUnpick.isDisplayed()).toBeTruthy();
+      expect(bttnUnpick.isEnabled()).toBeTruthy();
+      // Unpick the first row and make sure that it is disappeared
+      // in the table.
+      bttnUnpick.click();
+      expect(pickedAppsRows.count()).toBe(7);
+      expect(pickedTurbosRows.count()).toBe(0);
+      // Unpick all.
+      bttnUnpickAllApps.click();
+      expect(pickedPartsPane.isDisplayed()).toBeFalsy();
+      expect(pickedTurbosRows.count()).toBe(0);
+      expect(pickedAppsRows.count()).toBe(0);
+    });
+
+  });
+
+  it('should \'Do it!\'', function() {
+    expect(bttnDoit.isEnabled()).toBeFalsy();
+    browser._selectDropdownbyNum(fltrPartType, 42); // Turbos
+    expect(rowsTurbos.count()).toBe(4);
+    rowsTurbos.get(0).element(by.tiButton('Pick')).click();
+    rowsTurbos.get(1).element(by.tiButton('Pick')).click();
+    expect(bttnDoit.isEnabled()).toBeFalsy();
+    tabHeaderApps.click();
+    expect(bttnDoit.isEnabled()).toBeFalsy();
+    rowsApps.get(0).element(by.tiButton('Pick')).click();
+    rowsApps.get(1).element(by.tiButton('Pick')).click();
+    expect(bttnDoit.isEnabled()).toBeTruthy();
+    bttnDoit.click();
   });
 
 });

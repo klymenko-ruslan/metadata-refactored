@@ -39,6 +39,9 @@ exports.config = {
   ],
   onPrepare: function() {
 
+    // Maximize a browser window.
+    browser.driver.manage().window().maximize();
+
     var disableNgAnimate = function() {
       angular.module('disableNgAnimate', [])
         .run(['$animate', function($animate) {
