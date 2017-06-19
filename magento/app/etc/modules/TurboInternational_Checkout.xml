@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<config>
-    <modules>
-        <TurboInternational_Checkout>
-            <active>true</active>
-            <codePool>local</codePool>
-        </TurboInternational_Checkout>
-    </modules>
-</config>
