@@ -5,7 +5,7 @@
       <h2>{{::titleHead}} Car Model Engine Year <span data-ng-show="cmey.id">#{{cmey.id}}</span></h2>
     </div>
     <div class="col-xs-6 vcenter">
-      <div class="alert alert-danger" data-ng-show="cmeyForm.$dirty && cmeyForm.$error.nonUniqueApp">
+      <div id="cmey-frm-error" class="alert alert-danger" data-ng-show="cmeyForm.$dirty && cmeyForm.$error.nonUniqueApp">
         <i class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></i>
         Application with these attributes already exists.
       </div>
@@ -15,12 +15,12 @@
   <div class="row" data-ng-show="pickedModels.length > 0 || pickedEngines.length > 0 || pickedYears.length > 0" style="min-height:15em;">
     <div class="col-xs-12 col-md-4">
       <div>
-        <button type="button" title="Unpick all" class="btn btn-link btn-sm btn-h4" data-ng-click="unpickAllCarModels()" data-ng-show="pickedModels.length">
+        <button id="bttn-cmey-frm-unpickallmodels" type="button" title="Unpick all" class="btn btn-link btn-sm btn-h4" data-ng-click="unpickAllCarModels()" data-ng-show="pickedModels.length">
           <i class="fa fa-times"></i>
         </button>
         <h4 class="text-nowrap pull-left">Picked Make/Models</h4>
       </div>
-      <table data-ng-table="pickedModelsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+      <table id="cmey-frm-tbl-pickedmodels" data-ng-table="pickedModelsTableParams" class="table table-bordered table-striped table-hover table-responsive">
       <tr data-ng-repeat="rec in $data">
         <td title="'Make'">{{rec.make.name}}</td>
         <td title="'Model'">{{rec.name}}</td>
@@ -38,12 +38,12 @@
     </div>
     <div class="col-xs-12 col-md-3">
       <div>
-        <button type="button" title="Unpick all" class="btn btn-link btn-sm btn-h4" data-ng-click="unpickAllCarEngines()" data-ng-show="pickedEngines.length">
+        <button id="bttn-cmey-frm-unpickallengines" type="button" title="Unpick all" class="btn btn-link btn-sm btn-h4" data-ng-click="unpickAllCarEngines()" data-ng-show="pickedEngines.length">
           <i class="fa fa-times"></i>
         </button>
         <h4 class="text-nowrap pull-left">Picked Engines</h4>
       </div>
-      <table data-ng-table="pickedEnginesTableParams" class="table table-bordered table-striped table-hover table-responsive">
+      <table id="cmey-frm-tbl-pickedengines" data-ng-table="pickedEnginesTableParams" class="table table-bordered table-striped table-hover table-responsive">
       <tr data-ng-repeat="rec in $data">
         <td title="'Engine'">{{rec.engineSize}}</td>
         <td title="'Fuel Type'">{{rec.fuelType.name}}</td>
@@ -61,12 +61,12 @@
     </div>
     <div class="col-xs-12 col-md-3">
       <div>
-        <button type="button" title="Unpick all" class="btn btn-link btn-sm btn-h4" data-ng-click="unpickAllCarYears()" data-ng-show="pickedYears.length">
+        <button id="bttn-cmey-frm-unpickallyears" type="button" title="Unpick all" class="btn btn-link btn-sm btn-h4" data-ng-click="unpickAllCarYears()" data-ng-show="pickedYears.length">
           <i class="fa fa-times"></i>
         </button>
         <h4 class="text-nowrap pull-left">Picked Years</h4>
       </div>
-      <table data-ng-table="pickedYearsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+      <table id="cmey-frm-tbl-pickedyears" data-ng-table="pickedYearsTableParams" class="table table-bordered table-striped table-hover table-responsive">
       <tr data-ng-repeat="rec in $data">
         <td title="'Year'">{{rec.name}}</td>
         <td class="actions text-center" title="'Actions'">
@@ -82,7 +82,7 @@
       </table>
     </div>
     <div class="col-xs-12 col-md-2">
-      <button type="button" data-ng-click="bulkGeneration()" class="btn btn-success btn-lg pull-right">
+      <button id="bttn-cmey-frm-doit" type="button" data-ng-click="bulkGeneration()" class="btn btn-success btn-lg pull-right">
         <i class="fa fa-wrench"></i>
         Do it!
       </button>
@@ -98,19 +98,19 @@
         <div>
           <label for="carmakeFilter">
             Car Make
-            <button type="button" title="Clear" data-ng-click="onClearMM()" data-ng-disabled="cmey.model.make.id == null && filters.carMake === ''" class="btn btn-link btn-sm">
+            <button id="bttn-cmey-frm-make-clear" type="button" title="Clear" data-ng-click="onClearMM()" data-ng-disabled="cmey.model.make.id == null && filters.carMake === ''" class="btn btn-link btn-sm">
               <i class="fa fa-times"></i>
             </button>
           </label>
           <div class="pull-right">
-            <button type="button" class="btn btn-success btn-sm" data-ng-disabled="cmey.model.make.id == null" data-ng-click="quickCreateCarMake()">
+            <button id="bttn-cmey-frm-make-quickcreate" type="button" class="btn btn-success btn-sm" data-ng-disabled="cmey.model.make.id == null" data-ng-click="quickCreateCarMake()">
               <i class="fa fa-wrench"></i>
               Quick Create
             </button>
           </div>
         </div>
         <input id="carmakeFilter" data-ng-model="filters.carMake" class="form-control" placeholder="Car make filter..."/>
-        <select name = "car_make" data-ng-model="cmey.model.make.id" data-ng-change="onChangeMake()"
+        <select id="inpt-cmey-frm-carmake" name = "car_make" data-ng-model="cmey.model.make.id" data-ng-change="onChangeMake()"
           data-ng-options="carmake.id as carmake.name for carmake in carmakes | filter:{name:filters.carMake}"
           data-ng-disabled="carmakes.length == 0"
           size="6" class="select-large form-control">
@@ -123,23 +123,23 @@
         <div>
           <label for="carmodelFilter">
             Car Model
-            <button type="button" title="Clear" data-ng-click="onClearMM()" class="btn btn-link btn-sm" data-ng-disabled="cmey.model.id == null && filters.carModel === ''">
+            <button id="bttn-cmey-frm-model-clear" type="button" title="Clear" data-ng-click="onClearMM()" class="btn btn-link btn-sm" data-ng-disabled="cmey.model.id == null && filters.carModel === ''">
               <i class="fa fa-times"></i>
             </button>
           </label>
           <div class="btn-toolbar pull-right">
-            <button type="button" class="btn btn-success btn-sm" data-ng-click="quickCreateCarModel()">
+            <button id="bttn-cmey-frm-model-quickcreate" type="button" class="btn btn-success btn-sm" data-ng-click="quickCreateCarModel()">
               <i class="fa fa-wrench"></i>
               Quick Create
             </button>
-            <button type="button" data-ng-disabled="cmey.model.id == null || pickedModelIds[cmey.model.id] || cmey.model.make.id == null" class="btn btn-success btn-sm" data-ng-click="pickCarModel()">
+            <button id="bttn-cmey-frm-model-pick" type="button" data-ng-disabled="cmey.model.id == null || pickedModelIds[cmey.model.id] || cmey.model.make.id == null" class="btn btn-success btn-sm" data-ng-click="pickCarModel()">
               <i class="fa fa-bullseye"></i>
               Pick
             </button>
           </div>
         </div>
         <input id="carmodelFilter" data-ng-model="filters.carModel" class="form-control" placeholder="Car model filter..."/>
-        <select
+        <select id="inpt-cmey-frm-carmodel"
           name = "car_model"
           data-ng-model="cmey.model.id"
           data-ng-dblclick="pickCarModel()"
@@ -158,16 +158,16 @@
         <div>
           <label class="control-label" for="car_engine">
             Car Engine
-            <button title="Clear" data-ng-click="onClearEngine()" data-ng-disabled="cmey.engine.id == null && filters.carEngine === ''" class="btn btn-link btn-sm">
+            <button id="bttn-cmey-frm-engine-clear" title="Clear" data-ng-click="onClearEngine()" data-ng-disabled="cmey.engine.id == null && filters.carEngine === ''" class="btn btn-link btn-sm">
               <i class="fa fa-times"></i>
             </button>
           </label>
           <div class="btn-toolbar pull-right">
-            <button type="button" class="btn btn-success btn-sm" data-ng-click="quickCreateCarEngine()">
+            <button id="bttn-cmey-frm-engine-quickcreate" type="button" class="btn btn-success btn-sm" data-ng-click="quickCreateCarEngine()">
               <i class="fa fa-wrench"></i>
               Quick Create
             </button>
-            <button type="button" data-ng-disabled="cmey.engine.id == null || pickedEngineIds[cmey.engine.id]" class="btn btn-success btn-sm" data-ng-click="pickCarEngine()">
+            <button id="bttn-cmey-frm-engine-pick" type="button" data-ng-disabled="cmey.engine.id == null || pickedEngineIds[cmey.engine.id]" class="btn btn-success btn-sm" data-ng-click="pickCarEngine()">
               <i class="fa fa-bullseye"></i>
               Pick
             </button>
@@ -189,12 +189,12 @@
         <div>
           <label class="control-label" for="car_year">
             Car Year
-            <button title="Clear" data-ng-click="onClearYear()" data-ng-disabled="cmey.year.name == null" class="btn btn-link btn-sm">
+            <button id="bttn-cmey-frm-year-clear" title="Clear" data-ng-click="onClearYear()" data-ng-disabled="cmey.year.name == null" class="btn btn-link btn-sm">
               <i class="fa fa-times"></i>
             </button>
           </label>
           <div class="btn-toolbar pull-right">
-            <button type="button"
+            <button id="bttn-cmey-frm-year-pick" type="button"
                     data-ng-disabled="cmey.year.name == null || pickedYearNames[cmey.year.name] || cmeyForm.car_year.$invalid"
                     class="btn btn-success btn-sm" data-ng-click="pickCarYear()">
               <i class="fa fa-bullseye"></i>

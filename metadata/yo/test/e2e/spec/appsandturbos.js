@@ -3,8 +3,6 @@
 
 'use strict';
 
-var EC = protractor.ExpectedConditions;
-
 describe('Applications & Turbos:', function() {
 
   var bttnDoit, tabHeaderTurbos, tabTurbos, rowsTurbos,
@@ -253,32 +251,30 @@ describe('Applications & Turbos:', function() {
     });
 
     it('should have an initial state', function() {
-      tabHeaderApps.click().then(function() {
-        expect(tabTurbos.isDisplayed()).toBeFalsy();
-        expect(tabApps.isDisplayed()).toBeTruthy();
-        expect(bttnClear.isPresent()).toBeTruthy();
-        expect(bttnClear.isDisplayed()).toBeTruthy();
-        expect(bttnClear.isEnabled()).toBeTruthy();
-        expect(fltrApp.isPresent()).toBeTruthy();
-        expect(fltrApp.isDisplayed()).toBeTruthy();
-        expect(fltrApp.isEnabled()).toBeTruthy();
-        expect(fltrYear.isPresent()).toBeTruthy();
-        expect(fltrYear.isDisplayed()).toBeTruthy();
-        expect(fltrYear.isEnabled()).toBeTruthy();
-        expect(fltrMake.isPresent()).toBeTruthy();
-        expect(fltrMake.isDisplayed()).toBeTruthy();
-        expect(fltrMake.isEnabled()).toBeTruthy();
-        expect(fltrModel.isPresent()).toBeTruthy();
-        expect(fltrModel.isDisplayed()).toBeTruthy();
-        expect(fltrModel.isEnabled()).toBeTruthy();
-        expect(fltrEngine.isPresent()).toBeTruthy();
-        expect(fltrEngine.isDisplayed()).toBeTruthy();
-        expect(fltrEngine.isEnabled()).toBeTruthy();
-        expect(fltrFuelType.isPresent()).toBeTruthy();
-        expect(fltrFuelType.isDisplayed()).toBeTruthy();
-        expect(fltrFuelType.isEnabled()).toBeTruthy();
-        expect(rowsApps.count()).toBe(8);
-      });
+      expect(tabTurbos.isDisplayed()).toBeFalsy();
+      expect(tabApps.isDisplayed()).toBeTruthy();
+      expect(bttnClear.isPresent()).toBeTruthy();
+      expect(bttnClear.isDisplayed()).toBeTruthy();
+      expect(bttnClear.isEnabled()).toBeTruthy();
+      expect(fltrApp.isPresent()).toBeTruthy();
+      expect(fltrApp.isDisplayed()).toBeTruthy();
+      expect(fltrApp.isEnabled()).toBeTruthy();
+      expect(fltrYear.isPresent()).toBeTruthy();
+      expect(fltrYear.isDisplayed()).toBeTruthy();
+      expect(fltrYear.isEnabled()).toBeTruthy();
+      expect(fltrMake.isPresent()).toBeTruthy();
+      expect(fltrMake.isDisplayed()).toBeTruthy();
+      expect(fltrMake.isEnabled()).toBeTruthy();
+      expect(fltrModel.isPresent()).toBeTruthy();
+      expect(fltrModel.isDisplayed()).toBeTruthy();
+      expect(fltrModel.isEnabled()).toBeTruthy();
+      expect(fltrEngine.isPresent()).toBeTruthy();
+      expect(fltrEngine.isDisplayed()).toBeTruthy();
+      expect(fltrEngine.isEnabled()).toBeTruthy();
+      expect(fltrFuelType.isPresent()).toBeTruthy();
+      expect(fltrFuelType.isDisplayed()).toBeTruthy();
+      expect(fltrFuelType.isEnabled()).toBeTruthy();
+      expect(rowsApps.count()).toBe(8);
     });
 
     describe('Filter:', function() {
