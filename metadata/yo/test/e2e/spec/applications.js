@@ -320,15 +320,271 @@ describe('Applications:', function() {
 
   });
 
-  describe('Make:', function() {
+  fdescribe('Make:', function() {
+
+    var bttnCreate, rows, bttnClear, fltrMake;
 
     beforeAll(function() {
+      bttnCreate = element(by.partialLinkText('Create Make'));
+      bttnClear = element(by.tiButton('Clear'));
+      fltrMake = element(by.id('carmake'));
+      rows = element.all(by.repeater('rec in $data'));
     });
 
     beforeEach(function() {
+      browser.get('http://localhost:8080/application/carmake/list');
     });
 
-    it('', function() {
+    it('should have an initial state', function() {
+      expect(bttnCreate.isPresent()).toBeTruthy();
+      expect(bttnCreate.isDisplayed()).toBeTruthy();
+      expect(bttnCreate.isEnabled()).toBeTruthy();
+      expect(bttnClear.isPresent()).toBeTruthy();
+      expect(bttnClear.isDisplayed()).toBeTruthy();
+      expect(bttnClear.isEnabled()).toBeTruthy();
+      expect(fltrMake.isPresent()).toBeTruthy();
+      expect(fltrMake.isDisplayed()).toBeTruthy();
+      expect(fltrMake.isEnabled()).toBeTruthy();
+    });
+
+    it('should open form to create a new \'Make\' when button ' +
+      '\'Create Make\' is clicked',
+      function() {
+        bttnCreate.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/application/carmake/form');
+      }
+    );
+
+    fdescribe('Create:', function() {
+
+      var bttnSave, inptName;
+
+      beforeAll(function() {
+        bttnSave = element(by.tiButton('Save'));
+        inptName = element(by.id('carmake_name'));
+      });
+
+      beforeEach(function() {
+        browser.get('http://localhost:8080/application/carmake/form');
+      });
+
+      it('should have an initial state', function() {
+        expect(bttnSave.isPresent()).toBeTruthy();
+        expect(bttnSave.isDisplayed()).toBeTruthy();
+        expect(bttnSave.isEnabled()).toBeFalsy();
+        expect(inptName.isPresent()).toBeTruthy();
+        expect(inptName.isDisplayed()).toBeTruthy();
+        expect(inptName.isEnabled()).toBeTruthy();
+      });
+
+    });
+
+    describe('Filter:', function() {
+
+      beforeEach(function() {
+        bttnClear.click();
+      });
+
+      it('should clear all filter inputs', function() {
+        fltrMake.sendKeys('Alfa Romeo');
+        expect(rows.count()).toBe(1);
+        bttnClear.click();
+        expect(rows.count()).toBe(10);
+        expect(fltrMake.evaluate('search.carmake')).toBe('');
+      });
+
+      describe('Carmake:', function() {
+
+        it('should search by exact value', function() {
+          fltrMake.sendKeys('Alfa Rome');
+          expect(rows.count()).toBe(1);
+        });
+
+        it('should search by partial value, case sensitive', function() {
+          fltrMake.sendKeys('tos');
+          expect(rows.count()).toBe(2);
+        });
+
+        it('should search by partial value, case insensitive', function() {
+          fltrMake.sendKeys('TOS');
+          expect(rows.count()).toBe(2);
+        });
+
+      });
+
+    });
+
+    describe('Table:', function() {
+
+      var firstRow, firstCell, bttnModify, bttnRemove, bttnSave, bttnCancel, inptName;
+
+      beforeAll(function() {
+        firstRow = rows.first();
+        firstCell = firstRow.all(by.tagName('td')).first()
+          .all(by.tagName('span')).first();
+        bttnModify = firstRow.element(by.tiButton('Modify'));
+        bttnRemove = firstRow.element(by.tiButton('Remove'));
+        bttnSave = firstRow.element(by.tiButton('Save'));
+        bttnCancel = firstRow.element(by.tiButton('Cancel'));
+        inptName = firstRow.element(by.name('carmake_name'));
+      });
+
+      it('should have an initial state', function() {
+        expect(rows.count()).toBe(10);
+        expect(bttnModify.isPresent()).toBeTruthy();
+        expect(bttnModify.isDisplayed()).toBeTruthy();
+        expect(bttnModify.isEnabled()).toBeTruthy();
+        expect(bttnRemove.isPresent()).toBeTruthy();
+        expect(bttnRemove.isDisplayed()).toBeTruthy();
+        expect(bttnRemove.isEnabled()).toBeTruthy();
+        expect(bttnSave.isPresent()).toBeTruthy();
+        expect(bttnSave.isDisplayed()).toBeFalsy();
+        expect(bttnCancel.isPresent()).toBeTruthy();
+        expect(bttnCancel.isDisplayed()).toBeFalsy();
+        expect(inptName.isPresent()).toBeTruthy();
+        expect(inptName.isDisplayed()).toBeFalsy();
+      });
+
+      it('should display a confirmation dialog when button \'Remove\' ' +
+        'is clicked',
+        function() {
+          var dlg = element(by.css('.modal-dialog'));
+          expect(dlg.isPresent()).toBeFalsy();
+          bttnRemove.click();
+          expect(dlg.isDisplayed()).toBeTruthy();
+        }
+      );
+
+      describe('Modify:', function() {
+
+        beforeEach(function() {
+          bttnModify.click();
+        });
+
+        it('should have an initial state', function() {
+          expect(bttnModify.isPresent()).toBeTruthy();
+          expect(bttnModify.isDisplayed()).toBeFalsy();
+          expect(bttnRemove.isPresent()).toBeTruthy();
+          expect(bttnRemove.isDisplayed()).toBeFalsy();
+          expect(bttnSave.isPresent()).toBeTruthy();
+          expect(bttnSave.isDisplayed()).toBeTruthy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+          expect(bttnCancel.isPresent()).toBeTruthy();
+          expect(bttnCancel.isDisplayed()).toBeTruthy();
+          expect(bttnCancel.isEnabled()).toBeTruthy();
+          expect(inptName.isPresent()).toBeTruthy();
+          expect(inptName.isDisplayed()).toBeTruthy();
+          expect(inptName.evaluate('modifyValues[rec._source.id]'))
+            .toBe('Agrale');
+        });
+
+        it('should undo changes when button \'Cancel\' is clicked',
+          function() {
+            inptName.sendKeys('Foo');
+            expect(inptName.evaluate('modifyValues[rec._source.id]'))
+              .toBe('AgraleFoo');
+            bttnCancel.click();
+            expect(firstCell.getText()).toBe('Agrale');
+            expect(bttnModify.isPresent()).toBeTruthy();
+            expect(bttnModify.isDisplayed()).toBeTruthy();
+            expect(bttnModify.isEnabled()).toBeTruthy();
+            expect(bttnRemove.isPresent()).toBeTruthy();
+            expect(bttnRemove.isDisplayed()).toBeTruthy();
+            expect(bttnRemove.isEnabled()).toBeTruthy();
+            expect(bttnSave.isPresent()).toBeTruthy();
+            expect(bttnSave.isDisplayed()).toBeFalsy();
+            expect(bttnCancel.isPresent()).toBeTruthy();
+            expect(bttnCancel.isDisplayed()).toBeFalsy();
+            expect(inptName.isPresent()).toBeTruthy();
+            expect(inptName.isDisplayed()).toBeFalsy();
+          }
+        );
+
+        it('should save changes when button \'Save\' is clicked', function() {
+          inptName.sendKeys('Foo');
+          expect(inptName.evaluate('modifyValues[rec._source.id]'))
+            .toBe('AgraleFoo');
+          expect(bttnSave.isEnabled()).toBeTruthy();
+          bttnSave.click();
+          expect(firstCell.getText()).toBe('AgraleFoo');
+          expect(bttnModify.isPresent()).toBeTruthy();
+          expect(bttnModify.isDisplayed()).toBeTruthy();
+          expect(bttnModify.isEnabled()).toBeTruthy();
+          expect(bttnRemove.isPresent()).toBeTruthy();
+          expect(bttnRemove.isDisplayed()).toBeTruthy();
+          expect(bttnRemove.isEnabled()).toBeTruthy();
+          expect(bttnSave.isPresent()).toBeTruthy();
+          expect(bttnSave.isDisplayed()).toBeFalsy();
+          expect(bttnCancel.isPresent()).toBeTruthy();
+          expect(bttnCancel.isDisplayed()).toBeFalsy();
+          expect(inptName.isPresent()).toBeTruthy();
+          expect(inptName.isDisplayed()).toBeFalsy();
+          bttnModify.click();
+          inptName.clear();
+          inptName.sendKeys('Agrale');
+          bttnSave.click();
+          expect(firstRow.all(by.tagName('td')).first()
+            .all(by.tagName('span')).first().getText()).toBe('Agrale');
+        });
+
+        describe('Validation:', function() {
+
+          var errorArea, errRequired, errTooLong, errNotUnique;
+
+          beforeAll(function() {
+            errorArea = firstRow.all(by.tagName('td')).first()
+              .element(by.tagName('form'))
+              .all(by.tagName('span')).first();
+            var errs = errorArea.all(by.tagName('span'));
+            errRequired = errs.get(1);
+            errTooLong = errs.get(2);
+            errNotUnique = errs.get(3);
+          });
+
+          it('should not display any error before modification', function() {
+            expect(errorArea.isPresent()).toBeTruthy();
+            expect(errorArea.isDisplayed()).toBeFalsy();
+            expect(errRequired.isPresent()).toBeTruthy();
+            expect(errTooLong.isPresent()).toBeTruthy();
+            expect(errNotUnique.isPresent()).toBeTruthy();
+          });
+
+          it('should check constraint \'required\'', function() {
+            inptName.clear();
+            expect(errorArea.isDisplayed()).toBeTruthy();
+            expect(errRequired.isDisplayed()).toBeTruthy();
+            expect(errTooLong.isDisplayed()).toBeFalsy();
+            expect(errNotUnique.isDisplayed()).toBeFalsy();
+            expect(bttnSave.isEnabled()).toBeFalsy();
+          });
+
+          xit('should check constraint \'maxlength\'', function() {
+            // This test will fail beacuse 'input' does not allow
+            // to exceed 'maxlength'.
+            var longString = (new Array(100)).join('x');
+            inptName.sendKeys(longString);
+            expect(errorArea.isDisplayed()).toBeTruthy();
+            expect(errRequired.isDisplayed()).toBeFalsy();
+            expect(errTooLong.isDisplayed()).toBeTruthy();
+            expect(errNotUnique.isDisplayed()).toBeFalsy();
+            expect(bttnSave.isEnabled()).toBeFalsy();
+          });
+
+          it('should check constraint \'unique\'', function() {
+            inptName.clear();
+            inptName.sendKeys('ARO');
+            expect(errorArea.isDisplayed()).toBeTruthy();
+            expect(errRequired.isDisplayed()).toBeFalsy();
+            expect(errTooLong.isDisplayed()).toBeFalsy();
+            expect(errNotUnique.isDisplayed()).toBeTruthy();
+            expect(bttnSave.isEnabled()).toBeFalsy();
+          });
+
+        });
+
+      });
+
     });
 
   });

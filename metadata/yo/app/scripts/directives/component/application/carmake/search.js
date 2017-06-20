@@ -17,7 +17,7 @@ angular.module('ngMetaCrudApp').directive('carmakeSearch', ['$log', 'restService
       $scope.modifyValues = {};
 
       $scope.isModifying = function(carmake) {
-        return angular.isDefined($scope.modifyValues[carmake.id]);
+        return carmake.id in $scope.modifyValues;
       };
 
       $scope.modifyStart = function(carmake, form) {

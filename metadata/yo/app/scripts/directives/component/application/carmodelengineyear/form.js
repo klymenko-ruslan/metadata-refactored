@@ -220,8 +220,10 @@ angular.module('ngMetaCrudApp')
           };
 
           $scope.validateForm = function() {
-            restService.existsCarmodelengineyear($scope.cmey.model.id, $scope.cmey.engine.id,
-              $scope.cmey.year.name).then(
+            var modelId = $scope.$eval('cmey.model.id');
+            var engineId = $scope.$eval('cmey.engine.id');
+            var yearName = $scope.$eval('cmey.year.name');
+            restService.existsCarmodelengineyear(modelId, engineId, yearName).then(
                 function success(exists) {
                   if (exists) {
                     $scope.cmeyForm.$valid = false;
@@ -439,6 +441,11 @@ angular.module('ngMetaCrudApp')
                     if (_.isArray($scope.carmakes)) {
                       var pos = _.sortedIndex($scope.carmakes, newCarMake, 'name');
                       $scope.carmakes.splice(pos, 0, newCarMake);
+                      /*
+                      if ($scope.cmey.model === null || $scope.cmey.model === undefined) {
+                        $scope.cmey.model = {};
+                      }
+                      */
                       $scope.cmey.model.make = newCarMake;
                       $scope.cmeyForm.$setDirty();
                     }
