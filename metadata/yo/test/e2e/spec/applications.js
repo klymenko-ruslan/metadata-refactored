@@ -409,7 +409,7 @@ describe('Applications:', function() {
         expect(dlg.isDisplayed()).toBeTruthy();
         var bttnYes = dlg.element(by.partialButtonText('Yes'));
         bttnYes.click();
-        // Make sure that Car Model has really been removed.
+        // Make sure that Car Make has really been removed.
         expect(dlg.isPresent()).toBeFalsy();
         browser.wait(function() {
           bttnClear.click();
@@ -690,15 +690,345 @@ describe('Applications:', function() {
 
   describe('Model:', function() {
 
+    var bttnCreate, rows, bttnClear, fltrModel, fltrMake;
+
     beforeAll(function() {
+      bttnCreate = element(by.partialLinkText('Create Model'));
+      bttnClear = element(by.tiButton('Clear'));
+      fltrModel = element(by.id('carmodel'));
+      fltrMake = element(by.id('fltrCarmodelMake'));
+      rows = element.all(by.repeater('rec in $data'));
     });
 
     beforeEach(function() {
+      browser.get('http://localhost:8080/application/carmodel/list');
     });
 
-    it('', function() {
+    it('should have an initial state', function() {
+      expect(bttnCreate.isPresent()).toBeTruthy();
+      expect(bttnCreate.isDisplayed()).toBeTruthy();
+      expect(bttnCreate.isEnabled()).toBeTruthy();
+      expect(bttnClear.isPresent()).toBeTruthy();
+      expect(bttnClear.isDisplayed()).toBeTruthy();
+      expect(bttnClear.isEnabled()).toBeTruthy();
+      expect(fltrModel.isPresent()).toBeTruthy();
+      expect(fltrModel.isDisplayed()).toBeTruthy();
+      expect(fltrModel.isEnabled()).toBeTruthy();
+      expect(fltrMake.isPresent()).toBeTruthy();
+      expect(fltrMake.isDisplayed()).toBeTruthy();
+      expect(fltrMake.isEnabled()).toBeTruthy();
     });
 
+    it('should open form to create a new \'Model\' when button ' +
+      '\'Create Model\' is clicked',
+      function() {
+        bttnCreate.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/application/carmodel/form');
+      }
+    );
+
+    describe('Create:', function() {
+
+      var bttnSave, inptName, fltrCarMake, elmCarMake, elmCarMakeOptions;
+
+      beforeAll(function() {
+        bttnSave = element(by.tiButton('Save'));
+        inptName = element(by.id('carmodel_name'));
+        fltrCarMake = element(by.model('carmakeFilter'));
+        elmCarMake = element(by.model('carmodel.make.id'));
+        elmCarMakeOptions = elmCarMake.all(by.tagName('option'));
+      });
+
+      beforeEach(function() {
+        browser.get('http://localhost:8080/application/carmodel/form');
+      });
+
+      it('should have an initial state', function() {
+        expect(bttnSave.isPresent()).toBeTruthy();
+        expect(bttnSave.isDisplayed()).toBeTruthy();
+        expect(bttnSave.isEnabled()).toBeFalsy();
+        expect(inptName.isPresent()).toBeTruthy();
+        expect(inptName.isDisplayed()).toBeTruthy();
+        expect(inptName.isEnabled()).toBeFalsy();
+        expect(fltrCarMake.isPresent()).toBeTruthy();
+        expect(fltrCarMake.isDisplayed()).toBeTruthy();
+        expect(fltrCarMake.isEnabled()).toBeTruthy();
+        expect(elmCarMake.isPresent()).toBeTruthy();
+        expect(elmCarMake.isDisplayed()).toBeTruthy();
+        expect(elmCarMake.isEnabled()).toBeTruthy();
+        expect(elmCarMakeOptions.count()).toBe(271 + 1);
+      });
+
+      describe('Filter Car Makes:', function() {
+
+        beforeEach(function() {
+          fltrCarMake.clear();
+        });
+
+        it('should search by exact value', function() {
+          fltrCarMake.sendKeys('Citroen');
+          expect(elmCarMakeOptions.count()).toBe(1 + 1);
+        });
+
+        it('should search by partial value, case sensitive', function() {
+          fltrCarMake.sendKeys('oe');
+          expect(elmCarMakeOptions.count()).toBe(2 + 1);
+        });
+
+        it('should search by partial value, case insensitive', function() {
+          fltrCarMake.sendKeys('OE');
+          expect(elmCarMakeOptions.count()).toBe(2 + 1);
+        });
+
+      });
+
+      it('should create a new Car Model', function() {
+        browser._selectDropdownbyNum(elmCarMake, 256); // Volvo
+        inptName.sendKeys('foo');
+        expect(bttnSave.isEnabled()).toBeTruthy();
+        bttnSave.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/application/carmodel/list');
+        // Find the just created Car Make and delete it.
+        browser.wait(function() {
+          bttnClear.click();
+          fltrModel.sendKeys('foo');
+          browser._selectDropdownbyNum(fltrMake, 1); // Volvo
+          return rows.count().then(
+            function(rowCount) {
+              return rowCount === 1;
+            }
+          );
+        }, 3000, 'A Car Model \'foo\' has not been created ' +
+          'for Car Make \'Volvo\'.');
+        var firstRow = rows.first();
+        var bttnRemove = firstRow.element(by.tiButton('Remove'));
+        bttnRemove.click();
+        // A confirmation dialog should be displayed.
+        var dlg = element(by.css('.modal-dialog'));
+        expect(dlg.isDisplayed()).toBeTruthy();
+        var bttnYes = dlg.element(by.partialButtonText('Yes'));
+        bttnYes.click();
+        // Make sure that Car Make has really been removed.
+        expect(dlg.isPresent()).toBeFalsy();
+        browser.wait(function() {
+          bttnClear.click();
+          fltrModel.sendKeys('foo');
+          return rows.count().then(
+            function(rowCount) {
+              return rowCount === 0;
+            }
+          );
+        }, 3000, 'The just created Car Model \'foo\' was not deleted ' +
+          'in the Car Make \'Volvo\'.');
+      });
+
+      describe('Validation:', function() {
+
+        var errorArea, errRequired, errTooLong, errNotUnique;
+
+        beforeAll(function() {
+          errorArea = element(by.name('carmodelForm'))
+            .element(by.css('.alert'));
+          var errs = errorArea.all(by.tagName('span'));
+          errRequired = errs.get(1);
+          errTooLong = errs.get(2);
+          errNotUnique = errs.get(3);
+        });
+
+        it('should not display any error before modification', function() {
+          expect(errorArea.isPresent()).toBeTruthy();
+          expect(errorArea.isDisplayed()).toBeFalsy();
+          expect(errRequired.isPresent()).toBeTruthy();
+          expect(errTooLong.isPresent()).toBeTruthy();
+          expect(errNotUnique.isPresent()).toBeTruthy();
+        });
+
+        it('should check constraint \'required\'', function() {
+          browser._selectDropdownbyNum(elmCarMake, 2);
+          inptName.sendKeys('foo');
+          inptName.clear();
+          expect(errorArea.isDisplayed()).toBeTruthy();
+          expect(errRequired.isDisplayed()).toBeTruthy();
+          expect(errTooLong.isDisplayed()).toBeFalsy();
+          expect(errNotUnique.isDisplayed()).toBeFalsy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+        });
+
+        it('should check constraint \'unique\'', function() {
+          browser._selectDropdownbyNum(elmCarMake, 256); // Volvo
+          inptName.clear();
+          inptName.sendKeys('200');
+          expect(errorArea.isDisplayed()).toBeTruthy();
+          expect(errRequired.isDisplayed()).toBeFalsy();
+          expect(errTooLong.isDisplayed()).toBeFalsy();
+          expect(errNotUnique.isDisplayed()).toBeTruthy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+        });
+
+      });
+
+    });
+
+    describe('Table:', function() {
+
+      var firstRow, bttnEdit, bttnRemove;
+
+      beforeAll(function() {
+        firstRow = rows.first();
+        bttnEdit = firstRow.element(by.partialLinkText('Edit'));
+        bttnRemove = firstRow.element(by.tiButton('Remove'));
+      });
+
+      it('should have an initial state', function() {
+        expect(rows.count()).toBe(10);
+        expect(bttnEdit.isPresent()).toBeTruthy();
+        expect(bttnEdit.isDisplayed()).toBeTruthy();
+        expect(bttnEdit.isEnabled()).toBeTruthy();
+        expect(bttnRemove.isPresent()).toBeTruthy();
+        expect(bttnRemove.isDisplayed()).toBeTruthy();
+        expect(bttnRemove.isEnabled()).toBeTruthy();
+      });
+
+      it('should display a confirmation dialog when button \'Remove\' ' +
+        'is clicked',
+        function() {
+          var dlg = element(by.css('.modal-dialog'));
+          expect(dlg.isPresent()).toBeFalsy();
+          bttnRemove.click();
+          expect(dlg.isDisplayed()).toBeTruthy();
+        }
+      );
+
+    });
+
+    describe('Edit:', function() {
+
+      var bttnSave, inptName, fltrCarMake, elmCarMake, elmCarMakeOptions;
+
+      beforeAll(function() {
+        bttnSave = element(by.tiButton('Save'));
+        inptName = element(by.id('carmodel_name'));
+        fltrCarMake = element(by.model('carmakeFilter'));
+        elmCarMake = element(by.model('carmodel.make.id'));
+        elmCarMakeOptions = elmCarMake.all(by.tagName('option'));
+      });
+
+      beforeEach(function() {
+        browser.get('http://localhost:8080/application/carmodel/1/form');
+      });
+
+      it('should have an initial state', function() {
+        expect(bttnSave.isPresent()).toBeTruthy();
+        expect(bttnSave.isDisplayed()).toBeTruthy();
+        expect(bttnSave.isEnabled()).toBeFalsy();
+        expect(inptName.isPresent()).toBeTruthy();
+        expect(inptName.isDisplayed()).toBeTruthy();
+        expect(inptName.isEnabled()).toBeTruthy();
+        expect(fltrCarMake.isPresent()).toBeTruthy();
+        expect(fltrCarMake.isDisplayed()).toBeTruthy();
+        expect(fltrCarMake.isEnabled()).toBeTruthy();
+        expect(elmCarMake.isPresent()).toBeTruthy();
+        expect(elmCarMake.isDisplayed()).toBeTruthy();
+        expect(elmCarMake.isEnabled()).toBeTruthy();
+        expect(elmCarMakeOptions.count())
+          .toBe(271); // there is no first blank item
+        expect(inptName.evaluate('carmodel.name')).toBe('145');
+        expect(elmCarMake.evaluate('carmodel.make.id')).toBe(252); // Volvo
+      });
+
+      describe('Filter Car Makes:', function() {
+
+        beforeEach(function() {
+          fltrCarMake.clear();
+        });
+
+        it('should search by exact value', function() {
+          fltrCarMake.sendKeys('Citroen');
+          expect(elmCarMakeOptions.count()).toBe(1 + 1);
+        });
+
+        it('should search by partial value, case sensitive', function() {
+          fltrCarMake.sendKeys('oe');
+          expect(elmCarMakeOptions.count()).toBe(2 + 1);
+        });
+
+        it('should search by partial value, case insensitive', function() {
+          fltrCarMake.sendKeys('OE');
+          expect(elmCarMakeOptions.count()).toBe(2 + 1);
+        });
+
+      });
+
+      it('should update a Car Model', function() {
+        inptName.sendKeys('Foo');
+        expect(bttnSave.isEnabled()).toBeTruthy();
+        bttnSave.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/application/carmodel/list');
+        // Find the just created Car Make and delete it.
+        browser.wait(function() {
+          bttnClear.click();
+          fltrModel.sendKeys('145Foo');
+          browser._selectDropdownbyNum(fltrMake, 1); // Volvo
+          return rows.count().then(
+            function(rowCount) {
+              return rowCount === 1;
+            }
+          );
+        }, 3000, 'A Car Model \'145\' has not been updated ' +
+          'for Car Make \'Volvo\'.');
+        var firstRow = rows.first();
+        var bttnEdit = firstRow.element(by.partialLinkText('Edit'));
+        bttnEdit.click();
+        inptName.clear();
+        inptName.sendKeys('145');
+        bttnSave.click();
+      });
+
+      describe('Validation:', function() {
+
+        var errorArea, errRequired, errTooLong, errNotUnique;
+
+        beforeAll(function() {
+          errorArea = element(by.name('carmodelForm'))
+            .element(by.css('.alert'));
+          var errs = errorArea.all(by.tagName('span'));
+          errRequired = errs.get(1);
+          errTooLong = errs.get(2);
+          errNotUnique = errs.get(3);
+        });
+
+        it('should not display any error before modification', function() {
+          expect(errorArea.isPresent()).toBeTruthy();
+          expect(errorArea.isDisplayed()).toBeFalsy();
+          expect(errRequired.isPresent()).toBeTruthy();
+          expect(errTooLong.isPresent()).toBeTruthy();
+          expect(errNotUnique.isPresent()).toBeTruthy();
+        });
+
+        it('should check constraint \'required\'', function() {
+          inptName.clear();
+          expect(errorArea.isDisplayed()).toBeTruthy();
+          expect(errRequired.isDisplayed()).toBeTruthy();
+          expect(errTooLong.isDisplayed()).toBeFalsy();
+          expect(errNotUnique.isDisplayed()).toBeFalsy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+        });
+
+        it('should check constraint \'unique\'', function() {
+          inptName.clear();
+          inptName.sendKeys('200');
+          expect(errorArea.isDisplayed()).toBeTruthy();
+          expect(errRequired.isDisplayed()).toBeFalsy();
+          expect(errTooLong.isDisplayed()).toBeFalsy();
+          expect(errNotUnique.isDisplayed()).toBeTruthy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+        });
+      });
+
+    });
   });
 
   describe('Engine:', function() {

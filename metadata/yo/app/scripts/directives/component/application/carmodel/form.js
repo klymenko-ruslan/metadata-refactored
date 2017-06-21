@@ -68,30 +68,29 @@ angular.module('ngMetaCrudApp')
       ]
     };
   })
-  .directive('uniqueCarmodelRec', ['$log', '$q', function($log, $q) {
+  .directive('uniqueCarmodelName', ['$log', '$q', 'restService', function($log, $q, restService) {
     // Validator for uniqueness of the carmodel name.
     return {
       require: 'ngModel',
       link: function($scope, elm, attr, ctrl) {
-        ctrl.$asyncValidators.nonUniqueName = function(modelValue/*, viewValue*/) {
+        ctrl.$asyncValidators.nonUniqueName = function(modelValue, viewValue) {
           var def = $q.defer();
           if (ctrl.$isEmpty(modelValue)) {
             return $q.when();
           }
-          def.resolve();
-          /*restService.findCarmodelByName(viewValue).then(
+          restService.existsCarmodel(viewValue, $scope.carmodel.make.id).then(
             function(foundCarmodel) {
-              if (foundCarmodel === undefined) {
+              if (!foundCarmodel) {
                 def.resolve();
               } else {
                 def.reject();
               }
             },
-            function (errorResponse) {
+            function (/*errorResponse*/) {
               $log.log('Couldn\'t validate name of the car model: ' + viewValue);
               def.reject();
             }
-          );*/
+          );
           return def.promise;
         };
       }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.turbointernational.metadata.entity.CarModel;
 
 /**
- * Created by trunikov on 12/9/15.
+ * Created by dmytro.trunykov@zorallabs.com on 2015-12-09.
  */
 @Repository
 public class CarModelDao extends AbstractDao<CarModel> {
@@ -18,11 +18,7 @@ public class CarModelDao extends AbstractDao<CarModel> {
     }
 
     public boolean exists(String name, long carMakeId) {
-        Query q = em.createQuery("FROM CarModel WHERE name=:name AND make.id=:id");
-        q.setParameter("name", name);
-        q.setParameter("id", carMakeId);
-        q.setMaxResults(1);
-        List<?> r = q.getResultList();
+        List<?> r = findCarModelsByFilter(name, carMakeId, 1);
         return !r.isEmpty();
     }
 

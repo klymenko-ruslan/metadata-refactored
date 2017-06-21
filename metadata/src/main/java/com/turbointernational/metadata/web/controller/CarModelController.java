@@ -11,10 +11,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
 import java.util.List;
 
 /**
- * Created by trunikov on 12/15/15.
+ * Created by dmytro.trunykov@zorallabs.com on 2015-12015.
  */
 @RequestMapping("/metadata/application")
 @Controller
@@ -24,7 +30,7 @@ public class CarModelController {
     private CarModelDao carModelDao;
 
     @Transactional
-    @RequestMapping(value = "/carmodel/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/carmodel/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @JsonView(View.CarModelDetailed.class)
     @Secured("ROLE_READ")
@@ -33,7 +39,7 @@ public class CarModelController {
     }
 
     @Transactional
-    @RequestMapping(value = "/carmodels", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/carmodels", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
@@ -42,31 +48,35 @@ public class CarModelController {
     }
 
     @Transactional
-    @RequestMapping(value = "/carmodel", method = RequestMethod.POST)
+    @RequestMapping(value = "/carmodel", method = POST)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public CarModel create(@RequestBody CarModel carModel) {
-        if (!carModelDao.exists(carModel.getName(), carModel.getMake().getId())) { // TODO: replace by UI validation
-            carModelDao.persist(carModel);
-        }
+        carModelDao.persist(carModel);
         return carModel;
     }
 
     @Transactional
-    @RequestMapping(value = "/carmodel/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/carmodel/{id}", method = PUT)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void update(@RequestBody CarModel carModel) {
-        if (!carModelDao.exists(carModel.getName(), carModel.getMake().getId())) { // TODO: replace by UI validation
-            carModelDao.merge(carModel);
-        }
+        carModelDao.merge(carModel);
     }
 
     @Transactional
-    @RequestMapping(value = "/carmodel/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/carmodel/{id}", method = DELETE)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {
         carModelDao.delete(id);
     }
+
+    @RequestMapping(value = "/carmodel/exists", method = GET)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    public boolean exists(@RequestParam("name") String name, @RequestParam("carMakeId") Long carMakeId) {
+      return carModelDao.exists(name, carMakeId);
+    }
+
 }

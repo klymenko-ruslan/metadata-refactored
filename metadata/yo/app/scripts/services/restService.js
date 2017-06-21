@@ -713,7 +713,6 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('interchange', interchangeId).one('part', partId).remove();
       };
 
-
       this.findCarmakeByName = function(name) {
         return Restangular.one('application/carmake').get({
           'name': name
@@ -760,6 +759,13 @@ angular.module('ngMetaCrudApp')
 
       this.findCarmodel = function(id) {
         return Restangular.one('application/carmodel', id).get();
+      };
+
+      this.existsCarmodel = function(carModelName, carMakeId) {
+        return Restangular.one('application/carmodel/exists').get({
+          'name': carModelName,
+          'carMakeId': carMakeId
+        });
       };
 
       this.createCarmodel = function(carmodel) {
