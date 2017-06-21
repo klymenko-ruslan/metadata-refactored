@@ -320,7 +320,7 @@ describe('Applications:', function() {
 
   });
 
-  fdescribe('Make:', function() {
+  describe('Make:', function() {
 
     var bttnCreate, rows, bttnClear, fltrMake;
 
@@ -356,7 +356,7 @@ describe('Applications:', function() {
       }
     );
 
-    fdescribe('Create:', function() {
+    describe('Create:', function() {
 
       var bttnSave, inptName;
 
@@ -376,6 +376,105 @@ describe('Applications:', function() {
         expect(inptName.isPresent()).toBeTruthy();
         expect(inptName.isDisplayed()).toBeTruthy();
         expect(inptName.isEnabled()).toBeTruthy();
+      });
+
+      it('should create a new Car Make', function() {
+        inptName.sendKeys('foo');
+        expect(bttnSave.isEnabled()).toBeTruthy();
+        bttnSave.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/application/carmake/list');
+        // Find the just created Car Make and delete it.
+        //
+        // Because a datasource for the table is ElasticSearch
+        // it is possible that deletion of a Car Make is not
+        // reflected immediately (Elasticsearch is a near real time
+        // search platform).
+        // So we do the check by waiting of the expectation during
+        // some time period.
+        browser.wait(function() {
+          bttnClear.click();
+          fltrMake.sendKeys('foo');
+          return rows.count().then(
+            function(rowCount) {
+              return rowCount === 1;
+            }
+          );
+        }, 3000, 'A Car Make \'foo\' has not been created.');
+        var firstRow = rows.first();
+        var bttnRemove = firstRow.element(by.tiButton('Remove'));
+        bttnRemove.click();
+        // A confirmation dialog should be displayed.
+        var dlg = element(by.css('.modal-dialog'));
+        expect(dlg.isDisplayed()).toBeTruthy();
+        var bttnYes = dlg.element(by.partialButtonText('Yes'));
+        bttnYes.click();
+        // Make sure that Car Model has really been removed.
+        expect(dlg.isPresent()).toBeFalsy();
+        browser.wait(function() {
+          bttnClear.click();
+          fltrMake.sendKeys('foo');
+          return rows.count().then(
+            function(rowCount) {
+              return rowCount === 0;
+            }
+          );
+        }, 3000, 'The just created Car Make \'foo\' was not deleted.');
+      });
+
+      describe('Validation:', function() {
+
+        var errorArea, errRequired, errTooLong, errNotUnique;
+
+        beforeAll(function() {
+          errorArea = element(by.name('carmakeForm'))
+            .element(by.css('.alert'));
+          var errs = errorArea.all(by.tagName('span'));
+          errRequired = errs.get(1);
+          errTooLong = errs.get(2);
+          errNotUnique = errs.get(3);
+        });
+
+        it('should not display any error before modification', function() {
+          expect(errorArea.isPresent()).toBeTruthy();
+          expect(errorArea.isDisplayed()).toBeFalsy();
+          expect(errRequired.isPresent()).toBeTruthy();
+          expect(errTooLong.isPresent()).toBeTruthy();
+          expect(errNotUnique.isPresent()).toBeTruthy();
+        });
+
+        it('should check constraint \'required\'', function() {
+          inptName.sendKeys('foo');  // make dirty a form to start validation
+          inptName.clear();
+          expect(errorArea.isDisplayed()).toBeTruthy();
+          expect(errRequired.isDisplayed()).toBeTruthy();
+          expect(errTooLong.isDisplayed()).toBeFalsy();
+          expect(errNotUnique.isDisplayed()).toBeFalsy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+        });
+
+        xit('should check constraint \'maxlength\'', function() {
+          // This test will fail beacuse 'input' does not allow
+          // to exceed 'maxlength'.
+          var longString = (new Array(100)).join('x');
+          inptName.sendKeys(longString);
+          expect(errorArea.isDisplayed()).toBeTruthy();
+          expect(errRequired.isDisplayed()).toBeFalsy();
+          expect(errTooLong.isDisplayed()).toBeTruthy();
+          expect(errNotUnique.isDisplayed()).toBeFalsy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+        });
+
+        it('should check constraint \'unique\'', function() {
+          inptName.clear();
+          inptName.sendKeys('ARO');
+          expect(errorArea.isDisplayed()).toBeTruthy();
+          expect(errRequired.isDisplayed()).toBeFalsy();
+          expect(errTooLong.isDisplayed()).toBeFalsy();
+          expect(errNotUnique.isDisplayed()).toBeTruthy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+        });
+
       });
 
     });
