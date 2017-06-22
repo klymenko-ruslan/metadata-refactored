@@ -10,6 +10,7 @@ import static java.lang.Boolean.TRUE;
 import static java.util.Arrays.asList;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,7 +34,7 @@ import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 
 /**
- * Created by trunikov on 2/11/16.
+ * Created by dmytro.trunykov@zorallabs.com on 2016-11-02.
  */
 @Service
 public class InterchangeService {
@@ -56,6 +57,9 @@ public class InterchangeService {
     @Qualifier("transactionManagerMetadata")
     @Autowired
     private PlatformTransactionManager txManagerMetadata;
+   
+    @Autowired
+    private PartChangeService partChangeService;
 
     /**
      * Find an interchangeable by its ID.
@@ -73,7 +77,7 @@ public class InterchangeService {
      */
     @Transactional
     public void create(HttpServletRequest httpRequest, List<Long> partIds, Long[] sourcesIds, Integer[] ratings,
-            String description, Long[] attachIds) {
+            String description, Long[] attachIds) throws IOException {
         // Link it with the Hibernate parts
         Set<Part> canonicalParts = new HashSet<>();
         // Map the incoming part IDs to their canonical part
@@ -100,6 +104,7 @@ public class InterchangeService {
                 "Created interchange: " + formatInterchange(interchange) + ".", interchange.toJson(), relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
         bomService.rebuildBomDescendancyForParts(partIds, true);
+        partChangeService.addedInterchanges(canonicalParts);
     }
 
     /**
@@ -112,7 +117,7 @@ public class InterchangeService {
      * @param part
      * @param asInterchange
      */
-    public void create(Part part, Part asInterchange) {
+    public void create(Part part, Part asInterchange) throws IOException {
         normalizePartInterchange(part);
         normalizePartInterchange(asInterchange);
         Interchange interchange = moveInterchangeableGroupToOtherGroup(part, asInterchange);
@@ -122,6 +127,7 @@ public class InterchangeService {
         changelogService.log(INTERCHANGE, "Created interchange: " + formatInterchange(interchange) + ".",
                 interchange.toJson(), relatedParts);
         bomService.rebuildBomDescendancyForParts(asList(part.getId(), asInterchange.getId()), true);
+        partChangeService.addedInterchange(part);
     }
 
     /**
@@ -135,7 +141,7 @@ public class InterchangeService {
      *            ID of a part form remove.
      */
     @Transactional
-    public void leaveInterchangeableGroup(Long partId) {
+    public void leaveInterchangeableGroup(Long partId) throws IOException {
         Part part = partDao.findOne(partId);
         normalizePartInterchange(part);
         Interchange interchange = part.getInterchange();
@@ -158,6 +164,7 @@ public class InterchangeService {
                 + interchange.getId() + "] to [" + newInterchange.getId() + "].", relatedParts);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForParts(interchange.getParts().iterator(), true);
+        partChangeService.deleteInterchange(part);
     }
 
     /**
@@ -169,7 +176,7 @@ public class InterchangeService {
      */
     @Transactional
     public void mergePickedAloneToPart(HttpServletRequest httpRequest, long partId, long pickedPartId,
-            Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) {
+            Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) throws IOException {
         Part part = partDao.findOne(partId);
         normalizePartInterchange(part);
         Part pickedPart = partDao.findOne(pickedPartId);
@@ -184,6 +191,7 @@ public class InterchangeService {
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
+        partChangeService.addedInterchange(part);
     }
 
     /**
@@ -195,7 +203,7 @@ public class InterchangeService {
      */
     @Transactional
     public void mergePartAloneToPicked(HttpServletRequest httpRequest, long partId, long pickedPartId,
-            Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) {
+            Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) throws IOException {
         Part part = partDao.findOne(partId);
         normalizePartInterchange(part);
         Part pickedPart = partDao.findOne(pickedPartId);
@@ -210,6 +218,7 @@ public class InterchangeService {
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
+        partChangeService.addedInterchange(part);
     }
 
     /**
@@ -221,7 +230,7 @@ public class InterchangeService {
      */
     @Transactional
     public void mergePickedAllToPart(HttpServletRequest httpRequest, long partId, long pickedPartId, Long[] sourcesIds,
-            Integer[] ratings, String description, Long[] attachIds) {
+            Integer[] ratings, String description, Long[] attachIds) throws IOException {
         Part part = partDao.findOne(partId);
         normalizePartInterchange(part);
         Part pickedPart = partDao.findOne(pickedPartId);
@@ -236,20 +245,21 @@ public class InterchangeService {
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
+        partChangeService.addedInterchange(part);
     }
 
     /**
      * Move a part from its current interchange group to an interchange group of
      * other part.
      *
-     * @param scrPart
+     * @param srcPart
      *            the part which is being migrated
      * @param dstPart
      */
-    private void movePartToOtherInterchangeGroup(Part scrPart, Part dstPart) {
-        Interchange srcInterchange = scrPart.getInterchange();
+    private void movePartToOtherInterchangeGroup(Part srcPart, Part dstPart) throws IOException {
+        Interchange srcInterchange = srcPart.getInterchange();
         boolean alone = srcInterchange.isAlone();
-        srcInterchange.getParts().remove(scrPart);
+        srcInterchange.getParts().remove(srcPart);
         if (alone) {
             // Delete current interchange group because empty groups are not
             // allowed.
@@ -262,9 +272,11 @@ public class InterchangeService {
         }
         // Add srcPart to an interchangeable group of the destPart part.
         Interchange dstInterchange = dstPart.getInterchange();
-        scrPart.setInterchange(dstInterchange);
-        dstInterchange.getParts().add(scrPart);
+        srcPart.setInterchange(dstInterchange);
+        dstInterchange.getParts().add(srcPart);
         interchangeDao.merge(dstInterchange);
+        partChangeService.deleteInterchange(srcPart);
+        partChangeService.addedInterchange(dstPart);
     }
 
     /**
@@ -275,7 +287,7 @@ public class InterchangeService {
      *            group.
      * @param dstPart
      */
-    private Interchange moveInterchangeableGroupToOtherGroup(Part scrPart, Part dstPart) {
+    private Interchange moveInterchangeableGroupToOtherGroup(Part scrPart, Part dstPart) throws IOException {
         Interchange srcInterchange = scrPart.getInterchange();
         Set<Part> srcGrp = srcInterchange.getParts();
         Interchange dstInterchange = dstPart.getInterchange();
@@ -288,6 +300,8 @@ public class InterchangeService {
         }
         interchangeDao.remove(srcInterchange); // Delete interchange group.
         interchangeDao.merge(dstInterchange);
+        partChangeService.deleteInterchange(scrPart);
+        partChangeService.addedInterchange(dstPart);
         return dstInterchange;
     }
 

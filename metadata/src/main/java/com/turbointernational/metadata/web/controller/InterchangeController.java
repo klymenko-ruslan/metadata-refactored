@@ -5,6 +5,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -275,7 +276,7 @@ public class InterchangeController {
     @RequestMapping(value = "/part/{partId}", method = RequestMethod.DELETE)
     @ResponseBody
     @Secured("ROLE_INTERCHANGE")
-    public void delete(@PathVariable("partId") long partId) {
+    public void delete(@PathVariable("partId") long partId) throws IOException {
         interchangeService.leaveInterchangeableGroup(partId);
     }
 

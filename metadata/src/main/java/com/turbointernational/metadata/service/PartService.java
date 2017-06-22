@@ -14,6 +14,7 @@ import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 import static java.util.stream.Collectors.toSet;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -135,7 +136,7 @@ public class PartService {
         return results;
     }
 
-    public Part createXRefPart(Long originalPartId, Part toCreate) {
+    public Part createXRefPart(Long originalPartId, Part toCreate) throws IOException {
         partDao.persist(toCreate);
         // The table 'part' has a trigger on insert that associate an
         // interchangeable with the part.
