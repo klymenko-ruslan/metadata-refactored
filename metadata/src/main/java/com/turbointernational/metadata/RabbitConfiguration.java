@@ -13,20 +13,21 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfiguration {
 
-  @Value("${rabbitmq.host}")
-  private String host;
+    @Value("${rabbitmq.host}")
+    private String host;
 
-  @Value("${rabbitmq.port}")
-  private int port;
+    @Value("${rabbitmq.port}")
+    private int port;
 
-  @Bean
-  public ConnectionFactory rabbitConnectionFactory() {
-    return new CachingConnectionFactory(host, port);
-  }
+    @Bean
+    public ConnectionFactory rabbitConnectionFactory() {
+        return new CachingConnectionFactory(host, port);
+    }
 
-  @Bean
-  public RabbitTemplate rabbitTemplate() {
-    return new RabbitTemplate(rabbitConnectionFactory());
-  }
+    @Bean
+    public RabbitTemplate rabbitTemplate() {
+        RabbitTemplate retVal = new RabbitTemplate(rabbitConnectionFactory());
+        return retVal;
+    }
 
 }
