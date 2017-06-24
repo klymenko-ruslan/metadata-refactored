@@ -17,10 +17,10 @@ public class RabbitMessagingService implements MessagingService {
 
     private final static Logger log = LoggerFactory.getLogger(RabbitMessagingService.class);
 
-    @Value("rabbitmq.queue.bom.changed")
+    @Value("${rabbitmq.queue.bom.changed}")
     private String nameMqBomChanged;
 
-    @Value("rabbitmq.queue.interchange.changed")
+    @Value("${rabbitmq.queue.interchange.changed}")
     private String nameMqInterchangeChanged;
  
     @Autowired

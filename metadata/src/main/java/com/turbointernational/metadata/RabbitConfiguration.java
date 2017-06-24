@@ -26,18 +26,16 @@ public class RabbitConfiguration {
     @Value("${rabbitmq.exchange.metadata}")
     private String exchangeNameMetadata;
 
-    @Value("rabbitmq.queue.bom.changed")
+    @Value("${rabbitmq.queue.bom.changed}")
     private String nameMqBomChanged;
-    
 
-    @Value("rabbitmq.queue.durability.bom.changed")
+    @Value("${rabbitmq.queue.durability.bom.changed}")
     private boolean mqBomChangedDurability;
-    
 
-    @Value("rabbitmq.queue.durability.interchange.changed")
+    @Value("${rabbitmq.queue.durability.interchange.changed}")
     private boolean mqInterchangeChangedDurability;
 
-    @Value("rabbitmq.queue.interchange.changed")
+    @Value("${rabbitmq.queue.interchange.changed}")
     private String nameMqInterchangeChanged;
 
     @Bean
