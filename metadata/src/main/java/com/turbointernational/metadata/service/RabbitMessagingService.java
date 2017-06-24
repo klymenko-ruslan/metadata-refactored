@@ -31,13 +31,13 @@ public class RabbitMessagingService implements MessagingService {
 
     @Override
     public void bomChanged(byte[] message) throws IOException {
-        log.info("Send notification about changes in BOMs: {}", new String(message, Charset.forName("UTF-8")));
+        log.debug("Send notification about changes in BOMs: {}", new String(message, Charset.forName("UTF-8")));
         sendNotification(rbbtTmplMetadataBomChanges, nameMqBomChanged, message);
     }
 
     @Override
     public void interchangeChanged(byte[] message) throws IOException {
-        log.info("Send notification about changes in Interchanges: {}", new String(message, Charset.forName("UTF-8")));
+        log.debug("Send notification about changes in Interchanges: {}", new String(message, Charset.forName("UTF-8")));
         sendNotification(rbbtTmplMetadataInterchangeChanges, nameMqInterchangeChanged, message);
     }
 
