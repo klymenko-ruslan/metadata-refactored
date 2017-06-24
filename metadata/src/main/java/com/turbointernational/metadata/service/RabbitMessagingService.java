@@ -18,27 +18,30 @@ public class RabbitMessagingService implements MessagingService {
     private final static Logger log = LoggerFactory.getLogger(RabbitMessagingService.class);
 
     @Value("rabbitmq.queue.bom.changed")
-    private String nameMqBomChanged = "mq.metadata.bom.changes";
+    private String nameMqBomChanged;
 
     @Value("rabbitmq.queue.interchange.changed")
-    private String nameMqInterchangeChanged = "mq.metadata.interchange.changes";
+    private String nameMqInterchangeChanged;
+ 
+    @Autowired
+    private RabbitTemplate rbbtTmplMetadataBomChanges;
 
     @Autowired
-    private RabbitTemplate rabbitTemplate;
+    private RabbitTemplate rbbtTmplMetadataInterchangeChanges;
 
     @Override
     public void bomChanged(byte[] message) throws IOException {
         log.info("Send notification about changes in BOMs: {}", new String(message, Charset.forName("UTF-8")));
-        sendNotification(nameMqBomChanged, message);
+        sendNotification(rbbtTmplMetadataBomChanges, nameMqBomChanged, message);
     }
 
     @Override
     public void interchangeChanged(byte[] message) throws IOException {
         log.info("Send notification about changes in Interchanges: {}", new String(message, Charset.forName("UTF-8")));
-        sendNotification(nameMqInterchangeChanged, message);
+        sendNotification(rbbtTmplMetadataInterchangeChanges, nameMqInterchangeChanged, message);
     }
 
-    private void sendNotification(String queueName, byte[] message) {
+    private void sendNotification(RabbitTemplate rabbitTemplate, String queueName, byte[] message) {
         rabbitTemplate.convertAndSend(queueName, message);
     }
 
