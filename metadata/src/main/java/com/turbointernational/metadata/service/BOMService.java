@@ -16,6 +16,7 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -90,7 +92,7 @@ public class BOMService {
 
     @Autowired
     private SearchService searchService;
-   
+
     @Autowired
     private PartChangeService partChangeService;
 
@@ -1066,6 +1068,7 @@ public class BOMService {
         Long parentPartId = request.getParentPartId();
         Part parent = partDao.findOne(parentPartId);
         List<Failure> failures = new ArrayList<>();
+        Collection<Long> relatedPartIds = new ArrayList<Long>(request.getRows().size());
         for (Row row : request.getRows()) {
             // Create a new BOM item
             Part child = partDao.findOne(row.getChildPartId());
@@ -1076,6 +1079,7 @@ public class BOMService {
             try {
                 _create(httpRequest, parentPartId, childId, row.getQuantity(), request.getSourcesIds(),
                         request.getChlogSrcRatings(), request.getChlogSrcLnkDescription(), request.getAttachIds());
+                relatedPartIds.add(childId);
             } catch (FoundBomRecursionException e) {
                 log.debug("Adding of the part [" + childId + "] to list of BOM for part [" + parentPartId + "] failed.",
                         e);
@@ -1090,7 +1094,7 @@ public class BOMService {
         }
         rebuildBomDescendancyForPart(parentPartId, true); // TODO: is clean=true required?
         List<BOMItem> boms = getByParentId(parentPartId);
-        partChangeService.addedBom(parent);
+        partChangeService.addedBoms(parentPartId, relatedPartIds);
         return new CreateBOMsResponse(failures, boms);
     }
 
@@ -1167,8 +1171,9 @@ public class BOMService {
         }
         List<BOMItem> parents = getParentsForBom(primaryPartId);
         rebuildBomDescendancyForPart(primaryPartId, true);
-        partChangeService.addedBom(primaryPart);
-        partChangeService.addedBoms(affectedParts);
+        List<Long> affectedPartIds = affectedParts.stream().map(p -> p.getId()).collect(Collectors.toList());
+        // In the call below primaryPartId is actually childPartId from point of view partChangeService.
+        partChangeService.addedToParentBoms(primaryPartId, affectedPartIds);
         return new BOMService.AddToParentBOMsResponse(added, failures, parents);
     }
 
@@ -1186,25 +1191,25 @@ public class BOMService {
         // Update
         item.setQuantity(quantity);
         bomItemDao.merge(item);
-        partChangeService.updatedBom(parent);
+        partChangeService.updatedBom(parent.getId());
     }
 
     @Transactional
     public void delete(Long id) throws IOException {
         // Get the object
         BOMItem item = bomItemDao.findOne(id);
-        Part parent = item.getParent();
-        Long parentPartId = parent.getId();
+        Long parentPartId = item.getParent().getId();
+        Long childPartId = item.getChild().getId();
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(parentPartId, BOM_PARENT));
-        relatedParts.add(new RelatedPart(item.getChild().getId(), BOM_CHILD));
+        relatedParts.add(new RelatedPart(childPartId, BOM_CHILD));
         changelogService.log(BOM, "Deleted BOM item: " + formatBOMItem(item), relatedParts);
         // Delete it.
         jdbcTemplate.update("delete from bom where id=?", id);
         bomItemDao.flush();
         rebuildBomDescendancyForPart(parentPartId, true);
-        partChangeService.deletedBom(parent);
+        partChangeService.deletedBom(parentPartId, childPartId);
     }
 
     /**
