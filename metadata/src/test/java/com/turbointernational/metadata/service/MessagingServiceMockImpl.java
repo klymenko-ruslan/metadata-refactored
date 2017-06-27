@@ -15,16 +15,18 @@ import org.springframework.stereotype.Service;
 @Profile("integration")
 public class MessagingServiceMockImpl implements MessagingService {
 
-  private Logger log = LoggerFactory.getLogger(MessagingServiceMockImpl.class);
+    private Logger log = LoggerFactory.getLogger(MessagingServiceMockImpl.class);
 
-  @Override
-  public void bomChanged(byte[] message) throws IOException {
-    log.debug("Send notification about changes in BOMs: {}", new String(message, Charset.forName("UTF-8")));
-  }
+    @Override
+    public void bomChanged(String groupId, byte[] message) throws IOException {
+        log.debug("Send notification about changes in BOMs: {}", groupId,
+                new String(message, Charset.forName("UTF-8")));
+    }
 
-  @Override
-  public void interchangeChanged(byte[] message) throws IOException {
-    log.debug("Send notification about changes in Interchanges: {}", new String(message, Charset.forName("UTF-8")));
-  }
+    @Override
+    public void interchangeChanged(String groupId, byte[] message) throws IOException {
+        log.debug("Send notification about changes in Interchanges: {}, {}", groupId,
+                new String(message, Charset.forName("UTF-8")));
+    }
 
 }

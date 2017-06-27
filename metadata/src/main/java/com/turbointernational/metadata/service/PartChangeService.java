@@ -19,31 +19,11 @@ public class PartChangeService {
 
     private ObjectMapper jsonMapper;
 
-    private static enum ChangeEnum { INS, UPD, DEL }
-
-    private static abstract class Change {
-
-        /**
-         * Group ID.
-         *
-         * This attribute is mainly for debug purpose.
-         * It has the same value for a group of messages when one change operation generates these several messages
-         * to queue(s).
-         */
-        private final String grpid;
-
-        private Change(String groupId) {
-            this.grpid = groupId;
-        }
-
-        @SuppressWarnings("unused")
-        public String getGrpid() {
-            return grpid;
-        }
-
+    private static enum ChangeEnum {
+        INS, UPD, DEL
     }
 
-    private static class ChangeBOM extends Change {
+    private static class ChangeBOM {
 
         private final ChangeEnum chtyp;
 
@@ -59,8 +39,7 @@ public class PartChangeService {
          */
         private final Long chpid;
 
-        private ChangeBOM(ChangeEnum changeType, String groupId, long parentPartId, Long childPartId) {
-            super(groupId);
+        private ChangeBOM(ChangeEnum changeType, long parentPartId, Long childPartId) {
             this.chtyp = changeType;
             this.ppid = parentPartId;
             this.chpid = childPartId;
@@ -83,14 +62,13 @@ public class PartChangeService {
 
     }
 
-    private static class ChangeInterchange extends Change {
+    private static class ChangeInterchange {
 
         private final long intchid0;
 
         private final Long intchid1;
 
-        private ChangeInterchange(String groupId, long interchangeId0, Long interchangeId1) {
-            super(groupId);
+        private ChangeInterchange(long interchangeId0, Long interchangeId1) {
             this.intchid0 = interchangeId0;
             this.intchid1 = interchangeId1;
         }
@@ -149,16 +127,17 @@ public class PartChangeService {
         changedInterchange(null, interchangeGroupId0, interchangeGroupId1);
     }
 
-    private void changedBom(ChangeEnum changeType, String groupId, long parentPartId, Long relatedPartId) throws IOException {
-        ChangeBOM ch = new ChangeBOM(changeType, groupId, parentPartId, relatedPartId);
+    private void changedBom(ChangeEnum changeType, String groupId, long parentPartId, Long relatedPartId)
+            throws IOException {
+        ChangeBOM ch = new ChangeBOM(changeType, parentPartId, relatedPartId);
         byte[] message = jsonMapper.writeValueAsBytes(ch);
-        messagingService.bomChanged(message);
+        messagingService.bomChanged(groupId, message);
     }
 
     private void changedInterchange(String groupId, long interchangeId0, Long interchangeId1) throws IOException {
-        ChangeInterchange ch = new ChangeInterchange(groupId, interchangeId0, interchangeId1);
+        ChangeInterchange ch = new ChangeInterchange(interchangeId0, interchangeId1);
         byte[] message = jsonMapper.writeValueAsBytes(ch);
-        messagingService.interchangeChanged(message);
+        messagingService.interchangeChanged(groupId, message);
     }
 
     private static String generateGroupId(Long prefix) {
