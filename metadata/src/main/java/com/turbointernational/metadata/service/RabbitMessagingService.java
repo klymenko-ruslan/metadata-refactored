@@ -54,6 +54,10 @@ public class RabbitMessagingService implements MessagingService {
     private void sendNotification(RabbitTemplate rabbitTemplate, String routingQueue, String groupId, byte[] body) {
         MessageProperties messageProperties = new MessageProperties();
         messageProperties.setContentType(CONTENT_TYPE_JSON);
+        if (body != null) {
+            messageProperties.setContentLength(body.length);
+        }
+        messageProperties.setContentEncoding("UTF-8");
         if (groupId != null) {
             messageProperties.setHeader("xxx-group-id", groupId);
         }
