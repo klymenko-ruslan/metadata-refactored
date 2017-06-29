@@ -21,6 +21,8 @@ public class RabbitMessagingService implements MessagingService {
 
     private final static Logger log = LoggerFactory.getLogger(RabbitMessagingService.class);
 
+    final static String HEADER_GROUP = "xxx-group-id";
+
     @Value("${rabbitmq.queue.bom.changed}")
     private String nameMqBomChanged;
 
@@ -59,7 +61,7 @@ public class RabbitMessagingService implements MessagingService {
         }
         messageProperties.setContentEncoding("UTF-8");
         if (groupId != null) {
-            messageProperties.setHeader("xxx-group-id", groupId);
+            messageProperties.setHeader(HEADER_GROUP, groupId);
         }
         Message message = new Message(body, messageProperties);
         rabbitTemplate.send(routingQueue, message);

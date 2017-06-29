@@ -17,6 +17,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class PartChangeService {
 
+    @Autowired
+    private AppService appService;
+
     private ObjectMapper jsonMapper;
 
     private static enum ChangeEnum {
@@ -140,8 +143,8 @@ public class PartChangeService {
         messagingService.interchangeChanged(groupId, message);
     }
 
-    private static String generateGroupId(Long prefix) {
-        return prefix.toString() + "-" + System.currentTimeMillis();
+    private String generateGroupId(Long prefix) {
+        return prefix.toString() + "-" + appService.now();
     }
 
 }
