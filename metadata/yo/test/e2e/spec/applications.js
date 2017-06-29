@@ -1046,15 +1046,333 @@ describe('Applications:', function() {
 
   describe('Fuel Type:', function() {
 
+    var bttnCreate, rows, bttnClear, fltrFueltype;
+
     beforeAll(function() {
+      bttnCreate = element(by.partialLinkText('Create Fuel Type'));
+      bttnClear = element(by.tiButton('Clear'));
+      fltrFueltype = element(by.id('fueltype'));
+      rows = element.all(by.repeater('rec in $data'));
     });
 
     beforeEach(function() {
+      browser.get('http://localhost:8080/application/carfueltype/list');
     });
 
-    it('', function() {
+    it('should have an initial state', function() {
+      expect(bttnCreate.isPresent()).toBeTruthy();
+      expect(bttnCreate.isDisplayed()).toBeTruthy();
+      expect(bttnCreate.isEnabled()).toBeTruthy();
+      expect(bttnClear.isPresent()).toBeTruthy();
+      expect(bttnClear.isDisplayed()).toBeTruthy();
+      expect(bttnClear.isEnabled()).toBeTruthy();
+      expect(fltrFueltype.isPresent()).toBeTruthy();
+      expect(fltrFueltype.isDisplayed()).toBeTruthy();
+      expect(fltrFueltype.isEnabled()).toBeTruthy();
     });
 
+    it('should open form to create a new \'Fuel Type\' when button ' +
+      '\'Create Fuel Type\' is clicked',
+      function() {
+        bttnCreate.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/application/carfueltype/form');
+      }
+    );
+
+    describe('Create:', function() {
+
+      var bttnSave, inptName;
+
+      beforeAll(function() {
+        bttnSave = element(by.tiButton('Save'));
+        inptName = element(by.id('carfueltype_name'));
+      });
+
+      beforeEach(function() {
+        browser.get('http://localhost:8080/application/carfueltype/form');
+      });
+
+      it('should have an initial state', function() {
+        expect(bttnSave.isPresent()).toBeTruthy();
+        expect(bttnSave.isDisplayed()).toBeTruthy();
+        expect(bttnSave.isEnabled()).toBeFalsy();
+        expect(inptName.isPresent()).toBeTruthy();
+        expect(inptName.isDisplayed()).toBeTruthy();
+        expect(inptName.isEnabled()).toBeTruthy();
+      });
+
+      it('should create a new Fuel Type', function() {
+        inptName.sendKeys('foo');
+        expect(bttnSave.isEnabled()).toBeTruthy();
+        bttnSave.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/application/carfueltype/list');
+        // Find the just created Fuel Type and delete it.
+        //
+        // Because a datasource for the table is ElasticSearch
+        // it is possible that deletion of a Car Make is not
+        // reflected immediately (Elasticsearch is a near real time
+        // search platform).
+        // So we do the check by waiting of the expectation during
+        // some time period.
+        browser.wait(function() {
+          bttnClear.click();
+          fltrFueltype.sendKeys('foo');
+          return rows.count().then(
+            function(rowCount) {
+              return rowCount === 1;
+            }
+          );
+        }, 3000, 'A Fuel Type \'foo\' has not been created.');
+        var firstRow = rows.first();
+        var bttnRemove = firstRow.element(by.tiButton('Remove'));
+        bttnRemove.click();
+        // A confirmation dialog should be displayed.
+        var dlg = element(by.css('.modal-dialog'));
+        expect(dlg.isDisplayed()).toBeTruthy();
+        var bttnYes = dlg.element(by.partialButtonText('Yes'));
+        bttnYes.click();
+        // Make sure that Car Make has really been removed.
+        expect(dlg.isPresent()).toBeFalsy();
+        browser.wait(function() {
+          bttnClear.click();
+          fltrFueltype.sendKeys('foo');
+          return rows.count().then(
+            function(rowCount) {
+              return rowCount === 0;
+            }
+          );
+        }, 3000, 'The just created Fuel Type \'foo\' was not deleted.');
+      });
+
+      describe('Validation:', function() {
+
+        var errorArea, errRequired, errTooLong, errNotUnique;
+
+        beforeAll(function() {
+          errorArea = element(by.name('carfueltypeForm'))
+            .element(by.css('.alert'));
+          var errs = errorArea.all(by.tagName('span'));
+          errRequired = errs.get(1);
+          errTooLong = errs.get(2);
+          errNotUnique = errs.get(3);
+        });
+
+        it('should not display any error before modification', function() {
+          expect(errorArea.isPresent()).toBeTruthy();
+          expect(errorArea.isDisplayed()).toBeFalsy();
+          expect(errRequired.isPresent()).toBeTruthy();
+          expect(errTooLong.isPresent()).toBeTruthy();
+          expect(errNotUnique.isPresent()).toBeTruthy();
+        });
+
+        it('should check constraint \'required\'', function() {
+          inptName.sendKeys('foo');  // make dirty a form to start validation
+          inptName.clear();
+          expect(errorArea.isDisplayed()).toBeTruthy();
+          expect(errRequired.isDisplayed()).toBeTruthy();
+          expect(errTooLong.isDisplayed()).toBeFalsy();
+          expect(errNotUnique.isDisplayed()).toBeFalsy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+        });
+
+        xit('should check constraint \'maxlength\'', function() {
+          // This test will fail beacuse 'input' does not allow
+          // to exceed 'maxlength'.
+          var longString = (new Array(100)).join('x');
+          inptName.sendKeys(longString);
+          expect(errorArea.isDisplayed()).toBeTruthy();
+          expect(errRequired.isDisplayed()).toBeFalsy();
+          expect(errTooLong.isDisplayed()).toBeTruthy();
+          expect(errNotUnique.isDisplayed()).toBeFalsy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+        });
+
+        it('should check constraint \'unique\'', function() {
+          inptName.clear();
+          inptName.sendKeys('D');
+          expect(errorArea.isDisplayed()).toBeTruthy();
+          expect(errRequired.isDisplayed()).toBeFalsy();
+          expect(errTooLong.isDisplayed()).toBeFalsy();
+          expect(errNotUnique.isDisplayed()).toBeTruthy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+        });
+
+      });
+
+    });
+
+    describe('Table:', function() {
+
+      var firstRow, firstCell, bttnModify, bttnRemove, bttnSave, bttnCancel, inptName;
+
+      beforeAll(function() {
+        firstRow = rows.first();
+        firstCell = firstRow.all(by.tagName('td')).first()
+          .all(by.tagName('span')).first();
+        bttnModify = firstRow.element(by.tiButton('Modify'));
+        bttnRemove = firstRow.element(by.tiButton('Remove'));
+        bttnSave = firstRow.element(by.tiButton('Save'));
+        bttnCancel = firstRow.element(by.tiButton('Cancel'));
+        inptName = firstRow.element(by.name('carfueltype_name'));
+      });
+
+      it('should have an initial state', function() {
+        expect(rows.count()).toBe(2);
+        expect(bttnModify.isPresent()).toBeTruthy();
+        expect(bttnModify.isDisplayed()).toBeTruthy();
+        expect(bttnModify.isEnabled()).toBeTruthy();
+        expect(bttnRemove.isPresent()).toBeTruthy();
+        expect(bttnRemove.isDisplayed()).toBeTruthy();
+        expect(bttnRemove.isEnabled()).toBeTruthy();
+        expect(bttnSave.isPresent()).toBeTruthy();
+        expect(bttnSave.isDisplayed()).toBeFalsy();
+        expect(bttnCancel.isPresent()).toBeTruthy();
+        expect(bttnCancel.isDisplayed()).toBeFalsy();
+        expect(inptName.isPresent()).toBeTruthy();
+        expect(inptName.isDisplayed()).toBeFalsy();
+      });
+
+      it('should display a confirmation dialog when button \'Remove\' ' +
+        'is clicked',
+        function() {
+          var dlg = element(by.css('.modal-dialog'));
+          expect(dlg.isPresent()).toBeFalsy();
+          bttnRemove.click();
+          expect(dlg.isDisplayed()).toBeTruthy();
+        }
+      );
+
+      describe('Modify:', function() {
+
+        beforeEach(function() {
+          bttnModify.click();
+        });
+
+        it('should have an initial state', function() {
+          expect(bttnModify.isPresent()).toBeTruthy();
+          expect(bttnModify.isDisplayed()).toBeFalsy();
+          expect(bttnRemove.isPresent()).toBeTruthy();
+          expect(bttnRemove.isDisplayed()).toBeFalsy();
+          expect(bttnSave.isPresent()).toBeTruthy();
+          expect(bttnSave.isDisplayed()).toBeTruthy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+          expect(bttnCancel.isPresent()).toBeTruthy();
+          expect(bttnCancel.isDisplayed()).toBeTruthy();
+          expect(bttnCancel.isEnabled()).toBeTruthy();
+          expect(inptName.isPresent()).toBeTruthy();
+          expect(inptName.isDisplayed()).toBeTruthy();
+          expect(inptName.evaluate('modifyValues[rec._source.id]'))
+            .toBe('D');
+        });
+
+        it('should undo changes when button \'Cancel\' is clicked',
+          function() {
+            inptName.sendKeys('foo');
+            expect(inptName.evaluate('modifyValues[rec._source.id]'))
+              .toBe('Dfoo');
+            bttnCancel.click();
+            expect(firstCell.getText()).toBe('D');
+            expect(bttnModify.isPresent()).toBeTruthy();
+            expect(bttnModify.isDisplayed()).toBeTruthy();
+            expect(bttnModify.isEnabled()).toBeTruthy();
+            expect(bttnRemove.isPresent()).toBeTruthy();
+            expect(bttnRemove.isDisplayed()).toBeTruthy();
+            expect(bttnRemove.isEnabled()).toBeTruthy();
+            expect(bttnSave.isPresent()).toBeTruthy();
+            expect(bttnSave.isDisplayed()).toBeFalsy();
+            expect(bttnCancel.isPresent()).toBeTruthy();
+            expect(bttnCancel.isDisplayed()).toBeFalsy();
+            expect(inptName.isPresent()).toBeTruthy();
+            expect(inptName.isDisplayed()).toBeFalsy();
+          }
+        );
+
+        it('should save changes when button \'Save\' is clicked', function() {
+          inptName.sendKeys('foo');
+          expect(inptName.evaluate('modifyValues[rec._source.id]'))
+            .toBe('Dfoo');
+          expect(bttnSave.isEnabled()).toBeTruthy();
+          bttnSave.click();
+          expect(firstCell.getText()).toBe('Dfoo');
+          expect(bttnModify.isPresent()).toBeTruthy();
+          expect(bttnModify.isDisplayed()).toBeTruthy();
+          expect(bttnModify.isEnabled()).toBeTruthy();
+          expect(bttnRemove.isPresent()).toBeTruthy();
+          expect(bttnRemove.isDisplayed()).toBeTruthy();
+          expect(bttnRemove.isEnabled()).toBeTruthy();
+          expect(bttnSave.isPresent()).toBeTruthy();
+          expect(bttnSave.isDisplayed()).toBeFalsy();
+          expect(bttnCancel.isPresent()).toBeTruthy();
+          expect(bttnCancel.isDisplayed()).toBeFalsy();
+          expect(inptName.isPresent()).toBeTruthy();
+          expect(inptName.isDisplayed()).toBeFalsy();
+          bttnModify.click();
+          inptName.clear();
+          inptName.sendKeys('D');
+          bttnSave.click();
+          expect(firstCell.getText()).toBe('D');
+        });
+
+        describe('Validation:', function() {
+
+          var errorArea, errRequired, errTooLong, errNotUnique;
+
+          beforeAll(function() {
+            errorArea = firstRow.all(by.tagName('td')).first()
+              .element(by.tagName('form'))
+              .all(by.tagName('span')).first();
+            var errs = errorArea.all(by.tagName('span'));
+            errRequired = errs.get(1);
+            errTooLong = errs.get(2);
+            errNotUnique = errs.get(3);
+          });
+
+          it('should not display any error before modification', function() {
+            expect(errorArea.isPresent()).toBeTruthy();
+            expect(errorArea.isDisplayed()).toBeFalsy();
+            expect(errRequired.isPresent()).toBeTruthy();
+            expect(errTooLong.isPresent()).toBeTruthy();
+            expect(errNotUnique.isPresent()).toBeTruthy();
+          });
+
+          it('should check constraint \'required\'', function() {
+            inptName.clear();
+            expect(errorArea.isDisplayed()).toBeTruthy();
+            expect(errRequired.isDisplayed()).toBeTruthy();
+            expect(errTooLong.isDisplayed()).toBeFalsy();
+            expect(errNotUnique.isDisplayed()).toBeFalsy();
+            expect(bttnSave.isEnabled()).toBeFalsy();
+          });
+
+          xit('should check constraint \'maxlength\'', function() {
+            // This test will fail beacuse 'input' does not allow
+            // to exceed 'maxlength'.
+            var longString = (new Array(100)).join('x');
+            inptName.sendKeys(longString);
+            expect(errorArea.isDisplayed()).toBeTruthy();
+            expect(errRequired.isDisplayed()).toBeFalsy();
+            expect(errTooLong.isDisplayed()).toBeTruthy();
+            expect(errNotUnique.isDisplayed()).toBeFalsy();
+            expect(bttnSave.isEnabled()).toBeFalsy();
+          });
+
+          it('should check constraint \'unique\'', function() {
+            inptName.clear();
+            inptName.sendKeys('G');
+            expect(errorArea.isDisplayed()).toBeTruthy();
+            expect(errRequired.isDisplayed()).toBeFalsy();
+            expect(errTooLong.isDisplayed()).toBeFalsy();
+            expect(errNotUnique.isDisplayed()).toBeTruthy();
+            expect(bttnSave.isEnabled()).toBeFalsy();
+          });
+
+        });
+
+      });
+
+    });
   });
 
 });
