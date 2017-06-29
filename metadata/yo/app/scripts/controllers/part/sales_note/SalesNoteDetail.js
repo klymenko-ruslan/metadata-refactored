@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .controller("SalesNoteDetailCtrl", ["$log", "$routeParams", "$parse", "dialogs", "$scope",
-    "NgTableParams", "$location", "toastr", "SalesNotes", "utils", "restService", "part", "salesNote",
+angular.module('ngMetaCrudApp')
+  .controller('SalesNoteDetailCtrl', ['$log', '$routeParams', '$parse', 'dialogs', '$scope',
+    'NgTableParams', '$location', 'toastr', 'SalesNotes', 'utils', 'restService', 'part', 'salesNote',
     function($log, $routeParams, $parse, dialogs, $scope, NgTableParams, $location, toastr, SalesNotes,
         utils, restService, part, salesNote) {
       $scope.part = part;
@@ -31,7 +31,7 @@ angular.module("ngMetaCrudApp")
         });
         $scope.attachmentsTableParams.reload();
         formData = new FormData();
-      };
+      }
 
       $scope.uploadAttachment = function() {
         restService.uploadAttachmentForSalesNote($scope.salesNoteId, file.name, file).then(
@@ -85,7 +85,7 @@ angular.module("ngMetaCrudApp")
         count: 10,
         sorting: {}
       }, {
-        getData: utils.localPagination(salesNote.parts, "part.manufacturerPartNumber")
+        getData: utils.localPagination(salesNote.parts, 'part.manufacturerPartNumber')
       });
 
       // Editing flag
@@ -111,20 +111,20 @@ angular.module("ngMetaCrudApp")
               editing = false;
             },
             function failure(errorResponse) {
-              restService.error("Could not get sales note details", errorResponse);
+              restService.error('Could not get sales note details', errorResponse);
             });
       };
 
       $scope.remove = function() {
-        dialogs.confirm("Delete sales note [" + $scope.salesNoteId + "].", "Are you sure?").result.then(
+        dialogs.confirm('Delete sales note [' + $scope.salesNoteId + '].', 'Are you sure?').result.then(
           function() {
             restService.removeSalesNote($scope.salesNoteId).then(
               function() {
-                $location.path("/part/" + $scope.part.id + "/sales_notes");
-                toastr.success("Sales note [" + $scope.salesNoteId + "] has been successfully removed.");
+                $location.path('/part/' + $scope.part.id + '/sales_notes');
+                toastr.success('Sales note [' + $scope.salesNoteId + '] has been successfully removed.');
               },
               function errorResponse(response) {
-                restService.error("Removal of the sales note [" + $scope.salesNoteId + "] failed.", response);
+                restService.error('Removal of the sales note [' + $scope.salesNoteId + '] failed.', response);
               }
             );
           }

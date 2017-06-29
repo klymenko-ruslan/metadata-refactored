@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .directive("criticalDimensions", ["$log", "$filter",
+angular.module('ngMetaCrudApp')
+  .directive('criticalDimensions', ['$log', '$filter',
     function($log, $filter) {
 
       var _indexTolerances = function(descriptors) {
@@ -15,19 +15,19 @@ angular.module("ngMetaCrudApp")
           .groupBy(function(d) {
             // Associate each nominal's descriptor ID with
             // a tolerance descriptor.
-            // Returns: {"parent_id": [tolerance0, tolerance1], ...}
+            // Returns: {'parent_id': [tolerance0, tolerance1], ...}
             return d.parent.id;
           })
-          .mapObject(function(descriptors_array, key) {
+          .mapObject(function(descriptorsArray) {
             // Returns:
             // {
-            //    "parent_id": {
-            //      "BOTH": plus_minus_tolerance |
-            //      "UPPER": upper_tolerance,
-            //      "LOWER: lover_tolerance"
+            //    'parent_id': {
+            //      'BOTH': plus_minus_tolerance |
+            //      'UPPER': upper_tolerance,
+            //      'LOWER': lover_tolerance
             //    }
             // }
-            return _.indexBy(descriptors_array, "tolerance");
+            return _.indexBy(descriptorsArray, 'tolerance');
           })
           .value();
       };
@@ -36,13 +36,13 @@ angular.module("ngMetaCrudApp")
         var u = d.unit;
         var retVal = u;
         if (retVal === undefined || retVal === null) {
-          retVal = "";
-        } else if (u === "INCHES") {
+          retVal = '';
+        } else if (u === 'INCHES') {
           retVal = String.fromCharCode(0x2033);
-        } else if (u === "DEGREES") {
+        } else if (u === 'DEGREES') {
           retVal = String.fromCharCode(0x00B0);
-        } else if (u === "GRAMS") {
-          retVal = " g.";
+        } else if (u === 'GRAMS') {
+          retVal = ' g.';
         }
         return retVal;
       };
@@ -50,31 +50,31 @@ angular.module("ngMetaCrudApp")
       var _inputType = function(d) {
         var retVal = null;
         var dt = d.dataType;
-        if (dt !== "ENUMERATION") {
-          retVal = dt == "DECIMAL" ? "number" : "text";
+        if (dt !== 'ENUMERATION') {
+          retVal = dt === 'DECIMAL' ? 'number' : 'text';
         }
         return retVal;
       };
 
       var _buildErrorMessage = function(msg) {
-        return "Error: " + msg;
+        return 'Error: ' + msg;
       };
 
       var _errorId2errorMessage = function(errorId) {
-        if (errorId === "required") {
-          return "The vaue is required!";
-        } else if (errorId === "number") {
-          return "Invalid number!";
-        } else if (errorId === "maxlength" || errorId === "criticalDimensionLengthValidator") {
-          return "The value is too long!";
-        } else if (errorId === "min") {
-          return "The value is lower than minimal allowed value!";
-        } else if (errorId === "max") {
-          return "The value is higher than maximal allowed value!";
-        } else if (errorId == "criticalDimensionScaleValidator") {
-          return "Too many digits in the fraction!";
+        if (errorId === 'required') {
+          return 'The vaue is required!';
+        } else if (errorId === 'number') {
+          return 'Invalid number!';
+        } else if (errorId === 'maxlength' || errorId === 'criticalDimensionLengthValidator') {
+          return 'The value is too long!';
+        } else if (errorId === 'min') {
+          return 'The value is lower than minimal allowed value!';
+        } else if (errorId === 'max') {
+          return 'The value is higher than maximal allowed value!';
+        } else if (errorId === 'criticalDimensionScaleValidator') {
+          return 'Too many digits in the fraction!';
         } else {
-          return "Unknown error: " + angular.toJson(errorId);
+          return 'Unknown error: ' + angular.toJson(errorId);
         }
       };
 
@@ -83,41 +83,41 @@ angular.module("ngMetaCrudApp")
       // the web correctly then this method returns error message.
       // For null or undefined values cheks of the value are not done,
       // so it is possible that errors were not detected.
-      // Such situations are processed in the code "in-place".
+      // Such situations are processed in the code 'in-place'.
       var _getDisplayVal = function(descriptor, value) {
-        var retVal = "";
+        var retVal = '';
         if (value === undefined || value === null) {
-          retVal = descriptor.nullDisplay || "";
-        } else if (descriptor.dataType === "DECIMAL") {
-          retVal = $filter("number")(value, descriptor.scale);
-        } else if (descriptor.dataType === "ENUMERATION") {
+          retVal = descriptor.nullDisplay || '';
+        } else if (descriptor.dataType === 'DECIMAL') {
+          retVal = $filter('number')(value, descriptor.scale);
+        } else if (descriptor.dataType === 'ENUMERATION') {
           var valEnum;
           var mEnum = descriptor.enumeration;
           if (mEnum) {
             valEnum = mEnum.values;
           } else {
-            throw Error("definition of the enum for the field '" +
-              descriptor.jsonName + "' not found.");
+            throw Error('definition of the enum for the field "' +
+              descriptor.jsonName + '" not found.');
           }
           if (valEnum !== undefined) {
             var selected = _.find(valEnum, function(ve) {
-              return ve.id == value.id;
+              return ve.id === value.id;
             });
             if (selected !== undefined) {
               retVal = selected.val; // 'val' is a text representation
             } else {
-              throw new Error("value '" + value +
-                "' not found in the enumeration '" +
-                angular.toJson(descriptor.enumeration) + "'.");
+              throw new Error('value "' + value +
+                '" not found in the enumeration "' +
+                angular.toJson(descriptor.enumeration) + '".');
             }
           } else {
-            throw new Error("definition of the enum '" +
-              mEnum.name + "' not found.");
+            throw new Error('definition of the enum "' +
+              mEnum.name + '" not found.');
           }
         } else {
           retVal = String(value);
         }
-        if (retVal !== "") {
+        if (retVal !== '') {
           retVal += _unit2displaystr(descriptor);
         }
         return retVal;
@@ -128,30 +128,30 @@ angular.module("ngMetaCrudApp")
         if (toleranceDesc) {
           var toleranceValue = part[toleranceDesc.jsonName];
           if (toleranceValue !== undefined) {
-            dispObj[prefix + "ToleranceJsonName"] = toleranceDesc.jsonName;
-            dispObj[prefix + "Tolerance"] = toleranceValue;
-            dispObj[prefix + "ToleranceDisplayValue"] =
-              $filter("number")(toleranceValue, toleranceDesc.scale);
-            // dispObj[prefix + "ToleranceDisplayUnit"] =
+            dispObj[prefix + 'ToleranceJsonName'] = toleranceDesc.jsonName;
+            dispObj[prefix + 'Tolerance'] = toleranceValue;
+            dispObj[prefix + 'ToleranceDisplayValue'] =
+              $filter('number')(toleranceValue, toleranceDesc.scale);
+            // dispObj[prefix + 'ToleranceDisplayUnit'] =
             //   _unit2displaystr(toleranceDesc);
-            dispObj[prefix + "ToleranceDescriptor"] = toleranceDesc;
+            dispObj[prefix + 'ToleranceDescriptor'] = toleranceDesc;
             var toleranceInputType = _inputType(toleranceDesc);
             if (toleranceInputType) {
-              dispObj[prefix + "ToleranceInputType"] = toleranceInputType;
+              dispObj[prefix + 'ToleranceInputType'] = toleranceInputType;
             }
           } else {
-            $log.log("Critical dimension '" + toleranceDesc.jsonName +
-              "' is not defined in the 'Part' [" + part.class + "] entity. " +
-              "Check JPA entity.");
+            $log.log('Critical dimension "' + toleranceDesc.jsonName +
+              '" is not defined in the "Part" [' + part.class + '] entity. ' +
+              'Check JPA entity.');
           }
         }
       };
 
       var _getToleranceDisplayVal = function(prefix, dispObj) {
         var retVal = null;
-        var toleranceDescriptor = dispObj[prefix + "ToleranceDescriptor"];
+        var toleranceDescriptor = dispObj[prefix + 'ToleranceDescriptor'];
         if (toleranceDescriptor) { // If the dispOject has a tolerance.
-          var toleranceValue = dispObj[prefix + "Tolerance"];
+          var toleranceValue = dispObj[prefix + 'Tolerance'];
           retVal = _getDisplayVal(toleranceDescriptor,
             toleranceValue);
         }
@@ -166,22 +166,22 @@ angular.module("ngMetaCrudApp")
           var displayValue = _getDisplayVal(dispObj.valueDescriptor,
             dispObj.value);
 
-          var bothToleranceDispVal = _getToleranceDisplayVal("both",
+          var bothToleranceDispVal = _getToleranceDisplayVal('both',
             dispObj);
           if (bothToleranceDispVal) {
-            displayValue += (" " + String.fromCharCode(0x00B1) + " " +
+            displayValue += (' ' + String.fromCharCode(0x00B1) + ' ' +
               bothToleranceDispVal);
           }
-          var lowerToleranceDispVal = _getToleranceDisplayVal("lower",
+          var lowerToleranceDispVal = _getToleranceDisplayVal('lower',
             dispObj);
           if (lowerToleranceDispVal) {
-            displayValue += (" " + String.fromCharCode(8595) +
+            displayValue += (' ' + String.fromCharCode(8595) +
               lowerToleranceDispVal);
           }
-          var upperToleranceDispVal = _getToleranceDisplayVal("upper",
+          var upperToleranceDispVal = _getToleranceDisplayVal('upper',
             dispObj);
           if (upperToleranceDispVal) {
-            displayValue += (" " + String.fromCharCode(8593) +
+            displayValue += (' ' + String.fromCharCode(8593) +
               upperToleranceDispVal);
           }
           dispObj.displayValue = displayValue;
@@ -193,39 +193,39 @@ angular.module("ngMetaCrudApp")
       };
 
       return {
-        restrict: "E",
+        restrict: 'E',
         replace: false,
         transclude: true,
-        templateUrl: "/views/component/criticaldimensions.html",
+        templateUrl: '/views/component/criticaldimensions.html',
         scope: {
-          part: "=",
-          descriptors: "="
+          part: '=',
+          descriptors: '='
         },
-        controller: ["$scope", "$log", "Restangular", "toastr",
-          "restService", "METADATA_BASE",
+        controller: ['$scope', '$log', 'Restangular', 'toastr',
+          'restService', 'METADATA_BASE',
           function($scope, $log, Restangular, toastr,
             restService, METADATA_BASE) {
 
             $scope.METADATA_BASE = METADATA_BASE;
 
             // Make a dictionary: nominal's
-            // {"descriptor_id": {
-            //    "BOTH": plus_minus_tolerance |
-            //    "UPPER": upper_tolerance, "LOWER: lover_tolerance"}
+            // {'descriptor_id': {
+            //    'BOTH': plus_minus_tolerance |
+            //    'UPPER': upper_tolerance, 'LOWER': lover_tolerance}
             // }
             $scope.idxDim2Tol = _indexTolerances($scope.descriptors);
 
-            //$log.log("idxDim2Tol: " + angular.toJson($scope.idxDim2Tol, 2));
+            //$log.log('idxDim2Tol: ' + angular.toJson($scope.idxDim2Tol, 2));
 
             // Options bar's values.
             $scope.opts = {
               hideBlank: true,
               inlineLayout: true,
-              filter: ""
+              filter: ''
             };
 
             // Track changes on the options bar.
-            $scope.$watchCollection("opts", function(newOpts, oldOpts) {
+            $scope.$watchCollection('opts', function() {
               $scope._copyDescriptorsToDisplay();
             });
 
@@ -249,15 +249,15 @@ angular.module("ngMetaCrudApp")
               filter(
                   // Filter for inline layout.
                   function(d) {
-                    // For "inline layout" skip desctiptors which
+                    // For 'inline layout' skip desctiptors which
                     // are tolerance.
-                    // In "inline layout" a tolarace is displayed
+                    // In 'inline layout' a tolarace is displayed
                     // on the line of nominal value.
                     return (!$scope.opts.inlineLayout ||
                       $scope.opts.inlineLayout && d.tolerance === null);
                   }
                 )
-                // convert a descriptor to a "display object"
+                // convert a descriptor to a 'display object'
                 .map($scope._toDisplayObject)
                 .filter(
                   // Filter hide/show blank.
@@ -277,18 +277,14 @@ angular.module("ngMetaCrudApp")
 
 
             // Watch properties valid/invalid for controls on the form
-            // and update state of properties "error message" in
-            // the backend "display objects".
+            // and update state of properties 'error message' in
+            // the backend 'display objects'.
             _.each($scope.descriptors, function(d) {
-              $scope.$watch("cdForm." + d.jsonName + ".$valid",
-                function(valid, oldVal) {
-                  //$log.log("Watch::" + d.jsonName + ": " + newVal +
-                  //  ", " + oldVal);
+              $scope.$watch('cdForm.' + d.jsonName + '.$valid',
+                function(valid) {
                   if (valid === true) {
-                    //$log.log("Clear error messaged in: " + d.jsonName);
                     delete $scope.errors[d.jsonName];
                   } else if (valid === false) {
-                    //$log.log("Added error messaged in: " + d.jsonName);
                     $scope.errors[d.jsonName] = $scope.getErrorFor(
                       d.jsonName);
                   }
@@ -297,7 +293,7 @@ angular.module("ngMetaCrudApp")
 
             // This method build a JS object that represents a row in
             // the UI table.
-            // The object contains values for displayed "name" and "value"
+            // The object contains values for displayed 'name' and 'value'
             // fields as well as auxiliary properties (objects) for
             // the row editing.
             // A returning object has following mondatory properties:
@@ -312,7 +308,7 @@ angular.module("ngMetaCrudApp")
             //  * displayValue
             //  * selectOptions         (optional)
             //  * inputType             (optional)
-            // In a case of the "inline layout" the object also has
+            // In a case of the 'inline layout' the object also has
             // following extra properties:
             //  * toleranceJsonName     (optional)
             //  * tolerance             (optional)
@@ -341,7 +337,7 @@ angular.module("ngMetaCrudApp")
               var isNominal = d.tolerance === null;
               if ($scope.opts.inlineLayout && isNominal) {
                 // This is a special case when we should display nominal
-                // and tolerance values in the "inline layout" .
+                // and tolerance values in the 'inline layout' .
 
                 // Try to find a descriptor for a tolerance.
                 // In case of success use the descriptor to format
@@ -352,21 +348,21 @@ angular.module("ngMetaCrudApp")
                   var both = tolerancesDescs.BOTH;
                   var lower = tolerancesDescs.LOWER;
                   var upper = tolerancesDescs.UPPER;
-                  if (both & (lower | upper)) {
-                    $log.log("both: " + angular.toJson(both, 2));
-                    $log.log("lower: " + angular.toJson(lower, 2));
-                    $log.log("upper: " + angular.toJson(upper, 2));
-                    throw new Error("Internal error. Expected either " +
-                      "regular tolerance or upper or/and lower ones.");
+                  if (both && (lower || upper)) {
+                    $log.log('both: ' + angular.toJson(both, 2));
+                    $log.log('lower: ' + angular.toJson(lower, 2));
+                    $log.log('upper: ' + angular.toJson(upper, 2));
+                    throw new Error('Internal error. Expected either ' +
+                      'regular tolerance or upper or/and lower ones.');
                   }
-                  _addTolerance2dispObj("both", $scope.part, both, retVal);
-                  _addTolerance2dispObj("lower", $scope.part, lower, retVal);
-                  _addTolerance2dispObj("upper", $scope.part, upper, retVal);
+                  _addTolerance2dispObj('both', $scope.part, both, retVal);
+                  _addTolerance2dispObj('lower', $scope.part, lower, retVal);
+                  _addTolerance2dispObj('upper', $scope.part, upper, retVal);
                 }
               }
               _addDisplayValue(retVal);
               if (!retVal.invalidDisplayValue &&
-                d.dataType === "ENUMERATION") {
+                d.dataType === 'ENUMERATION') {
                 // It is possible that property 'invalidDisplayValue'
                 // was not set in the '_getDisplayVal'
                 // even when enumeration is not defined (see comments
@@ -375,10 +371,10 @@ angular.module("ngMetaCrudApp")
                 if (d.enumeration) {
                   retVal.selectOptions = angular.copy(d.enumeration.values);
                 } else {
-                  retVal.displayValue = _buildErrorMessage("definition " +
-                    "of the enum for the field '" +
+                  retVal.displayValue = _buildErrorMessage('definition ' +
+                    'of the enum for the field "' +
                     d.jsonName +
-                    "' not found.");
+                    '" not found.');
                   retVal.invalidDisplayValue = true;
                 }
               }
@@ -421,7 +417,7 @@ angular.module("ngMetaCrudApp")
 
             $scope.modifyStart = function(dispObj) {
               //$scope.editedPart = Restangular.copy($scope.part);
-              //$log.log("dispObj: " + angular.toJson(dispObj, 2));
+              //$log.log('dispObj: ' + angular.toJson(dispObj, 2));
               $scope.editedDispObjs[dispObj.id] = dispObj;
             };
 
@@ -451,7 +447,7 @@ angular.module("ngMetaCrudApp")
             $scope.modifySaveAll = function() {
               restService.updatePart($scope.editedPart).then(
                 function success(updatedPart) {
-                  toastr.success("The part has been successfully updated.");
+                  toastr.success('The part has been successfully updated.');
                   $scope.part = updatedPart;
                   $scope.editedPart = Restangular.copy($scope.part);
                   $scope._modifyEndAll();
@@ -459,7 +455,7 @@ angular.module("ngMetaCrudApp")
                   $scope._copyDescriptorsToDisplay();
                 },
                 function failure(response) {
-                  restService.error("Updating of the part failed.", response);
+                  restService.error('Updating of the part failed.', response);
                 }
               );
             };
@@ -503,10 +499,10 @@ angular.module("ngMetaCrudApp")
             };
 
             $scope.uploadLegend = function() {
-              $("#dlgUploadLegend").modal("hide");
+              $('#dlgUploadLegend').modal('hide');
               if ($scope.legendImage === null ||
                 $scope.legendImage === undefined) {
-                $("#dlgFileNotSelected").modal("show");
+                $('#dlgFileNotSelected').modal('show');
                 return;
               }
               restService.uploadPartCritDimsLegend($scope.part.id,
@@ -516,8 +512,8 @@ angular.module("ngMetaCrudApp")
                     httpResponse.data.legendImgFilename;
                 },
                 function failure(response) {
-                  restService.error("Uploading of a part critical " +
-                    "dimensions legend failed.", response);
+                  restService.error('Uploading of a part critical ' +
+                    'dimensions legend failed.', response);
                 }
               ).finally(function() {
                 $scope.legendImage = null;
@@ -526,19 +522,19 @@ angular.module("ngMetaCrudApp")
 
             $scope.showDeleteLegendDlg = function() {
               if ($scope.part.legendImgFilename) {
-                $("#dlgDeleteLegend").modal("show");
+                $('#dlgDeleteLegend').modal('show');
               }
             };
 
             $scope.deleteLegend = function() {
-              $("#dlgDeleteLegend").modal("hide");
+              $('#dlgDeleteLegend').modal('hide');
               restService.deletePartCritdimsLegend($scope.part.id).then(
                 function success() {
                   $scope.part.legendImgFilename = null;
                 },
                 function failure(response) {
-                  restService.error("Deletion of a part " +
-                    "critical dimensions legend failed.", response);
+                  restService.error('Deletion of a part ' +
+                    'critical dimensions legend failed.', response);
                 }
               );
             };
@@ -548,7 +544,7 @@ angular.module("ngMetaCrudApp")
       };
     }
   ])
-  .directive("criticalDimensionValidator", ["$log", "$parse",
+  .directive('criticalDimensionValidator', ['$log', '$parse',
     function($log, $parse) {
       /**
        * Do validation of a critical dimension.
@@ -556,23 +552,23 @@ angular.module("ngMetaCrudApp")
        * standart validators.
        */
       return {
-        restrict: "A",
-        require: "ngModel",
+        restrict: 'A',
+        require: 'ngModel',
         link: function(scope, elm, attrs, ctrl) {
           var descriptor = $parse(attrs.criticalDimensionValidator)(scope);
           if (!angular.isObject(descriptor)) {
-            $log.log("Descriptor not found.");
+            $log.log('Descriptor not found.');
             return;
           }
-          if (descriptor.dataType === "DECIMAL" &&
+          if (descriptor.dataType === 'DECIMAL' &&
             descriptor.scale !== null) {
             ctrl.$validators.criticalDimensionScaleValidator =
               function(modelValue, viewValue) {
-                if (viewValue == null) { // null or undefined
+                if (viewValue === null || viewValue === undefined) { // null or undefined
                   return true;
                 }
-                var dp = viewValue.indexOf(".");
-                if (dp == -1) {
+                var dp = viewValue.indexOf('.');
+                if (dp === -1) {
                   return true;
                 }
                 var scaleLength = viewValue.length - dp - 1;
@@ -583,7 +579,7 @@ angular.module("ngMetaCrudApp")
               };
             ctrl.$validators.criticalDimensionLengthValidator =
               function(modelValue, viewValue) {
-                if (viewValue == null) { // null or undefined
+                if (viewValue === null || viewValue === undefined) { // null or undefined
                   return true;
                 }
                 try {

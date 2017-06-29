@@ -1,21 +1,26 @@
 package com.turbointernational.metadata.service;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.Application;
-import com.turbointernational.metadata.entity.*;
-import com.turbointernational.metadata.entity.chlogsrc.Source;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.entity.SalesNotePart;
-import com.turbointernational.metadata.entity.SalesNoteState;
-import com.turbointernational.metadata.entity.User;
-import com.turbointernational.metadata.util.View;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.Application;
+import com.turbointernational.metadata.entity.CarEngine;
+import com.turbointernational.metadata.entity.CarFuelType;
+import com.turbointernational.metadata.entity.CarMake;
+import com.turbointernational.metadata.entity.CarModel;
+import com.turbointernational.metadata.entity.CarModelEngineYear;
+import com.turbointernational.metadata.entity.CarYear;
+import com.turbointernational.metadata.entity.SalesNotePart;
+import com.turbointernational.metadata.entity.SalesNoteState;
+import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.entity.chlogsrc.Source;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.util.View;
 
 /**
  * Interface for indexing and search metadata items.
@@ -538,4 +543,14 @@ public interface SearchService {
 
     String filterChanglelogSources(String name, String descritpion, String url, Long sourceNameId, String sortProperty,
                                    String sortOrder, Integer offset, Integer limit);
+
+    /**
+     * An utility method to index all documents in a batch mode.
+     *
+     * Its primary goal -- to be used in automation of integration testing.
+     *
+     * @throws Exception
+     */
+    void indexAll() throws Exception;
+
 }

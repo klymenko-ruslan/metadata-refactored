@@ -1,25 +1,23 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .service("SalesNotes", ["$location", "$log", "Restangular", "toastr", "User",
-    function SalesNotes($location, $log, Restangular, toastr, User) {
+angular.module('ngMetaCrudApp')
+  .service('SalesNotes', ['$location', '$log', /*'$uibModalInstance',*/ 'Restangular', 'restService', 'toastr', 'User',
+    function SalesNotes($location, $log, /*$uibModalInstance,*/ Restangular, restService, toastr, User) {
 
-      var SalesNotes = this;
+      this.states = ['draft', 'submitted', 'approved', 'rejected', 'published'];
 
-      SalesNotes.states = ["draft", "submitted", "approved", "rejected", "published"];
-
-      SalesNotes.addRelatedPart = function(salesNote, part) {
-        return Restangular.one("other/salesNote/" + salesNote.id + "/part")
+      this.addRelatedPart = function(salesNote, part) {
+        return Restangular.one('other/salesNote/' + salesNote.id + '/part')
           .post(part.id, null)
           .then(function() {
             // TODO: Add the related part? Right now it's reloaded.
           }, function(errorResponse) {
-            $log.log("Could not add related part", errorResponse);
+            $log.log('Could not add related part', errorResponse);
           });
       };
 
-      SalesNotes.removeRelatedPart = function(salesNote, partId, tableParams) {
-        return Restangular.one("other/salesNote/" + salesNote.id + "/part", partId)
+      this.removeRelatedPart = function(salesNote, partId, tableParams) {
+        return Restangular.one('other/salesNote/' + salesNote.id + '/part', partId)
           .remove()
           .then(function() {
             var idx = _.findIndex(salesNote.parts, function(salesNotePart) {
@@ -30,79 +28,79 @@ angular.module("ngMetaCrudApp")
               tableParams.reload();
             }
           }, function(errorResponse) {
-            $log.log("Could not remove related part", errorResponse);
+            $log.log('Could not remove related part', errorResponse);
           });
       };
 
-      SalesNotes.canSubmit = function(salesNote) {
-        return _.isObject(salesNote) && (salesNote.state === "draft" || salesNote.state === "rejected");
+      this.canSubmit = function(salesNote) {
+        return _.isObject(salesNote) && (salesNote.state === 'draft' || salesNote.state === 'rejected');
       };
 
-      SalesNotes.canPublish = function(salesNote) {
-        return _.isObject(salesNote) && salesNote.state === "approved";
+      this.canPublish = function(salesNote) {
+        return _.isObject(salesNote) && salesNote.state === 'approved';
       };
 
-      SalesNotes.canApprove = function(salesNote) {
-        return _.isObject(salesNote) && salesNote.state === "submitted";
+      this.canApprove = function(salesNote) {
+        return _.isObject(salesNote) && salesNote.state === 'submitted';
       };
 
-      SalesNotes.canReject = function(salesNote) {
-        return _.isObject(salesNote) && (salesNote.state === "submitted" || salesNote.state === "approved");
+      this.canReject = function(salesNote) {
+        return _.isObject(salesNote) && (salesNote.state === 'submitted' || salesNote.state === 'approved');
       };
 
-      SalesNotes.canRetract = function(salesNote) {
-        return _.isObject(salesNote) && salesNote.state === "published";
+      this.canRetract = function(salesNote) {
+        return _.isObject(salesNote) && salesNote.state === 'published';
       };
 
-      SalesNotes.canEdit = function(salesNote) {
+      this.canEdit = function(salesNote) {
         if (!_.isObject(salesNote)) {
           return false;
         }
 
-        if (salesNote.state == "published" && User.hasRole("ROLE_SALES_NOTE_PUBLISH")) {
+        if (salesNote.state === 'published' && User.hasRole('ROLE_SALES_NOTE_PUBLISH')) {
           return true;
         }
 
-        if ((salesNote.state == "approved" || salesNote.state == "submitted") && User.hasRole("ROLE_SALES_NOTE_APPROVE")) {
+        if ((salesNote.state === 'approved' || salesNote.state === 'submitted') && User.hasRole('ROLE_SALES_NOTE_APPROVE')) {
           return true;
         }
 
-        return (salesNote.state == "draft" || salesNote.state == "rejected") && User.hasRole("ROLE_SALES_NOTE_SUBMIT");
+        return (salesNote.state === 'draft' || salesNote.state === 'rejected') && User.hasRole('ROLE_SALES_NOTE_SUBMIT');
       };
 
       // State Management
-      SalesNotes.submit = function(salesNote) {
-        return Restangular.one("other/salesNote", salesNote.id).post("submit")
+      this.submit = function(salesNote) {
+        return Restangular.one('other/salesNote', salesNote.id).post('submit')
           .then(function() {
-            salesNote.state = "submitted";
+            salesNote.state = 'submitted';
           });
       };
 
-      SalesNotes.approve = function(salesNote) {
-        return Restangular.one("other/salesNote", salesNote.id).post("approve")
+      this.approve = function(salesNote) {
+        return Restangular.one('other/salesNote', salesNote.id).post('approve')
           .then(function() {
-            salesNote.state = "approved";
+            salesNote.state = 'approved';
           });
       };
 
-      SalesNotes.reject = function(salesNote) {
-        return Restangular.one("other/salesNote", salesNote.id).post("reject").then(
+      this.reject = function(salesNote) {
+        return Restangular.one('other/salesNote', salesNote.id).post('reject').then(
           function success() {
-            salesNote.state = "rejected";
+            salesNote.state = 'rejected';
           });
       };
 
-      SalesNotes.publish = function(salesNote) {
-        return Restangular.one("other/salesNote", salesNote.id).post("publish")
+      this.publish = function(salesNote) {
+        return Restangular.one('other/salesNote', salesNote.id).post('publish')
           .then(function() {
-            salesNote.state = "published";
+            salesNote.state = 'published';
           });
       };
 
-      SalesNotes.retract = function(salesNote) {
-        return Restangular.one("other/salesNote", salesNote.id).post("retract")
+      this.retract = function(salesNote) {
+        return Restangular.one('other/salesNote', salesNote.id).post('retract')
           .then(function() {
-            salesNote.state = "approved";
+            salesNote.state = 'approved';
           });
       };
 

@@ -14,6 +14,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -26,6 +28,17 @@ import flexjson.JSONSerializer;
 @Cacheable
 @Entity
 @Table(name = "turbo_model")
+@NamedQueries({
+  @NamedQuery(
+    name="findTurboModelsByTurboTypeId",
+    query = "SELECT o FROM TurboModel o JOIN o.turboType WHERE o.turboType.id = :turboTypeId ORDER BY o.name"
+  ),
+  @NamedQuery(
+    name="findTurboModelByTurboTypeIdAndName",
+    query = "SELECT o FROM TurboModel o JOIN o.turboType " +
+            "WHERE o.turboType.id = :turboTypeId AND o.name = :name"
+  )
+})
 public class TurboModel implements Serializable {
 
     //<editor-fold defaultstate="collapsed" desc="Properties">

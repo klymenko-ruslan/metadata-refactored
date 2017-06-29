@@ -1,35 +1,35 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .directive("cmeyForm", function() {
+angular.module('ngMetaCrudApp')
+  .directive('cmeyForm', function() {
     return {
       scope: {
-        carEngines: "=",
-        carMakes: "=",
-        carModelEngineYear: "="
+        carEngines: '=',
+        carMakes: '=',
+        carModelEngineYear: '='
       },
-      restrict: "E",
+      restrict: 'E',
       replace: false,
-      templateUrl: "/views/application/carmodelengineyear/form.html",
-      controller: ["restService", "$q", "$scope", "$location", "$parse", "$log", "$routeParams", "toastr",
-        "$uibModal", "NgTableParams", "utils",
+      templateUrl: '/views/application/carmodelengineyear/form.html',
+      controller: ['restService', '$q', '$scope', '$location', '$parse', '$log', '$routeParams', 'toastr',
+        '$uibModal', 'NgTableParams', 'utils',
         function(restService, $q, $scope, $location, $parse, $log, $routeParams, toastr, $uibModal,
           NgTableParams, utils)
         {
 
-          $scope.$on("form:created", function(event, data) {
-            if (data.name === "cmeyForm") {
+          $scope.$on('form:created', function(event, data) {
+            if (data.name === 'cmeyForm') {
               $scope.cmeyForm = data.controller;
             }
           });
 
           $scope.filters = {
-            carMake: "",
-            carModel: "",
-            carEngine: ""
+            carMake: '',
+            carModel: '',
+            carEngine: ''
           };
 
-          var makeIdGetter = $parse("cmey.model.make.id");
+          var makeIdGetter = $parse('cmey.model.make.id');
 
           $scope.onChangeMake = function() {
             //$scope.carmodels = [];
@@ -42,7 +42,7 @@ angular.module("ngMetaCrudApp")
                 $scope.carmodels = carmodels;
               },
               function(errorResponse) {
-                restService.error("Could not load car models for car make: " + makeId, errorResponse);
+                restService.error('Could not load car models for car make: ' + makeId, errorResponse);
               }
             );
           };
@@ -53,33 +53,33 @@ angular.module("ngMetaCrudApp")
           // Don't use null for the initialization below
           // because binding will not work.
           $scope.cmey = {
-            "model": {
-              "id": null,
-              "make": {
-                "id": null
+            'model': {
+              'id': null,
+              'make': {
+                'id': null
               }
             },
-            "engine": {
-              "id": null
+            'engine': {
+              'id': null
             },
-            "year": {
-              "name": null
+            'year': {
+              'name': null
             }
           };
 
           $scope.origCmey = null;
 
-          $scope.carengines = Array();
+          $scope.carengines = [];
 
           $scope._carengine2item = function(ce) {
             var name = ce.engineSize;
             var fuelType = ce.fuelType;
             if (angular.isObject(fuelType)) {
-              name += (", " + fuelType.name);
+              name += (', ' + fuelType.name);
             }
             var item = {
-              "id": ce.id,
-              "name": name
+              'id': ce.id,
+              'name': name
             };
             return item;
           };
@@ -94,7 +94,7 @@ angular.module("ngMetaCrudApp")
           $scope.cmeyId = $routeParams.id;
 
           if ($scope.cmeyId === undefined) { // create
-            $scope.titleHead = "Create";
+            $scope.titleHead = 'Create';
             $scope.cmey = {
               model: {
                 id: null,
@@ -111,7 +111,7 @@ angular.module("ngMetaCrudApp")
             };
             $scope.carYearExists = false;
           } else { // edit
-            $scope.titleHead = "Edit";
+            $scope.titleHead = 'Edit';
             $scope.origCmey = $scope.carModelEngineYear;
             angular.copy($scope.origCmey, $scope.cmey);
             $scope.onChangeMake();
@@ -132,17 +132,17 @@ angular.module("ngMetaCrudApp")
             }
             if (angular.isObject($scope.cmey.model) && $scope.cmey.model.id) {
               cmey2.model = {
-                "id": $scope.cmey.model.id,
+                'id': $scope.cmey.model.id,
               };
             }
             if (angular.isObject($scope.cmey.engine) && $scope.cmey.engine.id) {
               cmey2.engine = {
-                "id": $scope.cmey.engine.id
+                'id': $scope.cmey.engine.id
               };
             }
             if (angular.isObject($scope.cmey.year) && $scope.cmey.year.name) {
               cmey2.year = {
-                "name": $scope.cmey.year.name
+                'name': $scope.cmey.year.name
               };
             }
             return cmey2;
@@ -152,7 +152,7 @@ angular.module("ngMetaCrudApp")
             var cmey2 = $scope._merge();
             if (_.isEmpty(cmey2)) {
               // Ignore.
-              toastr.info("Nothing to save. Ignored.");
+              toastr.info('Nothing to save. Ignored.');
               return null;
             }
             if ($scope.cmeyId === undefined) {
@@ -162,20 +162,20 @@ angular.module("ngMetaCrudApp")
             }
           };
 
-          $scope.$on("cmeyform:save", function(event, callback) {
+          $scope.$on('cmeyform:save', function(event, callback) {
             var promise = $scope._save();
             if (promise !== null) {
               callback(promise);
             }
           });
 
-          $scope.$on("cmeyform:revert", function() {
+          $scope.$on('cmeyform:revert', function() {
             $scope._revert();
           });
 
           $scope.onClearMM = function() {
-            $scope.filters.carMake = "";
-            $scope.filters.carModel = "";
+            $scope.filters.carMake = '';
+            $scope.filters.carModel = '';
             $scope.cmey.model.make.id = null;
             $scope.cmey.model.id = null;
             $scope.carmodels.splice(0, $scope.carmodels.length);
@@ -183,7 +183,7 @@ angular.module("ngMetaCrudApp")
           };
 
           $scope.onClearEngine = function() {
-            $scope.filters.carEngine = "";
+            $scope.filters.carEngine = '';
             $scope.cmey.engine.id = null;
             $scope.cmeyForm.$setDirty();
           };
@@ -198,26 +198,32 @@ angular.module("ngMetaCrudApp")
             $scope.onClearMM();
             $scope.onClearEngine();
             $scope.onClearYear();
-          };
+          }
 
           $scope.onChangeYear = function() {
             var year = $scope.cmey.year;
-            if (!year) return;
+            if (!year) {
+                return;
+            }
             var year_name = year.name;
-            if (!year_name) return;
+            if (!year_name) {
+                return;
+            }
             restService.findCarYearByName(year_name).then(
               function(caryear) {
                 $scope.carYearExists = angular.isObject(caryear);
               },
               function(errorResponse) {
-                $log.log("Cat't validate the 'car year'. Error: " + angular.toJson(errorResponse));
+                $log.log('Cat\'t validate the "car year". Error: ' + angular.toJson(errorResponse));
               }
             );
           };
 
           $scope.validateForm = function() {
-            restService.existsCarmodelengineyear($scope.cmey.model.id, $scope.cmey.engine.id,
-              $scope.cmey.year.name).then(
+            var modelId = $scope.$eval('cmey.model.id');
+            var engineId = $scope.$eval('cmey.engine.id');
+            var yearName = $scope.$eval('cmey.year.name');
+            restService.existsCarmodelengineyear(modelId, engineId, yearName).then(
                 function success(exists) {
                   if (exists) {
                     $scope.cmeyForm.$valid = false;
@@ -232,12 +238,12 @@ angular.module("ngMetaCrudApp")
                   }
                 },
                 function failure(response) {
-                  restService.error("Could not validate application.", response);
+                  restService.error('Could not validate application.', response);
                 }
               );
           };
 
-          $scope.$watch("cmey", function() {
+          $scope.$watch('cmey', function() {
             $scope.validateForm();
           }, true);
 
@@ -262,7 +268,7 @@ angular.module("ngMetaCrudApp")
               return;
             }
             var pickedModel = _.find($scope.carmodels, function(cmd) {
-              return cmd.id == modelId;
+              return cmd.id === modelId;
             });
             if (pickedModel !== undefined) {
               angular.copy(pickedModel, carModel);
@@ -270,7 +276,7 @@ angular.module("ngMetaCrudApp")
               var makeId = makeIdGetter($scope);
               if (makeId) {
                 var pickedMake = _.find($scope.carmakes, function(cmk) {
-                  return cmk.id == makeId;
+                  return cmk.id === makeId;
                 });
                 angular.copy(pickedMake, carMake);
                 carModel.make = carMake;
@@ -320,7 +326,7 @@ angular.module("ngMetaCrudApp")
               return;
             }
             var pickedEngine = _.find($scope.carEngines, function(ce) {
-              return ce.id == engineId;
+              return ce.id === engineId;
             });
             if (pickedEngine !== undefined) {
               angular.copy(pickedEngine, carEngine);
@@ -395,6 +401,7 @@ angular.module("ngMetaCrudApp")
 
                 // Clear input filter and selections.
                 clearAllInputs();
+                $scope.cmeyForm.$setPristine();
 
                 // Clear picked items.
                 _.each($scope.pickedModels, function(cm) {
@@ -414,31 +421,35 @@ angular.module("ngMetaCrudApp")
                 });
                 $scope.pickedYears.splice(0, $scope.pickedYears.length);
                 $scope.pickedYearsTableParams.reload();
-
-                toastr.success("Created " + result.created + " applications. " + result.ignored + " ignored.");
+                toastr.success('Created ' + result.created + ' applications. ' + result.ignored + ' ignored.');
               },
               function failure(errorResponse) {
-                restService.error("Bulk creation of application failed.", errorResponse);
+                restService.error('Bulk creation of application failed.', errorResponse);
               }
             );
           };
 
           $scope.quickCreateCarMake = function() {
             $uibModal.open({
-              templateUrl: "/views/application/carmodelengineyear/createCarMakeDlg.html",
+              templateUrl: '/views/application/carmodelengineyear/createCarMakeDlg.html',
               animation: false,
-              size: "lg" ,
-              controller: "createCarMakeDlgCtrl",
+              size: 'lg' ,
+              controller: 'createCarMakeDlgCtrl',
               resolve: {
                 addCarMakeCallback: function() {
                   return function(newCarMake) {
                     if (_.isArray($scope.carmakes)) {
-                      var pos = _.sortedIndex($scope.carmakes, newCarMake, "name");
+                      var pos = _.sortedIndex($scope.carmakes, newCarMake, 'name');
                       $scope.carmakes.splice(pos, 0, newCarMake);
+                      /*
+                      if ($scope.cmey.model === null || $scope.cmey.model === undefined) {
+                        $scope.cmey.model = {};
+                      }
+                      */
                       $scope.cmey.model.make = newCarMake;
                       $scope.cmeyForm.$setDirty();
                     }
-                  }
+                  };
                 }
               }
             });
@@ -447,13 +458,13 @@ angular.module("ngMetaCrudApp")
           $scope.quickCreateCarModel = function() {
             var makeId = makeIdGetter($scope);
             $uibModal.open({
-              templateUrl: "/views/application/carmodelengineyear/createCarModelDlg.html",
+              templateUrl: '/views/application/carmodelengineyear/createCarModelDlg.html',
               animation: false,
-              size: "lg" ,
-              controller: "createCarModelDlgCtrl",
+              size: 'lg' ,
+              controller: 'createCarModelDlgCtrl',
               resolve: {
                 makeId: function() { return makeId; },
-                carMakes: ["restService", function (restService) {
+                carMakes: ['restService', function (restService) {
                   return restService.findAllCarMakesOrderedByName();
                 }],
                 addCarModelCallback: function() {
@@ -461,11 +472,11 @@ angular.module("ngMetaCrudApp")
                     if (!_.isArray($scope.carmodels)) { // null or undefined
                       $scope.carmodels = [];
                     }
-                    var pos = _.sortedIndex($scope.carmodels, newCarModel, "name");
+                    var pos = _.sortedIndex($scope.carmodels, newCarModel, 'name');
                     $scope.carmodels.splice(pos, 0, newCarModel);
                     $scope.cmey.model = newCarModel;
                     $scope.cmeyForm.$setDirty();
-                  }
+                  };
                 }
               }
             });
@@ -473,12 +484,12 @@ angular.module("ngMetaCrudApp")
 
           $scope.quickCreateCarEngine = function() {
             $uibModal.open({
-              templateUrl: "/views/application/carmodelengineyear/createCarEngineDlg.html",
+              templateUrl: '/views/application/carmodelengineyear/createCarEngineDlg.html',
               animation: false,
-              size: "lg" ,
-              controller: "createCarEngineDlgCtrl",
+              size: 'lg' ,
+              controller: 'createCarEngineDlgCtrl',
               resolve: {
-                carFuelTypes: ["restService", function(restService) {
+                carFuelTypes: ['restService', function(restService) {
                   return restService.findAllCarFuelTypesOrderedByName();
                 }],
                 addCarEngineCallback: function() {
@@ -487,11 +498,11 @@ angular.module("ngMetaCrudApp")
                       $scope.carengines = [];
                     }
                     var item = $scope._carengine2item(newCarEngine);
-                    var pos = _.sortedIndex($scope.carengines, item, "engineSize");
+                    var pos = _.sortedIndex($scope.carengines, item, 'engineSize');
                     $scope.carengines.splice(pos, 0, item);
                     $scope.cmey.engine = item;
                     $scope.cmeyForm.$setDirty();
-                  }
+                  };
                 }
               }
             });
@@ -502,27 +513,29 @@ angular.module("ngMetaCrudApp")
 
     };
   })
-  .controller("createCarMakeDlgCtrl",["$scope", "$log", "toastr", "$uibModalInstance", "addCarMakeCallback",
-    function($scope, $log, toastr, $uibModalInstance, addCarMakeCallback) {
+  .controller('createCarMakeDlgCtrl',['$scope', '$log', 'toastr', '$uibModalInstance', 'addCarMakeCallback', 'restService',
+    function($scope, $log, toastr, $uibModalInstance, addCarMakeCallback,
+        restService)
+    {
 
-    $scope.$on("form:created", function(event, data) {
-      if (data.name === "carmakeForm") {
+    $scope.$on('form:created', function(event, data) {
+      if (data.name === 'carmakeForm') {
         $scope.carmakeForm = data.controller;
       }
     });
 
     $scope.save = function() {
-      $scope.$broadcast("carmakeform:save", function(promise) {
+      $scope.$broadcast('carmakeform:save', function(promise) {
         promise.then(
           function(carMake) {
-            $log.log("Carmake has been successfully created: " + carMake.id);
-            toastr.success("Carmake [" + carMake.id + "] - '" + carMake.name + "' has been successfully created.");
+            $log.log('Carmake has been successfully created: ' + carMake.id);
+            toastr.success('Carmake [' + carMake.id + '] - "' + carMake.name + '" has been successfully created.');
             addCarMakeCallback(carMake);
             $scope.close ();
           },
-          function (errorResponse) {
+          function (response) {
             $scope.close ();
-            restService.error("Could not create carmake.", response);
+            restService.error('Could not create carmake.', response);
           }
         );
       });
@@ -533,30 +546,30 @@ angular.module("ngMetaCrudApp")
     };
 
   }])
-  .controller("createCarModelDlgCtrl",["$scope", "$log", "toastr", "$uibModalInstance", "makeId", "carMakes",
-      "addCarModelCallback",
-    function($scope, $log, toastr, $uibModalInstance, makeId, carMakes, addCarModelCallback) {
+  .controller('createCarModelDlgCtrl',['$scope', '$log', 'toastr', '$uibModalInstance', 'makeId', 'carMakes',
+      'addCarModelCallback', 'restService',
+    function($scope, $log, toastr, $uibModalInstance, makeId, carMakes, addCarModelCallback, restService) {
 
     $scope.makeId = makeId;
     $scope.carMakes = carMakes;
 
-    $scope.$on("form:created", function(event, data) {
-      if (data.name === "carmodelForm") {
+    $scope.$on('form:created', function(event, data) {
+      if (data.name === 'carmodelForm') {
         $scope.carmodelForm = data.controller;
       }
     });
 
     $scope.save = function() {
-      $scope.$broadcast("carmodelform:save", function(promise) {
+      $scope.$broadcast('carmodelform:save', function(promise) {
         promise.then(
           function(carModel) {
-            $log.log("Carmodel has been successfully created: " + carModel.id);
-            toastr.success("Car model [" + carModel.id + "] - '" + carModel.name + "' has been successfully created.");
+            $log.log('Carmodel has been successfully created: ' + carModel.id);
+            toastr.success('Car model [' + carModel.id + '] - "' + carModel.name + '" has been successfully created.');
             addCarModelCallback(carModel);
             $scope.close ();
           },
-          function (errorResponse) {
-            restService.error("Could not create car model.", response);
+          function (response) {
+            restService.error('Could not create car model.', response);
           }
         );
       });
@@ -567,29 +580,29 @@ angular.module("ngMetaCrudApp")
     };
 
   }])
-  .controller("createCarEngineDlgCtrl",["$scope", "$log", "toastr", "$uibModalInstance", "carFuelTypes",
-      "addCarEngineCallback",
-    function($scope, $log, toastr, $uibModalInstance, carFuelTypes, addCarEngineCallback) {
+  .controller('createCarEngineDlgCtrl',['$scope', '$log', 'toastr', '$uibModalInstance', 'carFuelTypes',
+      'addCarEngineCallback', 'restService',
+    function($scope, $log, toastr, $uibModalInstance, carFuelTypes, addCarEngineCallback, restService) {
 
     $scope.carFuelTypes = carFuelTypes;
 
-    $scope.$on("form:created", function(event, data) {
-      if (data.name === "carengineForm") {
+    $scope.$on('form:created', function(event, data) {
+      if (data.name === 'carengineForm') {
         $scope.carengineForm = data.controller;
       }
     });
 
     $scope.save = function() {
-      $scope.$broadcast("carengineform:save", function(promise) {
+      $scope.$broadcast('carengineform:save', function(promise) {
         promise.then(
           function(carEngine) {
-            $log.log("Carengine has been successfully created: " + carEngine.id);
-            toastr.success("Car model [" + carEngine.id + "] - '" + carEngine.engineSize + "' has been successfully created.");
+            $log.log('Carengine has been successfully created: ' + carEngine.id);
+            toastr.success('Car model [' + carEngine.id + '] - "' + carEngine.engineSize + '" has been successfully created.');
             addCarEngineCallback(carEngine);
             $scope.close ();
           },
-          function (errorResponse) {
-            restService.error("Could not create car engine.", response);
+          function (response) {
+            restService.error('Could not create car engine.', response);
           }
         );
       });

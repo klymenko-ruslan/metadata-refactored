@@ -1,32 +1,32 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .directive("cengineForm", function() {
+angular.module('ngMetaCrudApp')
+  .directive('cengineForm', function() {
     return {
       scope: {
-        carEngine: "=",
-        carFuelTypes: "="
+        carEngine: '=',
+        carFuelTypes: '='
       },
-      restrict: "E",
+      restrict: 'E',
       replace: false,
-      templateUrl: "/views/application/carengine/form.html",
-      controller: ["restService", "$scope", "$log",
-        function(restService, $scope, $log) {
+      templateUrl: '/views/application/carengine/form.html',
+      controller: ['restService', '$scope',
+        function(restService, $scope) {
 
-          $scope.$on("form:created", function(event, data) {
-            if (data.name === "carengineForm") {
+          $scope.$on('form:created', function(event, data) {
+            if (data.name === 'carengineForm') {
               $scope.carengineForm = data.controller;
             }
           });
 
-          $scope.carfueltypeFilter = "";
+          $scope.carfueltypeFilter = '';
 
           if ($scope.carEngine !== null) { // edit
-            $scope.titleHead = "Edit";
+            $scope.titleHead = 'Edit';
             $scope.carengineId = $scope.carEngine.id;
             $scope.carengine = $scope.carEngine;
           } else { // create
-            $scope.titleHead = "Create";
+            $scope.titleHead = 'Create';
             $scope.carengineId = null;
             $scope.carengine = {};
           }
@@ -39,7 +39,7 @@ angular.module("ngMetaCrudApp")
             var n = carfueltypes.length;
             var fueltypeName = null;
             for (var i = 0; i < n; i++) {
-              if (carfueltypes[i].id == carfueltypeId) {
+              if (carfueltypes[i].id === carfueltypeId) {
                 fueltypeName = carfueltypes[i].name;
               }
             }
@@ -48,7 +48,7 @@ angular.module("ngMetaCrudApp")
 
           $scope._save = function() {
             $scope._merge();
-            if ($scope.carengineId == null) {
+            if ($scope.carengineId === null) {
               // create
               return restService.createCarengine($scope.carengine);
             } else {
@@ -57,7 +57,7 @@ angular.module("ngMetaCrudApp")
             }
           };
 
-          $scope.$on("carengineform:save", function(event, callback) {
+          $scope.$on('carengineform:save', function(event, callback) {
             var promise = $scope._save();
             callback(promise);
           });
@@ -83,7 +83,7 @@ angular.module("ngMetaCrudApp")
                 }
               },
               function failure(response) {
-                restService.error("Could not validate the car engine.", response);
+                restService.error('Could not validate the car engine.', response);
               }
             );
             /*
@@ -103,26 +103,26 @@ angular.module("ngMetaCrudApp")
                   }
                 },
                 function failure(response) {
-                  restService.error("Could not validate application.", response);
+                  restService.error('Could not validate application.', response);
                 }
               );
               */
           };
 
-          $scope.$watch("carengine", function() {
+          $scope.$watch('carengine', function() {
             $scope.validateForm();
           }, true);
 
         }
       ]
-    }
+    };
   })
-  .directive("uniqueCarengineName", ["$log", "$q", "restService", function($log, $q, restService) {
+  .directive('uniqueCarengineName', ['$log', '$q', function($log, $q) {
     // Validator for uniqueness of the carengine name.
     return {
-      require: "ngModel",
+      require: 'ngModel',
       link: function($scope, elm, attr, ctrl) {
-        ctrl.$asyncValidators.nonUniqueName = function(modelValue, viewValue) {
+        ctrl.$asyncValidators.nonUniqueName = function(modelValue/*, viewValue*/) {
           var def = $q.defer();
           if (ctrl.$isEmpty(modelValue)) {
             return $q.when();
@@ -137,7 +137,7 @@ angular.module("ngMetaCrudApp")
               }
             },
             function (errorResponse) {
-              $log.log("Couldn't validate name of the car model: " + viewValue);
+              $log.log('Couldn\'t validate name of the car model: ' + viewValue);
               def.reject();
             }
           );*/

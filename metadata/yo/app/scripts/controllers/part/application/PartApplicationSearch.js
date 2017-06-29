@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .controller("PartApplicationSearchCtrl", ["$scope", "$log", "$location", "$routeParams", "restService", "dialogs",
-    "toastr", "LinkSource", "services",
+angular.module('ngMetaCrudApp')
+  .controller('PartApplicationSearchCtrl', ['$scope', '$log', '$location', '$routeParams', 'restService', 'dialogs',
+    'toastr', 'LinkSource', 'services',
     function($scope, $log, $location, $routeParams, restService, dialogs, toastr, LinkSource, services) {
 
       $scope.partId = $routeParams.id;
@@ -14,13 +14,13 @@ angular.module("ngMetaCrudApp")
         .then(function(part) {
           $scope.part = part;
         }, function(errorResponse) {
-          restService.error("Could not get part details", errorResponse);
+          restService.error('Could not get part details', errorResponse);
         });
       $scope.applications = restService.findPartApplications($scope.partId)
         .then(function(applications) {
           $scope.applications = applications;
         }, function(errorResponse) {
-          restService.error("Could not get part details", errorResponse);
+          restService.error('Could not get part details', errorResponse);
         });
 
       $scope.pickedApplications = [];
@@ -29,15 +29,15 @@ angular.module("ngMetaCrudApp")
         restService.addPartApplications($scope.partId, $scope.pickedApplications, srcIds, ratings, description, attachIds).then(
           function() {
             // Success
-            toastr.success("Application(s) added to part.");
-            $location.path("/part/" + $scope.partId);
+            toastr.success('Application(s) added to part.');
+            $location.path('/part/' + $scope.partId);
           },
           function(response) {
-            dialogs.error("Could not add Applications to part.",
-              "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+            dialogs.error('Could not add Applications to part.',
+              'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
           }
         );
-      };
+      }
 
       $scope.save = function() {
         if ($scope.pickedApplications.length) {
@@ -46,11 +46,11 @@ angular.module("ngMetaCrudApp")
       };
 
       $scope.pickApplication = function(app) {
-        if ($scope.pickedApplications.indexOf(app) == -1) {
+        if ($scope.pickedApplications.indexOf(app) === -1) {
           for (var i = 0; i < $scope.applications.length; i++) {
             var val = $scope.applications[i];
-            if (val.carModelEngineYear.id == app.id) {
-              toastr.info("The item already exists.");
+            if (val.carModelEngineYear.id === app.id) {
+              toastr.info('The item already exists.');
               return;
             }
           }

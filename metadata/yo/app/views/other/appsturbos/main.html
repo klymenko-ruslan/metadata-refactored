@@ -8,10 +8,10 @@
 
 <h2>Associate Turbos and Applications</h2>
 
-<div class="row" data-ng-show="pickedParts.length > 0 || pickedApps.length > 0" style="min-height:15em;">
-  <div class="col-xs-12 col-md-6">
+<div id="pickedParts" class="row" data-ng-show="pickedParts.length > 0 || pickedApps.length > 0" style="min-height:15em;">
+  <div id="pickedTurbos" class="col-xs-12 col-md-6">
     <div>
-      <button type="button" title="Unpick all" class="btn btn-link btn-sm btn-h4" data-ng-click="unpickAllParts()" data-ng-show="pickedParts.length">
+      <button id="unpickAllTurbos" type="button" title="Unpick all" class="btn btn-link btn-sm btn-h4" data-ng-click="unpickAllParts()" data-ng-show="pickedParts.length">
         <i class="fa fa-times"></i>
       </button>
       <h4 class="text-nowrap pull-left">Picked Turbos</h4>
@@ -33,9 +33,9 @@
     </tr>
     </table>
   </div>
-  <div class="col-xs-12 col-md-6">
+  <div id="pickedApps" class="col-xs-12 col-md-6">
     <div>
-      <button type="button" title="Unpick all" class="btn btn-link btn-sm btn-h4" data-ng-click="unpickAllApps()" data-ng-show="pickedApps.length">
+      <button id="unpickAllApps" type="button" title="Unpick all" class="btn btn-link btn-sm btn-h4" data-ng-click="unpickAllApps()" data-ng-show="pickedApps.length">
         <i class="fa fa-times"></i>
       </button>
       <h4 class="text-nowrap pull-left">Picked Applications</h4>
@@ -82,7 +82,7 @@
     </ul>
 
     <div class="tab-content">
-      <div id="parts" role="tabpanel" class="tab-pane fade tab-part-detail">
+      <div id="parts" role="tabpanel" class="tab-pane tab-part-detail">
         <div class="row">
           <div class="col-xs-12">
             <part-search>
@@ -96,7 +96,7 @@
           </div>
         </div>
       </div>
-      <div id="apps" role="tabpanel" class="tab-pane fade tab-part-detail">
+      <div id="apps" role="tabpanel" class="tab-pane tab-part-detail">
         <div class="row">
           <div class="col-xs-12">
             <cmey-search>

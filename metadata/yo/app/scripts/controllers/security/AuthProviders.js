@@ -1,25 +1,27 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log", "restService", "dialogs", "toastr",
-  "NgTableParams", "Restangular",
-  function($scope, $log, restService, dialogs, toasrt, NgTableParams, Restangular) {
+angular.module('ngMetaCrudApp').controller('AuthProvidersCtrl', ['$scope', '$log', 'restService', 'dialogs', 'toastr',
+  'NgTableParams', 'Restangular',
+  function($scope, $log, restService, dialogs, toastr, NgTableParams, Restangular) {
 
     $scope.modifyingRow = null;
     $scope.refRow = null;
 
     // Authentication Providers Table
     $scope.authProvidersTableParams = new NgTableParams({
-      "page": 1,
-      "count": 10,
-      "sorting": {
-        "id": "asc"
+      'page': 1,
+      'count': 10,
+      'sorting': {
+        'id': 'asc'
       }
     }, {
-      "getData": function(params) {
+      'getData': function(params) {
         // Update the pagination info
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
-        for (var sortProperty in params.sorting()) break;
+        for (var sortProperty in params.sorting()) {
+            break;
+        }
         var sortOrder;
         if (sortProperty) {
           sortOrder = params.sorting()[sortProperty];
@@ -30,8 +32,8 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
             $scope.modifyingRow = null;
             return authProviders;
           },
-          function(errorResponse) {
-            $log.log("Couldn't load all authentication providers.");
+          function(/*errorResponse*/) {
+            $log.log('Couldn\'t load all authentication providers.');
           }
         );
       }
@@ -43,7 +45,7 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
     };
 
     $scope.isModifying = function(id) {
-      return angular.isObject($scope.modifyingRow) && (angular.isUndefined(id) || $scope.modifyingRow.id == id);
+      return angular.isObject($scope.modifyingRow) && (angular.isUndefined(id) || $scope.modifyingRow.id === id);
     };
 
     $scope.modifyStart = function(row, form) {
@@ -76,25 +78,27 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
           $scope.modifyingRow = null;
           $scope.refRow = null;
           $scope._resetForm(form);
-          toastr.success("The LDAP authenticationa provider '" + name + "' has been successfully updated.");
+          toastr.success('The LDAP authenticationa provider "' + name +
+              '" has been successfully updated.');
         },
         function failure(errorResponse) {
-          restService.error("Update of the LDAP authentication povider (id:" + $scope.modifyingRow.id + ") '"
-            + $scope.modifyingRow.name + "' failed.", errorResponse);
+          restService.error('Update of the LDAP authentication povider (id:' +
+              $scope.modifyingRow.id + ') "' +
+              $scope.modifyingRow.name + '" failed.', errorResponse);
         }
       );
     };
 
     $scope.remove = function(rec) {
-      dialogs.confirm("Delete authentication provider [" + rec.id + "] '" + rec.name + "'.", "Are you sure?").result.then(
+      dialogs.confirm('Delete authentication provider [' + rec.id + '] "' + rec.name + '".', 'Are you sure?').result.then(
         function() {
           restService.removeAuthenticationProvider(rec.id).then(
             function() {
               $scope.authProvidersTableParams.reload();
-              toastr.success("Authentication provider [" + rec.id + "] '" + name + "' has been successfully removed.");
+              toastr.success('Authentication provider [' + rec.id + '] "' + name + '" has been successfully removed.');
             },
             function errorResponse(response) {
-              restService.error("Removal of the authentication provider [" + rec.id + "] '" + name + "' failed.", response);
+              restService.error('Removal of the authentication provider [' + rec.id + '] "' + name + '" failed.', response);
             }
           );
         }
@@ -102,8 +106,8 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
     };
 
   }
-]).controller("AuthProviderFormCtrl", ["$scope", "$log", "$location", "toastr",
-  "restService",
+]).controller('AuthProviderFormCtrl', ['$scope', '$log', '$location', 'toastr',
+  'restService',
   function($scope, $log, $location, toastr, restService) {
 
     $scope.authp = {
@@ -111,32 +115,32 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
       host: null,
       port: 389,
       domain: null,
-      typ: "LDAP",
-      protocol: "LDAP"
+      typ: 'LDAP',
+      protocol: 'LDAP'
     };
 
     $scope.save = function() {
       restService.createAuthProviderLDAP($scope.authp).then(
-        function(id) {
-          toastr.success("Authentication provider '" + $scope.authp.name + "' has been successfully created.");
-          $location.path("/security/auth_providers");
+        function(/*id*/) {
+          toastr.success('Authentication provider "' + $scope.authp.name + '" has been successfully created.');
+          $location.path('/security/auth_providers');
         },
         function(errorResponse) {
-          restService.error("Could not create authentication provider.", errorResponse);
+          restService.error('Could not create authentication provider.', errorResponse);
         }
       );
     };
 
     $scope.back = function() {
-      $location.path("/security/auth_providers");
+      $location.path('/security/auth_providers');
     };
 
   }
-]).directive("hostName", ["$log", "VALID_IP_ADDRESS_REGEX", "VALID_HOSTNAME_REGEX",
+]).directive('hostName', ['$log', 'VALID_IP_ADDRESS_REGEX', 'VALID_HOSTNAME_REGEX',
   function($log, VALID_IP_ADDRESS_REGEX, VALID_HOSTNAME_REGEX) {
   // Validator of a hostname (or IP).
   return {
-    require: "ngModel",
+    require: 'ngModel',
     link: function($scope, elm, attr, ctrl) {
       ctrl.$validators.hostName = function(modelValue, viewValue) {
         if (ctrl.$isEmpty(modelValue)) {
@@ -148,10 +152,10 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
       };
     }
   };
-}]).directive("domainName", ["$log", "VALID_HOSTNAME_REGEX", function($log, VALID_HOSTNAME_REGEX) {
+}]).directive('domainName', ['$log', 'VALID_HOSTNAME_REGEX', function($log, VALID_HOSTNAME_REGEX) {
   // Validator of a hostname (or IP).
   return {
-    require: "ngModel",
+    require: 'ngModel',
     link: function($scope, elm, attr, ctrl) {
       ctrl.$validators.domainName = function(modelValue, viewValue) {
         if (ctrl.$isEmpty(modelValue)) {
@@ -163,10 +167,10 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
       };
     }
   };
-}]).directive("uniqueAuthLdapName", ["$log", "$q", "restService", function($log, $q, restService) {
+}]).directive('uniqueAuthLdapName', ['$log', '$q', 'restService', function($log, $q, restService) {
   // Validator for uniqueness of a LDAP provider.
   return {
-    require: "ngModel",
+    require: 'ngModel',
     link: function($scope, elm, attr, ctrl) {
       ctrl.$asyncValidators.uniqueAuthLdapName = function(modelValue, viewValue) {
         if (ctrl.$isEmpty(modelValue) /*|| modelValue ===  viewValue*/) {
@@ -178,16 +182,17 @@ angular.module("ngMetaCrudApp").controller("AuthProvidersCtrl", ["$scope", "$log
             if (authProvider === undefined) {
               def.resolve();
             } else {
-              var id = $scope.$eval("modifyingRow.id");
-              if (authProvider.id == id) {
+              var id = $scope.$eval('modifyingRow.id');
+              if (authProvider.id === id) {
                 def.resolve();
               } else {
                 def.reject();
               }
             }
           },
-          function failure(errorResponse) {
-            $log.log("Couldn't validate name of the LDAP authentication provider: " + viewValue);
+          function failure(/*errorResponse*/) {
+            $log.log('Couldn\'t validate name of the LDAP ' +
+                'authentication provider: ' + viewValue);
             def.reject();
           }
         );

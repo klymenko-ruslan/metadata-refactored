@@ -1,25 +1,25 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .directive("partSearch", ["$log", "restService", function($log, restService) {
+angular.module('ngMetaCrudApp')
+  .directive('partSearch', ['$log', 'restService', function($log, restService) {
     return {
-      restrict: "E",
+      restrict: 'E',
       replace: true,
-      templateUrl: "/views/component/PartSearch.html",
+      templateUrl: '/views/component/PartSearch.html',
       transclude: true,
       link: function(scope, element, attrs) {
         scope.defManufacturerName = scope.$eval(attrs.searchManufacturerName);
         var partTypeId = scope.$eval(attrs.searchPartTypeId);
-        var pt = _.find(scope.partTypes, function(pt) { return pt.id == partTypeId; });
+        var pt = _.find(scope.partTypes, function(pt) { return pt.id === partTypeId; });
         if (angular.isObject(pt)) {
           scope.fltrPart.partType = pt;
         }
       },
-      controller: ["$transclude", "$parse", "$sce", "$log", "$q", "$location",
-                   "$scope", "NgTableParams", "utils",
+      controller: ['$transclude', '$parse', '$sce', '$log', '$q', '$location',
+                   '$scope', 'NgTableParams', 'utils',
         function($transclude, $parse, $sce, $log, $q, $location, $scope, NgTableParams, utils) {
 
-        $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, "id");
+        $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, 'id');
 
         // Filter
         $scope.fltrPart = {
@@ -60,33 +60,33 @@ angular.module("ngMetaCrudApp")
 
         $scope.fixedCols = [
           {
-            title: "Part Type",
-            getter: $parse("_source.partType.name"),
-            sortable: "partType.name.lower_case_sort"
+            title: 'Part Type',
+            getter: $parse('_source.partType.name'),
+            sortable: 'partType.name.lower_case_sort'
           },
           {
-            title: "Manufacturer",
-            getter: $parse("_source.manufacturer.name"),
-            sortable: "manufacturer.name.lower_case_sort"
+            title: 'Manufacturer',
+            getter: $parse('_source.manufacturer.name'),
+            sortable: 'manufacturer.name.lower_case_sort'
           },
           {
-            title: "Mfr Part #",
-            cssClass: ["text-nowrap"],
-            getter: $parse("_source.manufacturerPartNumber"),
-            sortable: "manufacturerPartNumber.lower_case_sort"
+            title: 'Mfr Part #',
+            cssClass: ['text-nowrap'],
+            getter: $parse('_source.manufacturerPartNumber'),
+            sortable: 'manufacturerPartNumber.lower_case_sort'
           },
           {
-            title: "Name",
-            getter: $parse("_source.name"),
-            sortable: "name.lower_case_sort"
+            title: 'Name',
+            getter: $parse('_source.name'),
+            sortable: 'name.lower_case_sort'
           }
         ];
 
         $scope.actionsCol = [
           {
-            title: "Action",
-            cssClass: ["actions", "text-center"],
-            getter: function(part) {
+            title: 'Action',
+            cssClass: ['actions', 'text-center'],
+            getter: function(/*part*/) {
               return $scope.actions;
             }
           }
@@ -97,7 +97,8 @@ angular.module("ngMetaCrudApp")
         };
 
         $scope.isCritDimsForCurrentPartTypeAvailable = function() {
-          return angular.isObject($scope.fltrPart.partType) && $scope.critDims != null && $scope.critDims.length;
+          return angular.isObject($scope.fltrPart.partType) &&
+                angular.isObject($scope.critDims) && $scope.critDims.length;
         };
 
         $scope.initColumns = function() {
@@ -107,11 +108,11 @@ angular.module("ngMetaCrudApp")
               _.each($scope.critDims, function (d) {
                 var gttr = null;
                 var srtbl = null;
-                if (d.dataType == "ENUMERATION") {
-                  gttr = $parse("_source." + d.idxName + "Label");
-                  srtbl = d.idxName + "Label.lower_case_sort";
+                if (d.dataType === 'ENUMERATION') {
+                  gttr = $parse('_source.' + d.idxName + 'Label');
+                  srtbl = d.idxName + 'Label.lower_case_sort';
                 } else {
-                  gttr = $parse("_source." + d.idxName);
+                  gttr = $parse('_source.' + d.idxName);
                   srtbl = d.idxName;
                 }
                 var col = {
@@ -130,7 +131,7 @@ angular.module("ngMetaCrudApp")
 
         $scope.initColumns();
 
-        $scope.$watch("[showCriticalDimensions]", function(newVal, oldVal) {
+        $scope.$watch('[showCriticalDimensions]', function(/*newVal, oldVal*/) {
           $scope.initColumns();
         });
 
@@ -243,7 +244,9 @@ angular.module("ngMetaCrudApp")
             var offset = params.count() * (params.page() - 1);
             var limit = params.count();
             var sortProperty, sortOrder;
-            for (sortProperty in params.sorting()) break;
+            for (sortProperty in params.sorting()) {
+                break;
+            }
             if (sortProperty) {
               sortOrder = params.sorting()[sortProperty];
             }
@@ -264,18 +267,18 @@ angular.module("ngMetaCrudApp")
               $scope.fltrPart.critDims, sortProperty, sortOrder, offset, limit).then(
               function(filtered) { // The 'filtered' is a JSON returned by ElasticSearch.
                 $scope.searchResults = filtered;
-                // Update values for UI combobox -- "State".
+                // Update values for UI combobox -- 'State'.
                 $scope.stateItems = [];
                 _.each(filtered.aggregations.State.buckets, function(b) {
                   if (b.key === 0) {
                     $scope.stateItems.push({
-                      name: "Active",
+                      name: 'Active',
                       val: false,
                       count: b.doc_count
                     });
-                  } else if (b.key == 1) {
+                  } else if (b.key === 1) {
                     $scope.stateItems.push({
-                      name: "Inactive",
+                      name: 'Inactive',
                       val: true,
                       count: b.doc_count
                     });
@@ -283,8 +286,8 @@ angular.module("ngMetaCrudApp")
                 });
 
                 if ($scope.defManufacturerName) {
-                  var manufacturerBucket = _.find($scope.searchResults.aggregations["Manufacturer"].buckets,
-                    function(r) { return r.key == $scope.defManufacturerName; }
+                  var manufacturerBucket = _.find($scope.searchResults.aggregations.Manufacturer.buckets,
+                    function(r) { return r.key === $scope.defManufacturerName; }
                   );
                   if (angular.isObject(manufacturerBucket)) {
                     $scope.fltrPart.manufacturer = manufacturerBucket.key;
@@ -297,7 +300,7 @@ angular.module("ngMetaCrudApp")
                 return $scope.searchResults.hits.hits;
               },
               function(errorResponse) {
-                $log.log("Parts search failed: " + errorResponse);
+                $log.log('Parts search failed: ' + errorResponse);
               }
             );
           }
@@ -324,15 +327,15 @@ angular.module("ngMetaCrudApp")
           $scope.fltrGroupState.appAttrsOpened = false;
           $scope.fltrGroupState.critDimsOpened = false;
 
-          $scope.$broadcast("angucomplete-alt:clearInput", "fltrTurboModel");
-          $scope.$broadcast("angucomplete-alt:clearInput", "fltrTurboType");
+          $scope.$broadcast('angucomplete-alt:clearInput', 'fltrTurboModel');
+          $scope.$broadcast('angucomplete-alt:clearInput', 'fltrTurboType');
 
         };
 
         $scope.clearFilter();
 
-        $scope.$watch("[fltrPart.partNumber, fltrPart.inactive, fltrPart.manufacturer, " +
-          "fltrPart.name, fltrPart.critDims]", function(newVal, oldVal)
+        $scope.$watch('[fltrPart.partNumber, fltrPart.inactive, fltrPart.manufacturer, ' +
+          'fltrPart.name, fltrPart.critDims]', function(newVal, oldVal)
         {
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
@@ -344,7 +347,7 @@ angular.module("ngMetaCrudApp")
         // Watch a change of $scope.fltrPart.partType
         // and initialize $scope.critDims by critical dimensions which are
         // corresponding the part type.
-        $scope.$watch("[fltrPart.partType]", function(newVal, oldVal) {
+        $scope.$watch('[fltrPart.partType]', function(newVal, oldVal) {
 
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
@@ -383,8 +386,8 @@ angular.module("ngMetaCrudApp")
           if ($scope.searchResults.hits.total === 1) {
             var rec = $scope.searchResults.hits.hits[0]._source;
             var partId = rec.id;
-            $location.path("/part/" + partId);
-          };
+            $location.path('/part/' + partId);
+          }
         };
 
       }]

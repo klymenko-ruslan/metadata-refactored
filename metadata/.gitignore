@@ -10,3 +10,5 @@ bower_components
 .factorypath
 *.iml
 **/Session.vim
+**/.var
+/run-dev.sh

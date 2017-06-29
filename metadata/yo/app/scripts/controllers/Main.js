@@ -1,16 +1,16 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .controller("MainCtrl", ["$scope", "$log", "$location", "User",
+angular.module('ngMetaCrudApp')
+  .controller('MainCtrl', ['$scope', '$log', '$location', 'User',
     function($scope, $log, $location, User) {
       //Initialize the user
       User.init().then(
         function() {
-          $log.log("User initialized.");
+          $log.log('User initialized.');
         },
         function() {
-          $log.log("User init failed.");
-          $location.path("/");
+          $log.log('User init failed.');
+          $location.path('/');
         }
       );
 

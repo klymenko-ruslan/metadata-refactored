@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
+angular.module('ngMetaCrudApp')
 
-.controller("AddTurboTypeDialogCtrl", ["$scope", "$uibModalInstance", "$log", "$location", "data", "toastr", "restService", function ($scope, $uibModalInstance, $log, $location, data, toastr, restService) {
+.controller('AddTurboTypeDialogCtrl', ['$scope', '$uibModalInstance', '$log', '$location', 'data', 'toastr', 'restService', function ($scope, $uibModalInstance, $log, $location, data, toastr, restService) {
 
   var partId = data.partId;
   $scope.filter = "";
@@ -15,26 +15,26 @@ angular.module("ngMetaCrudApp")
     turboType.manufacturer = $scope.selection.manufacturer;
     restService.addTurboTypeToPart(partId, turboType.id).then(
       function() {
-        toastr.success("Turbo type added.");
+        toastr.success('Turbo type added.');
         $uibModalInstance.close(turboType);
       },
       function(response) {
-        restService.error("Could not add turbo type.", response);
+        restService.error('Could not add turbo type.', response);
       });
-  }
+  };
 
   $scope.cancel = function () {
-    $uibModalInstance.dismiss("cancel");
-  }
+    $uibModalInstance.dismiss('cancel');
+  };
 
-  $scope.$watch("selection.manufacturer.id", function(manufacturerId) {
+  $scope.$watch('selection.manufacturer.id', function(manufacturerId) {
     if (manufacturerId) {
       restService.listTurboTypesForManufacturerId(manufacturerId).then(
         function (turboTypes) {
           $scope.turboTypes = turboTypes;
         },
         function (response) {
-          restService.error("Could not get turbo types for manufacturer.", response);
+          restService.error('Could not get turbo types for manufacturer.', response);
         });
     } else {
       $scope.turboTypes = [];

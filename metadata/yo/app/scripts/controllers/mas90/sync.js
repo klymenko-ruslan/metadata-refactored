@@ -1,11 +1,11 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interval", "$log", "NgTableParams",
-    "$uibModal" ,"restService", "status",
+angular.module('ngMetaCrudApp').controller('Mas90SyncCtrl', ['$scope', '$interval', '$log', 'NgTableParams',
+    '$uibModal', 'restService', 'status',
   function($scope, $interval, $log, NgTableParams, $uibModal, restService, status) {
 
-    $scope.errors = "";
-    $scope.modifications = "";
+    $scope.errors = '';
+    $scope.modifications = '';
 
     /*
      * Phases:
@@ -27,19 +27,19 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
         $scope.partsUpdateSkipped = newStatus.partsUpdateSkipped;
         if (angular.isObject(newStatus.errors)) {
           angular.forEach(newStatus.errors, function(s) {
-            $scope.errors += ("\u2022 " + s + "\n");
+            $scope.errors += ('\u2022 ' + s + '\n');
           });
         }
         if (angular.isObject(newStatus.modifications)) {
           angular.forEach(newStatus.modifications, function(s) {
-            $scope.modifications += ("\u2022 " + s + "\n");
+            $scope.modifications += ('\u2022 ' + s + '\n');
           });
         }
-        if ($scope.phase == null) {
+        if ($scope.phase === null) {
           $scope.phase = newStatus.finished ? 0 : 1;
-        } else if ($scope.phase == 0 && $scope.finished && !newStatus.finished) {
+        } else if ($scope.phase === 0 && $scope.finished && !newStatus.finished) {
           $scope.phase = 1;
-        } else if ($scope.phase == 1 && !$scope.finished && newStatus.finished) {
+        } else if ($scope.phase === 1 && !$scope.finished && newStatus.finished) {
           $scope.phase = 2;
           $scope.mas90syncHistoryTableParams.reload();
         }
@@ -60,7 +60,7 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
             return result.recs;
           },
           function failure(error) {
-            restService.error("Can't load history of synchronization.", error);
+            restService.error('Can\'t load history of synchronization.', error);
           }
         );
       }
@@ -68,7 +68,7 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
 
     $scope.getProgressBarType = function() {
       return $scope.finished && $scope.errors.length && $scope.partsUpdateCurrentStep > 0 &&
-        $scope.partsUpdateCurrentStep < $scope.partsUpdateTotalSteps ? "danger" : "info";
+        $scope.partsUpdateCurrentStep < $scope.partsUpdateTotalSteps ? 'danger' : 'info';
     };
 
     $scope.onCloseStatus = function () {
@@ -77,19 +77,19 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
 
     $scope.startSync = function() {
       $scope.phase = 0;
-      $scope.errors = "";
+      $scope.errors = '';
       $scope.modifications = "";
       restService.startMas90Sync().then(
         function success(newStatus) {
           $scope._updateStatus(newStatus);
         },
         function failure(error) {
-          restService.error("Starting of the synchronization process failed.", error);
+          restService.error('Starting of the synchronization process failed.', error);
         }
       );
     };
 
-    $scope.$on("$destroy", function () {
+    $scope.$on('$destroy', function () {
       $interval.cancel(refreshTask);
     });
 
@@ -100,19 +100,19 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
           $scope._updateStatus(newStatus2);
         },
         function failure(error) {
-          $log.log("Update of the sync.status failed: " + angular.toJson(error));
+          $log.log('Update of the sync.status failed: ' + angular.toJson(error));
         }
       );
     }, 1000);
 
     $scope.onView = function(id) {
       $uibModal.open({
-        templateUrl: "/views/mas90/sync/ViewResultDlg.html",
+        templateUrl: '/views/mas90/sync/ViewResultDlg.html',
         animation: false,
-        size: "lg",
-        controller: "Mas90ViewResultDlgCtrl",
+        size: 'lg',
+        controller: 'Mas90ViewResultDlgCtrl',
         resolve: {
-          result: ["restService", function(restService) {
+          result: ['restService', function(restService) {
             return restService.mas90SyncResult(id);
           }]
         }
@@ -120,25 +120,29 @@ angular.module("ngMetaCrudApp").controller("Mas90SyncCtrl", ["$scope", "$interva
     };
 
   }
-]).controller("Mas90ViewResultDlgCtrl", ["$scope", "$log", "$uibModalInstance", "result",
+]).controller('Mas90ViewResultDlgCtrl', ['$scope', '$log', '$uibModalInstance', 'result',
   function($scope, $log, $uibModalInstance, result) {
 
     $scope.result = result;
     $scope.logtext = {};
 
     if (result.successes.length > 0 ) {
-      var s = "";
-      _.each(result.successes, function(e) { s += (e.log + "\n")});
-      if (s !== "") {
-        $scope.logtext.successes = s;
+      var s0 = '';
+      _.each(result.successes, function(e) {
+          s0 += (e.log + '\n');
+      });
+      if (s0 !== '') {
+        $scope.logtext.successes = s0;
       }
     }
 
     if (result.failures.length > 0) {
-      var s = "";
-      _.each(result.failures, function(e) { s += (e.log + "\n")});
-       if (s !== "") {
-        $scope.logtext.failures = s;
+      var s1 = '';
+      _.each(result.failures, function(e) {
+          s1 += (e.log + '\n');
+      });
+       if (s1 !== '') {
+        $scope.logtext.failures = s1;
       }
     }
 

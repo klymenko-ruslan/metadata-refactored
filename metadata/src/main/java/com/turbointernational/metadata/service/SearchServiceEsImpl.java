@@ -124,6 +124,8 @@ public class SearchServiceEsImpl implements SearchService {
     @Value("${elasticsearch.type.part}")
     private String elasticSearchTypePart = "part";
 
+    private int DEF_FETCH_SIZE = 250;
+
     @Autowired
     private PartDao partDao;
 
@@ -611,7 +613,7 @@ public class SearchServiceEsImpl implements SearchService {
             retVal = getIndexingStatus();
         }
         Thread job = new IndexingJob(indexParts, indexApplications, indexSalesNotes, indexChangelogSources,
-                recreateIndex, 250);
+                recreateIndex, DEF_FETCH_SIZE);
         job.start();
         return retVal;
     }
@@ -1254,6 +1256,31 @@ public class SearchServiceEsImpl implements SearchService {
         return srb.execute().actionGet(timeout).toString();
     }
 
+    @Override
+    public void indexAll() throws Exception {
+        log.info("All documents are being indexed.");
+        createIndex();
+        ScrollableResults scrollableParts = partDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
+        indexAllDocs(scrollableParts, DEF_FETCH_SIZE, elasticSearchTypePart, null);
+        ScrollableResults scrollableCarModelEngineYears = carModelEngineYearDao.getScrollableResults(DEF_FETCH_SIZE,
+                true, "id");
+        indexAllDocs(scrollableCarModelEngineYears, DEF_FETCH_SIZE, elasticSearchTypeCarModelEngineYear, null);
+        ScrollableResults scrollableCarEngines = carEngineDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
+        indexAllDocs(scrollableCarEngines, DEF_FETCH_SIZE, elasticSearchTypeCarEngine, null);
+        ScrollableResults scrollableCarFuelTypes = carFuelTypeDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
+        indexAllDocs(scrollableCarFuelTypes, DEF_FETCH_SIZE, elasticSearchTypeCarFuelType, null);
+        ScrollableResults scrollableCarMakes = carMakeDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
+        indexAllDocs(scrollableCarMakes, DEF_FETCH_SIZE, elasticSearchTypeCarMake, null);
+        ScrollableResults scrollableCarModels = carModelDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
+        indexAllDocs(scrollableCarModels, DEF_FETCH_SIZE, elasticSearchTypeCarModel, null);
+        ScrollableResults scrollableSalesNotes = salesNotePartDao.getScrollableResults(DEF_FETCH_SIZE, true,
+                "pk.salesNote.id");
+        indexAllDocs(scrollableSalesNotes, DEF_FETCH_SIZE, elasticSearchTypeSalesNotePart, null);
+        ScrollableResults scrollableChangelogSources = sourceDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
+        indexAllDocs(scrollableChangelogSources, DEF_FETCH_SIZE, elasticSearchTypeSource, null);
+        log.info("The indexing has been finished.");
+    }
+
     private void deleteDoc(String elasticSearchType, String searchId) throws Exception {
         DeleteRequest delete = new DeleteRequest(elasticSearchIndex, elasticSearchType, searchId);
         elasticSearch.delete(delete).actionGet(timeout);
@@ -1291,10 +1318,10 @@ public class SearchServiceEsImpl implements SearchService {
         TransactionTemplate tt = new TransactionTemplate(txManager);
         tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
         tt.execute((TransactionCallback<Void>) ts -> {
+            String searchId = null;
             try {
                 BulkRequest bulk = null;
                 while (true) {
-                    String searchId;
                     IndexRequest index;
                     String asJson;
                     // The synchronization below is needed because scrollable
@@ -1330,7 +1357,7 @@ public class SearchServiceEsImpl implements SearchService {
                     batchIndex(bulk, elasticSearchType, observer);
                 }
             } catch (Exception e) {
-                log.error("Reindexing of '" + elasticSearchType + "' failed.", e);
+                log.error("Reindexing of '" + elasticSearchType + "' failed. Search ID: {}", searchId, e);
                 throw e;
             } finally {
                 scrollableResults.close();

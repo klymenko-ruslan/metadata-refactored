@@ -1,27 +1,27 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .directive("cmodelForm", function() {
+angular.module('ngMetaCrudApp')
+  .directive('cmodelForm', function() {
     return {
       scope: {
-        carMakeId: "=",
-        carModel: "=",
-        carMakes: "="
+        carMakeId: '=',
+        carModel: '=',
+        carMakes: '='
       },
-      restrict: "E",
+      restrict: 'E',
       replace: false,
-      templateUrl: "/views/application/carmodel/form.html",
-      controller: ["restService", "$scope", "$location", "$log",
-        function(restService, $scope, $location, $log) {
+      templateUrl: '/views/application/carmodel/form.html',
+      controller: ['restService', '$scope',
+        function(restService, $scope) {
 
-          $scope.carmakeFilter = "";
+          $scope.carmakeFilter = '';
 
           if ($scope.carModel === null) { // edit
-            $scope.titleHead = "Create";
+            $scope.titleHead = 'Create';
             $scope.carmodelId = null;
             $scope.carmodel = {};
           } else { // create
-            $scope.titleHead = "Edit";
+            $scope.titleHead = 'Edit';
             $scope.carmodel = $scope.carModel;
             $scope.carmodelId = $scope.carModel.id;
           }
@@ -29,7 +29,7 @@ angular.module("ngMetaCrudApp")
           $scope.carmakes = $scope.carMakes;
 
           if ($scope.carMakeId !== null && $scope.carMakeId !== undefined && $scope.carMakes) {
-            var pos = _.findIndex($scope.carMakes, function(a){return a.id == $scope.carMakeId;});
+            var pos = _.findIndex($scope.carMakes, function(a){return a.id === $scope.carMakeId;});
             if (pos > 0) {
               $scope.carmodel.make = $scope.carMakes[pos];
             }
@@ -41,7 +41,7 @@ angular.module("ngMetaCrudApp")
             var n = carmakes.length;
             var makeName = null;
             for (var i = 0; i < n; i++) {
-              if (carmakes[i].id == carmakeId) {
+              if (carmakes[i].id === carmakeId) {
                 makeName = carmakes[i].name;
               }
             }
@@ -50,7 +50,7 @@ angular.module("ngMetaCrudApp")
 
           $scope._save = function() {
             $scope._merge();
-            if ($scope.carmodelId == null) {
+            if ($scope.carmodelId === null) {
               // create
               return restService.createCarmodel($scope.carmodel);
             } else {
@@ -59,41 +59,40 @@ angular.module("ngMetaCrudApp")
             }
           };
 
-          $scope.$on("carmodelform:save", function(event, callback) {
+          $scope.$on('carmodelform:save', function(event, callback) {
             var promise = $scope._save();
             callback(promise);
           });
 
         }
       ]
-    }
+    };
   })
-  .directive("uniqueCarmodelRec", ["$log", "$q", "restService", function($log, $q, restService) {
+  .directive('uniqueCarmodelName', ['$log', '$q', 'restService', function($log, $q, restService) {
     // Validator for uniqueness of the carmodel name.
     return {
-      require: "ngModel",
+      require: 'ngModel',
       link: function($scope, elm, attr, ctrl) {
         ctrl.$asyncValidators.nonUniqueName = function(modelValue, viewValue) {
           var def = $q.defer();
           if (ctrl.$isEmpty(modelValue)) {
             return $q.when();
           }
-          def.resolve();
-          /*restService.findCarmodelByName(viewValue).then(
+          restService.existsCarmodel(viewValue, $scope.carmodel.make.id).then(
             function(foundCarmodel) {
-              if (foundCarmodel === undefined) {
+              if (!foundCarmodel) {
                 def.resolve();
               } else {
                 def.reject();
               }
             },
-            function (errorResponse) {
-              $log.log("Couldn't validate name of the car model: " + viewValue);
+            function (/*errorResponse*/) {
+              $log.log('Couldn\'t validate name of the car model: ' + viewValue);
               def.reject();
             }
-          );*/
+          );
           return def.promise;
         };
       }
-    }
+    };
   }]);

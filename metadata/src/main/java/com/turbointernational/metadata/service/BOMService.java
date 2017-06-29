@@ -14,7 +14,9 @@ import static java.util.Collections.binarySearch;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -89,6 +92,9 @@ public class BOMService {
 
     @Autowired
     private SearchService searchService;
+
+    @Autowired
+    private PartChangeService partChangeService;
 
     private final IndexingStatus indexingStatus = new IndexingStatus();
 
@@ -1060,10 +1066,11 @@ public class BOMService {
     @Transactional(noRollbackFor = { FoundBomRecursionException.class, AssertionError.class })
     public CreateBOMsResponse createBOMs(HttpServletRequest httpRequest, CreateBOMsRequest request) throws Exception {
         Long parentPartId = request.getParentPartId();
+        Part parent = partDao.findOne(parentPartId);
         List<Failure> failures = new ArrayList<>();
+        Collection<Long> relatedPartIds = new ArrayList<Long>(request.getRows().size());
         for (Row row : request.getRows()) {
             // Create a new BOM item
-            Part parent = partDao.findOne(parentPartId);
             Part child = partDao.findOne(row.getChildPartId());
             Long childId = child.getId();
             if (child.getManufacturer().getId() != parent.getManufacturer().getId()) {
@@ -1072,6 +1079,7 @@ public class BOMService {
             try {
                 _create(httpRequest, parentPartId, childId, row.getQuantity(), request.getSourcesIds(),
                         request.getChlogSrcRatings(), request.getChlogSrcLnkDescription(), request.getAttachIds());
+                relatedPartIds.add(childId);
             } catch (FoundBomRecursionException e) {
                 log.debug("Adding of the part [" + childId + "] to list of BOM for part [" + parentPartId + "] failed.",
                         e);
@@ -1086,6 +1094,7 @@ public class BOMService {
         }
         rebuildBomDescendancyForPart(parentPartId, true); // TODO: is clean=true required?
         List<BOMItem> boms = getByParentId(parentPartId);
+        partChangeService.addedBoms(parentPartId, relatedPartIds);
         return new CreateBOMsResponse(failures, boms);
     }
 
@@ -1113,6 +1122,7 @@ public class BOMService {
         Long primaryPartManufacturerId = primaryPart.getManufacturer().getId();
         List<BOMService.AddToParentBOMsRequest.Row> rows = request.getRows();
         List<AddToParentBOMsResponse.Failure> failures = new ArrayList<>(10);
+        List<Part> affectedParts = new ArrayList<>(10);
         for (AddToParentBOMsRequest.Row r : rows) {
             Long pickedPartId = r.getPartId();
             Part pickedPart = partDao.findOne(pickedPartId);
@@ -1146,6 +1156,7 @@ public class BOMService {
                 _create(httpRequest, pickedPartId, primaryPartId, r.getQuantity(), request.getSourcesIds(),
                         request.getChlogSrcRatings(), request.getChlogSrcLnkDescription(), request.getAttachIds());
                 added++;
+                affectedParts.add(pickedPart);
             } catch (FoundBomRecursionException e) {
                 log.debug("Adding of the part [" + primaryPartId + "] to list of BOM for part [" + pickedPartId
                         + "] failed.", e);
@@ -1160,39 +1171,45 @@ public class BOMService {
         }
         List<BOMItem> parents = getParentsForBom(primaryPartId);
         rebuildBomDescendancyForPart(primaryPartId, true);
+        List<Long> affectedPartIds = affectedParts.stream().map(p -> p.getId()).collect(Collectors.toList());
+        // In the call below primaryPartId is actually childPartId from point of view partChangeService.
+        partChangeService.addedToParentBoms(primaryPartId, affectedPartIds);
         return new BOMService.AddToParentBOMsResponse(added, failures, parents);
     }
 
     @Transactional
-    public void update(Long id, Integer quantity) {
+    public void update(Long id, Integer quantity) throws IOException {
         // Get the item
         BOMItem item = bomItemDao.findOne(id);
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(2);
-        relatedParts.add(new RelatedPart(item.getParent().getId(), BOM_PARENT));
+        Part parent = item.getParent();
+        relatedParts.add(new RelatedPart(parent.getId(), BOM_PARENT));
         relatedParts.add(new RelatedPart(item.getChild().getId(), BOM_CHILD));
         changelogService.log(BOM, "Changed BOM " + formatBOMItem(item) + " quantity to " + quantity, item.toJson(),
                 relatedParts);
         // Update
         item.setQuantity(quantity);
         bomItemDao.merge(item);
+        partChangeService.updatedBom(parent.getId());
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id) throws IOException {
         // Get the object
         BOMItem item = bomItemDao.findOne(id);
-        Part parent = item.getParent();
-        Long parentPartId = parent.getId();
+        Long parentPartId = item.getParent().getId();
+        Long childPartId = item.getChild().getId();
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(parentPartId, BOM_PARENT));
-        relatedParts.add(new RelatedPart(item.getChild().getId(), BOM_CHILD));
+        relatedParts.add(new RelatedPart(childPartId, BOM_CHILD));
         changelogService.log(BOM, "Deleted BOM item: " + formatBOMItem(item), relatedParts);
         // Delete it.
         jdbcTemplate.update("delete from bom where id=?", id);
         bomItemDao.flush();
         rebuildBomDescendancyForPart(parentPartId, true);
+        partChangeService.deletedBom(parentPartId, childPartId);
     }
 
     /**

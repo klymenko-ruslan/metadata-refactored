@@ -1,10 +1,12 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
+angular.module('ngMetaCrudApp')
 
-.controller("ChangelogSourcesListCtrl",
-  ["$scope", "$log", "$location", "dialogs", "NgTableParams", "utils", "restService", "sourcesNames",
-  function($scope, $log, $location, dialogs, NgTableParams, utils, restService, sourcesNames) {
+.controller('ChangelogSourcesListCtrl', ['$scope', '$log', '$location',
+    'dialogs', 'NgTableParams', 'utils', 'restService', 'sourcesNames',
+  function($scope, $log, $location, dialogs, NgTableParams, utils,
+      restService, sourcesNames)
+  {
 
     $scope.sourcesNames = sourcesNames;
 
@@ -27,7 +29,7 @@ angular.module("ngMetaCrudApp")
     };
 
     // Handle updating search results
-    $scope.$watch("[fltrSource]",
+    $scope.$watch('[fltrSource]',
       function (newVal, oldVal) {
         // Debounce
         if (angular.equals(newVal, oldVal, true)) {
@@ -39,11 +41,11 @@ angular.module("ngMetaCrudApp")
     );
 
     $scope.onCreateNewSource = function() {
-      $location.path("/changelog/source/create");
+      $location.path('/changelog/source/create');
     };
 
     $scope.onView = function(srcId) {
-      $location.path("/changelog/source/" + srcId);
+      $location.path('/changelog/source/' + srcId);
     };
 
     $scope.sourceTableParams = new NgTableParams(
@@ -51,7 +53,7 @@ angular.module("ngMetaCrudApp")
         page: 1,
         count: 25,
         sorting: {
-          "name.lower_case_sort": "asc"
+          'name.lower_case_sort': 'asc'
         }
       },
       {
@@ -60,7 +62,9 @@ angular.module("ngMetaCrudApp")
           var offset = params.count() * (params.page() - 1);
           var limit = params.count();
           var sortProperty, sortOrder;
-          for (sortProperty in params.sorting()) break;
+          for (sortProperty in params.sorting()) {
+              break;
+          }
           if (sortProperty) {
             sortOrder = params.sorting()[sortProperty];
           }
@@ -68,16 +72,17 @@ angular.module("ngMetaCrudApp")
           if ($scope.fltrSource.sourceName) {
             snid = $scope.fltrSource.sourceName.id;
           }
-          return restService.filterChangelogSource($scope.fltrSource.name, $scope.fltrSource.description,
-            $scope.fltrSource.url, snid, sortProperty, sortOrder, offset, limit)
+          return restService.filterChangelogSource($scope.fltrSource.name,
+              $scope.fltrSource.description, $scope.fltrSource.url, snid,
+              sortProperty, sortOrder, offset, limit)
           .then(
             function (filtered) {
               // Update the total and slice the result
               params.total(filtered.hits.total);
               return filtered.hits.hits;
             },
-            function (errorResponse) {
-              $log.log("Couldn't search for 'changelog source'.");
+            function () {
+              $log.log('Couldn\'t search for "changelog source".');
             }
           );
         }

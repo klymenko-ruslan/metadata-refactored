@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .service("User", ["$location", "$log", "$q", "restService", function User($location, $log, $q, restService) {
+angular.module('ngMetaCrudApp')
+  .service('User', ['$location', '$log', '$q', 'restService', function User($location, $log, $q, restService) {
       var User = this; // jshint ignore:line
       User.roles = [];
       // Fetch the user's roles
@@ -21,7 +21,7 @@ angular.module("ngMetaCrudApp")
               User.roles = _.sortBy(roles);
             },
             function() {
-              $log.log("Could not fetch your account info.");
+              $log.log('Could not fetch your account info.');
             }
         );
         return User.promise;
@@ -36,10 +36,10 @@ angular.module("ngMetaCrudApp")
           function() {
             User.user = null;
             User.roles = [];
-            // Don't use code $location.path("/"); below as it could
+            // Don't use code $location.path('/'); below as it could
             // lead to recursion in loading.
-            window.location.href = "/";
+            window.location.href = '/';
           }
         );
-      }
+      };
     }]);

@@ -1,15 +1,15 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .directive("bom", function() {
+angular.module('ngMetaCrudApp')
+  .directive('bom', function() {
     return {
       scope: {
-        parentPartId: "="
+        parentPartId: '='
       },
-      templateUrl: "/views/component/bom.html",
-      restrict: "E",
+      templateUrl: '/views/component/bom.html',
+      restrict: 'E',
       link: function postLink() {},
-      controller: ["dialogs", "$scope", "$q", "$parse", "BOM", "NgTableParams", "toastr", "utils", "restService",
+      controller: ['dialogs', '$scope', '$q', '$parse', 'BOM', 'NgTableParams', 'toastr', 'utils', 'restService',
         function(dialogs, $scope, $q, $parse, BOM, NgTableParams, toastr, utils, restService) {
           $scope.restService = restService;
 
@@ -20,7 +20,7 @@ angular.module("ngMetaCrudApp")
             data: []
           });
 
-          $scope.$watch("parentPartId", function(parentPartId) {
+          $scope.$watch('parentPartId', function(parentPartId) {
             if (parentPartId === undefined) {
               return;
             }
@@ -32,11 +32,11 @@ angular.module("ngMetaCrudApp")
                   page: 1,
                   count: 10
                 }, {
-                  getData: utils.localPagination($scope.bom, "child.manufacturerPartNumber")
+                  getData: utils.localPagination($scope.bom, 'child.manufacturerPartNumber')
                 });
               },
               function failure(response) {
-                restService.error("Loading of BOMs failed.", response);
+                restService.error('Loading of BOMs failed.', response);
               }
             );
           });
@@ -70,8 +70,8 @@ angular.module("ngMetaCrudApp")
 
           $scope.remove = function(bomItem) {
             dialogs.confirm(
-              "Remove BOM Item?",
-              "Remove child part from this bill of materials?").result.then(
+              'Remove BOM Item?',
+              'Remove child part from this bill of materials?').result.then(
               function() {
                 // Yes
                 BOM.removeBOM(bomItem.id).then(
@@ -85,10 +85,10 @@ angular.module("ngMetaCrudApp")
                     $scope.bomTableParams.reload();
                     // Clear the alt bom item
                     $scope.altBomItem = null;
-                    toastr.success("Child part removed from BOM.");
+                    toastr.success('Child part removed from BOM.');
                   },
                   function failure(response) {
-                    restService.error("Removing of the BOM failed.", response);
+                    restService.error('Removing of the BOM failed.', response);
                   }
                 );
               }
@@ -97,16 +97,16 @@ angular.module("ngMetaCrudApp")
 
           $scope.removeAlternate = function(index, altItem) {
             dialogs.confirm(
-              "Remove alternate item?",
-              "This will remove the alternate part from this BOM item.").result.then(
+              'Remove alternate item?',
+              'This will remove the alternate part from this BOM item.').result.then(
               function() {
                 restService.removeBomAlternative($scope.altBomItem.id, altItem.id).then(
                   function success() {
                     $scope.altBomItem.alternatives.splice(index, 1);
-                    toastr.success("BOM alternate removed.");
+                    toastr.success('BOM alternate removed.');
                   },
                   function failure(response) {
-                    restService.error("Removing of the Alternate failed.", response);
+                    restService.error('Removing of the Alternate failed.', response);
                   }
                 );
               });

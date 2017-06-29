@@ -41,8 +41,7 @@ public class CarEngineController {
     @ResponseBody
     @JsonView(View.CarEngineDetailed.class)
     @Secured("ROLE_READ")
-    public List<CarEngine> findAllOrderedByName(@RequestParam(value = "detailed", required = false,
-            defaultValue = "false") Boolean detailed) {
+    public List<CarEngine> findAllOrderedByName() {
         return carEngineDao.findAllOrderedByName();
     }
 

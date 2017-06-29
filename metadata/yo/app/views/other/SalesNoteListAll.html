@@ -4,16 +4,16 @@
 
 <form data-ng-submit="notesTableParams.reload()" class="form-inline" style="left-padding:0;">
 
-  <div class="btn-group" style="padding-right:3em;">
+  <div id="fltrStates" class="btn-group" style="padding-right:3em;">
     <label data-ng-repeat="state in SalesNotes.states" class="btn btn-success" uib-btn-checkbox data-ng-model="states.current[state]">{{state}}</label>
   </div>
 
-  <div class="btn-group">
+  <div id="fltrPrimary" class="btn-group">
     <label class="btn btn-primary" uib-btn-checkbox data-ng-model="search.includePrimary">Primary</label>
     <label class="btn btn-primary" uib-btn-checkbox data-ng-model="search.includeRelated">Related</label>
   </div>
 
-  <div class="form-group pull-right">
+  <div id="fltrOther" class="form-group pull-right">
     <input id="part-number" class="form-control" size="15" type="text" placeholder="Primary Part" data-ng-model="search.partNumber" data-ng-model-options="{debounce:300}">
     <input id="comment" class="form-control" size="25" type="text" placeholder="Comment" data-ng-model="search.comment" data-ng-model-options="{debounce:300}">
   </div>

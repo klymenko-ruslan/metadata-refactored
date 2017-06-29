@@ -1,0 +1,48 @@
+This directory contains stuff for e2e testing.
+
+
+ PREPEQUSITES
+ ============
+
+To run e2e trests your testing environment must have got some
+required sofware. The lis of required software is following:
+ * Oracle JDK 1.8
+   (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+ * Apacha Maven 3.3.3 (https://maven.apache.org/)
+ * Python V3.4.5 (https://www.python.org/)
+   a) MySql driver for the python version 2.1.4
+      (https://dev.mysql.com/downloads/connector/python/)
+ * elastic search 5.0.2 (https://www.elastic.co/products/elasticsearch)
+ * Protractor testing framework version 5.1.2 or above
+   (http://www.protractortest.org).
+ * MySql databese server version 5.6.35 (https://www.mysql.com/).
+
+In the list specified versions of the software which is certified for the
+test environment. You may try to use other versions but without any guaranties.
+
+ TESTING
+ =======
+
+1. Run webdriver:
+
+   $ webdriver-manager start
+
+2. In other window run an elasticsearch instance:
+
+   $ cd [root dir of elasticsearch installation]
+   $ bin/elasticsearch -v -Ecluster.name=es-metadata-e2e
+
+3. Import database:
+
+   $ ./prepare.sql
+
+4. In other window run the metadata webapp:
+
+   $ ./metadata.py
+
+5. Wait until the webapp in the previous step finished starting. And run
+   e2e tests:
+
+   $ ./runtests.py
+
+To repeat the tests you should repeat steps 3, 4, 5.

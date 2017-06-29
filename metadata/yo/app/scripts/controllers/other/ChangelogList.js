@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .controller("ChangelogListCtrl", ["$scope", "$log", "NgTableParams", "$uibModal", "restService", "users",
-    "DATE_FORMAT", function(
+angular.module('ngMetaCrudApp')
+  .controller('ChangelogListCtrl', ['$scope', '$log', 'NgTableParams', '$uibModal', 'restService', 'users',
+    'DATE_FORMAT', function(
     $scope, $log, NgTableParams, $uibModal, restService, users, DATE_FORMAT) {
 
     $scope.dateFormat = DATE_FORMAT;
@@ -30,13 +30,15 @@ angular.module("ngMetaCrudApp")
       page: 1,
       count: 25,
       sorting: {
-        changeDate: "desc"
+        changeDate: 'desc'
       }
     }, {
       getData: function(params) {
         var sortOrder;
         var sorting = params.sorting();
-        for (var sortProperty in sorting) break;
+        for (var sortProperty in sorting) {
+            break;
+        }
         if (sortProperty) {
           sortOrder = sorting[sortProperty];
         }
@@ -55,19 +57,19 @@ angular.module("ngMetaCrudApp")
             return result.recs;
           },
           function(errorResponse) {
-            restService.error("Search in the changelog failed.", errorResponse);
+            restService.error('Search in the changelog failed.', errorResponse);
           });
       }
     });
 
     // Query Parameters
     $scope.search = {
-      "startDate": null,
-      "finishDate": null,
-      "service": null,
-      "user": null,
-      "description": null,
-      "data": null
+      'startDate': null,
+      'finishDate': null,
+      'service': null,
+      'user': null,
+      'description': null,
+      'data': null
     };
 
     $scope.applyFilter = function() {
@@ -76,15 +78,15 @@ angular.module("ngMetaCrudApp")
 
     $scope.onOpenViewDlg = function(changelogRecord) {
       $uibModal.open({
-        templateUrl: "/views/changelog/view.html",
+        templateUrl: '/views/changelog/view.html',
         animation: false,
-        size: "lg",
-        controller: "ChangelogViewDlgCtrl",
+        size: 'lg',
+        controller: 'ChangelogViewDlgCtrl',
         resolve: {
           changelogRecord: function() {
             return changelogRecord;
           },
-          changelogSourceLink: ["restService", function(restService) {
+          changelogSourceLink: ['restService', function(restService) {
             return restService.findChangelogSourceLinkByChangelogId(changelogRecord.id);
           }]
         }
@@ -92,7 +94,7 @@ angular.module("ngMetaCrudApp")
     };
 
   }])
-  .controller("ChangelogViewDlgCtrl", ["$scope", "$log", "$location", "NgTableParams", "utils", "$uibModalInstance", "changelogRecord", "changelogSourceLink",
+  .controller('ChangelogViewDlgCtrl', ['$scope', '$log', '$location', 'NgTableParams', 'utils', '$uibModalInstance', 'changelogRecord', 'changelogSourceLink',
     function($scope, $log, $location, NgTableParams, utils, $uibModalInstance,  changelogRecord, changelogSourceLink) {
       $scope.readonly = true;
       $scope.date = changelogRecord.changeDate;
@@ -126,7 +128,7 @@ angular.module("ngMetaCrudApp")
           try {
             $scope.changes = angular.fromJson(patched);
           } catch(e) {
-            $log.log("Bad data of a changelog record [" + changelogRecord.id + "]: " + e);
+            $log.log('Bad data of a changelog record [' + changelogRecord.id + ']: ' + e);
             $scope.changes = data; // string
           }
         }
@@ -134,7 +136,7 @@ angular.module("ngMetaCrudApp")
 
       $scope.onSourceView = function(srcId) {
         $uibModalInstance.close();
-        $location.path("/changelog/source/" + srcId);
+        $location.path('/changelog/source/' + srcId);
       };
 
       $scope.onCloseViewDlg = function() {

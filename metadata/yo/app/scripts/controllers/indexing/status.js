@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-.controller("IndexingCtrl", ["$log", "$scope", "$timeout", "$interval",
-  "restService", "status",
+angular.module('ngMetaCrudApp')
+.controller('IndexingCtrl', ['$log', '$scope', '$timeout', '$interval',
+  'restService', 'status',
   function($log, $scope, $timeout, $interval, restService, status) {
 
     $scope.toIndex = {};
@@ -54,7 +54,7 @@ angular.module("ngMetaCrudApp")
 
       $scope.phase = status.phase;
 
-      if ($scope.phase != 0) {
+      if ($scope.phase !== 0) {
         $scope.toIndex.parts = status.indexParts;
         $scope.toIndex.applications = status.indexApplications;
         $scope.toIndex.salesNotes = status.indexSalesNotes;
@@ -105,7 +105,7 @@ angular.module("ngMetaCrudApp")
           $scope._updateStatus(newStatus);
         },
         function failure(response) {
-          restService.httpServiceError("Starting of the indexing process failed.",
+          restService.httpServiceError('Starting of the indexing process failed.',
             response);
         }
       );
@@ -120,7 +120,7 @@ angular.module("ngMetaCrudApp")
     this._resetToIndex();
     $scope._updateStatus(status);
 
-    $scope.$watch("toIndex.recreateIndex", function(newVal, oldVal) {
+    $scope.$watch('toIndex.recreateIndex', function(newVal/*, oldVal*/) {
       if (newVal) {
         $scope.toIndex.parts = true;
         $scope.toIndex.applications = true;
@@ -135,13 +135,13 @@ angular.module("ngMetaCrudApp")
           $scope._updateStatus(newStatus);
         },
         function failure(response) {
-          restService.httpServiceError("Update of a status of the indexing process failed.",
+          restService.httpServiceError('Update of a status of the indexing process failed.',
             response);
         }
       );
     }, 1000);
 
-    $scope.$on("$destroy", function() {
+    $scope.$on('$destroy', function() {
       $interval.cancel($scope.refreshTask);
     });
 

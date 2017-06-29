@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .controller("ServiceListCtrl", ["$scope", "$log", "toastr", "NgTableParams", "restService",
+angular.module('ngMetaCrudApp')
+  .controller('ServiceListCtrl', ['$scope', '$log', 'toastr', 'NgTableParams', 'restService',
     function($scope, $log, toastr, NgTableParams, restService) {
 
     $scope.requiredSource = {};
@@ -10,13 +10,15 @@ angular.module("ngMetaCrudApp")
       page: 1,
       count: 25,
       sorting: {
-        "name": "asc"
+        'name': 'asc'
       }
     }, {
       getData: function(params) {
         var sortOrder;
         var sorting = params.sorting();
-        for (var sortProperty in sorting) break;
+        for (var sortProperty in sorting) {
+            break;
+        }
         if (sortProperty) {
           sortOrder = sorting[sortProperty];
         }
@@ -34,7 +36,7 @@ angular.module("ngMetaCrudApp")
             return result.recs;
           },
           function(errorResponse) {
-            restService.error("Loading of list of services failed.", errorResponse);
+            restService.error('Loading of list of services failed.', errorResponse);
           });
       }
     });
@@ -43,10 +45,10 @@ angular.module("ngMetaCrudApp")
       var checked = $scope.requiredSource[srv.name];
       restService.setChangelogSourceRequiredForService(srv.id, checked).then(
         function success() {
-          toastr.success("The field has been successfully updated.");
+          toastr.success('The field has been successfully updated.');
         },
         function failure(errorResponse) {
-          restService.error("The operation failed.", errorResponse);
+          restService.error('The operation failed.', errorResponse);
         }
       );
     };

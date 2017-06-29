@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.service;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -51,7 +52,7 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/interchange_service/leave_interchangeable_group_0_before.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
-    public void testLeaveInterchangeableGroup_0() {
+    public void testLeaveInterchangeableGroup_0() throws IOException {
         // Check prerequisites before testing.
         int chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' contains unexpected data.", 0, chlogCount);
@@ -98,7 +99,7 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @WithUserDetails("mock@gmail.com")
-    public void testLeaveInterchangeableGroup_1() {
+    public void testLeaveInterchangeableGroup_1() throws IOException {
         // Check prerequisites before testing.
         int chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' contains unexpected data.", 0, chlogCount);
@@ -154,7 +155,7 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
 
     @WithUserDetails("mock@gmail.com")
-    public void testMergePickedAloneToPart() {
+    public void testMergePickedAloneToPart() throws IOException {
         // Check prerequisites before testing.
         int chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' contains unexpected data.", 0, chlogCount);
@@ -200,7 +201,7 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @WithUserDetails("mock@gmail.com")
-    public void testMergePartAloneToPicked() {
+    public void testMergePartAloneToPicked() throws IOException {
         // Check prerequisites before testing.
         int chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' contains unexpected data.", 0, chlogCount);
@@ -265,7 +266,7 @@ public class InterchangeServiceTest extends AbstractFunctionalTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @WithUserDetails("mock@gmail.com")
-    public void testMergePickedAllToPart() {
+    public void testMergePickedAllToPart() throws IOException {
         // Check prerequisites before testing.
         int chlogCount = JdbcTestUtils.countRowsInTable(jdbcTemplate, "changelog");
         Assert.assertEquals("Table 'changelog' contains unexpected data.", 0, chlogCount);

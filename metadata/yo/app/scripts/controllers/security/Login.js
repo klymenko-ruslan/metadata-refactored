@@ -1,30 +1,30 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-  .controller("LoginCtrl", ["$location", "$scope", "$routeParams", "toastr", "restService", "User", "$uibModal",
+angular.module('ngMetaCrudApp')
+  .controller('LoginCtrl', ['$location', '$scope', '$routeParams', 'toastr', 'restService', 'User', '$uibModal',
     function ($location, $scope, $routeParams, toastr, restService, User, $uibModal) {
 
     $scope.login = function() {
-      restService.login($scope.username, $scope.password).then(
-        function(loginResponse) {
+      return restService.login($scope.username, $scope.password).then(
+        function(/*loginResponse*/) {
           User.init().then(
             function() {
-              $location.path("/part/list");
+              $location.path('/part/list');
             }
           );
         },
-        function() {
-          toastr.error("Login failed.");
+        function(/*response*/) {
+          toastr.error('Login failed.');
         }
       );
     };
 
     $scope.onOpenPasswordResetConfirmDlg = function() {
       $uibModal.open({
-        templateUrl: "/views/dialog/PasswordResetConfirmDlg.html",
+        templateUrl: '/views/dialog/PasswordResetConfirmDlg.html',
         animation: false,
-        size: "lg",
-        controller: "PasswordResetConfirmDlgCtrl",
+        size: 'lg',
+        controller: 'PasswordResetConfirmDlgCtrl',
         resolve: {
           username: function() {
             return $scope.username;
@@ -34,27 +34,29 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.resetToken = function() {
-      restService.resetToken($routeParams.token).then(
+      restService.resetToken($routeParams.token, $scope.password).then(
         function() {
-          $location.path("/login")
+          $location.path('/login');
         },
         function() {
-          toastr.success("Could not reset password.");
+          toastr.success('Could not reset password.');
         }
       );
     };
 
   }])
-  .controller("PasswordResetConfirmDlgCtrl",["$scope", "$uibModalInstance", "toastr", "username",
-    function($scope, $uibModalInstance, toastr, username) {
+  .controller('PasswordResetConfirmDlgCtrl',['$scope', '$uibModalInstance',
+    'toastr', 'restService', 'username',
+    function($scope, $uibModalInstance, toastr, restService,username) {
     $scope.username = username;
     $scope.onConfirmPasswordResetConfirmDlg = function() {
-      restService.resetPassword(username).then(
+      restService.resetPassword(username)
+        .then(
           function success() {
-            toastr.success("Password reset link sent.");
+            toastr.success('Password reset link sent.');
           },
           function failure() {
-            toastr.error("Is your username correct?");
+            toastr.error('Is your username correct?');
           }
         )
         .finally(function always() {

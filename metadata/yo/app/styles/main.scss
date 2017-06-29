@@ -1,10 +1,10 @@
-$icon-font-path: "../fonts/";
-$fa-font-path:   "../fonts/";
-$iconSpritePath: "../images/glyphicons-halflings.png";
-$iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
-
-@import "../bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
-@import "../bower_components/fontawesome/scss/font-awesome";
+/* The last '/' in the var below is mandatory. */
+$icon-font-path: "/styles/fonts/";
+/* But in the var below it is redundant.
+   (I 'like' all these full of bugs hipster tools.) */
+$fa-font-path: "/styles/fonts";
+@import "../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "../../bower_components/fontawesome/scss/font-awesome";
 
 /* Mixins */
 @mixin rounded {
@@ -478,8 +478,8 @@ div.upload-box {
 
 .row-white {
   background-color: #fff;
-}
+} 
 
 div.markdown img {
   max-width: 100%;
-};
+}

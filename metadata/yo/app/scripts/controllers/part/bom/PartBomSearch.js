@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
+angular.module('ngMetaCrudApp')
 
-.controller("PartBomSearchCtrl", ["$log", "$scope", "$location", "NgTableParams", "$routeParams", "$uibModal",
-  "User", "BOM", "restService", "dialogs", "toastr", "utils", "partTypes", "part", "boms",
-  "services", "LinkSource",
+.controller('PartBomSearchCtrl', ['$log', '$scope', '$location', 'NgTableParams', '$routeParams', '$uibModal',
+  'User', 'BOM', 'restService', 'dialogs', 'toastr', 'utils', 'partTypes', 'part', 'boms',
+  'services', 'LinkSource',
   function($log, $scope, $location, NgTableParams, $routeParams, $uibModal, User, BOM, restService,
     dialogs, toastr, utils, partTypes, part, boms, services, LinkSource) {
 
@@ -24,7 +24,7 @@ angular.module("ngMetaCrudApp")
       _.each(boms, function(bi) {
         existingBomPartIds[bi.child.id] = true;
       });
-    };
+    }
 
     updateExistingBomPartIds();
 
@@ -33,7 +33,7 @@ angular.module("ngMetaCrudApp")
       count: 5
     }, {
         counts: [5, 10, 15],
-      getData: utils.localPagination(boms, "child.manufacturerPartNumber")
+      getData: utils.localPagination(boms, 'child.manufacturerPartNumber')
     });
 
     $scope.pickedPartsTableParams = new NgTableParams(
@@ -85,8 +85,8 @@ angular.module("ngMetaCrudApp")
     };
 
     $scope.isBttnPickDisabled = function(p) {
-      return p === undefined || $scope.part.manufacturer.id != p.manufacturer.id ||
-        $scope.part.id == p.id || pickedPartIds[p.id] || existingBomPartIds[p.id] ||
+      return p === undefined || $scope.part.manufacturer.id !== p.manufacturer.id ||
+        $scope.part.id === p.id || pickedPartIds[p.id] || existingBomPartIds[p.id] ||
         restService.status.bomRebuilding;
     };
 
@@ -106,13 +106,13 @@ angular.module("ngMetaCrudApp")
           $scope.pickedPartsTableParams.reload();
           if (response.failures.length > 0) {
             $uibModal.open({
-              templateUrl: "/views/part/bom/FailedBOMsDlg.html",
+              templateUrl: '/views/part/bom/FailedBOMsDlg.html',
               animation: false,
-              size: "lg",
-              controller: "FailedBOMsDlgCtrl",
+              size: 'lg',
+              controller: 'FailedBOMsDlgCtrl',
               resolve: {
                 message: function() {
-                  return "Following parts failed while adding to the BOM of the part [" + $scope.partId + "] - " +
+                  return 'Following parts failed while adding to the BOM of the part [' + $scope.partId + '] - ' +
                     $scope.part.manufacturerPartNumber + ":";
                 },
                 failures: function() {
@@ -121,26 +121,26 @@ angular.module("ngMetaCrudApp")
               }
             });
           } else {
-            toastr.success("The BOMs have been successfully added to the part.");
+            toastr.success('The BOMs have been successfully added to the part.');
           }
         },
         function(response) {
-          dialogs.error("Could not add BOMs", "Server said: <pre>" + JSON.stringify(response.data) + "</pre>");
+          dialogs.error('Could not add BOMs', 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
         });
-    };
+    }
 
     $scope.save = function() {
-      LinkSource.link(cbSave, $scope.requiredSource, "/part/" + $scope.partId + "/bom/search");
+      LinkSource.link(cbSave, $scope.requiredSource, '/part/' + $scope.partId + '/bom/search');
     };
 
     $scope.removeBOM = function(bomId) {
       var idx = _.findIndex(boms, function(b) {
         return b.id === bomId;
       });
-      var bomItem = boms[idx];
+      // var bomItem = boms[idx];
       dialogs.confirm(
-        "Remove BOM Item?",
-        "Remove this child part from the bill of materials of the parent part?").result.then(
+        'Remove BOM Item?',
+        'Remove this child part from the bill of materials of the parent part?').result.then(
         function() {
           // Yes
           BOM.removeBOM(bomId).then(
@@ -148,7 +148,7 @@ angular.module("ngMetaCrudApp")
               boms.splice(idx, 1);
               $scope.bomTableParams.reload();
               updateExistingBomPartIds();
-              toastr.success("The BOM has been successfully removed.");
+              toastr.success('The BOM has been successfully removed.');
             },
             restService.error
           );

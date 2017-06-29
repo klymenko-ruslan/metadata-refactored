@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-angular.module("ngMetaCrudApp")
-    .controller("CriticalDimensionEnumsCtrl", [
-      "$scope", "$log", "Restangular", "NgTableParams", "restService", "utils", "critDimEnums",
+angular.module('ngMetaCrudApp')
+    .controller('CriticalDimensionEnumsCtrl', [
+      '$scope', '$log', 'Restangular', 'NgTableParams', 'restService', 'utils', 'critDimEnums',
       function($scope, $log, Restangular, NgTableParams, restService, utils, critDimEnums) {
 
         $scope.selectedRow = null;
@@ -62,7 +62,7 @@ angular.module("ngMetaCrudApp")
               },
               function failure(response) {
                 $scope.critDimEnumItms = null;
-                restService.error("Loading of items for the enumeration failed.", response);
+                restService.error('Loading of items for the enumeration failed.', response);
               }
             )
             .finally(function() {
@@ -87,7 +87,7 @@ angular.module("ngMetaCrudApp")
           $scope.cdEnumToAdd = {
             name: null
           };
-          $("#addEnumDlg").modal("show");
+          $('#addEnumDlg').modal('show');
         };
 
         $scope.addEnum = function() {
@@ -95,11 +95,11 @@ angular.module("ngMetaCrudApp")
             function success(addedCde) {
               critDimEnums.push(addedCde);
               $scope.critDimEnumsTableParams.reload();
-              $("#addEnumDlg").modal("hide");
+              $('#addEnumDlg').modal('hide');
             },
             function failure(response) {
-              $("#addEnumDlg").modal("hide");
-              restService.error("Can't add the new enumeration.", response);
+              $('#addEnumDlg').modal('hide');
+              restService.error('Can\'t add the new enumeration.', response);
             }
           ).finally(function() {
             $scope.cdEnumToAdd = null;
@@ -109,7 +109,7 @@ angular.module("ngMetaCrudApp")
         $scope.showDeleteEnumDlg = function(event, row) {
           event.stopPropagation();
           $scope.cdEnumToDel = row;
-          $("#delEnumDlg").modal("show");
+          $('#delEnumDlg').modal('show');
         };
 
         $scope.removeCritDimEnum = function() {
@@ -124,7 +124,7 @@ angular.module("ngMetaCrudApp")
                   critDimEnums.splice(foundIdx, 1);
                   $scope.critDimEnumsTableParams.reload();
                 }
-                if (id == $scope.selectedRow.id) {
+                if (id === $scope.selectedRow.id) {
                   var selected = $scope.selectFirstEnum();
                   if (!selected) {
                     $scope.critDimEnumValsTableParams = new NgTableParams({
@@ -135,11 +135,11 @@ angular.module("ngMetaCrudApp")
                     });
                   }
                 }
-                $("#delEnumDlg").modal("hide");
+                $('#delEnumDlg').modal('hide');
               },
               function failure(response) {
-                $("#delEnumDlg").modal("hide");
-                restService.error("Can't delete the enumeration.", response);
+                $('#delEnumDlg').modal('hide');
+                restService.error('Can\'t delete the enumeration.', response);
               }
             ).finally(function() {
               $scope.cdEnumToDel = null;
@@ -151,7 +151,7 @@ angular.module("ngMetaCrudApp")
           $scope.cdEnumItmToAdd = {
             val: null
           };
-          $("#addEnumItmDlg").modal("show");
+          $('#addEnumItmDlg').modal('show');
         };
 
         $scope.addEnumItm = function() {
@@ -159,11 +159,11 @@ angular.module("ngMetaCrudApp")
             function success(addedCdeItm) {
               $scope.critDimEnumItms.push(addedCdeItm);
               $scope.critDimEnumValsTableParams.reload();
-              $("#addEnumItmDlg").modal("hide");
+              $('#addEnumItmDlg').modal('hide');
             },
             function failure(response) {
-              $("#addEnumItmDlg").modal("hide");
-              restService.error("Can't add the new enumeration item.", response);
+              $('#addEnumItmDlg').modal('hide');
+              restService.error('Can\'t add the new enumeration item.', response);
             }
           ).finally(function() {
             $scope.cdEnumItmToAdd = null;
@@ -174,7 +174,7 @@ angular.module("ngMetaCrudApp")
         $scope.showDeleteEnumItmDlg = function(event, row) {
           event.stopPropagation();
           $scope.cdEnumItmToDel = row;
-          $("#delEnumItmDlg").modal("show");
+          $('#delEnumItmDlg').modal('show');
         };
 
         $scope.removeCritDimEnumItm = function() {
@@ -189,11 +189,11 @@ angular.module("ngMetaCrudApp")
                   $scope.critDimEnumItms.splice(foundIdx, 1);
                   $scope.critDimEnumValsTableParams.reload();
                 }
-                $("#delEnumItmDlg").modal("hide");
+                $('#delEnumItmDlg').modal('hide');
               },
               function failure(response) {
-                $("#delEnumItmDlg").modal("hide");
-                restService.error("Can't delete the item in the enumeration.",
+                $('#delEnumItmDlg').modal('hide');
+                restService.error('Can\'t delete the item in the enumeration.',
                   response);
               }
             ).finally(function() {
@@ -256,7 +256,7 @@ angular.module("ngMetaCrudApp")
                 $scope.cdeModifyingRef.name = updatedCde.name;
               },
               function failure(response) {
-                restService.error("Can't update the enumeration.",
+                restService.error('Can\'t update the enumeration.',
                   response);
               }
             ).finally(function() {
@@ -273,7 +273,7 @@ angular.module("ngMetaCrudApp")
                 $scope.cdevModifyingRef.val = updatedCdev.val;
               },
               function failure(response) {
-                restService.error("Can't update the item in the enumeration.",
+                restService.error('Can\'t update the item in the enumeration.',
                   response);
               }
             ).finally(function() {
@@ -286,9 +286,9 @@ angular.module("ngMetaCrudApp")
 
       }
     ])
-    .directive("uniqueCdeName", ["$log", "$q", "restService", function($log, $q, restService) {
+    .directive('uniqueCdeName', ['$log', '$q', 'restService', function($log, $q, restService) {
       return {
-        require: "ngModel",
+        require: 'ngModel',
         link: function($scope, elm, attr, ctrl) {
           ctrl.$asyncValidators.uniqueCdeName = function(modelVal, viewVal) {
             if (ctrl.$isEmpty(modelVal)) {
@@ -300,17 +300,17 @@ angular.module("ngMetaCrudApp")
                 if (foundCde === undefined) {
                   defer.resolve();
                 } else {
-                  var id = $scope.$eval("cdeModifying.id");
-                  if (foundCde.id == id) {
+                  var id = $scope.$eval('cdeModifying.id');
+                  if (foundCde.id === id) {
                     defer.resolve();
                   } else {
                     defer.reject();
                   }
                 }
               },
-              function failure(response) {
-                $log.log("Can't validate uniqueness of an enumeration name: " + angular.toJson(viewVal));
-                def.reject();
+              function failure(/*response*/) {
+                $log.log('Can\'t validate uniqueness of an enumeration name: ' + angular.toJson(viewVal));
+                defer.reject();
               }
             );
             return defer.promise;
@@ -318,32 +318,32 @@ angular.module("ngMetaCrudApp")
         }
       };
     }])
-    .directive("uniqueCdevName", ["$log", "$q", "restService", function($log, $q, restService) {
+    .directive('uniqueCdevName', ['$log', '$q', 'restService', function($log, $q, restService) {
       return {
-        require: "ngModel",
+        require: 'ngModel',
         link: function($scope, elm, attr, ctrl) {
           ctrl.$asyncValidators.uniqueCdevName = function(modelVal, viewVal) {
             if (ctrl.$isEmpty(modelVal)) {
               return $q.when();
             }
             var defer = $q.defer();
-            var enumId = $scope.$eval("selectedRow.id");
+            var enumId = $scope.$eval('selectedRow.id');
             restService.findCritDimEnumItmByName(enumId, viewVal).then(
               function success(foundCdeItm) {
                 if (foundCdeItm === undefined) {
                   defer.resolve();
                 } else {
-                  var id = $scope.$eval("cdevModifying.id");
-                  if (foundCdeItm.id == id) {
+                  var id = $scope.$eval('cdevModifying.id');
+                  if (foundCdeItm.id === id) {
                     defer.resolve();
                   } else {
                     defer.reject();
                   }
                 }
               },
-              function failure(response) {
-                $log.log("Can't validate uniqueness of an enumeration item name: " + angular.toJson(viewVal));
-                def.reject();
+              function failure(/*response*/) {
+                $log.log('Can\'t validate uniqueness of an enumeration item name: ' + angular.toJson(viewVal));
+                defer.reject();
               }
             );
             return defer.promise;

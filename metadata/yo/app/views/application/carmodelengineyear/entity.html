@@ -3,7 +3,7 @@
 <subnav>
 
   <li authorize="ROLE_READ" data-ng-hide="cmeyId == null">
-    <button type="button" data-ng-click="onClickViewCmey()"
+    <button id="bttn-subnav-cmey-viewmodelengineyear" type="button" data-ng-click="onClickViewCmey()"
        class="btn btn-primary">
       <i class="fa fa-eye"></i>
       View Model Engine Year
@@ -13,7 +13,7 @@
   <li style="padding-left:2em;" data-ng-hide="cmeyId == null">&nbsp;</li>
 
   <li>
-    <button type="button" data-ng-hide="cmeyId == null" data-ng-disabled="cmeyForm.$pristine || cmeyForm.$invalid || cmeyForm.$pending"
+    <button id="bttn-subnav-cmey-save" type="button" data-ng-hide="cmeyId == null" data-ng-disabled="cmeyForm.$pristine || cmeyForm.$invalid || cmeyForm.$pending"
        data-ng-click="save()" class="btn btn-success">
       <i class="fa fa-save"></i>
       Save
@@ -21,7 +21,7 @@
   </li>
 
   <li data-ng-hide="cmeyId == null">
-    <button type="button" data-ng-click="revert()"
+    <button id="bttn-subnav-cmey-revert" type="button" data-ng-click="revert()"
        data-ng-disabled="cmeyForm.$pristine"
        class="btn btn-warning">
       <i class="fa fa-undo"></i>

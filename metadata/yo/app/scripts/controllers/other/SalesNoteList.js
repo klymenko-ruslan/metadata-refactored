@@ -1,25 +1,28 @@
-"use strict";
+'use strict';
 
-// Argument primaryPartID is initialized during resolving before invocation of this controller (see app.js).
-angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log", "$routeParams", "NgTableParams",
-  "restService", "SalesNotes", "primaryPartId",
-  function(
-    $scope, $log, $routeParams, NgTableParams, restService, SalesNotes, primaryPartId) {
+// Argument primaryPartID is initialized during resolving before
+// invocation of this controller (see app.js).
+angular.module('ngMetaCrudApp')
+
+.controller('SalesNoteListCtrl', ['$scope', '$log', '$routeParams',
+  'NgTableParams', 'restService', 'SalesNotes', 'primaryPartId',
+
+  function($scope, $log, $routeParams, NgTableParams, restService,
+    SalesNotes, primaryPartId)
+  {
 
     $scope.states = {
-      "current": {
-        "draft": true,
-        "submitted": true,
-        "approved": true,
-        "rejected": false,
-        "published": true
+      'current': {
+        'draft': true,
+        'submitted': true,
+        'approved': true,
+        'rejected': false,
+        'published': true
       }
     };
 
     $scope.SalesNotes = SalesNotes;
-
     $scope.partId = $routeParams.id;
-
     $scope.part = null;
 
     // Load the part if we know partID.
@@ -31,8 +34,8 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
             $scope.partType = part.partType.name;
         },
         function (errorResponse) {
-            $log.log("Could not get part details", errorResponse);
-            restService.error("Could not get part details", errorResponse);
+            $log.log('Could not get part details', errorResponse);
+            restService.error('Could not get part details', errorResponse);
         }
       );
     }
@@ -42,7 +45,7 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
       page: 1,
       count: 10,
       sorting: {
-        createDate: "desc"
+        createDate: 'desc'
       }
     }, {
       getData: function(params) {
@@ -51,37 +54,44 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
         }
         var sortOrder;
         var sorting = params.sorting();
-        for (var sortProperty in sorting) break;
+        for (var sortProperty in sorting) {
+            break;
+        }
         if (sortProperty) {
           sortOrder = sorting[sortProperty];
         }
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
-        $scope.notesPromise = restService.filterSalesNotes($scope.search.partNumber, $scope.search.comment,
-          primaryPartId, $scope.search.includePrimary, $scope.search.includeRelated,
-          $scope.search.states, sortProperty, sortOrder, offset, limit).then(
-          function(searchResults) {
-            // Update the total and slice the result
-            params.total(searchResults.hits.total);
-            return searchResults.hits.hits;
-          },
-          function(errorResponse) {
-            restService.error("Couldn't search for sales notes.", errorResponse);
-          });
+        $scope.notesPromise = restService
+          .filterSalesNotes($scope.search.partNumber, $scope.search.comment,
+            primaryPartId, $scope.search.includePrimary,
+            $scope.search.includeRelated, $scope.search.states,
+            sortProperty, sortOrder, offset, limit)
+          .then(
+            function(searchResults) {
+              // Update the total and slice the result
+              params.total(searchResults.hits.total);
+              return searchResults.hits.hits;
+            },
+            function(errorResponse) {
+              restService.error('Couldn\'t search for sales notes.',
+                errorResponse);
+            }
+          );
         return $scope.notesPromise;
       }
     });
     // Query Parameters
     $scope.search = {
-      "partNumber": null,
-      "includePrimary": true,
-      "includeRelated": true,
-      "states": [],
-      "comment": null
+      'partNumber': null,
+      'includePrimary': true,
+      'includeRelated': true,
+      'states': [],
+      'comment': null
     };
 
     // Keep the states up-to-date
-    $scope.$watch("states.current", function(currentStates) {
+    $scope.$watch('states.current', function(currentStates) {
 
       // Get a list of active states, currentStates={stateName:boolean, ...}
       var newStates = _.chain(currentStates)
@@ -96,7 +106,7 @@ angular.module("ngMetaCrudApp").controller("SalesNoteListCtrl", ["$scope", "$log
     }, true);
 
     // Refresh the search when it changes
-    $scope.$watch("search", function(newVal, oldVal) {
+    $scope.$watch('search', function(newVal, oldVal) {
       // Debounce
       if (angular.equals(newVal, oldVal)) {
         return;

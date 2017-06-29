@@ -1,79 +1,203 @@
-<metanav>
-</metanav>
+<metanav></metanav>
 
+<h1>Turbo Models</h1>
 
-<h4>Manufacturer</h4>
-<div class="row">
-    <picker class="col-xs-12 col-md-6"
-            data-ng-model="selection.manufacturer"
-            item-type="other/manufacturer"
-            required></picker>
+<div class="form-group">
+ <label for="mnfr-selector">Manufacturer</label>
+ <picker id="mnfr-selector" data-ng-model="selection.manufacturer"
+   item-type="other/manufacturer" required></picker>
 </div>
 
-<hr/>
+<form name="turboModelMappingForm">
 
-<div class="row">
+  <div class="row">
 
     <div class="col-xs-12 col-md-6">
-        <h4>Turbo Type</h4>
 
-        <input data-ng-model="turboTypeFilter" class="form-control input-sm" placeholder="Turbo type filter..."/>
-
+      <div class="form-group">
+        <label for="">Turbo Type</label>
+        <input data-ng-model="turboTypeFilter" class="form-control input-sm"
+          placeholder="Turbo type filter..."/>
         <select data-ng-model="selection.turboType"
-                data-ng-options="turboType as turboType.name for turboType in turboTypes | filter:{name:turboTypeFilter}"
-                data-ng-disabled="turboTypes.length == 0"
-                size="15" class="select-large required form-control">
+          data-ng-options="turboType as turboType.name for turboType in turboTypes | filter:{name:turboTypeFilter}"
+          data-ng-disabled="turboTypes.length == 0" size="15"
+          class="select-large required form-control">
         </select>
+      </div>
 
-        <div>
-            <a data-ng-click="createTurboType()" class="btn btn-success"
-               data-ng-disabled="!selection.manufacturer.id">
-                <i class="fa fa-wrench"></i>
-                Create Type
-            </a>
-            <a data-ng-click="renameTurboType(selection.turboType)" class="btn btn-warning"
-               data-ng-disabled="!selection.turboType">
-                <i class="fa fa-pencil"></i>
-                Rename Type
-            </a>
-            <a data-ng-click="deleteTurboType(selection.turboType)" class="btn btn-danger"
-               data-ng-disabled="!selection.turboType">
-                <i class="fa fa-trash-o"></i>
-                Delete Type
-            </a>
-        </div>
+      <div style="padding-bottom:1.3em">
+        <button data-ng-click="displayCreateTurboTypeDlg()" class="btn btn-success"
+          data-ng-disabled="!selection.manufacturer.id">
+          <i class="fa fa-wrench"></i>
+          Create Type
+        </button>
+        <button data-ng-click="displayRenameTurboTypeDlg()"
+          class="btn btn-warning" data-ng-disabled="!selection.turboType">
+          <i class="fa fa-pencil"></i>
+          Rename Type
+        </button>
+        <button data-ng-click="deleteTurboType(selection.turboType)"
+          class="btn btn-danger" data-ng-disabled="!selection.turboType">
+          <i class="fa fa-trash-o"></i>
+          Delete Type
+        </button>
+      </div>
 
-        <hr/>
     </div>
 
     <div class="col-xs-12 col-md-6">
-        <h4>Turbo Model</h4>
-        <input data-ng-model="turboModelFilter" class="form-control input-sm" placeholder="Turbo model filter..."/>
 
+      <div class="form-group">
+        <label for="turbomodel-selector">Turbo Model</label>
+        <input id="turbomodel-selector" data-ng-model="turboModelFilter"
+          class="form-control input-sm" placeholder="Turbo model filter..."/>
         <select data-ng-model="selection.turboModel"
-                data-ng-options="turboModel as turboModel.name for turboModel in turboModels | filter:{name:turboModelFilter}"
-                data-ng-disabled="turboModels.length == 0"
-                size="15" class="select-large required form-control">
+          data-ng-options="turboModel as turboModel.name for turboModel in turboModels | filter:{name:turboModelFilter}"
+          data-ng-disabled="turboModels.length == 0" size="15"
+          class="select-large required form-control">
         </select>
+      </div>
 
-        <div>
-            <a data-ng-click="createTurboModel()" class="btn btn-success"
-               data-ng-disabled="!selection.turboType">
-                <i class="fa fa-wrench"></i>
-                Create Model
-            </a>
-            <a data-ng-click="renameTurboModel(selection.turboModel)" class="btn btn-warning"
-               data-ng-disabled="!selection.turboModel">
-                <i class="fa fa-pencil"></i>
-                Rename Model
-            </a>
-            <a data-ng-click="deleteTurboModel(selection.turboModel)" class="btn btn-danger"
-               data-ng-disabled="!selection.turboModel">
-                <i class="fa fa-trash-o"></i>
-                Delete Model
-            </a>
-        </div>
+      <div style="padding-bottom:1.3em">
+        <button data-ng-click="displayCreateTurboModelDlg()" class="btn btn-success"
+           data-ng-disabled="!selection.turboType">
+            <i class="fa fa-wrench"></i>
+            Create Model
+        </button>
+        <button data-ng-click="displayRenameTurboModelDlg(selection.turboModel)"
+          class="btn btn-warning" data-ng-disabled="!selection.turboModel">
+          <i class="fa fa-pencil"></i>
+          Rename Model
+        </button>
+        <button data-ng-click="deleteTurboModel(selection.turboModel)"
+          class="btn btn-danger" data-ng-disabled="!selection.turboModel">
+          <i class="fa fa-trash-o"></i>
+          Delete Model
+        </button>
+      </div>
 
-        <hr/>
     </div>
+
+  </div>
+
+</form>
+
+<!-- Dialogs -->
+
+<div class="modal" id="createTurboTypeDlg" tabindex="-1" role="dialog" aria-labelledby="createTurboTypeDlgTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <ng-form name="formNewTurboType" novalidate>
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="createTurboTypeDlgTitle">Create a new Turbo Type</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="createTurboTypeDlgCtrlName">Name</label>
+            <input id="createTurboTypeDlgCtrlName" name="name" data-ng-model="turbotype.name" autofocus class="form-control" type="text" data-ng-trim="true" data-ng-maxlength="255" required unique-turbomodels-turbotypename />
+            <span data-ng-show="formNewTurboType.name.$dirty && formNewTurboType.name.$invalid" class="alert alert-danger" role="alert">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span data-ng-show="formNewTurboType.name.$error.required">Required!</span>
+              <span data-ng-show="formNewTurboType.name.$error.maxlength">Max 255 chars!</span>
+              <span data-ng-show="formNewTurboType.name.$error.uniqueTurbotypeName">Not unique name in a scope of the selected manufacturer!</span>
+            </span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-ng-disabled="formNewTurboType.$invalid" data-ng-click="createTurboType()">Create</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </ng-form>
+    </div>
+  </div>
 </div>
+
+<div class="modal" id="renameTurboTypeDlg" tabindex="-1" role="dialog" aria-labelledby="renameTurboTypeDlgTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <ng-form name="formRenameTurboType" novalidate>
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="createTurboTypeDlgTitle">Rename the Turbo Type</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="renameTurboTypeDlgCtrlName">Name</label>
+            <input id="renameTurboTypeDlgCtrlName" name="name" data-ng-model="turbotype.name" autofocus class="form-control" type="text" data-ng-trim="true" data-ng-maxlength="255" required unique-turbomodels-turbotypename />
+            <span data-ng-show="formRenameTurboType.name.$dirty && formRenameTurboType.name.$invalid" class="alert alert-danger" role="alert">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span data-ng-show="formRenameTurboType.name.$error.required">Required!</span>
+              <span data-ng-show="formRenameTurboType.name.$error.maxlength">Max 255 chars!</span>
+              <span data-ng-show="formRenameTurboType.name.$error.uniqueTurbotypeName">Not unique name in a scope of the selected manufacturer!</span>
+            </span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-ng-disabled="formRenameTurboType.$invalid || turbotype.name === selection.turboType.name" data-ng-click="renameTurboType()">Rename</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </ng-form>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="createTurboModelDlg" tabindex="-1" role="dialog" aria-labelledby="createTurboModelDlgTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <ng-form name="formNewTurboModel" novalidate>
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="createTurboModelDlgTitle">Create a new Turbo Model</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="createTurboModelDlgCtrlName">Name</label>
+            <input id="createTurboModelDlgCtrlName" name="name" data-ng-model="turbomodel.name" autofocus class="form-control" type="text" data-ng-trim="true" data-ng-maxlength="255" required unique-turbomodels-turbomodelname />
+            <span data-ng-show="formNewTurboModel.name.$dirty && formNewTurboModel.name.$invalid" class="alert alert-danger" role="alert">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span data-ng-show="formNewTurboModel.name.$error.required">Required!</span>
+              <span data-ng-show="formNewTurboModel.name.$error.maxlength">Max 255 chars!</span>
+              <span data-ng-show="formNewTurboModel.name.$error.uniqueTurbomodelName">Not unique name in a scope of the selected turbo type!</span>
+            </span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-ng-disabled="formNewTurboModel.$invalid" data-ng-click="createTurboModel()">Create</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </ng-form>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="renameTurboModelDlg" tabindex="-1" role="dialog" aria-labelledby="renameTurboModelDlgTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <ng-form name="formRenameTurboModel" novalidate>
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="createTurboTypeDlgTitle">Rename the Turbo Model</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="renameTurboModelDlgCtrlName">Name</label>
+            <input id="renameTurboModelDlgCtrlName" name="name" data-ng-model="turbomodel.name" autofocus class="form-control" type="text" data-ng-trim="true" data-ng-maxlength="255" required unique-turbomodels-turbomodelname />
+            <span data-ng-show="formRenameTurboModel.name.$dirty && formRenameTurboModel.name.$invalid" class="alert alert-danger" role="alert">
+              <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+              <span data-ng-show="formRenameTurboModel.name.$error.required">Required!</span>
+              <span data-ng-show="formRenameTurboModel.name.$error.maxlength">Max 255 chars!</span>
+              <span data-ng-show="formRenameTurboModel.name.$error.uniqueTurbomodelName">Not unique name in a scope of the selected manufacturer!</span>
+            </span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-ng-disabled="formRenameTurboModel.$invalid || turbomodel.name === selection.turboModel.name" data-ng-click="renameTurboModel()">Rename</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </ng-form>
+    </div>
+  </div>
+</div>
+
+<script>$('.modal').on('shown.bs.modal', function() {$(this).find('[autofocus]').focus();});</script>
