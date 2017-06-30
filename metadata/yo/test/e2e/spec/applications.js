@@ -623,8 +623,7 @@ describe('Applications:', function() {
           inptName.clear();
           inptName.sendKeys('Agrale');
           bttnSave.click();
-          expect(firstRow.all(by.tagName('td')).first()
-            .all(by.tagName('span')).first().getText()).toBe('Agrale');
+          expect(firstCell.getText()).toBe('Agrale');
         });
 
         describe('Validation:', function() {
@@ -1029,17 +1028,336 @@ describe('Applications:', function() {
       });
 
     });
+
   });
 
   describe('Engine:', function() {
 
+    var bttnCreate, rows, bttnClear, fltrEngine, fltrFuelType;
+
     beforeAll(function() {
+      bttnCreate = element(by.partialLinkText('Create Engine'));
+      bttnClear = element(by.tiButton('Clear'));
+      fltrEngine = element(by.id('carengine'));
+      fltrFuelType = element(by.id('fltrCarengineFuelType'));
+      rows = element.all(by.repeater('rec in $data'));
     });
 
     beforeEach(function() {
+      browser.get('http://localhost:8080/application/carengine/list');
     });
 
-    it('', function() {
+    it('should have an initial state', function() {
+      expect(bttnCreate.isPresent()).toBeTruthy();
+      expect(bttnCreate.isDisplayed()).toBeTruthy();
+      expect(bttnCreate.isEnabled()).toBeTruthy();
+      expect(bttnClear.isPresent()).toBeTruthy();
+      expect(bttnClear.isDisplayed()).toBeTruthy();
+      expect(bttnClear.isEnabled()).toBeTruthy();
+      expect(fltrEngine.isPresent()).toBeTruthy();
+      expect(fltrEngine.isDisplayed()).toBeTruthy();
+      expect(fltrEngine.isEnabled()).toBeTruthy();
+      expect(fltrFuelType.isPresent()).toBeTruthy();
+      expect(fltrFuelType.isDisplayed()).toBeTruthy();
+      expect(fltrFuelType.isEnabled()).toBeTruthy();
+    });
+
+    it('should open form to create a new \'Engine\' when button ' +
+      '\'Create Engine\' is clicked',
+      function() {
+        bttnCreate.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/application/carengine/form');
+      }
+    );
+
+    describe('Create:', function() {
+
+      var bttnSave, inptName, fltrFuel, elmFuel, elmFuelOptions;
+
+      beforeAll(function() {
+        bttnSave = element(by.tiButton('Save'));
+        inptName = element(by.id('carengine_enginesize'));
+        fltrFuel = element(by.model('carfueltypeFilter'));
+        elmFuel = element(by.model('carengine.fuelType.id'));
+        elmFuelOptions = elmFuel.all(by.tagName('option'));
+      });
+
+      beforeEach(function() {
+        browser.get('http://localhost:8080/application/carengine/form');
+      });
+
+      it('should have an initial state', function() {
+        expect(bttnSave.isPresent()).toBeTruthy();
+        expect(bttnSave.isDisplayed()).toBeTruthy();
+        expect(bttnSave.isEnabled()).toBeFalsy();
+        expect(inptName.isPresent()).toBeTruthy();
+        expect(inptName.isDisplayed()).toBeTruthy();
+        expect(inptName.isEnabled()).toBeTruthy();
+        expect(fltrFuel.isPresent()).toBeTruthy();
+        expect(fltrFuel.isDisplayed()).toBeTruthy();
+        expect(fltrFuel.isEnabled()).toBeTruthy();
+        expect(elmFuel.isPresent()).toBeTruthy();
+        expect(elmFuel.isDisplayed()).toBeTruthy();
+        expect(elmFuel.isEnabled()).toBeTruthy();
+        expect(elmFuelOptions.count()).toBe(2 + 1);
+      });
+
+      describe('Filter Fuel Type:', function() {
+
+        beforeEach(function() {
+          fltrFuel.clear();
+        });
+
+        it('should search by exact value, case sensitive', function() {
+          fltrFuel.sendKeys('D');
+          expect(elmFuelOptions.count()).toBe(1 + 1);
+        });
+
+        it('should search by exact value, case insensitive', function() {
+          fltrFuel.sendKeys('d');
+          expect(elmFuelOptions.count()).toBe(1 + 1);
+        });
+
+      });
+
+      it('should create a new Car Engine', function() {
+        browser._selectDropdownbyNum(elmFuel, 1); // D
+        inptName.sendKeys('foo');
+        expect(bttnSave.isEnabled()).toBeTruthy();
+        bttnSave.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/application/carengine/list');
+        // Find the just created Car Engine and delete it.
+        browser.wait(function() {
+          bttnClear.click();
+          fltrEngine.sendKeys('foo');
+          browser._selectDropdownbyNum(fltrFuelType, 1); // D
+          return rows.count().then(
+            function(rowCount) {
+              return rowCount === 1;
+            }
+          );
+        }, 3000, 'A Car Engine \'foo\' has not been created ' +
+          'for Fuel Type \'D\'.');
+        var firstRow = rows.first();
+        var bttnRemove = firstRow.element(by.tiButton('Remove'));
+        bttnRemove.click();
+        // A confirmation dialog should be displayed.
+        var dlg = element(by.css('.modal-dialog'));
+        expect(dlg.isDisplayed()).toBeTruthy();
+        var bttnYes = dlg.element(by.partialButtonText('Yes'));
+        bttnYes.click();
+        // Make sure that Car Make has really been removed.
+        expect(dlg.isPresent()).toBeFalsy();
+        browser.wait(function() {
+          bttnClear.click();
+          fltrEngine.sendKeys('foo');
+          return rows.count().then(
+            function(rowCount) {
+              return rowCount === 0;
+            }
+          );
+        }, 3000, 'The just created Car Engine \'foo\' was not deleted ' +
+          'for the Fuel Type \'D\'.');
+      });
+
+      describe('Validation:', function() {
+
+        var errorArea, errRequired, errTooLong, errNotUnique;
+
+        beforeAll(function() {
+          errorArea = element(by.name('carengineForm'))
+            .element(by.css('.alert'));
+          var errs = errorArea.all(by.tagName('span'));
+          errRequired = errs.get(1);
+          errTooLong = errs.get(2);
+          errNotUnique = errs.get(3);
+        });
+
+        it('should not display any error before modification', function() {
+          expect(errorArea.isPresent()).toBeTruthy();
+          expect(errorArea.isDisplayed()).toBeFalsy();
+          expect(errRequired.isPresent()).toBeTruthy();
+          expect(errTooLong.isPresent()).toBeTruthy();
+          expect(errNotUnique.isPresent()).toBeTruthy();
+        });
+
+        it('should check constraint \'required\'', function() {
+          inptName.sendKeys('foo');
+          inptName.clear();
+          expect(errorArea.isDisplayed()).toBeTruthy();
+          expect(errRequired.isDisplayed()).toBeTruthy();
+          expect(errTooLong.isDisplayed()).toBeFalsy();
+          expect(errNotUnique.isDisplayed()).toBeFalsy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+        });
+
+        it('should check constraint \'unique\'', function() {
+          inptName.clear();
+          inptName.sendKeys('3589');
+          expect(errorArea.isDisplayed()).toBeTruthy();
+          expect(errRequired.isDisplayed()).toBeFalsy();
+          expect(errTooLong.isDisplayed()).toBeFalsy();
+          expect(errNotUnique.isDisplayed()).toBeTruthy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+        });
+
+      });
+
+    });
+
+    describe('Table:', function() {
+
+      var firstRow, bttnEdit, bttnRemove;
+
+      beforeAll(function() {
+        firstRow = rows.first();
+        bttnEdit = firstRow.element(by.partialLinkText('Edit'));
+        bttnRemove = firstRow.element(by.tiButton('Remove'));
+      });
+
+      it('should have an initial state', function() {
+        expect(rows.count()).toBe(10);
+        expect(bttnEdit.isPresent()).toBeTruthy();
+        expect(bttnEdit.isDisplayed()).toBeTruthy();
+        expect(bttnEdit.isEnabled()).toBeTruthy();
+        expect(bttnRemove.isPresent()).toBeTruthy();
+        expect(bttnRemove.isDisplayed()).toBeTruthy();
+        expect(bttnRemove.isEnabled()).toBeTruthy();
+      });
+
+      it('should display a confirmation dialog when button \'Remove\' ' +
+        'is clicked',
+        function() {
+          var dlg = element(by.css('.modal-dialog'));
+          expect(dlg.isPresent()).toBeFalsy();
+          bttnRemove.click();
+          expect(dlg.isDisplayed()).toBeTruthy();
+        }
+      );
+
+    });
+
+    describe('Edit:', function() {
+
+      var bttnSave, inptName, fltrFuel, elmFuel, elmFuelOptions;
+
+      beforeAll(function() {
+        bttnSave = element(by.tiButton('Save'));
+        inptName = element(by.id('carengine_enginesize'));
+        fltrFuel = element(by.model('carfueltypeFilter'));
+        elmFuel = element(by.model('carengine.fuelType.id'));
+        elmFuelOptions = elmFuel.all(by.tagName('option'));
+      });
+
+      beforeEach(function() {
+        browser.get('http://localhost:8080/application/carengine/3/form');
+      });
+
+      it('should have an initial state', function() {
+        expect(bttnSave.isPresent()).toBeTruthy();
+        expect(bttnSave.isDisplayed()).toBeTruthy();
+        expect(bttnSave.isEnabled()).toBeFalsy();
+        expect(inptName.isPresent()).toBeTruthy();
+        expect(inptName.isDisplayed()).toBeTruthy();
+        expect(inptName.isEnabled()).toBeTruthy();
+        expect(fltrFuel.isPresent()).toBeTruthy();
+        expect(fltrFuel.isDisplayed()).toBeTruthy();
+        expect(fltrFuel.isEnabled()).toBeTruthy();
+        expect(elmFuel.isPresent()).toBeTruthy();
+        expect(elmFuel.isDisplayed()).toBeTruthy();
+        expect(elmFuel.isEnabled()).toBeTruthy();
+        expect(elmFuelOptions.count())
+          .toBe(2); // there is no first blank item
+        expect(inptName.evaluate('carengine.engineSize')).toBe('1.8 L');
+        expect(elmFuel.evaluate('carengine.fuelType.id')).toBe(3); // D
+      });
+
+      describe('Filter Car Engines:', function() {
+
+        beforeEach(function() {
+          fltrFuel.clear();
+        });
+
+        it('should search by exact value, case sensitive', function() {
+          fltrFuel.sendKeys('D');
+          expect(elmFuelOptions.count()).toBe(1);
+        });
+
+        it('should search by exact value, case insensitive', function() {
+          fltrFuel.sendKeys('d');
+          expect(elmFuelOptions.count()).toBe(1);
+        });
+
+      });
+
+      it('should update a Car Engine', function() {
+        inptName.sendKeys('Foo');
+        expect(bttnSave.isEnabled()).toBeTruthy();
+        bttnSave.click();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/application/carengine/list');
+        // Find the just created Car Make and delete it.
+        browser.wait(function() {
+          bttnClear.click();
+          fltrEngine.sendKeys('1.8 LFoo');
+          browser._selectDropdownbyNum(fltrFuelType, 1); // D
+          return rows.count().then(
+            function(rowCount) {
+              return rowCount === 1;
+            }
+          );
+        }, 3000, 'A Car Engine \'1.8 L\' has not been updated.');
+        var firstRow = rows.first();
+        var bttnEdit = firstRow.element(by.partialLinkText('Edit'));
+        bttnEdit.click();
+        inptName.clear();
+        inptName.sendKeys('1.8 L');
+        bttnSave.click();
+      });
+
+      describe('Validation:', function() {
+
+        var errorArea, errRequired, errTooLong, errNotUnique;
+
+        beforeAll(function() {
+          errorArea = element(by.name('carengineForm'))
+            .element(by.css('.alert'));
+          var errs = errorArea.all(by.tagName('span'));
+          errRequired = errs.get(1);
+          errTooLong = errs.get(2);
+          errNotUnique = errs.get(3);
+        });
+
+        it('should not display any error before modification', function() {
+          expect(errorArea.isPresent()).toBeTruthy();
+          expect(errorArea.isDisplayed()).toBeFalsy();
+          expect(errRequired.isPresent()).toBeTruthy();
+          expect(errTooLong.isPresent()).toBeTruthy();
+          expect(errNotUnique.isPresent()).toBeTruthy();
+        });
+
+        it('should check constraint \'required\'', function() {
+          inptName.clear();
+          expect(errorArea.isDisplayed()).toBeTruthy();
+          expect(errRequired.isDisplayed()).toBeTruthy();
+          expect(errTooLong.isDisplayed()).toBeFalsy();
+          expect(errNotUnique.isDisplayed()).toBeFalsy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+        });
+
+        it('should check constraint \'unique\'', function() {
+          inptName.clear();
+          inptName.sendKeys('3.9/V8');
+          expect(errorArea.isDisplayed()).toBeTruthy();
+          expect(errRequired.isDisplayed()).toBeFalsy();
+          expect(errTooLong.isDisplayed()).toBeFalsy();
+          expect(errNotUnique.isDisplayed()).toBeTruthy();
+          expect(bttnSave.isEnabled()).toBeFalsy();
+        });
+      });
+
     });
 
   });
@@ -1373,6 +1691,7 @@ describe('Applications:', function() {
       });
 
     });
+
   });
 
 });
