@@ -194,6 +194,12 @@ public class BearingHousing extends Part {
     private Double armAngle;
 
     @JsonView(View.Summary.class)
+    @JsonProperty("armAngleSource")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "armAngleSource")
+    private CriticalDimensionEnumVal armAngleSource;
+
+    @JsonView(View.Summary.class)
     @JsonProperty("singleDualOilFeed")
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "singleDualOilFeed")
@@ -466,6 +472,14 @@ public class BearingHousing extends Part {
 
     public void setArmAngle(Double armAngle) {
         this.armAngle = armAngle;
+    }
+
+    public CriticalDimensionEnumVal getArmAngleSource() {
+        return armAngleSource;
+    }
+
+    public void setArmAngleSource(CriticalDimensionEnumVal armAngleSource) {
+        this.armAngleSource = armAngleSource;
     }
 
     public CriticalDimensionEnumVal getSingleDualOilFeed() {

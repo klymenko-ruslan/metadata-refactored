@@ -180,6 +180,23 @@
                   data-ng-trim="true" />
               </div>
 
+              <div data-ng-if="d.otherToleranceJsonName" class="tolerance">&nbsp;;&nbsp;
+                <select name="{{::d.otherToleranceJsonName}}" data-ng-if="d.otherToleranceDescriptor.selectOptions" data-ng-options="item.val for item in d.otherToleranceDescriptor.selectOptions track by item.id" data-ng-model="editedPart[d.otherToleranceJsonName]">
+                  <option value="" data-ng-if="::d.otherToleranceDescriptor.nullAllowed">{{::d.otherToleranceDescriptor.nullDisplay}}</option>
+                </select>
+                <input
+                  name="{{::d.otherToleranceJsonName}}" type="{{::d.upperToleranceInputType}}"
+                  title="{{errors[d.otherToleranceJsonName]}}"
+                  data-ng-if="::!d.selectOptions"
+                  data-ng-model="editedPart[d.otherToleranceJsonName]"
+                  data-ng-required="::!d.otherToleranceDescriptor.nullAllowed"
+                  data-ng-max="::d.otherToleranceDescriptor.maxVal"
+                  data-ng-pattern="::d.otherToleranceDescriptor.regex"
+                  critical-dimension-validator="d.otherToleranceDescriptor"
+                  data-ng-trim="true" />
+                <pre>{{d | json:2}}</pre>
+              </div>
+
             </div>
           </td>
           <td class="text-right">

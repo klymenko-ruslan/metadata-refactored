@@ -224,6 +224,10 @@ public class CriticalDimensionService {
             }
             cdlst.add(cd);
         }
+        // Sort critical dimensions for each part type by sequence number.
+        cacheById.forEach((ptid, cdlst) -> {
+            Collections.sort(cdlst, (cd0, cd1) -> cd0.getSeqNum() - cd1.getSeqNum());
+        });
         this.criticalDimensionsCacheById = Collections.unmodifiableMap(cacheById);
         ObjectMapper mapper = (new ObjectMapper()).disable(DEFAULT_VIEW_INCLUSION);
         try {

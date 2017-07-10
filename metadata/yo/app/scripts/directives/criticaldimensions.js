@@ -12,22 +12,31 @@ angular.module('ngMetaCrudApp')
             // (in other words -- tolerances).
             return d.parent !== null;
           })
+          .map(function(d) {
+            // Descriptors which are child but not tolerances
+            // are denoted as tolerances of type 'OTHER'.
+            if (d.tolerance === null) {
+              d.tolerance = 'OTHER';
+            }
+            return d;
+          })
           .groupBy(function(d) {
             // Associate each nominal's descriptor ID with
             // a tolerance descriptor.
             // Returns: {'parent_id': [tolerance0, tolerance1], ...}
             return d.parent.id;
           })
-          .mapObject(function(descriptorsArray) {
+          .mapObject(function(childDescriptors) {
             // Returns:
             // {
             //    'parent_id': {
             //      'BOTH': plus_minus_tolerance |
-            //      'UPPER': upper_tolerance,
-            //      'LOWER': lover_tolerance
+            //      'UPPER': upper_tolerance, |
+            //      'LOWER': lover_tolerance |
+            //      'OTHER': plain child
             //    }
             // }
-            return _.indexBy(descriptorsArray, 'tolerance');
+            return _.indexBy(childDescriptors, 'tolerance');
           })
           .value();
       };
@@ -184,6 +193,11 @@ angular.module('ngMetaCrudApp')
             displayValue += (' ' + String.fromCharCode(8593) +
               upperToleranceDispVal);
           }
+          var plainChildDispVal = _getToleranceDisplayVal('other',
+            dispObj);
+          if (plainChildDispVal) {
+            displayValue += (' // ' + plainChildDispVal);
+          }
           dispObj.displayValue = displayValue;
           dispObj.filterValue = displayValue.toLowerCase();
         } catch (e) {
@@ -211,7 +225,8 @@ angular.module('ngMetaCrudApp')
             // Make a dictionary: nominal's
             // {'descriptor_id': {
             //    'BOTH': plus_minus_tolerance |
-            //    'UPPER': upper_tolerance, 'LOWER': lover_tolerance}
+            //    'UPPER': upper_tolerance,
+            //    'OTHER': any value to display after value for a parent desc}
             // }
             $scope.idxDim2Tol = _indexTolerances($scope.descriptors);
 
@@ -333,7 +348,7 @@ angular.module('ngMetaCrudApp')
               if (inputType) {
                 retVal.inputType = inputType;
               }
-              // Add properties for tolerance if any.
+              // Add properties to the descriptor for a nominal.
               var isNominal = d.tolerance === null;
               if ($scope.opts.inlineLayout && isNominal) {
                 // This is a special case when we should display nominal
@@ -344,20 +359,27 @@ angular.module('ngMetaCrudApp')
                 // the value and add
                 // the formatted value to the nominal value to display.
                 var tolerancesDescs = $scope.idxDim2Tol[d.id];
-                if (tolerancesDescs) { // if this is a real tolerance
+                if (tolerancesDescs) {
+                  // If this is a real tolerance (or plain child).
                   var both = tolerancesDescs.BOTH;
                   var lower = tolerancesDescs.LOWER;
                   var upper = tolerancesDescs.UPPER;
-                  if (both && (lower || upper)) {
+                  var other = tolerancesDescs.OTHER;
+                  var invalid = both && (lower || upper) ||
+                    other && (both || lower || upper);
+                  if (invalid) {
                     $log.log('both: ' + angular.toJson(both, 2));
                     $log.log('lower: ' + angular.toJson(lower, 2));
                     $log.log('upper: ' + angular.toJson(upper, 2));
+                    $log.log('other: ' + angular.toJson(other, 2));
                     throw new Error('Internal error. Expected either ' +
-                      'regular tolerance or upper or/and lower ones.');
+                      'regular tolerance or upper or/and lower ' +
+                      'ones or plain child.');
                   }
                   _addTolerance2dispObj('both', $scope.part, both, retVal);
                   _addTolerance2dispObj('lower', $scope.part, lower, retVal);
                   _addTolerance2dispObj('upper', $scope.part, upper, retVal);
+                  _addTolerance2dispObj('other', $scope.part, other, retVal);
                 }
               }
               _addDisplayValue(retVal);
