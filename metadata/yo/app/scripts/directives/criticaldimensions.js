@@ -148,6 +148,12 @@ angular.module('ngMetaCrudApp')
             if (toleranceInputType) {
               dispObj[prefix + 'ToleranceInputType'] = toleranceInputType;
             }
+            // If tolerance is enumerations then add a list of
+            // options to select on UI.
+            if (toleranceDesc.dataType === 'ENUMERATION') {
+              _addSelectOptions(toleranceDesc,
+                dispObj[prefix + 'ToleranceDescriptor']);
+            }
           } else {
             $log.log('Critical dimension "' + toleranceDesc.jsonName +
               '" is not defined in the "Part" [' + part.class + '] entity. ' +
@@ -161,8 +167,7 @@ angular.module('ngMetaCrudApp')
         var toleranceDescriptor = dispObj[prefix + 'ToleranceDescriptor'];
         if (toleranceDescriptor) { // If the dispOject has a tolerance.
           var toleranceValue = dispObj[prefix + 'Tolerance'];
-          retVal = _getDisplayVal(toleranceDescriptor,
-            toleranceValue);
+          retVal = _getDisplayVal(toleranceDescriptor, toleranceValue);
         }
         return retVal;
       };
@@ -203,6 +208,17 @@ angular.module('ngMetaCrudApp')
         } catch (e) {
           dispObj.invalidDisplayValue = true;
           dispObj.displayValue = _buildErrorMessage(e.message);
+        }
+      };
+
+      var _addSelectOptions = function(descriptor, obj) {
+        if (descriptor.enumeration) {
+          obj.selectOptions = angular.copy(descriptor.enumeration.values);
+        } else {
+          obj.displayValue = _buildErrorMessage('definition ' +
+            'of the enum for the field "' + descriptor.jsonName +
+            '" not found.');
+          obj.invalidDisplayValue = true;
         }
       };
 
@@ -390,15 +406,7 @@ angular.module('ngMetaCrudApp')
                 // even when enumeration is not defined (see comments
                 // for the method '_getDisplayVal' for details).
                 // So we do check too for existence of the enumeration here.
-                if (d.enumeration) {
-                  retVal.selectOptions = angular.copy(d.enumeration.values);
-                } else {
-                  retVal.displayValue = _buildErrorMessage('definition ' +
-                    'of the enum for the field "' +
-                    d.jsonName +
-                    '" not found.');
-                  retVal.invalidDisplayValue = true;
-                }
+                _addSelectOptions(d, retVal);
               }
               return retVal;
             }; // $scope._getDisplayObject(d);
