@@ -1,0 +1,1 @@
+alter table bearing_housing add constraint bearing_housing_ibfk_12 foreign key (armAngleSource) references crit_dim_enum_val(id) on delete set null on update cascade;

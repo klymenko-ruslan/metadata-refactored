@@ -2,8 +2,8 @@
 
 angular.module('ngMetaCrudApp')
     .controller('CriticalDimensionEnumsCtrl', [
-      '$scope', '$log', 'Restangular', 'NgTableParams', 'restService', 'utils', 'critDimEnums',
-      function($scope, $log, Restangular, NgTableParams, restService, utils, critDimEnums) {
+      '$scope', '$log', 'toastr', 'Restangular', 'NgTableParams', 'restService', 'utils', 'critDimEnums',
+      function($scope, $log, toastr, Restangular, NgTableParams, restService, utils, critDimEnums) {
 
         $scope.selectedRow = null;
 
@@ -271,6 +271,8 @@ angular.module('ngMetaCrudApp')
               function success(updatedCdev) {
                 $scope.cdevModifyingRef.id = updatedCdev.id;
                 $scope.cdevModifyingRef.val = updatedCdev.val;
+                toastr.success('The value has been successfully updated.');
+                toastr.warning('You should re-index parts if this modified value is used by them.');
               },
               function failure(response) {
                 restService.error('Can\'t update the item in the enumeration.',
