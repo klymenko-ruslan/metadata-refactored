@@ -180,7 +180,7 @@
                   data-ng-trim="true" />
               </div>
 
-              <div data-ng-if="d.otherToleranceJsonName" class="tolerance">&nbsp;;&nbsp;
+              <div data-ng-if="d.otherToleranceJsonName" class="tolerance">&nbsp;//&nbsp;
                 <select name="{{::d.otherToleranceJsonName}}" data-ng-if="d.otherToleranceDescriptor.selectOptions" data-ng-options="item.val for item in d.otherToleranceDescriptor.selectOptions track by item.id" data-ng-model="editedPart[d.otherToleranceJsonName]">
                   <option value="" data-ng-if="::d.otherToleranceDescriptor.nullAllowed">{{::d.otherToleranceDescriptor.nullDisplay}}</option>
                 </select>
