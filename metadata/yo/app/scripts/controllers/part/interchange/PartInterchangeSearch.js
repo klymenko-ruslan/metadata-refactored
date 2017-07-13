@@ -29,6 +29,8 @@ angular.module('ngMetaCrudApp')
     $scope.critDimsByPartTypes = critDimsByPartTypes;
     $scope.critDimEnumVals = critDimEnumVals;
     $scope.partId = $routeParams.id;
+    $scope.part = null;
+    $scope.pickedPart = null;
     // The part whose interchange we're editing
     $scope.promise = restService.findPart($scope.partId).then(function(part) {
       $scope.part = part;
