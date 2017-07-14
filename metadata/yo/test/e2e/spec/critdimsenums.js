@@ -62,7 +62,7 @@ describe('Critical dimensions enumerations:', function() {
       expect(rowsEnumItems.count()).toBe(2);
       var secondRowEnum = rowsEnums.get(1);
       secondRowEnum.click();
-      expect(rowsEnumItems.count()).toBe(10);
+      expect(rowsEnumItems.count()).toBe(2);
       firstRowEnums.click();
       expect(rowsEnumItems.count()).toBe(2);
     });

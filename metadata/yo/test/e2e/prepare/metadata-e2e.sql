@@ -225,6 +225,7 @@ CREATE TABLE `bearing_housing` (
   `spinningBearing` int(11) DEFAULT NULL,
   `weight` decimal(6,1) DEFAULT NULL,
   `diagram` int(3) DEFAULT NULL,
+  `armAngleSource` int(11) DEFAULT NULL,
   KEY `part_id` (`part_id`),
   KEY `waterCooled` (`waterCooled`),
   KEY `oilInletThread` (`oilInletThread`),
@@ -236,9 +237,11 @@ CREATE TABLE `bearing_housing` (
   KEY `quadrant` (`quadrant`),
   KEY `singleDualOilFeed` (`singleDualOilFeed`),
   KEY `spinningBearing` (`spinningBearing`),
+  KEY `bearing_housing_ibfk_12` (`armAngleSource`),
   CONSTRAINT `bearing_housing_ibfk_1` FOREIGN KEY (`part_id`) REFERENCES `part` (`id`),
   CONSTRAINT `bearing_housing_ibfk_10` FOREIGN KEY (`singleDualOilFeed`) REFERENCES `crit_dim_enum_val` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `bearing_housing_ibfk_11` FOREIGN KEY (`spinningBearing`) REFERENCES `crit_dim_enum_val` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `bearing_housing_ibfk_12` FOREIGN KEY (`armAngleSource`) REFERENCES `crit_dim_enum_val` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `bearing_housing_ibfk_2` FOREIGN KEY (`waterCooled`) REFERENCES `crit_dim_enum_val` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `bearing_housing_ibfk_3` FOREIGN KEY (`oilInletThread`) REFERENCES `crit_dim_enum_val` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `bearing_housing_ibfk_4` FOREIGN KEY (`oilInletFlangeThread`) REFERENCES `crit_dim_enum_val` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
@@ -2024,8 +2027,8 @@ INSERT INTO `crit_dim` VALUES (12,13,4,'DECIMAL',NULL,'INCHES',NULL,'BORE DIA MA
 INSERT INTO `crit_dim` VALUES (13,13,5,'DECIMAL',NULL,'INCHES',NULL,'BORE DIA MIN','boreDiaMin','brnghsngBorediamin',1,NULL,0.000000,NULL,NULL,NULL,6,4,6,4,1,1);
 INSERT INTO `crit_dim` VALUES (14,13,26,'DECIMAL',NULL,'INCHES',NULL,'PR BORE DIA','prBoreDia','brnghsngPrboredia',1,NULL,0.000000,NULL,NULL,NULL,6,3,6,3,1,1);
 INSERT INTO `crit_dim` VALUES (15,13,27,'DECIMAL',NULL,'INCHES','BOTH','PR BORE DIA TOL','prBoreDiaTol','brnghsngPrborediatol',1,NULL,0.000000,NULL,NULL,14,6,3,6,3,1,1);
-INSERT INTO `crit_dim` VALUES (16,13,32,'ENUMERATION',741,NULL,NULL,'SINGLE / DUAL OIL FEED','singleDualOilFeed','brnghsngSingledualoilfeed',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,1);
-INSERT INTO `crit_dim` VALUES (17,13,33,'ENUMERATION',1,NULL,NULL,'SPINNING BEARING','spinningBearing','brnghsngSpinningbearing',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,1);
+INSERT INTO `crit_dim` VALUES (16,13,33,'ENUMERATION',741,NULL,NULL,'SINGLE / DUAL OIL FEED','singleDualOilFeed','brnghsngSingledualoilfeed',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,1);
+INSERT INTO `crit_dim` VALUES (17,13,34,'ENUMERATION',1,NULL,NULL,'SPINNING BEARING','spinningBearing','brnghsngSpinningbearing',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,1);
 INSERT INTO `crit_dim` VALUES (18,13,20,'ENUMERATION',787,NULL,NULL,'OIL INLET THREAD','oilInletThread','brnghsngOilinletthread',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,1);
 INSERT INTO `crit_dim` VALUES (19,13,22,'ENUMERATION',787,NULL,NULL,'OIL DRAIN THREAD','oilDrainThread','brnghsngOildrainthread',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,1);
 INSERT INTO `crit_dim` VALUES (20,13,23,'ENUMERATION',787,NULL,NULL,'OIL DRAIN FLANGE THREAD','oilDrainFlangeThread','brnghsngOildrainflangethread',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,1);
@@ -2041,7 +2044,7 @@ INSERT INTO `crit_dim` VALUES (29,13,31,'DECIMAL',NULL,'DEGREES',NULL,'ARM ANGLE
 INSERT INTO `crit_dim` VALUES (30,13,30,'ENUMERATION',788,NULL,NULL,'QUADRANT','quadrant','brnghsngQuadrant',1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,1);
 INSERT INTO `crit_dim` VALUES (31,13,18,'DECIMAL',NULL,'INCHES',NULL,'OAL','oal','brnghsngOal',1,NULL,0.000000,NULL,NULL,NULL,6,3,6,3,1,1);
 INSERT INTO `crit_dim` VALUES (32,13,19,'DECIMAL',NULL,'INCHES','BOTH','OAL TOL','oalTol','brnghsngOaltol',1,NULL,0.000000,NULL,NULL,31,6,3,6,3,1,1);
-INSERT INTO `crit_dim` VALUES (33,13,34,'DECIMAL',NULL,'GRAMS',NULL,'WEIGHT','weight','brnghsngWeight',1,NULL,0.000000,NULL,NULL,NULL,6,1,6,1,1,1);
+INSERT INTO `crit_dim` VALUES (33,13,35,'DECIMAL',NULL,'GRAMS',NULL,'WEIGHT','weight','brnghsngWeight',1,NULL,0.000000,NULL,NULL,NULL,6,1,6,1,1,1);
 INSERT INTO `crit_dim` VALUES (34,34,5,'DECIMAL',NULL,'INCHES',NULL,'DIA  \"A\"','diaA','bckpltDiaa',1,NULL,0.000000,NULL,NULL,NULL,6,3,6,3,1,1);
 INSERT INTO `crit_dim` VALUES (35,34,6,'DECIMAL',NULL,'INCHES','BOTH','DIA  \"A\"  TOL','diaATol','bckpltDiaatol',1,NULL,0.000000,NULL,NULL,34,6,3,6,3,1,1);
 INSERT INTO `crit_dim` VALUES (36,34,7,'DECIMAL',NULL,'INCHES',NULL,'DIA  \"B\"','diaB','bckpltDiab',1,NULL,0.000000,NULL,NULL,NULL,6,3,6,3,1,1);
@@ -2257,8 +2260,8 @@ INSERT INTO `crit_dim` VALUES (245,40,18,'DECIMAL',NULL,'INCHES',NULL,'GROOVE DI
 INSERT INTO `crit_dim` VALUES (246,40,19,'DECIMAL',NULL,'INCHES','UPPER','GROOVE DIA UPPER TOL','grooveDiaUpperTol','rtnngrngGroovediauppertol',1,NULL,0.000000,NULL,NULL,245,6,3,6,3,1,1);
 INSERT INTO `crit_dim` VALUES (247,40,20,'DECIMAL',NULL,'INCHES','LOWER','GROOVE DIA LOWER TOL','grooveDiaLowerTol','rtnngrngGroovedialowertol',1,NULL,0.000000,NULL,NULL,245,6,3,6,3,1,1);
 INSERT INTO `crit_dim` VALUES (248,40,21,'DECIMAL',NULL,'INCHES',NULL,'GROOVE WIDTH','grooveWidth','rtnngrngGroovewidth',1,NULL,0.000000,NULL,NULL,NULL,6,3,6,3,1,1);
-INSERT INTO `crit_dim` VALUES (249,40,22,'DECIMAL',NULL,'INCHES',NULL,'GROOVE WIDTH UPPER TOL','grooveWidthUpperTol','rtnngrngGroovewidthuppertol',1,NULL,0.000000,NULL,NULL,248,6,3,6,3,1,1);
-INSERT INTO `crit_dim` VALUES (250,40,23,'DECIMAL',NULL,'INCHES',NULL,'GROOVE WIDTH LOWER TOL','grooveWidthLowerTol','rtnngrngGroovewidthlowertol',1,NULL,0.000000,NULL,NULL,248,6,3,6,3,1,1);
+INSERT INTO `crit_dim` VALUES (249,40,22,'DECIMAL',NULL,'INCHES','UPPER','GROOVE WIDTH UPPER TOL','grooveWidthUpperTol','rtnngrngGroovewidthuppertol',1,NULL,0.000000,NULL,NULL,248,6,3,6,3,1,1);
+INSERT INTO `crit_dim` VALUES (250,40,23,'DECIMAL',NULL,'INCHES','LOWER','GROOVE WIDTH LOWER TOL','grooveWidthLowerTol','rtnngrngGroovewidthlowertol',1,NULL,0.000000,NULL,NULL,248,6,3,6,3,1,1);
 INSERT INTO `crit_dim` VALUES (251,40,9,'DECIMAL',NULL,'INCHES',NULL,'FREE DIA \"A\"','freeDiaA','rtnngrngFreediaa',1,NULL,0.000000,NULL,NULL,NULL,6,3,6,3,1,1);
 INSERT INTO `crit_dim` VALUES (252,40,11,'DECIMAL',NULL,'INCHES','UPPER','FREE DIA \"A\" UPPER TOL','freeDiaAUpperTol','rtnngrngFreediaauppertol',1,NULL,0.000000,NULL,NULL,251,6,3,6,3,1,1);
 INSERT INTO `crit_dim` VALUES (253,40,10,'DECIMAL',NULL,'INCHES','LOWER','FREE DIA \"A\" LOWER TOL','freeDiaALowerTol','rtnngrngFreediaalowertol',1,NULL,0.000000,NULL,NULL,251,6,3,6,3,1,1);
@@ -2446,7 +2449,7 @@ INSERT INTO `crit_dim` VALUES (439,40,1,'TEXT',NULL,NULL,NULL,'REFERENCE NUMBER'
 INSERT INTO `crit_dim` VALUES (440,15,0,'INTEGER',NULL,NULL,NULL,'DIAGRAM #','diagram','htshldDiagram',1,NULL,0.000000,NULL,NULL,NULL,3,0,3,0,1,1);
 INSERT INTO `crit_dim` VALUES (441,5,0,'INTEGER',NULL,NULL,NULL,'# BRG SURFACES','brgSurfaces','jrnlbrngBrgsurfaces',1,NULL,0.000000,NULL,NULL,NULL,2,0,2,0,1,1);
 INSERT INTO `crit_dim` VALUES (442,5,0,'INTEGER',NULL,NULL,NULL,'DIAGRAM #','diagram','jrnlbrngDiagram',1,NULL,0.000000,NULL,NULL,NULL,3,0,3,0,1,1);
-INSERT INTO `crit_dim` VALUES (443,13,35,'INTEGER',NULL,NULL,NULL,'DIAGRAM #','diagram','brnghsngDiagram',1,NULL,0.000000,NULL,NULL,NULL,3,0,3,0,1,1);
+INSERT INTO `crit_dim` VALUES (443,13,36,'INTEGER',NULL,NULL,NULL,'DIAGRAM #','diagram','brnghsngDiagram',1,NULL,0.000000,NULL,NULL,NULL,3,0,3,0,1,1);
 INSERT INTO `crit_dim` VALUES (444,19,10,'INTEGER',NULL,NULL,NULL,'DIAGRAM #','diagram','clmpDiagram',1,NULL,0.000000,NULL,NULL,NULL,3,0,3,0,1,1);
 INSERT INTO `crit_dim` VALUES (445,11,30,'INTEGER',NULL,NULL,NULL,'DIAGRAM #','diagram','cmprssrwhlDiagram',1,NULL,0.000000,NULL,NULL,NULL,3,0,3,0,1,1);
 INSERT INTO `crit_dim` VALUES (446,34,28,'INTEGER',NULL,NULL,NULL,'DIAGRAM #','diagram','bckpltDiagram',1,NULL,0.000000,NULL,NULL,NULL,3,0,3,0,1,1);
@@ -2500,6 +2503,7 @@ INSERT INTO `crit_dim` VALUES (497,48,0,'DECIMAL',NULL,'INCHES',NULL,'DIAMETER \
 INSERT INTO `crit_dim` VALUES (498,48,0,'DECIMAL',NULL,'INCHES',NULL,'DIAMETER \"B\"','diameterB','crbnslDiameterb',1,NULL,0.000000,NULL,NULL,NULL,6,3,6,3,1,1);
 INSERT INTO `crit_dim` VALUES (499,48,0,'DECIMAL',NULL,'INCHES',NULL,'DIAMETER \"C\"','diameterC','crbnslDiameterc',1,NULL,0.000000,NULL,NULL,NULL,6,3,6,3,1,1);
 INSERT INTO `crit_dim` VALUES (500,48,0,'DECIMAL',NULL,'INCHES',NULL,'DIAMETER \"D\"','diameterD','crbnslDiameterd',1,NULL,0.000000,NULL,NULL,NULL,6,3,6,3,1,1);
+INSERT INTO `crit_dim` VALUES (510,13,32,'ENUMERATION',800,NULL,NULL,'ARM ANGLE SOURCE','armAngleSource','brnghsngArmangleSource',1,NULL,NULL,NULL,NULL,29,NULL,NULL,NULL,NULL,0,1);
 /*!40000 ALTER TABLE `crit_dim` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2574,6 +2578,7 @@ INSERT INTO `crit_dim_enum` VALUES (787,'Thread_Callout');
 INSERT INTO `crit_dim_enum` VALUES (788,'VNT_Quad');
 INSERT INTO `crit_dim_enum` VALUES (789,'Wshr_Matl');
 INSERT INTO `crit_dim_enum` VALUES (790,'Wshr_Typ');
+INSERT INTO `crit_dim_enum` VALUES (800,'BH_ArmAngleSource');
 /*!40000 ALTER TABLE `crit_dim_enum` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3978,6 +3983,8 @@ INSERT INTO `crit_dim_enum_val` VALUES (21090,790,'WEAR');
 INSERT INTO `crit_dim_enum_val` VALUES (21091,790,'OTHER');
 INSERT INTO `crit_dim_enum_val` VALUES (21092,790,'SPLIT LOCK');
 INSERT INTO `crit_dim_enum_val` VALUES (21093,790,'INTERNAL TOOTH LOCK');
+INSERT INTO `crit_dim_enum_val` VALUES (21100,800,'Vendor Sample');
+INSERT INTO `crit_dim_enum_val` VALUES (21101,800,'OEM Sample');
 /*!40000 ALTER TABLE `crit_dim_enum_val` ENABLE KEYS */;
 UNLOCK TABLES;
 
