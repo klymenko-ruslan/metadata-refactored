@@ -607,15 +607,15 @@ angular.module('ngMetaCrudApp')
     $scope.images.pgSzVal = _imgPgSzTxt2Val($scope.images.pgSzTxt);
   };
 
-  $scope.onShowProductImage = function(img_id) {
+  $scope.onShowProductImage = function(imgId) {
     $uibModal.open({
       templateUrl: '/views/part/dialog/DisplayPartImages.html',
       animation: false,
       windowClass: 'part-img-modal-window',
       controller: 'DisplayPartImagesDlgCtrl',
       resolve: {
-        img_id: function() {
-          return img_id;
+        imgId: function() {
+          return imgId;
         },
         part: function() {
           return $scope.part;
@@ -718,9 +718,9 @@ angular.module('ngMetaCrudApp')
 
 }])
 .controller('DisplayPartImagesDlgCtrl', ['$scope', '$log', '$uibModalInstance', 'img_id', 'part',
-  function($scope, $log, $uibModalInstance, img_id, part) {
+  function($scope, $log, $uibModalInstance, imgId, part) {
 
-    $scope.imgId = img_id;
+    $scope.imgId = imgId;
     $scope.imgSize = '1000';
     $scope.part = part;
 

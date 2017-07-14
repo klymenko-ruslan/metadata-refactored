@@ -16,12 +16,12 @@ angular.module('ngMetaCrudApp')
       var attachments = salesNote.attachments || [];
 
       $scope.isUploadBttnDisabled = function () {
-        return !formData.has("file") || $scope.isEditing();
+        return !formData.has('file') || $scope.isEditing();
       };
 
       $scope.changedAttachment = function(files) {
         file = files[0];
-        formData.append("file", files[0]);
+        formData.append('file', files[0]);
       };
 
       function _updateAttachmentsTable(updatedAttachments) {
@@ -38,11 +38,11 @@ angular.module('ngMetaCrudApp')
           function success(salesNote) {
             $scope.salesNote = salesNote;
             _updateAttachmentsTable(salesNote.attachments);
-            toastr.success("File uploaded.");
-            formData.delete("file");
+            toastr.success('File uploaded.');
+            formData.delete('file');
           },
           function failure(response) {
-            restService.error("Can not upload the attachment.", response);
+            restService.error('Can not upload the attachment.', response);
           }
         );
       };
@@ -55,10 +55,10 @@ angular.module('ngMetaCrudApp')
                 function success(salesNote) {
                   $scope.salesNote = salesNote;
                   _updateAttachmentsTable(salesNote.attachments);
-                  toastr.success("The attachment has been successfully removed.");
+                  toastr.success('The attachment has been successfully removed.');
                 },
                 function failure(response) {
-                  restService.error("Can not remove the attachment.", response);
+                  restService.error('Can not remove the attachment.', response);
                 }
               );
               toastr.success('The attachment has been successfully removed.');
@@ -76,7 +76,7 @@ angular.module('ngMetaCrudApp')
         count: 10,
         sorting: {}
       }, {
-        getData: utils.localPagination(attachments, "createDate")
+        getData: utils.localPagination(attachments, 'createDate')
       });
 
       // Related Part Table

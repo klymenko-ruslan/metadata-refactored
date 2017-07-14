@@ -274,13 +274,17 @@ angular.module('ngMetaCrudApp')
                     $scope.stateItems.push({
                       name: 'Active',
                       val: false,
+                      // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
                       count: b.doc_count
+                      // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
                     });
                   } else if (b.key === 1) {
                     $scope.stateItems.push({
                       name: 'Inactive',
                       val: true,
+                      // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
                       count: b.doc_count
+                      // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
                     });
                   }
                 });

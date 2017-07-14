@@ -5,7 +5,7 @@ angular.module('ngMetaCrudApp')
 .controller('AddTurboTypeDialogCtrl', ['$scope', '$uibModalInstance', '$log', '$location', 'data', 'toastr', 'restService', function ($scope, $uibModalInstance, $log, $location, data, toastr, restService) {
 
   var partId = data.partId;
-  $scope.filter = "";
+  $scope.filter = '';
   $scope.selection = {};
   $scope.turboTypes = [];
 

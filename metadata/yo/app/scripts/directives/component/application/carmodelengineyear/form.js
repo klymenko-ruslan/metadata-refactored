@@ -205,11 +205,11 @@ angular.module('ngMetaCrudApp')
             if (!year) {
                 return;
             }
-            var year_name = year.name;
-            if (!year_name) {
+            var yearName = year.name;
+            if (!yearName) {
                 return;
             }
-            restService.findCarYearByName(year_name).then(
+            restService.findCarYearByName(yearName).then(
               function(caryear) {
                 $scope.carYearExists = angular.isObject(caryear);
               },

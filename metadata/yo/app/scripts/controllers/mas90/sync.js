@@ -78,7 +78,7 @@ angular.module('ngMetaCrudApp').controller('Mas90SyncCtrl', ['$scope', '$interva
     $scope.startSync = function() {
       $scope.phase = 0;
       $scope.errors = '';
-      $scope.modifications = "";
+      $scope.modifications = '';
       restService.startMas90Sync().then(
         function success(newStatus) {
           $scope._updateStatus(newStatus);

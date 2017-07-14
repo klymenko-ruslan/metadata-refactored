@@ -114,7 +114,7 @@ angular.module('ngMetaCrudApp')
     var baseUrl = $location.protocol() + '://' + $location.host() + ':' +
       $location.port();
 
-    function onClickLinkBttn(upload_id, file, link) {
+    function onClickLinkBttn(uploadId, file, link) {
 
       if (!file || file.status !== Dropzone.SUCCESS) {
         return;
@@ -171,11 +171,11 @@ angular.module('ngMetaCrudApp')
           });
 
           this.on('removedfile', function(file) {
-            var upload_id = $(file.previewElement).attr(ATTR_UPLOAD_ID);
-            if (upload_id) {
+            var uploadId = $(file.previewElement).attr(ATTR_UPLOAD_ID);
+            if (uploadId) {
               if (file.status === Dropzone.SUCCESS) {
                 restService.removeChangelogSourceLinkDescriptionAttachment(
-                  upload_id).then(
+                  uploadId).then(
                   function success() {
                     // ignore
                   },
@@ -188,14 +188,14 @@ angular.module('ngMetaCrudApp')
             }
           });
           this.on('success', function(file, response) {
-            var upload_id = response[0].id;
+            var uploadId = response[0].id;
             var downloadLink = baseUrl + '/metadata/changelogsourcelink/' +
-              'description/attachment/download/' + upload_id;
+              'description/attachment/download/' + uploadId;
             $(file.previewElement).find('.dz-filename').first()
               .attr('href', downloadLink);
-            $(file.previewElement).attr(ATTR_UPLOAD_ID, upload_id);
+            $(file.previewElement).attr(ATTR_UPLOAD_ID, uploadId);
             $(file.previewElement).find('.btn-info').first().click(function() {
-              onClickLinkBttn(upload_id, file, downloadLink);
+              onClickLinkBttn(uploadId, file, downloadLink);
             });
           });
           this.on('error', function(file, message) {
@@ -392,9 +392,9 @@ angular.module('ngMetaCrudApp')
 
           $scope.sourcesNames.push(newSourceName);
           $scope.sourcesNames.sort(function(a, b) {
-            var name_a = a.name.toLowerCase();
-            var name_b = b.name.toLowerCase();
-            return (name_a < name_b ? -1 :(name_a > name_b ? 1 : 0));
+            var nameA = a.name.toLowerCase();
+            var nameB = b.name.toLowerCase();
+            return (nameA < nameB ? -1 :(nameA > nameB ? 1 : 0));
           });
           $scope.data.crud.source.sourceName = newSourceName;
 
@@ -548,7 +548,7 @@ angular.module('ngMetaCrudApp')
           $location.path(cancelUrl);
         }
       } else if (cv === 'create_new_source') {
-        _chvw("sources_list");
+        _chvw('sources_list');
       } else if (cv === 'create_source_name') {
         $scope.data.newSourceName = null;
         _chvw('create_new_source');

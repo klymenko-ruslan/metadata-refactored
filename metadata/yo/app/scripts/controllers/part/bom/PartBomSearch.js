@@ -113,7 +113,7 @@ angular.module('ngMetaCrudApp')
               resolve: {
                 message: function() {
                   return 'Following parts failed while adding to the BOM of the part [' + $scope.partId + '] - ' +
-                    $scope.part.manufacturerPartNumber + ":";
+                    $scope.part.manufacturerPartNumber + ':';
                 },
                 failures: function() {
                   return response.failures;
