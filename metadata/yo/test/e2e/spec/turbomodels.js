@@ -165,7 +165,8 @@ describe('Turbo Models:', function() {
           'A dialog to create a new turbo type was not hidden.');
         elmTurboType.evaluate('turboTypes').then(function(turboTypes) {
           var found =  false;
-          for(var tt of turboTypes) {
+          for(var i in turboTypes) {
+            var tt = turboTypes[i];
             if (tt.name === 'FOO') {
               found = true;
               break;
@@ -255,7 +256,8 @@ describe('Turbo Models:', function() {
           'A dialog to rename a turbo type was not hidden.');
         elmTurboType.evaluate('turboTypes').then(function(turboTypes) {
           var found =  false;
-          for(var tt of turboTypes) {
+          for(var i in turboTypes) {
+            var tt = turboTypes[i];
             if (tt.name === 'FO') {
               found = true;
               break;
@@ -339,7 +341,8 @@ describe('Turbo Models:', function() {
           'A dialog to delete a turbo type was not hidden.');
         elmTurboType.evaluate('turboTypes').then(function(turboTypes) {
           var found =  false;
-          for(var tt of turboTypes) {
+          for(var i in turboTypes) {
+            var tt = turboTypes[i];
             if (tt.name === 'FO') {
               found = true;
               break;
@@ -366,7 +369,8 @@ describe('Turbo Models:', function() {
           expect(dlgDeleteTurboTypeFailure.isPresent()).toBeFalsy();
           elmTurboType.evaluate('turboTypes').then(function(turboTypes) {
             var found =  false;
-            for(var tt of turboTypes) {
+            for(var i in turboTypes) {
+              var tt = turboTypes[i];
               if (tt.name === 'H1C') {
                 found = true;
                 break;
@@ -498,7 +502,8 @@ describe('Turbo Models:', function() {
           'A dialog to create a new turbo model was not hidden.');
         elmTurboType.evaluate('turboModels').then(function(turboModels) {
           var found =  false;
-          for(var tm of turboModels) {
+          for(var i in turboModels) {
+            var tm = turboModels[i];
             if (tm.name === 'FOO') {
               found = true;
               break;
@@ -589,7 +594,8 @@ describe('Turbo Models:', function() {
           'A dialog to rename a turbo model was not hidden.');
         elmTurboModel.evaluate('turboModels').then(function(turboModels) {
           var found =  false;
-          for(var tm of turboModels) {
+          for(var i in turboModels) {
+            var tm = turboModels[i];
             if (tm.name === 'FO') {
               found = true;
               break;
@@ -674,7 +680,8 @@ describe('Turbo Models:', function() {
           'A dialog to delete a turbo model was not hidden.');
         elmTurboModel.evaluate('turboModels').then(function(turboModels) {
           var found =  false;
-          for(var tm of turboModels) {
+          for(var i in turboModels) {
+            var tm = turboModels[i];
             if (tm.name === 'FO') {
               found = true;
               break;
@@ -702,7 +709,8 @@ describe('Turbo Models:', function() {
           expect(dlgDeleteTurboTypeFailure.isPresent()).toBeFalsy();
           elmTurboType.evaluate('turboTypes').then(function(turboTypes) {
             var found =  false;
-            for(var tt of turboTypes) {
+            for(var i in turboTypes) {
+              var tt = turboTypes[i];
               if (tt.name === 'H1C') {
                 found = true;
                 break;
