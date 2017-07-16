@@ -28,6 +28,7 @@
     "angular-mocks": "1.6.4"
   },
   "resolutions": {
+    "angular": "1.6.4",
     "bootstrap-markdown": "14a21c3837140144b27efc19c795d1a37fad70fb"
   },
   "overrides": {

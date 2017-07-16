@@ -3,24 +3,50 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!--
-    .npmrc: prefix=${HOME}/.npm-packages
-    mkdir "${HOME}/.npm-packages"
-    npm install -g grunt bower grunt-contrib-compass
+
+    DEVELOPMENT ENVIRONTENT PREPARATION
+    ===================================
+
+    $ printf '\nprefix=${HOME}/.npm-packages\n' >> .${HOME}/.npmrc
+    $ mkdir "${HOME}/.npm-packages"
+    $ npm install -g grunt bower grunt-contrib-compass
     Add to PATH: ${HOME}/.npm-packages/bin
 
-    Install compass:
+    Install compass (word <minus> below replace by acutal sign '-'):
 
         # gem update <minus><minus>system
         # gem install compass
 
+    on FreeBSD the package should be installed from system packages:
+
+        # pkg install rubygem-compass
+
     The project is depended on the MS SQL server JDBC dirver.
     The driver is not available in the public Apache Maven repositories.
-    It can be installed in a local Apache Maven cache by following command (it assumes that current working dir is
-    the top level project's directory - TurboInternational):
+    It can be installed in a local Apache Maven cache by following command 
+    (it assumes that current working dir is the top level project's
+    directory - TurboInternational):
 
-    $ mvn install:install-file -Dfile=../bits/libs/sqljdbc_4.2/enu/sqljdbc42.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.2 -Dpackaging=jar
+        $ mvn install:install-file -Dfile=../bits/libs/sqljdbc_4.2/enu/sqljdbc42.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.2 -Dpackaging=jar
 
-    To run:
+
+    BUILD THE PROJECT
+    ==================
+
+    $ mvn -DskipTests -Dyo.test.skip=true -DbuildNumber=dev clean package
+
+    of course you may skip -D options which disables run tests so the
+    build will be tested.
+
+    On FreeBSD a dependency on a PhantomJS is not available in NPM's
+    repositories for this platform. So it should be installed from packages:
+
+        # pkg install phantomjs
+
+
+    RUN THE PROJECT
+    ===============
+
     $ mvn clean package spring-boot:run -DskipTests -Dyo.test.skip=true -DbuildNumber=dev \
         -Dimages.originals=file:/var2/turbointernationa/metadata/product_images/originals/ \
         -Dimages.resized=file:/var2/turbointerantional/metadata/product_images/resized/
@@ -496,5 +522,57 @@
                 </configuration>
             </plugin>
         </plugins>
+        <pluginManagement>
+        	<plugins>
+        		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        		<plugin>
+        			<groupId>org.eclipse.m2e</groupId>
+        			<artifactId>lifecycle-mapping</artifactId>
+        			<version>1.0.0</version>
+        			<configuration>
+        				<lifecycleMappingMetadata>
+        					<pluginExecutions>
+        						<pluginExecution>
+        							<pluginExecutionFilter>
+        								<groupId>
+        									com.github.trecloux
+        								</groupId>
+        								<artifactId>
+        									yeoman-maven-plugin
+        								</artifactId>
+        								<versionRange>
+        									[0.5,)
+        								</versionRange>
+        								<goals>
+        									<goal>build</goal>
+        								</goals>
+        							</pluginExecutionFilter>
+        							<action>
+        								<ignore></ignore>
+        							</action>
+        						</pluginExecution>
+        						<pluginExecution>
+        							<pluginExecutionFilter>
+        								<groupId>org.bsc.maven</groupId>
+        								<artifactId>
+        									maven-processor-plugin
+        								</artifactId>
+        								<versionRange>
+        									[3.2.0,)
+        								</versionRange>
+        								<goals>
+        									<goal>process</goal>
+        								</goals>
+        							</pluginExecutionFilter>
+        							<action>
+        								<ignore></ignore>
+        							</action>
+        						</pluginExecution>
+        					</pluginExecutions>
+        				</lifecycleMappingMetadata>
+        			</configuration>
+        		</plugin>
+        	</plugins>
+        </pluginManagement>
     </build>
 </project>
