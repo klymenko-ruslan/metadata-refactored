@@ -11,6 +11,8 @@ This script does following:
     * creates the database 'metadata_e2e'
     * grants permissions for the user to the database
     * import to the database a dump
+    * copy product images to a filestorage which will be used by
+      a testing instance of 'metadata' webapp.
 
 """
 
@@ -19,6 +21,15 @@ import mysql.connector
 import subprocess
 import time
 import sys
+import shutil
+import os
+
+SELF_DIR = os.path.dirname(os.path.realpath(__file__))
+DB_DUMP_FILENAME = os.path.join(SELF_DIR, 'prepare', 'metadata-e2e.sql')
+PRODUCT_IMG_ORIGINALS_DIR = os.path.join(SELF_DIR, 'prepare', 'img',
+                                         'product', 'originals')
+PRODUCT_IMG_RESIZED_DIR = os.path.join(SELF_DIR, 'prepare', 'img', 'product',
+                                       'resized')
 
 parser = argparse.ArgumentParser(description='Preparing of'
                                  ' a test environment.')
@@ -35,9 +46,9 @@ parser.add_argument('--db-password', default='metaserver_e2e',
 parser.add_argument('--db-name', default='metadata_e2e',
                     help='Database name (\'metaserver_e2e\') for use during '
                     'running of e2e tests.')
-parser.add_argument('--dump-filename', default='prepare/metadata-e2e.sql',
-                    help='A filename of a dump to load in the database.'
-                    'running of e2e tests.')
+parser.add_argument('--files-storage-path', default='/tmp/metadata',
+                    help='A path to a directory where file storage for'
+                    'testing \'metadata\' instance is located.')
 
 args = parser.parse_args()
 
@@ -63,8 +74,10 @@ def main(dbaCnx):
     print('Grant permission on the database to the user.')
     grantPermission(dbaCnx, args.db_host, args.db_name,
                     args.db_username, args.db_password)
+    print('Prepare file storage [product images].')
+    copyProductImages()
     print('Import a dump to the database.')
-    importDb(args.dump_filename, args.db_host, args.db_port, args.db_name,
+    importDb(DB_DUMP_FILENAME, args.db_host, args.db_port, args.db_name,
              args.dba_username, args.dba_password)
 
 
@@ -157,6 +170,17 @@ def ifDbUserExists(dbaCnx, username):
             return bool(row[0])
     finally:
         cursor.close()
+
+
+def copyProductImages():
+    """Copy products images to a filestorage."""
+    if os.path.isdir(args.files_storage_path):
+        shutil.rmtree(args.files_storage_path, ignore_errors=False)
+    productImagesDir = os.path.join(args.files_storage_path, 'product_images')
+    originalsDir = os.path.join(productImagesDir, 'originals')
+    resizedDir = os.path.join(productImagesDir, 'resized')
+    shutil.copytree(PRODUCT_IMG_ORIGINALS_DIR, originalsDir)
+    shutil.copytree(PRODUCT_IMG_RESIZED_DIR, resizedDir)
 
 
 dbaCnx = mysql.connector.connect(host=args.db_host, port=args.db_port,

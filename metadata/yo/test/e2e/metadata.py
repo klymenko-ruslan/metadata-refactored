@@ -29,6 +29,9 @@ parser.add_argument('--skip-build', action='store_true',
                     'that application has already been built.')
 parser.add_argument('--java-extra-opts', default='',
                     help='Extra options to run \'java\'.')
+parser.add_argument('--files-storage-path', default='/tmp/metadata',
+                    help='A path to a directory where file storage for'
+                    'testing \'metadata\' instance is located.')
 args = parser.parse_args()
 
 
@@ -109,8 +112,9 @@ def buildapp():
         print('Can\'t find a POM for the \'metadata\' webapp: {}'
               .format(pomfilename), file=sys.stderr)
         sys.exit(1)
-    cmdmvn = ('{mvn} -f {pom} -DskipTests -Dyo.test.skip=true -DbuildNumber=e2e '
-              'clean package'.format(mvn=mvnfname, pom=pomfilename))
+    cmdmvn = ('{mvn} -f {pom} -DskipTests -Dyo.test.skip=true '
+              '-DbuildNumber=e2e clean package'
+              .format(mvn=mvnfname, pom=pomfilename))
     print('Building of the \'metadata\' webapp.\n')
     retcode = subprocess.call(cmdmvn, shell=True)
     if retcode != 0:
