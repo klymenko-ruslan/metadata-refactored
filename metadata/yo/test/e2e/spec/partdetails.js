@@ -6,7 +6,9 @@
 describe('Part details:', function() {
 
   var bttnCreateXRef, bttnWhereUsed, bttnInterchanges, bttnSalesNotes,
-    lblStateActive, lblStateInactive, bttnReindex, bttnRebuildBOM, bttnReload;
+    lblStateActive, lblStateInactive, bttnReindex, bttnRebuildBOM, bttnReload,
+    tabDetails, tabDimensions, tabTurboTypes, tabApplications, tabTurbos,
+    tabNonStandard, tabAuditLog, tabPrices, tabAlsoBought, ;
 
   beforeAll(function() {
     bttnCreateXRef = element(by.tiButton('Create X Ref'));
@@ -18,6 +20,15 @@ describe('Part details:', function() {
     bttnReindex = element(by.tiButton('Reindex'));
     bttnRebuildBOM = element(by.tiButton('Rebuild BOM'));
     bttnReload = element(by.tiButton('Reload'));
+    tabDetails = element(by.id('tab-details'));
+    tabDimensions = element(by.id('tab-critical-dimensions'));
+    tabTurboTypes = element(by.id('tab-turbo-types'));
+    tabApplications = element(by.id('tab-applications'));
+    tabTurbos = element(by.id('tab-turbos'));
+    tabNonStandard = element(by.id('tab-nonstandard'));
+    tabAuditLog = element(by.id('tab-audit-log'));
+    tabPrices = element(by.id('tab-prices'));
+    tabAlsoBought = element(by.id('tab-also-bought'));
   });
 
   beforeEach(function() {
@@ -51,6 +62,92 @@ describe('Part details:', function() {
     expect(bttnReload.isPresent()).toBeTruthy();
     expect(bttnReload.isDisplayed()).toBeTruthy();
     expect(bttnReload.isEnabled()).toBeTruthy();
+    expect(tabDetails.isPresent()).toBeTruthy();
+    expect(tabDetails.isDisplayed()).toBeTruthy();
+    expect(tabDetails.isEnabled()).toBeTruthy();
+    expect(tabDimensions.isPresent()).toBeTruthy();
+    expect(tabDimensions.isDisplayed()).toBeTruthy();
+    expect(tabDimensions.isEnabled()).toBeTruthy();
+    expect(tabTurboTypes.isPresent()).toBeTruthy();
+    expect(tabTurboTypes.isDisplayed()).toBeTruthy();
+    expect(tabTurboTypes.isEnabled()).toBeTruthy();
+    expect(tabApplications.isPresent()).toBeTruthy();
+    expect(tabApplications.isDisplayed()).toBeFalsy();
+    expect(tabTurbos.isPresent()).toBeTruthy();
+    expect(tabTurbos.isDisplayed()).toBeFalsy();
+    expect(tabNonStandard.isPresent()).toBeTruthy();
+    expect(tabNonStandard.isDisplayed()).toBeFalsy();
+    expect(tabAuditLog.isPresent()).toBeTruthy();
+    expect(tabAuditLog.isDisplayed()).toBeTruthy();
+    expect(tabAuditLog.isEnabled()).toBeTruthy();
+    expect(tabPrices.isPresent()).toBeTruthy();
+    expect(tabPrices.isDisplayed()).toBeTruthy();
+    expect(tabPrices.isEnabled()).toBeTruthy();
+    expect(tabAlsoBought.isPresent()).toBeTruthy();
+    expect(tabAlsoBought.isDisplayed()).toBeTruthy();
+    expect(tabAlsoBought.isEnabled()).toBeTruthy();
   });
+
+  fit('has clickable tabs', function() {
+    expect(tabDetails.getAttribute('aria-expanded')).toEqual('true');
+    expect(tabDimensions.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabTurboTypes.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabApplications.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabTurbos.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabNonStandard.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabAuditLog.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabPrices.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabAlsoBought.getAttribute('aria-expanded')).not.toEqual('true');
+    tabDimensions.click();
+    expect(tabDetails.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabDimensions.getAttribute('aria-expanded')).toEqual('true');
+    expect(tabTurboTypes.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabApplications.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabTurbos.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabNonStandard.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabAuditLog.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabPrices.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabAlsoBought.getAttribute('aria-expanded')).not.toEqual('true');
+    tabTurboTypes.click();
+    expect(tabDetails.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabDimensions.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabTurboTypes.getAttribute('aria-expanded')).toEqual('true');
+    expect(tabApplications.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabTurbos.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabNonStandard.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabAuditLog.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabPrices.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabAlsoBought.getAttribute('aria-expanded')).not.toEqual('true');
+    tabAuditLog.click();
+    expect(tabDetails.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabDimensions.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabTurboTypes.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabApplications.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabTurbos.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabNonStandard.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabAuditLog.getAttribute('aria-expanded')).toEqual('true');
+    expect(tabPrices.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabAlsoBought.getAttribute('aria-expanded')).not.toEqual('true');
+    tabPrices.click();
+    expect(tabDetails.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabDimensions.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabTurboTypes.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabApplications.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabTurbos.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabNonStandard.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabAuditLog.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabPrices.getAttribute('aria-expanded')).toEqual('true');
+    expect(tabAlsoBought.getAttribute('aria-expanded')).not.toEqual('true');
+    tabAlsoBought.click();
+    expect(tabDetails.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabDimensions.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabTurboTypes.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabApplications.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabTurbos.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabNonStandard.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabAuditLog.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabPrices.getAttribute('aria-expanded')).not.toEqual('true');
+    expect(tabAlsoBought.getAttribute('aria-expanded')).toEqual('true');
+ });
 
 });

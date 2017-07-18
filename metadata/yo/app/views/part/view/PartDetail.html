@@ -93,7 +93,7 @@
     </a>
   </li>
   <li role="presentation">
-    <a id="tab-linked-sources" href="#linked_sources" aria-controls="linked sources" role="tab" data-toggle="tab">
+    <a id="tab-audit-log" href="#audit_log" aria-controls="audit log" role="tab" data-toggle="tab">
       <i class="fa fa-book" aria-hidden="true"></i>
       Audit Log
     </a>
@@ -105,7 +105,7 @@
     </a>
   </li>
   <li role="presentation" authorize="ROLE_PRICE_READ" data-ng-show="part.manufacturer.name == 'Turbo International'">
-    <a id="tab-alsobought" href="#alsobought" aria-controls="also bought" role="tab" data-toggle="tab">
+    <a id="tab-also-bought" href="#alsobought" aria-controls="also bought" role="tab" data-toggle="tab">
       <i class="fa fa-shopping-cart" aria-hidden="true"></i>
       Also Bought
     </a>
@@ -135,13 +135,13 @@
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="nonstandard">
     <data-ng-include src="'/views/part/view/TabNonstandard.html'"></data-ng-include>
   </div>
-  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="linked_sources">
-    <data-ng-include src="'/views/part/view/TabLinkedSources.html'"></data-ng-include>
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="audit_log">
+    <data-ng-include src="'/views/part/view/TabAuditLog.html'"></data-ng-include>
   </div>
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="prices">
     <data-ng-include src="'/views/part/view/TabPrices.html'"></data-ng-include>
   </div>
-  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="alsobought">
+  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="also_bought">
     <data-ng-include src="'/views/part/view/TabAlsoBought.html'"></data-ng-include>
   </div>
 </div>
@@ -163,10 +163,12 @@
     $('#tab-turbos').tab('show');
   } else if (h === '#nonstandard') {
     $('#tab-nonstandard').tab('show');
-  } else if (h === '#linked_sources') {
-    $('#tab-linked-sources').tab('show');
+  } else if (h === '#audit_log') {
+    $('#tab-auditlog').tab('show');
   } else if (h === '#prices') {
     $('#tab-prices').tab('show');
+  } else if (h === '#also_bought') {
+    $('#tab-also-bought').tab('show');
   } else {
     $('#partTabs a:first').tab('show');
   }
