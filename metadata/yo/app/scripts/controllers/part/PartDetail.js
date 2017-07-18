@@ -717,7 +717,7 @@ angular.module('ngMetaCrudApp')
   };
 
 }])
-.controller('DisplayPartImagesDlgCtrl', ['$scope', '$log', '$uibModalInstance', 'img_id', 'part',
+.controller('DisplayPartImagesDlgCtrl', ['$scope', '$log', '$uibModalInstance', 'imgId', 'part',
   function($scope, $log, $uibModalInstance, imgId, part) {
 
     $scope.imgId = imgId;
