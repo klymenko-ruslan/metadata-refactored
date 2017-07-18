@@ -13,7 +13,6 @@ This script does following:
     * import to the database a dump
     * copy product images to a filestorage which will be used by
       a testing instance of 'metadata' webapp.
-
 """
 
 import argparse
@@ -46,7 +45,7 @@ parser.add_argument('--db-password', default='metaserver_e2e',
 parser.add_argument('--db-name', default='metadata_e2e',
                     help='Database name (\'metaserver_e2e\') for use during '
                     'running of e2e tests.')
-parser.add_argument('--files-storage-path', default='/tmp/metadata',
+parser.add_argument('--files-storage-dir', default='/tmp/metadata',
                     help='A path to a directory where file storage for'
                     'testing \'metadata\' instance is located.')
 
@@ -74,8 +73,12 @@ def main(dbaCnx):
     print('Grant permission on the database to the user.')
     grantPermission(dbaCnx, args.db_host, args.db_name,
                     args.db_username, args.db_password)
-    print('Prepare file storage [product images].')
-    copyProductImages()
+    print('Prepare file storage.')
+    filesStorageDir = prepareFileStorage()
+    print('Copy images to the storage.')
+    copyProductImages(filesStorageDir)
+    print('Copy attachments to the storage.')
+    copyAttachments(filesStorageDir)
     print('Import a dump to the database.')
     importDb(DB_DUMP_FILENAME, args.db_host, args.db_port, args.db_name,
              args.dba_username, args.dba_password)
@@ -172,15 +175,42 @@ def ifDbUserExists(dbaCnx, username):
         cursor.close()
 
 
-def copyProductImages():
+def prepareFileStorage():
+    """
+    Create a directory for a filestorage and required subdirs.
+
+    The destination directory is removed in the begin if it exists.
+    The function returns full filename of a root directory of the storage.
+    """
+    rootDir = args.files_storage_dir
+    if os.path.isdir(rootDir):
+        shutil.rmtree(rootDir, ignore_errors=False)
+    os.makedirs(rootDir)
+    return rootDir
+
+
+def copyProductImages(filesStorageDir):
     """Copy products images to a filestorage."""
-    if os.path.isdir(args.files_storage_path):
-        shutil.rmtree(args.files_storage_path, ignore_errors=False)
-    productImagesDir = os.path.join(args.files_storage_path, 'product_images')
-    originalsDir = os.path.join(productImagesDir, 'originals')
-    resizedDir = os.path.join(productImagesDir, 'resized')
-    shutil.copytree(PRODUCT_IMG_ORIGINALS_DIR, originalsDir)
-    shutil.copytree(PRODUCT_IMG_RESIZED_DIR, resizedDir)
+    productImagesDir = os.path.join(filesStorageDir, 'product_images')
+    originalImagesDir = os.path.join(productImagesDir, 'originals')
+    resizedImagesDir = os.path.join(productImagesDir, 'resized')
+    shutil.copytree(PRODUCT_IMG_ORIGINALS_DIR, originalImagesDir)
+    shutil.copytree(PRODUCT_IMG_RESIZED_DIR, resizedImagesDir)
+
+
+def copyAttachments(filesStorageDir):
+    """Copy attachments to a filestorage."""
+    otherDir = os.path.join(filesStorageDir, 'other')
+    attachmentsSalesnotesDir = os.path.join(otherDir, 'salesNote',
+                                            'attachments')
+    changelogSourcesDir = os.path.join(otherDir, 'changelog', 'sources',
+                                       'attachments')
+    changelogSourceLnkDscrAttchDir = os.path.join(otherDir, 'changelog',
+                                                  'sources', 'link',
+                                                  'description', 'attachments')
+    os.makedirs(attachmentsSalesnotesDir)
+    os.makedirs(changelogSourcesDir)
+    os.makedirs(changelogSourceLnkDscrAttchDir)
 
 
 dbaCnx = mysql.connector.connect(host=args.db_host, port=args.db_port,

@@ -29,7 +29,7 @@ parser.add_argument('--skip-build', action='store_true',
                     'that application has already been built.')
 parser.add_argument('--java-extra-opts', default='',
                     help='Extra options to run \'java\'.')
-parser.add_argument('--files-storage-path', default='/tmp/metadata',
+parser.add_argument('--files-storage-dir', default='/tmp/metadata',
                     help='A path to a directory where file storage for'
                     'testing \'metadata\' instance is located.')
 args = parser.parse_args()
@@ -129,44 +129,37 @@ if not args.skip_build:
 
 print('Checking of prerequisites.')
 javafname = check_jdk()
-print('Prepare environment to start the webapp.')
-# The variable 'vardir' below is a root for various file storages
-# in the webapp (images, attachments etc.).
-vardir = os.path.join(scriptdir, '.var')
-if os.path.exists(vardir):
-    shutil.rmtree(vardir)
-images_originals_dir = os.path.join(vardir, 'metadata', 'product_images',
-                                    'originals')
-os.makedirs(images_originals_dir)
-images_resized_dir = os.path.join(vardir, 'metadata', 'product_images',
-                                  'resized')
-os.makedirs(images_resized_dir)
-attachments_salesnotes_dir = os.path.join(vardir, 'metadata', 'salesNote',
-                                          'attachments')
-os.makedirs(attachments_salesnotes_dir)
-changelog_sources_dir = os.path.join(vardir, 'metadata', 'changelog',
-                                     'sources', 'attachments')
-os.makedirs(changelog_sources_dir)
-changelog_source_lnk_dscr_attch_dir = os.path.join(vardir, 'metadata',
-                                                   'changelog', 'sources',
-                                                   'link', 'description',
-                                                   'attachments')
-os.makedirs(changelog_source_lnk_dscr_attch_dir)
+
 print('Starting the built webapp.')
 jarfilename = os.path.join(scriptdir, '..', '..', '..', 'target',
                            'metadata-e2e.jar').format(scriptdir)
+filesStorageDir = args.files_storage_dir
+productImagesDir = os.path.join(filesStorageDir, 'product_images')
+originalImagesDir = os.path.join(productImagesDir, 'originals')
+resizedImagesDir = os.path.join(productImagesDir, 'resized')
+
+otherDir = os.path.join(filesStorageDir, 'other')
+attachmentsSalesnotesDir = os.path.join(otherDir, 'salesNote',
+                                        'attachments')
+changelogSourcesDir = os.path.join(otherDir, 'changelog', 'sources',
+                                   'attachments')
+changelogSourceLnkDscrAttchDir = os.path.join(otherDir, 'changelog',
+                                              'sources', 'link',
+                                              'description', 'attachments')
 cmdjava = ('{java} '
            '-Dimages.originals=file:{product_images_originals} '
            '-Dimages.resized=file:{product_images_resized} '
+           '-Dattachments.salesNote.dir=file:{sales_notes_dir} '
            '-Dchangelog.sources.dir=file:{changelog_sources_dir} '
            '-Dchangelog.source.link.description.attachments.dir=file:{cldscr} '
            '{extraopts} '
            '-jar {metadatajar} --spring.profiles.active=e2e').format(
                java=javafname,
-               product_images_originals=images_originals_dir,
-               product_images_resized=images_resized_dir,
-               changelog_sources_dir=changelog_sources_dir,
-               cldscr=changelog_source_lnk_dscr_attch_dir,
+               product_images_originals=originalImagesDir,
+               product_images_resized=resizedImagesDir,
+               sales_notes_dir=attachmentsSalesnotesDir,
+               changelog_sources_dir=changelogSourcesDir,
+               cldscr=changelogSourceLnkDscrAttchDir,
                metadatajar=jarfilename,
                extraopts=args.java_extra_opts
            )

@@ -3,7 +3,7 @@
 
 'use strict';
 
-fdescribe('Part details:', function() {
+describe('Part details:', function() {
 
   var bttnCreateXRef, bttnWhereUsed, bttnInterchanges, bttnSalesNotes,
     lblStateActive, lblStateInactive, bttnReindex, bttnRebuildBOM, bttnReload;
