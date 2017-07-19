@@ -267,13 +267,13 @@
     </form>
 
       <div class="row">
-        <div class="col-xs-12">
+        <div id="part-images" class="col-xs-12">
 
-          <div data-ng-show="!part.productImages || part.productImages.length == 0" class="no-image"></div>
+          <div id="no-part-images" data-ng-show="!part.productImages || part.productImages.length == 0" class="no-image"></div>
 
-          <ul data-ng-hide="!part.productImages || part.productImages.length == 0" class="list-unstyled list-inline">
+          <ul id="part-images-list" data-ng-hide="!part.productImages || part.productImages.length == 0" class="list-unstyled list-inline">
 
-            <li data-ng-repeat="image in part.productImages" class="ng-scope bg-info part-icon text-center" data-ng-show="($index >= (images.pgNum - 1) * images.pgSzVal) && ($index < (images.pgNum - 1) * images.pgSzVal + images.pgSzVal)">
+            <li data-ng-repeat="image in part.productImages" class="ng-scope bg-info part-icon text-center" data-ng-if="($index >= (images.pgNum - 1) * images.pgSzVal) && ($index < (images.pgNum - 1) * images.pgSzVal + images.pgSzVal)">
               <form class="form-inline">
                 <div class="form-group pull-right">
                   <button class="btn btn-xs btn-danger" data-ng-click="deleteImage(image)">
@@ -299,7 +299,7 @@
 
           </ul>
 
-          <uib-pagination items-per-page="images.pgSzVal" total-items="part.productImages.length" data-ng-model="images.pgNum" data-ng-hide="part.productImages.length == 0 || part.productImages.length == images.pgSzVal" />
+          <uib-pagination items-per-page="images.pgSzVal" total-items="part.productImages.length" data-ng-model="images.pgNum" data-ng-hide="part.productImages.length == 0 || part.productImages.length <= images.pgSzVal || images.pgSzVal == 'all'" />
 
         </div>
       </div>
