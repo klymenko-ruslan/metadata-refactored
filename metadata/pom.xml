@@ -7,7 +7,7 @@
     DEVELOPMENT ENVIRONTENT PREPARATION
     ===================================
 
-    $ printf '\nprefix=${HOME}/.npm-packages\n' >> .${HOME}/.npmrc
+    $ printf '\nprefix=${HOME}/.npm-packages\n' >> ${HOME}/.npmrc
     $ mkdir "${HOME}/.npm-packages"
     $ npm install -g grunt bower grunt-contrib-compass
     Add to PATH: ${HOME}/.npm-packages/bin

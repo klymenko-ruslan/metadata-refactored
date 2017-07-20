@@ -49,13 +49,13 @@ def check_jdk():
         sys.exit(1)
     javaversionout = subprocess.getoutput('java -version')
     javaversionout0 = javaversionout.splitlines()[0]
-    javaversionmatch = re.search(r'^java version "([\d\._]+)"$',
+    javaversionmatch = re.search(r'^(java|openjdk) version "([\d\._]+)"$',
                                  javaversionout0)
     if javaversionmatch is None:
         print('Can\'t parse java\'s output to find out its version:\n{}'
               .format(javaversionout0), file=sys.stderr)
         sys.exit(1)
-    javaversionstr = javaversionmatch.group(1)
+    javaversionstr = javaversionmatch.group(2)
     javaversionarr = javaversionstr.split('.')
     if int(javaversionarr[1]) < 8:
         print('Found \'java\' ({location}) has incompatible '
@@ -122,13 +122,13 @@ def buildapp():
               .format(retcode), file=sys.stderr)
         sys.exit(1)
 
+print('Checking of prerequisites.')
+javafname = check_jdk()
+
 scriptdir = os.path.dirname(os.path.realpath(__file__))
 
 if not args.skip_build:
     buildapp()
-
-print('Checking of prerequisites.')
-javafname = check_jdk()
 
 print('Starting the built webapp.')
 jarfilename = os.path.join(scriptdir, '..', '..', '..', 'target',
@@ -163,4 +163,5 @@ cmdjava = ('{java} '
                metadatajar=jarfilename,
                extraopts=args.java_extra_opts
            )
+print('cmdjava: {}'.format(cmdjava))
 subprocess.call(cmdjava, shell=True)
