@@ -4,16 +4,16 @@
 <div class="modal-body">
   <form class="form-inline">
     <div class="form-group">
-      <input type="file" name="file" onchange="angular.element(this).scope().changed(this.files)"/>
+      <input id="prt-img-upld-file" type="file" name="file" onchange="angular.element(this).scope().changed(this.files)"/>
     </div>
     <div class="btn-group">
-      <label class="btn btn-primary" data-ng-model="publishImage" uib-btn-radio="true">Publish</label>
-      <label class="btn btn-primary" data-ng-model="publishImage" uib-btn-radio="false">Unpublish</label>
+      <label id="prt-img-upld-publish" class="btn btn-primary" data-ng-model="publishImage" uib-btn-radio="true">Publish</label>
+      <label id="prt-img-upld-unpublish" class="btn btn-primary" data-ng-model="publishImage" uib-btn-radio="false">Unpublish</label>
     </div>
   </form>
 </div>
 
 <div class="modal-footer">
-  <button class="btn btn-default" data-ng-click="cancel()">Cancel</button>
-  <button class="btn btn-primary" data-ng-click="upload()">Upload</button>
+  <button id="prt-img-upld-bttn-cancel" class="btn btn-default" data-ng-click="cancel()">Cancel</button>
+  <button id="prt-img-upld-bttn-upload" class="btn btn-primary" data-ng-click="upload()" data-ng-disabled="isUploadBttnDisabled()">Upload</button>
 </div>

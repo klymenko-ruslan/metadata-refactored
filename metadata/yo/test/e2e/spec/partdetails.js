@@ -3,7 +3,8 @@
 
 'use strict';
 
-var path = require('path')
+var path = require('path');
+var EC = protractor.ExpectedConditions;
 
 describe('Part details:', function() {
 
@@ -289,12 +290,74 @@ describe('Part details:', function() {
       expect(bttnPub.evaluate('image.publish')).toBe(true);
     });
 
-    xit('should open \'Upload JPG image\' dialog', function() {
-    });
 
-    xit('should upload image', function() {
-      bttnAddImage.click();
-      expect();
+    describe('Upload image:', function() {
+
+      var inptFile, bttnPublish, bttnUnpublish, bttnCancel, bttnUpload;
+
+      beforeAll(function() {
+        inptFile = element(by.id('prt-img-upld-file'));
+        bttnPublish = element(by.id('prt-img-upld-publish'));
+        bttnUnpublish = element(by.id('prt-img-upld-bttn-upload'));
+        bttnCancel = element(by.id('prt-img-upld-bttn-cancel'));
+        bttnUpload = element(by.id('prt-img-upld-bttn-upload'));
+      });
+
+      beforeEach(function() {
+        bttnAddImage.click();
+      });
+
+      describe('Dialog:', function() {
+
+        it('should be displayed', function() {
+          expect(inptFile.isPresent()).toBeTruthy();
+        });
+
+        it('can be closed', function() {
+          bttnCancel.click();
+          expect(inptFile.isPresent()).toBeFalsy();
+        });
+
+        it('should has an initial state', function() {
+          expect(inptFile.isPresent()).toBeTruthy();
+          expect(inptFile.isDisplayed()).toBeTruthy();
+          expect(inptFile.isEnabled()).toBeTruthy();
+          expect(bttnPublish.isPresent()).toBeTruthy();
+          expect(bttnPublish.isDisplayed()).toBeTruthy();
+          expect(bttnPublish.isEnabled()).toBeTruthy();
+          expect(bttnUnpublish.isPresent()).toBeTruthy();
+          expect(bttnUnpublish.isDisplayed()).toBeTruthy();
+          expect(bttnUnpublish.isEnabled()).toBeFalsy();
+          expect(bttnCancel.isPresent()).toBeTruthy();
+          expect(bttnCancel.isDisplayed()).toBeTruthy();
+          expect(bttnCancel.isEnabled()).toBeTruthy();
+          expect(bttnUpload.isPresent()).toBeTruthy();
+          expect(bttnUpload.isDisplayed()).toBeTruthy();
+          expect(bttnUpload.isEnabled()).toBeFalsy();
+        });
+
+        it('should be possible to mark image as \'Publish\' and \'Unpublish\'',
+          function() {
+            bttnUnpublish.click();
+            expect(bttnPublish.isPresent()).toBeTruthy();
+            expect(bttnPublish.isDisplayed()).toBeTruthy();
+            expect(bttnPublish.isEnabled()).toBeTruthy();
+            expect(bttnUnpublish.isPresent()).toBeTruthy();
+            expect(bttnUnpublish.isDisplayed()).toBeTruthy();
+            expect(bttnUnpublish.isEnabled()).toBeFalsy();
+          }
+        );
+
+        it('should be possible to choose an image for upload', function() {
+          var attachment = path.resolve(__dirname, '../resources/part.jpg');
+          inptFile.sendKeys(attachment);
+          browser.wait(EC.elementToBeClickable(bttnUpload), 1000, 'Button ' +
+            '\'Upload\' has not been enabled when file to upload ' +
+            'was choosed.');
+        });
+
+      });
+
     });
 
   });

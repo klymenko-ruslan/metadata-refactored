@@ -4,7 +4,7 @@ angular.module('ngMetaCrudApp').controller('AddPartImageCtrl', [
   '$log', '$scope', '$uibModalInstance', 'data', 'toastr', 'restService',
   function ($log, $scope, $uibModalInstance, data, toastr, restService) {
 
-    var file;
+    var file = null;
 
     // Data to be uploaded
     var formData = new FormData();
@@ -31,5 +31,10 @@ angular.module('ngMetaCrudApp').controller('AddPartImageCtrl', [
         }
       );
     };
+
+    $scope.isUploadBttnDisabled = function() {
+      return !file;
+    };
+
   }
 ]);
