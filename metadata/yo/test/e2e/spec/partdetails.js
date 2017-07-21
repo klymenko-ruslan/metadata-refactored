@@ -216,7 +216,7 @@ describe('Part details:', function() {
     expect(browser.getCurrentUrl()).toBe('http://localhost:8080/part/64956');
   });
 
-  fdescribe('CRUD images:', function() {
+  describe('CRUD images:', function() {
 
     var bttnAddImage, elmDisplayPerPage, ulImagesList, imageListPaginator,
       noPartImages;
