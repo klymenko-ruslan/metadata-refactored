@@ -9,7 +9,7 @@
 
     $ printf '\nprefix=${HOME}/.npm-packages\n' >> ${HOME}/.npmrc
     $ mkdir "${HOME}/.npm-packages"
-    $ npm install -g grunt bower grunt-contrib-compass
+    $ npm install -g protractor grunt bower grunt-contrib-compass
     Add to PATH: ${HOME}/.npm-packages/bin
 
     Install compass (word <minus> below replace by acutal sign '-'):
