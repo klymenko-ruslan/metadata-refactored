@@ -105,7 +105,7 @@
   <div class="form-group">
     <div class="col-xs-12">
       <div class="pull-right">
-        <button data-ng-click="modifyStartAll()" data-ng-hide="isEditing()" authorize="ROLE_ALTER_PART" class="btn btn-primary">
+        <button data-ng-click="modifyStartAll()" data-ng-hide="isEditing()" data-ng-disabled="toDisplay.length === 0" authorize="ROLE_ALTER_PART" class="btn btn-primary">
           <i class="fa fa-cog"></i> Modify All
         </button>
         <button data-ng-click="modifySaveAll()" data-ng-show="isEditing()" authorize="ROLE_ALTER_PART" class="btn btn-success data-ng-hide" data-ng-disabled="cdForm.$pristine || cdForm.$invalid || cdForm.$pending">

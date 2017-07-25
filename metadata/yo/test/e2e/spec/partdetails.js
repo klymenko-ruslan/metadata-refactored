@@ -217,147 +217,274 @@ describe('Part details:', function() {
     expect(browser.getCurrentUrl()).toBe('http://localhost:8080/part/64956');
   });
 
-  describe('CRUD images:', function() {
+  describe('Tab - Part Details:', function() {
 
-    var bttnAddImage, elmDisplayPerPage, ulImagesList, imageListPaginator,
-      noPartImages;
-
-    beforeAll(function() {
-      elmDisplayPerPage = element(by.id('img-pg-sz'));
-      bttnAddImage = element(by.tiButton('Add Image'));
-      ulImagesList = element(by.id('part-images-list'));
-      imageListPaginator = element(by.id('part-images')).all(by.tagName('ul'))
-        .last();
-      noPartImages = element(by.id('no-part-images'));
+    describe('Edit:', function() {
+      // TODO
     });
 
-    it('should have an initial state', function() {
-      expect(elmDisplayPerPage.isPresent()).toBeTruthy();
-      expect(elmDisplayPerPage.isDisplayed()).toBeTruthy();
-      expect(elmDisplayPerPage.isEnabled()).toBeTruthy();
-      expect(bttnAddImage.isPresent()).toBeTruthy();
-      expect(bttnAddImage.isDisplayed()).toBeTruthy();
-      expect(bttnAddImage.isEnabled()).toBeTruthy();
-      expect(ulImagesList.isPresent()).toBeTruthy();
-      expect(noPartImages.isPresent()).toBeTruthy();
-      expect(noPartImages.isDisplayed()).toBeFalsy();
-    });
+    describe('CRUD images:', function() {
 
-    it('should change number of displayed images', function() {
-      browser._selectDropdownbyNum(elmDisplayPerPage, 0);
-      expect(ulImagesList.all(by.tagName('li')).count()).toBe(1);
-      expect(bttnAddImage.isPresent()).toBeTruthy();
-      expect(bttnAddImage.isDisplayed()).toBeTruthy();
-      expect(imageListPaginator.isDisplayed()).toBeTruthy();
-      browser._selectDropdownbyNum(elmDisplayPerPage, 1);
-      expect(ulImagesList.all(by.tagName('li')).count()).toBe(2);
-      expect(bttnAddImage.isPresent()).toBeTruthy();
-      expect(bttnAddImage.isDisplayed()).toBeTruthy();
-      expect(imageListPaginator.isDisplayed()).toBeFalsy();
-      browser._selectDropdownbyNum(elmDisplayPerPage, 2);
-      expect(ulImagesList.all(by.tagName('li')).count()).toBe(2);
-      expect(bttnAddImage.isPresent()).toBeTruthy();
-      expect(bttnAddImage.isDisplayed()).toBeTruthy();
-      expect(imageListPaginator.isDisplayed()).toBeFalsy();
-      browser._selectDropdownbyNum(elmDisplayPerPage, 3);
-      expect(ulImagesList.all(by.tagName('li')).count()).toBe(2);
-      expect(bttnAddImage.isPresent()).toBeTruthy();
-      expect(bttnAddImage.isDisplayed()).toBeTruthy();
-      expect(imageListPaginator.isDisplayed()).toBeFalsy();
-      browser._selectDropdownbyNum(elmDisplayPerPage, 4); // all images
-      expect(ulImagesList.all(by.tagName('li')).count()).toBe(2);
-      expect(bttnAddImage.isPresent()).toBeTruthy();
-      expect(bttnAddImage.isDisplayed()).toBeTruthy();
-    });
-
-    it('should display image correctly', function() {
-      browser._selectDropdownbyNum(elmDisplayPerPage, 0);
-      var form = ulImagesList.all(by.tagName('li')).first()
-        .element(by.tagName('form'));
-      var bttnDelete = form.element(by.tagName('button'));
-      expect(bttnDelete.isPresent()).toBeTruthy();
-      expect(bttnDelete.isDisplayed()).toBeTruthy();
-      expect(bttnDelete.isEnabled()).toBeTruthy();
-      var bttnPrim = form.all(by.tagName('input')).first();
-      expect(bttnPrim.isPresent()).toBeTruthy();
-      expect(bttnPrim.isDisplayed()).toBeTruthy();
-      expect(bttnPrim.isEnabled()).toBeTruthy();
-      expect(bttnPrim.evaluate('image.main')).toBe(false);
-      var bttnPub = form.all(by.tagName('input')).last();
-      expect(bttnPub.isPresent()).toBeTruthy();
-      expect(bttnPub.isDisplayed()).toBeTruthy();
-      expect(bttnPub.isEnabled()).toBeTruthy();
-      expect(bttnPub.evaluate('image.publish')).toBe(true);
-    });
-
-
-    describe('Upload image:', function() {
-
-      var inptFile, bttnPublish, bttnUnpublish, bttnCancel, bttnUpload;
+      var bttnAddImage, elmDisplayPerPage, ulImagesList, imageListPaginator,
+        noPartImages;
 
       beforeAll(function() {
-        inptFile = element(by.id('prt-img-upld-file'));
-        bttnPublish = element(by.id('prt-img-upld-publish'));
-        bttnUnpublish = element(by.id('prt-img-upld-bttn-upload'));
-        bttnCancel = element(by.id('prt-img-upld-bttn-cancel'));
-        bttnUpload = element(by.id('prt-img-upld-bttn-upload'));
+        elmDisplayPerPage = element(by.id('img-pg-sz'));
+        bttnAddImage = element(by.tiButton('Add Image'));
+        ulImagesList = element(by.id('part-images-list'));
+        imageListPaginator = element(by.id('part-images')).all(by.tagName('ul'))
+          .last();
+        noPartImages = element(by.id('no-part-images'));
       });
 
-      beforeEach(function() {
-        bttnAddImage.click();
+      it('should have an initial state', function() {
+        expect(elmDisplayPerPage.isPresent()).toBeTruthy();
+        expect(elmDisplayPerPage.isDisplayed()).toBeTruthy();
+        expect(elmDisplayPerPage.isEnabled()).toBeTruthy();
+        expect(bttnAddImage.isPresent()).toBeTruthy();
+        expect(bttnAddImage.isDisplayed()).toBeTruthy();
+        expect(bttnAddImage.isEnabled()).toBeTruthy();
+        expect(ulImagesList.isPresent()).toBeTruthy();
+        expect(noPartImages.isPresent()).toBeTruthy();
+        expect(noPartImages.isDisplayed()).toBeFalsy();
       });
 
-      describe('Dialog:', function() {
+      it('should change number of displayed images', function() {
+        browser._selectDropdownbyNum(elmDisplayPerPage, 0);
+        expect(ulImagesList.all(by.tagName('li')).count()).toBe(1);
+        expect(bttnAddImage.isPresent()).toBeTruthy();
+        expect(bttnAddImage.isDisplayed()).toBeTruthy();
+        expect(imageListPaginator.isDisplayed()).toBeTruthy();
+        browser._selectDropdownbyNum(elmDisplayPerPage, 1);
+        expect(ulImagesList.all(by.tagName('li')).count()).toBe(2);
+        expect(bttnAddImage.isPresent()).toBeTruthy();
+        expect(bttnAddImage.isDisplayed()).toBeTruthy();
+        expect(imageListPaginator.isDisplayed()).toBeFalsy();
+        browser._selectDropdownbyNum(elmDisplayPerPage, 2);
+        expect(ulImagesList.all(by.tagName('li')).count()).toBe(2);
+        expect(bttnAddImage.isPresent()).toBeTruthy();
+        expect(bttnAddImage.isDisplayed()).toBeTruthy();
+        expect(imageListPaginator.isDisplayed()).toBeFalsy();
+        browser._selectDropdownbyNum(elmDisplayPerPage, 3);
+        expect(ulImagesList.all(by.tagName('li')).count()).toBe(2);
+        expect(bttnAddImage.isPresent()).toBeTruthy();
+        expect(bttnAddImage.isDisplayed()).toBeTruthy();
+        expect(imageListPaginator.isDisplayed()).toBeFalsy();
+        browser._selectDropdownbyNum(elmDisplayPerPage, 4); // all images
+        expect(ulImagesList.all(by.tagName('li')).count()).toBe(2);
+        expect(bttnAddImage.isPresent()).toBeTruthy();
+        expect(bttnAddImage.isDisplayed()).toBeTruthy();
+      });
 
-        it('should be displayed', function() {
-          expect(inptFile.isPresent()).toBeTruthy();
+      it('should display image correctly', function() {
+        browser._selectDropdownbyNum(elmDisplayPerPage, 0);
+        var form = ulImagesList.all(by.tagName('li')).first()
+          .element(by.tagName('form'));
+        var bttnDelete = form.element(by.tagName('button'));
+        expect(bttnDelete.isPresent()).toBeTruthy();
+        expect(bttnDelete.isDisplayed()).toBeTruthy();
+        expect(bttnDelete.isEnabled()).toBeTruthy();
+        var bttnPrim = form.all(by.tagName('input')).first();
+        expect(bttnPrim.isPresent()).toBeTruthy();
+        expect(bttnPrim.isDisplayed()).toBeTruthy();
+        expect(bttnPrim.isEnabled()).toBeTruthy();
+        expect(bttnPrim.evaluate('image.main')).toBe(false);
+        var bttnPub = form.all(by.tagName('input')).last();
+        expect(bttnPub.isPresent()).toBeTruthy();
+        expect(bttnPub.isDisplayed()).toBeTruthy();
+        expect(bttnPub.isEnabled()).toBeTruthy();
+        expect(bttnPub.evaluate('image.publish')).toBe(true);
+      });
+
+
+      describe('Upload image:', function() {
+
+        var inptFile, bttnPublish, bttnUnpublish, bttnCancel, bttnUpload;
+
+        beforeAll(function() {
+          inptFile = element(by.id('prt-img-upld-file'));
+          bttnPublish = element(by.id('prt-img-upld-publish'));
+          bttnUnpublish = element(by.id('prt-img-upld-bttn-upload'));
+          bttnCancel = element(by.id('prt-img-upld-bttn-cancel'));
+          bttnUpload = element(by.id('prt-img-upld-bttn-upload'));
         });
 
-        it('can be closed', function() {
-          bttnCancel.click();
-          expect(inptFile.isPresent()).toBeFalsy();
+        beforeEach(function() {
+          bttnAddImage.click();
         });
 
-        it('should has an initial state', function() {
-          expect(inptFile.isPresent()).toBeTruthy();
-          expect(inptFile.isDisplayed()).toBeTruthy();
-          expect(inptFile.isEnabled()).toBeTruthy();
-          expect(bttnPublish.isPresent()).toBeTruthy();
-          expect(bttnPublish.isDisplayed()).toBeTruthy();
-          expect(bttnPublish.isEnabled()).toBeTruthy();
-          expect(bttnUnpublish.isPresent()).toBeTruthy();
-          expect(bttnUnpublish.isDisplayed()).toBeTruthy();
-          expect(bttnUnpublish.isEnabled()).toBeFalsy();
-          expect(bttnCancel.isPresent()).toBeTruthy();
-          expect(bttnCancel.isDisplayed()).toBeTruthy();
-          expect(bttnCancel.isEnabled()).toBeTruthy();
-          expect(bttnUpload.isPresent()).toBeTruthy();
-          expect(bttnUpload.isDisplayed()).toBeTruthy();
-          expect(bttnUpload.isEnabled()).toBeFalsy();
-        });
+        describe('Dialog:', function() {
 
-        it('should be possible to mark image as \'Publish\' and \'Unpublish\'',
-          function() {
-            bttnUnpublish.click();
+          it('should be displayed', function() {
+            expect(inptFile.isPresent()).toBeTruthy();
+          });
+
+          it('can be closed', function() {
+            bttnCancel.click();
+            expect(inptFile.isPresent()).toBeFalsy();
+          });
+
+          it('should has an initial state', function() {
+            expect(inptFile.isPresent()).toBeTruthy();
+            expect(inptFile.isDisplayed()).toBeTruthy();
+            expect(inptFile.isEnabled()).toBeTruthy();
             expect(bttnPublish.isPresent()).toBeTruthy();
             expect(bttnPublish.isDisplayed()).toBeTruthy();
             expect(bttnPublish.isEnabled()).toBeTruthy();
             expect(bttnUnpublish.isPresent()).toBeTruthy();
             expect(bttnUnpublish.isDisplayed()).toBeTruthy();
             expect(bttnUnpublish.isEnabled()).toBeFalsy();
-          }
-        );
+            expect(bttnCancel.isPresent()).toBeTruthy();
+            expect(bttnCancel.isDisplayed()).toBeTruthy();
+            expect(bttnCancel.isEnabled()).toBeTruthy();
+            expect(bttnUpload.isPresent()).toBeTruthy();
+            expect(bttnUpload.isDisplayed()).toBeTruthy();
+            expect(bttnUpload.isEnabled()).toBeFalsy();
+          });
 
-        it('should be possible to choose an image for upload', function() {
-          var attachment = path.resolve(__dirname, '../resources/part.jpg');
-          inptFile.sendKeys(attachment);
-          browser.wait(EC.elementToBeClickable(bttnUpload), 1000, 'Button ' +
-            '\'Upload\' has not been enabled when file to upload ' +
-            'was choosed.');
+          it('should be possible to mark image as \'Publish\' and \'Unpublish\'',
+            function() {
+              bttnUnpublish.click();
+              expect(bttnPublish.isPresent()).toBeTruthy();
+              expect(bttnPublish.isDisplayed()).toBeTruthy();
+              expect(bttnPublish.isEnabled()).toBeTruthy();
+              expect(bttnUnpublish.isPresent()).toBeTruthy();
+              expect(bttnUnpublish.isDisplayed()).toBeTruthy();
+              expect(bttnUnpublish.isEnabled()).toBeFalsy();
+            }
+          );
+
+          it('should be possible to choose an image for upload', function() {
+            var attachment = path.resolve(__dirname, '../resources/part.jpg');
+            inptFile.sendKeys(attachment);
+            browser.wait(EC.elementToBeClickable(bttnUpload), 3000, 'Button ' +
+              '\'Upload\' has not been enabled when file to upload ' +
+              'was choosed.');
+          });
+
+          it('should be possible to upload image and then delete it',
+            function() {
+              var dlgConfirmImgDel = element(
+                by.css('.remove-image-confirmation-window'));
+              var attachment = path.resolve(__dirname, '../resources/part.jpg');
+              inptFile.sendKeys(attachment);
+              browser.wait(EC.elementToBeClickable(bttnUpload), 3000, 'Button ' +
+                '\'Upload\' has not been enabled when file to upload ' +
+                'was choosed.');
+              bttnUpload.click();
+              // Check that dialog window is closed.
+              expect(inptFile.isPresent()).toBeFalsy();
+              expect(browser.getCurrentUrl())
+                .toBe('http://localhost:8080/part/64956');
+              browser._selectDropdownbyNum(elmDisplayPerPage, 4); // all images
+              // check that image was added
+              expect(ulImagesList.all(by.tagName('li')).count()).toBe(3);
+              var lastImgItm = ulImagesList.all(by.tagName('li')).last();
+              var bttnDelLastImg = lastImgItm.element(by.tiButton('Delete'));
+              expect(bttnDelLastImg.isPresent()).toBeTruthy();
+              expect(bttnDelLastImg.isDisplayed()).toBeTruthy();
+              expect(bttnDelLastImg.isEnabled()).toBeTruthy();
+              expect(dlgConfirmImgDel.isPresent()).toBeFalsy();
+              bttnDelLastImg.click();
+              expect(dlgConfirmImgDel.isDisplayed()).toBeTruthy();
+              var bttnYes = dlgConfirmImgDel.element(by.tiButton('Yes'));
+              expect(bttnYes.isPresent()).toBeTruthy();
+              expect(bttnYes.isDisplayed()).toBeTruthy();
+              expect(bttnYes.isEnabled()).toBeTruthy();
+              bttnYes.click();
+              expect(dlgConfirmImgDel.isPresent()).toBeFalsy();
+              expect(ulImagesList.all(by.tagName('li')).count()).toBe(2);
+            }
+          );
+
         });
 
       });
 
+    });
+
+  });
+
+  describe('Tab - Critical Dimensions:', function() {
+
+    var lnkToggleLegend, bttnAddReplaceImage, elmHideBlank, elmInlineLayout,
+      inpFilter, bttnModifyAll, rows;
+
+    // TODO
+  });
+
+  fdescribe('Tab - Turbo Types:', function() {
+
+    var  bttnAddType, rows;
+
+    beforeAll(function() {
+      bttnAddType = element(by.id('btn-add-turbo-type'));
+      rows = element.all(by.repeater('turboType in $data'));
+    });
+
+    beforeEach(function() {
+      tabTurboTypes.click();
+    });
+
+    it('should have an initial state', function() {
+      expect(bttnAddType.isPresent()).toBeTruthy();
+      expect(bttnAddType.isDisplayed()).toBeTruthy();
+      expect(bttnAddType.isEnabled()).toBeTruthy();
+      expect(rows.count()).toBe(0);
+    });
+
+  });
+
+  describe('Tab - Audit Log:', function() {
+
+    var rows;
+
+    beforeAll(function() {
+      rows = element.all(by.repeater('rec in $data'));
+    });
+
+    beforeEach(function() {
+      tabAuditLog.click();
+    });
+
+    it('should display a records in the table', function() {
+      expect(rows.count()).toBe(0);
+    });
+
+ });
+
+  describe('Tab - Prices:', function() {
+
+    var rows;
+
+    beforeAll(function() {
+      rows = element.all(by.repeater('(n, v) in prices.prices'));
+    });
+
+    beforeEach(function() {
+      tabPrices.click();
+    });
+
+    it('should display a records in the table', function() {
+      expect(rows.count()).toBe(10);
+    });
+
+  });
+
+  describe('Tab - Also Bought:', function() {
+
+    var rows;
+
+    beforeAll(function() {
+      rows = element.all(by.repeater('r in $data'));
+    });
+
+    beforeEach(function() {
+      tabAlsoBought.click();
+    });
+
+    it('should display a records in the table', function() {
+      expect(rows.count()).toBe(25);
     });
 
   });

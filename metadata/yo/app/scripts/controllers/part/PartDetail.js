@@ -541,8 +541,13 @@ angular.module('ngMetaCrudApp')
   $scope.deleteImage = function(image) {
 
     dialogs.confirm(
-            'Delete image?',
-            'Do you want to remove this image from the part?').result.then(
+      'Delete image?',
+      'Do you want to remove this image from the part?',
+      {
+        // Fake class-marker to locate this dialog in e2e tests.
+        windowClass: 'remove-image-confirmation-window'
+      }
+    ).result.then(
         function() {
           // Yes
           restService.deleteProductImage(image.id).then(

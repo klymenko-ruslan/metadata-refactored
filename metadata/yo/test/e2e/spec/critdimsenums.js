@@ -295,7 +295,8 @@ describe('Critical dimensions enumerations:', function() {
       beforeAll(function() {
         dlgNewEnumItem = element(by.id('addEnumItmDlg'));
         dlgDelEnumItem = element(by.id('delEnumItmDlg'));
-        inptEnumItemName = dlgNewEnumItem.element(by.id('addEnumItmDlgCtrlName'));
+        inptEnumItemName = dlgNewEnumItem.element(
+          by.id('addEnumItmDlgCtrlName'));
         bttnCreate = dlgNewEnumItem.element(by.partialButtonText('Create'));
         bttnCancel = dlgNewEnumItem.element(by.partialButtonText('Cancel'));
       });
