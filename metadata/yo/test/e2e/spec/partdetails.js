@@ -6,7 +6,7 @@
 var path = require('path');
 var EC = protractor.ExpectedConditions;
 
-describe('Part details:', function() {
+fdescribe('Part details:', function() {
 
   var bttnCreateXRef, bttnWhereUsed, bttnInterchanges, bttnSalesNotes,
     lblStateActive, lblStateInactive, bttnReindex, bttnRebuildBOM, bttnReload,
@@ -408,12 +408,141 @@ describe('Part details:', function() {
   describe('Tab - Critical Dimensions:', function() {
 
     var lnkToggleLegend, bttnAddReplaceImage, elmHideBlank, elmInlineLayout,
-      inpFilter, bttnModifyAll, rows;
+      inpFilter, bttnModifyAll, bttnSaveAll, bttnUndoAll, bttnCancelAll, rows,
+      imgLegend, imgNoLegend;
 
-    // TODO
+    beforeAll(function() {
+      lnkToggleLegend = element(by.id('cd-ctrl-toggle-legend'));
+      bttnAddReplaceImage = element(by.id('cd-bttn-add-replcace-image'));
+      elmHideBlank = element(by.id('cd-ctrl-hide-blank'));
+      elmInlineLayout = element(by.id('cd-ctrl-inline-layout'));
+      inpFilter = element(by.id('cd-inpt-filter'));
+      bttnModifyAll = element(by.id('cd-bttn-modify-all'));
+      bttnSaveAll = element(by.id('cd-bttn-save-all'));
+      bttnUndoAll = element(by.id('cd-bttn-undo-all'));
+      bttnCancelAll = element(by.id('cd-bttn-cancel-all'));
+      rows = element.all(by.repeater('d in toDisplay'));
+      imgLegend = element(by.id('cd-legend-image'));
+      imgNoLegend = element(by.id('cd-legend-noimage'));
+    });
+
+    beforeEach(function() {
+      browser.getCurrentUrl();
+      browser.get('http://localhost:8080/part/49654');
+      tabDimensions.click();
+      // Activating of tabs is poorly detected by Protractor
+      // so line below is a double check that tab was activated
+      // and all controls are visible.
+      browser.wait(EC.visibilityOf(lnkToggleLegend), 3000,
+        'Can\'t open a tab \'CriticalDimensions\'');
+    });
+
+    it('should has an initial state', function() {
+      expect(lnkToggleLegend.isPresent()).toBeTruthy();
+      expect(lnkToggleLegend.isDisplayed()).toBeTruthy();
+      expect(lnkToggleLegend.isEnabled()).toBeTruthy();
+      expect(elmHideBlank.isPresent()).toBeTruthy();
+      expect(elmHideBlank.isDisplayed()).toBeTruthy();
+      expect(elmHideBlank.isEnabled()).toBeTruthy();
+      expect(elmHideBlank.evaluate('opts.hideBlank')).toBeTruthy(); // checked
+      expect(elmInlineLayout.isPresent()).toBeTruthy();
+      expect(elmInlineLayout.isDisplayed()).toBeTruthy();
+      expect(elmInlineLayout.isEnabled()).toBeTruthy();
+      expect(elmInlineLayout.evaluate('opts.inlineLayout')).toBeTruthy();
+      expect(inpFilter.isPresent()).toBeTruthy();
+      expect(inpFilter.isDisplayed()).toBeTruthy();
+      expect(inpFilter.isEnabled()).toBeTruthy();
+      expect(inpFilter.evaluate('opts.filter')).toBe('');
+      expect(bttnModifyAll.isPresent()).toBeTruthy();
+      expect(bttnModifyAll.isDisplayed()).toBeTruthy();
+      expect(bttnModifyAll.isEnabled()).toBeTruthy();
+      expect(bttnSaveAll.isPresent()).toBeTruthy();
+      expect(bttnSaveAll.isDisplayed()).toBeFalsy();
+      expect(bttnUndoAll.isPresent()).toBeTruthy();
+      expect(bttnUndoAll.isDisplayed()).toBeFalsy();
+      expect(bttnCancelAll.isPresent()).toBeTruthy();
+      expect(bttnCancelAll.isDisplayed()).toBeFalsy();
+      expect(rows.count()).toBe(15);
+      expect(imgLegend.isPresent()).toBeTruthy();
+      expect(imgLegend.isDisplayed()).toBeFalsy();
+      expect(imgNoLegend.isPresent()).toBeTruthy();
+      expect(imgNoLegend.isDisplayed()).toBeFalsy();
+    });
+
+    it('should be possible to show empty lines', function() {
+      elmHideBlank.click();
+      expect(rows.count()).toBe(19);
+    });
+
+    it('should be possible to show non-inline layout', function() {
+      elmInlineLayout.click();
+      expect(rows.count()).toBe(23);
+    });
+
+    it('should filter rows', function() {
+      inpFilter.sendKeys('dia');
+      expect(rows.count()).toBe(7);
+    });
+
+    describe('Legend image CRUD:', function() {
+
+      var inptFile, bttnCancel, bttnUpload, dlgUploadLegend;
+
+      beforeAll(function() {
+        inptFile = element(by.id('cd-file'));
+        bttnCancel = element(by.id('cd-dlg-upload-btn-cancel'));
+        bttnUpload = element(by.id('cd-dlg-upload-btn-upload'));
+        dlgUploadLegend = element(by.id('dlgUploadLegend'));
+      });
+
+      beforeEach(function() {
+        lnkToggleLegend.click();
+      });
+
+      it('should has an initial state', function() {
+        // expect(imgNoLegend.isDisplayed()).toBeTruthy();
+        // expect(imgLegend.isDisplayed()).toBeFalsy();
+        expect(bttnAddReplaceImage.isPresent()).toBeTruthy();
+        expect(bttnAddReplaceImage.isDisplayed()).toBeTruthy();
+        expect(bttnAddReplaceImage.isEnabled()).toBeTruthy();
+        expect(dlgUploadLegend.isDisplayed()).toBeFalsy();
+      });
+
+      it('should open and close upload image dialog', function() {
+        bttnAddReplaceImage.click();
+        browser.wait(EC.visibilityOf(dlgUploadLegend), 3000,
+          'A dialog to upload an image has not been displayed');
+        expect(dlgUploadLegend.isDisplayed()).toBeTruthy();
+        expect(bttnCancel.isPresent()).toBeTruthy();
+        expect(bttnCancel.isDisplayed()).toBeTruthy();
+        expect(bttnCancel.isEnabled()).toBeTruthy();
+        expect(bttnUpload.isPresent()).toBeTruthy();
+        expect(bttnUpload.isDisplayed()).toBeTruthy();
+        expect(bttnUpload.isEnabled()).toBeFalsy();
+        bttnCancel.click();
+        expect(dlgUploadLegend.isDisplayed()).toBeFalsy();
+      });
+
+      it('should upload an image', function() {
+        bttnAddReplaceImage.click();
+        var attachment = path.resolve(__dirname, '../resources/part.jpg');
+        inptFile.sendKeys(attachment);
+        browser.wait(EC.elementToBeClickable(bttnUpload), 5000,
+          'Button \'Upload\' is disabled.');
+        expect(bttnUpload.isEnabled()).toBeTruthy();
+        bttnUpload.click();
+        expect(dlgUploadLegend.isDisplayed()).toBeFalsy();
+        expect(browser.getCurrentUrl())
+          .toBe('http://localhost:8080/part/49654');
+        expect(imgLegend.isDisplayed()).toBeTruthy();
+        expect(imgNoLegend.isDisplayed()).toBeFalsy();
+      });
+
+    });
+
   });
 
-  fdescribe('Tab - Turbo Types:', function() {
+  describe('Tab - Turbo Types:', function() {
 
     var  bttnAddType, rows;
 
