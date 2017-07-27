@@ -6,7 +6,7 @@
 var path = require('path');
 var EC = protractor.ExpectedConditions;
 
-fdescribe('Part details:', function() {
+describe('Part details:', function() {
 
   var bttnCreateXRef, bttnWhereUsed, bttnInterchanges, bttnSalesNotes,
     lblStateActive, lblStateInactive, bttnReindex, bttnRebuildBOM, bttnReload,
@@ -537,6 +537,173 @@ fdescribe('Part details:', function() {
           .toBe('http://localhost:8080/part/49654');
         expect(imgLegend.isDisplayed()).toBeTruthy();
         expect(imgNoLegend.isDisplayed()).toBeFalsy();
+      });
+
+    });
+
+    describe('Edit:', function() {
+
+      beforeEach(function() {
+        bttnModifyAll.click();
+      });
+
+      it('should have an initial state', function() {
+        expect(bttnModifyAll.isDisplayed()).toBeFalsy();
+        expect(bttnSaveAll.isPresent()).toBeTruthy();
+        expect(bttnSaveAll.isDisplayed()).toBeTruthy();
+        expect(bttnSaveAll.isEnabled()).toBeFalsy();
+        expect(bttnUndoAll.isPresent()).toBeTruthy();
+        expect(bttnUndoAll.isDisplayed()).toBeTruthy();
+        expect(bttnUndoAll.isEnabled()).toBeFalsy();
+        expect(bttnCancelAll.isPresent()).toBeTruthy();
+        expect(bttnCancelAll.isDisplayed()).toBeTruthy();
+        expect(bttnCancelAll.isEnabled()).toBeTruthy();
+        expect(elmHideBlank.isEnabled()).toBeFalsy();
+        expect(elmInlineLayout.isEnabled()).toBeFalsy();
+        expect(inpFilter.isEnabled()).toBeFalsy();
+      });
+
+      it('should return to r/o mode when button \'Cancel All\' is pressed',
+        function() {
+          bttnCancelAll.click();
+          expect(bttnModifyAll.isDisplayed()).toBeTruthy();
+          expect(bttnSaveAll.isPresent()).toBeTruthy();
+          expect(bttnSaveAll.isDisplayed()).toBeFalsy();
+          expect(bttnUndoAll.isPresent()).toBeTruthy();
+          expect(bttnUndoAll.isDisplayed()).toBeFalsy();
+          expect(bttnCancelAll.isPresent()).toBeTruthy();
+          expect(bttnCancelAll.isDisplayed()).toBeFalsy();
+          expect(elmHideBlank.isEnabled()).toBeTruthy();
+          expect(elmInlineLayout.isEnabled()).toBeTruthy();
+          expect(inpFilter.isEnabled()).toBeTruthy();
+        }
+      );
+
+      describe('Dimension-enumeration:', function() {
+
+        var dynCsText, dynCsCtrl, dynCsBttnUndo, dynCsBttnCancel,
+          dynCsBttnModify;
+
+        beforeAll(function() {
+          var tds = rows.first().all(by.tagName('td'));
+          dynCsText = tds.get(1).element(by.tagName('span'));
+          dynCsCtrl = tds.get(1).element(by.name('dynCs'));
+          dynCsBttnUndo = tds.get(2).element(by.tiButton('Undo'));
+          dynCsBttnCancel = tds.get(2).element(by.tiButton('Cancel'));
+          dynCsBttnModify = tds.get(2).element(by.tiButton('Modify'));
+        });
+
+        it('should has an initial state', function() {
+          expect(dynCsText.isDisplayed()).toBeFalsy();
+          expect(dynCsCtrl.isPresent()).toBeTruthy();
+          expect(dynCsCtrl.isDisplayed()).toBeTruthy();
+          expect(dynCsCtrl.isEnabled()).toBeTruthy();
+          expect(dynCsBttnUndo.isPresent()).toBeTruthy();
+          expect(dynCsBttnUndo.isDisplayed()).toBeTruthy();
+          expect(dynCsBttnUndo.isEnabled()).toBeFalsy();
+          expect(dynCsBttnCancel.isPresent()).toBeTruthy();
+          expect(dynCsBttnCancel.isDisplayed()).toBeTruthy();
+          expect(dynCsBttnCancel.isEnabled()).toBeTruthy();
+          expect(dynCsBttnModify.isPresent()).toBeTruthy();
+          expect(dynCsBttnModify.isDisplayed()).toBeFalsy();
+        });
+
+        it('should revert to r/o mode when button \'Cancel\' is pressed',
+          function() {
+            dynCsBttnCancel.click();
+            expect(dynCsText.isDisplayed()).toBeTruthy();
+            expect(dynCsText.getText()).toBe('DYNAMIC');
+            expect(dynCsCtrl.isPresent()).toBeTruthy();
+            expect(dynCsCtrl.isDisplayed()).toBeFalsy();
+            expect(dynCsBttnUndo.isPresent()).toBeTruthy();
+            expect(dynCsBttnUndo.isDisplayed()).toBeFalsy();
+            expect(dynCsBttnCancel.isPresent()).toBeTruthy();
+            expect(dynCsBttnCancel.isDisplayed()).toBeFalsy();
+            expect(dynCsBttnModify.isPresent()).toBeTruthy();
+            expect(dynCsBttnModify.isDisplayed()).toBeTruthy();
+            expect(dynCsBttnModify.isEnabled()).toBeTruthy();
+          }
+        );
+
+        it('should revert to r/o mode when button \'Cancel All\' is pressed',
+          function() {
+            bttnCancelAll.click();
+            expect(dynCsText.isDisplayed()).toBeTruthy();
+            expect(dynCsText.getText()).toBe('DYNAMIC');
+            expect(dynCsCtrl.isPresent()).toBeTruthy();
+            expect(dynCsCtrl.isDisplayed()).toBeFalsy();
+            expect(dynCsBttnUndo.isPresent()).toBeTruthy();
+            expect(dynCsBttnUndo.isDisplayed()).toBeFalsy();
+            expect(dynCsBttnCancel.isPresent()).toBeTruthy();
+            expect(dynCsBttnCancel.isDisplayed()).toBeFalsy();
+            expect(dynCsBttnModify.isPresent()).toBeTruthy();
+            expect(dynCsBttnModify.isDisplayed()).toBeTruthy();
+            expect(dynCsBttnModify.isEnabled()).toBeTruthy();
+          }
+        );
+
+        it('should revert changes when button \'Undo\' is pressed',
+          function() {
+            browser._selectDropdownbyNum(dynCsCtrl, 3); // CARBON SEAL
+            dynCsBttnUndo.click();
+            expect(dynCsText.isDisplayed()).toBeFalsy();
+            expect(dynCsCtrl.isPresent()).toBeTruthy();
+            expect(dynCsCtrl.isDisplayed()).toBeTruthy();
+            expect(dynCsCtrl.isEnabled()).toBeTruthy();
+            expect(dynCsCtrl.evaluate('editedPart[d.jsonName].val'))
+              .toBe('DYNAMIC');
+            expect(dynCsBttnUndo.isPresent()).toBeTruthy();
+            expect(dynCsBttnUndo.isDisplayed()).toBeTruthy();
+            expect(dynCsBttnCancel.isPresent()).toBeTruthy();
+            expect(dynCsBttnCancel.isDisplayed()).toBeTruthy();
+            expect(dynCsBttnModify.isPresent()).toBeTruthy();
+            expect(dynCsBttnModify.isDisplayed()).toBeFalsy();
+          }
+        );
+
+        it('should revert changes when button \'Undo All\' is pressed',
+          function() {
+            browser._selectDropdownbyNum(dynCsCtrl, 3); // CARBON SEAL
+            bttnUndoAll.click();
+            expect(dynCsText.isDisplayed()).toBeFalsy();
+            expect(dynCsCtrl.isPresent()).toBeTruthy();
+            expect(dynCsCtrl.isDisplayed()).toBeTruthy();
+            expect(dynCsCtrl.isEnabled()).toBeTruthy();
+            expect(dynCsCtrl.evaluate('editedPart[d.jsonName].val'))
+              .toBe('DYNAMIC');
+            expect(dynCsBttnUndo.isPresent()).toBeTruthy();
+            expect(dynCsBttnUndo.isDisplayed()).toBeTruthy();
+            expect(dynCsBttnCancel.isPresent()).toBeTruthy();
+            expect(dynCsBttnCancel.isDisplayed()).toBeTruthy();
+            expect(dynCsBttnModify.isPresent()).toBeTruthy();
+            expect(dynCsBttnModify.isDisplayed()).toBeFalsy();
+          }
+        );
+
+        it('should save changes when button \'Save All\' is pressed',
+          function() {
+            browser._selectDropdownbyNum(dynCsCtrl, 3); // CARBON SEAL
+            bttnSaveAll.click();
+            expect(dynCsText.isDisplayed()).toBeTruthy();
+            expect(dynCsCtrl.isPresent()).toBeTruthy();
+            expect(dynCsCtrl.isDisplayed()).toBeFalsy();
+            expect(dynCsCtrl.evaluate('editedPart[d.jsonName].val'))
+              .toBe('CARBON SEAL');
+            expect(dynCsBttnUndo.isPresent()).toBeTruthy();
+            expect(dynCsBttnUndo.isDisplayed()).toBeFalsy();
+            expect(dynCsBttnCancel.isPresent()).toBeTruthy();
+            expect(dynCsBttnCancel.isDisplayed()).toBeFalsy();
+            expect(dynCsBttnModify.isPresent()).toBeTruthy();
+            expect(dynCsBttnModify.isDisplayed()).toBeTruthy();
+            // revert original values
+            dynCsBttnModify.click();
+            browser._selectDropdownbyNum(dynCsCtrl, 2); // DYNAMIC
+            bttnSaveAll.click();
+            expect(dynCsCtrl.evaluate('editedPart[d.jsonName].val'))
+              .toBe('DYNAMIC');
+          }
+        );
+
       });
 
     });

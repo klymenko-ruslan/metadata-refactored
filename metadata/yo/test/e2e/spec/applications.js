@@ -3,7 +3,7 @@
 
 'use strict';
 
-describe('Applications:', function() {
+fdescribe('Applications:', function() {
 
   var bttnModelEngineYear, bttnMake, bttnModel, bttnEngine, bttnFuelType;
 
