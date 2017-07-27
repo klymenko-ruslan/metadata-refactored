@@ -407,11 +407,12 @@ fdescribe('Part details:', function() {
 
   describe('Tab - Critical Dimensions:', function() {
 
-    var lnkToggleLegend, bttnAddReplaceImage, elmHideBlank, elmInlineLayout,
-      inpFilter, bttnModifyAll, bttnSaveAll, bttnUndoAll, bttnCancelAll, rows,
-      imgLegend, imgNoLegend;
+    var tabArea, lnkToggleLegend, bttnAddReplaceImage, elmHideBlank,
+      elmInlineLayout, inpFilter, bttnModifyAll, bttnSaveAll, bttnUndoAll,
+      bttnCancelAll, rows, imgLegend, imgNoLegend;
 
     beforeAll(function() {
+      tabArea = element(by.id('critical_dimensions'));
       lnkToggleLegend = element(by.id('cd-ctrl-toggle-legend'));
       bttnAddReplaceImage = element(by.id('cd-bttn-add-replcace-image'));
       elmHideBlank = element(by.id('cd-ctrl-hide-blank'));
@@ -433,7 +434,7 @@ fdescribe('Part details:', function() {
       // Activating of tabs is poorly detected by Protractor
       // so line below is a double check that tab was activated
       // and all controls are visible.
-      browser.wait(EC.visibilityOf(lnkToggleLegend), 3000,
+      browser.wait(EC.visibilityOf(tabArea), 3000,
         'Can\'t open a tab \'CriticalDimensions\'');
     });
 
@@ -544,15 +545,21 @@ fdescribe('Part details:', function() {
 
   describe('Tab - Turbo Types:', function() {
 
-    var  bttnAddType, rows;
+    var tabArea, bttnAddType, rows;
 
     beforeAll(function() {
+      tabArea = element(by.id('turbo_types'));
       bttnAddType = element(by.id('btn-add-turbo-type'));
       rows = element.all(by.repeater('turboType in $data'));
     });
 
     beforeEach(function() {
       tabTurboTypes.click();
+      // Activating of tabs is poorly detected by Protractor
+      // so line below is a double check that tab was activated
+      // and all controls are visible.
+      browser.wait(EC.visibilityOf(tabArea), 3000,
+        'Can\'t open a tab \'Turbo Types\'');
     });
 
     it('should have an initial state', function() {
@@ -566,14 +573,20 @@ fdescribe('Part details:', function() {
 
   describe('Tab - Audit Log:', function() {
 
-    var rows;
+    var tabArea, rows;
 
     beforeAll(function() {
+      tabArea = element(by.id('audit_log'));
       rows = element.all(by.repeater('rec in $data'));
     });
 
     beforeEach(function() {
       tabAuditLog.click();
+      // Activating of tabs is poorly detected by Protractor
+      // so line below is a double check that tab was activated
+      // and all controls are visible.
+      browser.wait(EC.visibilityOf(tabArea), 3000,
+        'Can\'t open a tab \'Audit Log\'');
     });
 
     it('should display a records in the table', function() {
@@ -584,14 +597,20 @@ fdescribe('Part details:', function() {
 
   describe('Tab - Prices:', function() {
 
-    var rows;
+    var tabArea, rows;
 
     beforeAll(function() {
+      tabArea = element(by.id('prices'));
       rows = element.all(by.repeater('(n, v) in prices.prices'));
     });
 
     beforeEach(function() {
       tabPrices.click();
+      // Activating of tabs is poorly detected by Protractor
+      // so line below is a double check that tab was activated
+      // and all controls are visible.
+      browser.wait(EC.visibilityOf(tabArea), 3000,
+        'Can\'t open a tab \'Prices\'');
     });
 
     it('should display a records in the table', function() {
@@ -602,14 +621,20 @@ fdescribe('Part details:', function() {
 
   describe('Tab - Also Bought:', function() {
 
-    var rows;
+    var tabArea, rows;
 
     beforeAll(function() {
+      tabArea = element(by.id('also_bought'));
       rows = element.all(by.repeater('r in $data'));
     });
 
     beforeEach(function() {
       tabAlsoBought.click();
+      // Activating of tabs is poorly detected by Protractor
+      // so line below is a double check that tab was activated
+      // and all controls are visible.
+      browser.wait(EC.visibilityOf(tabArea), 3000,
+        'Can\'t open a tab \'Also Bought\'');
     });
 
     it('should display a records in the table', function() {

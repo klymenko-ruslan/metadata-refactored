@@ -122,6 +122,7 @@ def buildapp():
               .format(retcode), file=sys.stderr)
         sys.exit(1)
 
+
 print('Checking of prerequisites.')
 javafname = check_jdk()
 
