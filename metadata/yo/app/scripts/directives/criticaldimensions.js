@@ -579,7 +579,7 @@ angular.module('ngMetaCrudApp')
       /**
        * Do validation of a critical dimension.
        * It validates only constraints which are not covered by
-       * standart validators.
+       * standard validators.
        */
       return {
         restrict: 'A',

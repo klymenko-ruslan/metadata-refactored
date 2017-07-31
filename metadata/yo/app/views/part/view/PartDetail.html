@@ -117,6 +117,7 @@
     <data-ng-include src="'/views/part/view/TabDetails.html'"></data-ng-include>
   </div>
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="critical_dimensions">
+    cdForm.$invalid: {{cdForm.$invalid}}
     <critical-dimensions part="part" descriptors="criticalDimensions"></critical-dimensions>
   </div>
   <div role="tabpanel" class="tab-pane fade tab-part-detail" id="turbo_types">
