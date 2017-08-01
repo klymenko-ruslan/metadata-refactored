@@ -76,7 +76,7 @@ angular.module('ngMetaCrudApp')
           return 'Invalid number!';
         } else if (errorId === 'maxlength' || errorId === 'criticalDimensionLengthValidator') {
           return 'The value is too long!';
-        } else if (errorId === 'min') {
+        } else if (errorId === 'min' || errorId === 'criticalDimensionMinValidator') {
           return 'The value is lower than minimal allowed value!';
         } else if (errorId === 'max') {
           return 'The value is higher than maximal allowed value!';
@@ -592,6 +592,7 @@ angular.module('ngMetaCrudApp')
           }
           if (descriptor.dataType === 'DECIMAL' &&
             descriptor.scale !== null) {
+            // Number scale validator.
             ctrl.$validators.criticalDimensionScaleValidator =
               function(modelValue, viewValue) {
                 if (viewValue === null || viewValue === undefined) { // null or undefined
@@ -607,6 +608,7 @@ angular.module('ngMetaCrudApp')
                 }
                 return false;
               };
+            // Number length validator.
             ctrl.$validators.criticalDimensionLengthValidator =
               function(modelValue, viewValue) {
                 if (viewValue === null || viewValue === undefined) { // null or undefined
@@ -620,7 +622,22 @@ angular.module('ngMetaCrudApp')
                   return true;
                 }
               };
-          }
+            // Number min validator.
+            // We can't use a standard ngMin validator because range [-99..-100) below has a special meaning.
+            // See comments in CriticalDimensionService.java for more info.
+            ctrl.$validators.criticalDimensionMinValidator =
+              function(modelValue, viewValue) {
+                if (viewValue === null || viewValue === undefined) { // null or undefined
+                  return true;
+                }
+                try {
+                  var valid = viewValue >= descriptor.minVal || (viewValue <= -99 && viewValue > -100);
+                  return valid;
+                } catch (e) {
+                  return true;
+                }
+              };
+         }
         }
       };
     }

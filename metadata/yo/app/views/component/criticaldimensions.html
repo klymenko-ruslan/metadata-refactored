@@ -145,7 +145,6 @@
                 title="{{errors[d.jsonName]}}"
                 data-ng-if="::!d.selectOptions" data-ng-model="editedPart[d.jsonName]"
                 data-ng-required="::!d.valueDescriptor.nullAllowed"
-                data-ng-min="::d.valueDescriptor.minVal"
                 data-ng-max="::d.valueDescriptor.maxVal"
                 data-ng-pattern="::d.valueDescriptor.regex"
                 critical-dimension-validator="d.valueDescriptor"
@@ -157,7 +156,6 @@
                   data-ng-if="d.bothToleranceJsonName"
                   data-ng-model="editedPart[d.bothToleranceJsonName]"
                   data-ng-required="::!d.bothToleranceDescriptor.nullAllowed"
-                  data-ng-min="::d.bothToleranceDescriptor.minVal"
                   data-ng-max="::d.bothToleranceDescriptor.maxVal"
                   data-ng-pattern="::d.bothToleranceDescriptor.regex"
                   critical-dimension-validator="d.bothToleranceDescriptor"
@@ -171,7 +169,6 @@
                   data-ng-if="d.lowerToleranceJsonName"
                   data-ng-model="editedPart[d.lowerToleranceJsonName]"
                   data-ng-required="::!d.lowerToleranceDescriptor.nullAllowed"
-                  data-ng-min="::d.lowerToleranceDescriptor.minVal"
                   data-ng-max="::d.lowerToleranceDescriptor.maxVal"
                   data-ng-pattern="::d.lowerToleranceDescriptor.regex"
                   critical-dimension-validator="d.lowerToleranceDescriptor"
@@ -185,7 +182,6 @@
                   data-ng-if="d.upperToleranceJsonName"
                   data-ng-model="editedPart[d.upperToleranceJsonName]"
                   data-ng-required="::!d.upperToleranceDescriptor.nullAllowed"
-                  data-ng-min="::d.upperToleranceDescriptor.minVal"
                   data-ng-max="::d.upperToleranceDescriptor.maxVal"
                   data-ng-pattern="::d.upperToleranceDescriptor.regex"
                   critical-dimension-validator="d.upperToleranceDescriptor"
@@ -202,7 +198,6 @@
                   data-ng-if="::!d.otherToleranceDescriptor.selectOptions"
                   data-ng-model="editedPart[d.otherToleranceJsonName]"
                   data-ng-required="::!d.otherToleranceDescriptor.nullAllowed"
-                  data-ng-min="::d.otherToleranceDescriptor.minVal"
                   data-ng-max="::d.otherToleranceDescriptor.maxVal"
                   data-ng-pattern="::d.otherToleranceDescriptor.regex"
                   critical-dimension-validator="d.otherToleranceDescriptor"
@@ -229,7 +224,5 @@
       </table>
     </div>
   </div>
-  
-  <pre>{{cdForm | json:2}}</pre>
 
 </form>

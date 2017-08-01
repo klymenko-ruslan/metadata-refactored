@@ -465,6 +465,31 @@ public class PartController {
     @Transactional
     @Secured("ROLE_ALTER_PART")
     @JsonView(View.Detail.class)
+    @RequestMapping(value = "/part/{id}/details", method = PUT, produces = APPLICATION_JSON_VALUE,
+        consumes = APPLICATION_JSON_VALUE)
+    public @ResponseBody Part updatePartDetails(HttpServletRequest request, HttpServletResponse response,
+            @RequestBody Part part, @PathVariable("id") Long id) throws IOException {
+        try {
+            String manfrPartNum = part.getManufacturerPartNumber();
+            Long manfrId = part.getManufacturer().getId();
+            String name = part.getName();
+            String description = part.getDescription();
+            Boolean inactive = part.getInactive();
+            Double dimLength = part.getDimLength();
+            Double dimWidth = part.getDimWidth();
+            Double dimHeight = part.getDimHeight();
+            Double weight = part.getWeight();
+            return partService.updatePartDetails(request, id, manfrPartNum, manfrId, name, description, inactive,
+                    dimLength, dimWidth, dimHeight, weight);
+        } catch (SecurityException e) {
+            response.sendError(SC_FORBIDDEN, e.toString());
+            return null;
+        }
+    }
+
+    @Transactional
+    @Secured("ROLE_ALTER_PART")
+    @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/{id}", method = PUT, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public @ResponseBody Part updatePart(HttpServletRequest request, HttpServletResponse response,
             @RequestBody Part part, @PathVariable("id") Long id) throws IOException {

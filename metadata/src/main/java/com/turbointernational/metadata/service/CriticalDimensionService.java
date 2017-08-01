@@ -356,9 +356,10 @@ class CriticalDimensionsValidator implements Validator {
                         Double decimal = (Double) value;
                         Double minVal = cd.getMinVal();
                         if (minVal != null && decimal < minVal) {
-                            // We use range [-99.0..-100.0) as a NULL value.
+                            // We use range [-99.0..-100.0) as a special values to denote "not clickable" element.
                             // So if the value is not in this range we assume it
                             // as invalid.
+                            // Yes, it is hack. But it exists due to historical reasons.
                             if (decimal > -99.0D || decimal <= -100.0D) {
                                 errors.rejectValue(fieldName, null, "The value lower than allowed: " + minVal);
                             }

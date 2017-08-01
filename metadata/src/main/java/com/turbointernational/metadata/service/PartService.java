@@ -47,6 +47,7 @@ import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
 import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
@@ -180,6 +181,58 @@ public class PartService {
                         + part.toJson(
                                 criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId()))
                         + "}",
+                relatedParts);
+        return retVal;
+    }
+
+    /**
+     * Update only part details attributes.
+     *
+     * @param request
+     * @param id
+     * @param manfrPartNum
+     * @param manfrId
+     * @param name
+     * @param description
+     * @param inactive
+     * @param dimLength
+     * @param dimWidth
+     * @param dimHeight
+     * @param weight
+     * @return
+     */
+    public Part updatePartDetails(HttpServletRequest request, Long id, String manfrPartNum, Long manfrId, String name,
+            String description, Boolean inactive, Double dimLength, Double dimWidth, Double dimHeight, Double weight) {
+        Part originPart = partDao.findOne(id);
+        if (!originPart.getManufacturer().equals(manfrId)
+                && !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
+            throw new SecurityException("You have no permission to modify a manufacturer.");
+        }
+        if (!originPart.getManufacturerPartNumber().equals(manfrPartNum)
+                && !request.isUserInRole("ROLE_ALTER_PART_NUMBER")) {
+            throw new SecurityException("You have no permission to modify a manufacturer.");
+        }
+        String originalPartStr = formatPart(originPart);
+        String originalPartJson = originPart
+                .toJson(criticalDimensionService.getCriticalDimensionForPartType(originPart.getPartType().getId()));
+        Manufacturer mnfr = partDao.getEntityManager().getReference(Manufacturer.class, manfrId);
+        originPart.setManufacturerPartNumber(manfrPartNum);
+        originPart.setManufacturer(mnfr);
+        originPart.setName(name);
+        originPart.setDescription(description);
+        originPart.setInactive(inactive);
+        originPart.setDimLength(dimLength);
+        originPart.setDimWidth(dimWidth);
+        originPart.setDimHeight(dimHeight);
+        originPart.setWeight(weight);
+        Part retVal = partDao.merge(originPart);
+        String updatedPartJson = originPart
+                .toJson(criticalDimensionService.getCriticalDimensionForPartType(originPart.getPartType().getId()));
+        // Update the changelog
+        List<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(id, PART0));
+        changelogService.log(PART, "Updated part " + originalPartStr + ".", "{original: " + originalPartJson +
+                ",updated: " + updatedPartJson + "}",
                 relatedParts);
         return retVal;
     }

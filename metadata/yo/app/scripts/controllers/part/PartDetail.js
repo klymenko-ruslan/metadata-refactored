@@ -263,14 +263,14 @@ angular.module('ngMetaCrudApp')
       $scope.part.turboModel.turboType = $scope.turbo.tt;
     }
 
-    restService.updatePart($scope.part).then(
+    restService.updatePartDetails($scope.part).then(
       function(part) {
         $scope.part = part;
         $scope.oldPart = Restangular.copy(part);
         _closeForm();
       },
       function(response) {
-        restService.error('Could not update part', response);
+        restService.error('Could not update details of the part', response);
       }
     );
 

@@ -393,6 +393,10 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('part', part.id).customPUT(part);
       };
 
+      this.updatePartDetails = function(part) {
+        return Restangular.one('part', part.id).one('details').customPUT(part);
+      };
+
       this.rebuildPartBom = function(partId) {
         Restangular.setParentless(false);
         return Restangular.one('part', partId).one('bom/rebuild').post();
