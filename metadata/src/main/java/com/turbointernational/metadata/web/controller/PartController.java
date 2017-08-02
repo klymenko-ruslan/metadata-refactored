@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -341,10 +342,18 @@ public class PartController {
 
     }
 
-    @Secured("ROLE_READ")
+    @PreAuthorize("hasRole('ROLE_READ') or hasIpAddress('127.0.0.1/32')")
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody Part getPart(@PathVariable("id") Long id) {
+        Part part = partRepository.findOne(id);
+        return part;
+    }
+
+    @PreAuthorize("hasIpAddress('127.0.0.1')")
+    @JsonView(View.Detail.class)
+    @RequestMapping(value = "/ws/part/{id}", method = GET)
+    public @ResponseBody Part wsGetPart(@PathVariable("id") Long id) {
         Part part = partRepository.findOne(id);
         return part;
     }
