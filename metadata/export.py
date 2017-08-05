@@ -188,6 +188,25 @@ def load_interchanges(cur, pid):
     return retval
 
 
+def load_whereused(cur, pid):
+    """Load 'where used' for a part."""
+    cur.execute("""
+                select
+                    p.id, p.manfr_part_num, pt.name, m.name, ba.distance,
+                    ba.type
+                from
+                    part as p join manfr m on m.id = p.manfr_id
+                    join part_type pt on pt.id = p.part_type_id
+                    join (
+                        select distinct
+                            part_id, ancestor_part_id, distance, type
+                        from vbom_ancestor
+                        where part_id=%(pid)s and distance > 0
+                    ) as ba on ba.ancestor_part_id = p.id
+                order by ba.distance, ba.type, p.manfr_part_num
+                """, {'pid': pid})
+    return cur.fetchall()
+
 try:
     cnx = mysql.connector.connect(host=args.db_host, port=args.db_port,
                                   database=args.db_name,
@@ -241,10 +260,9 @@ try:
         cursor.execute(sql, {'id': pid})
         p = cursor.fetchone()
         normalize_part(p)
-        boms = load_boms(cursor2, pid)
-        p['boms'] = boms
-        interchanges = load_interchanges(cursor2, pid)
-        p['interchanges'] = interchanges
+        p['boms'] = load_boms(cursor2, pid)
+        p['interchanges'] = load_interchanges(cursor2, pid)
+        p['whereused'] = load_whereused(cursor2, pid)
         result.append(p)
     cursor2.close()
     cursor.close()
