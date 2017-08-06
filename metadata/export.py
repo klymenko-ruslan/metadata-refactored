@@ -207,6 +207,7 @@ def load_whereused(cur, pid):
                 """, {'pid': pid})
     return cur.fetchall()
 
+
 try:
     cnx = mysql.connector.connect(host=args.db_host, port=args.db_port,
                                   database=args.db_name,
