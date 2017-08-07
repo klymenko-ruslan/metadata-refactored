@@ -346,15 +346,7 @@ public class PartController {
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody Part getPart(@PathVariable("id") Long id) {
-        Part part = partRepository.findOne(id);
-        return part;
-    }
-
-    @PreAuthorize("hasIpAddress('127.0.0.1')")
-    @JsonView(View.Detail.class)
-    @RequestMapping(value = "/ws/part/{id}", method = GET)
-    public @ResponseBody Part wsGetPart(@PathVariable("id") Long id) {
-        Part part = partRepository.findOne(id);
+        Part part = partDao.findOne(id);
         return part;
     }
 
@@ -367,7 +359,8 @@ public class PartController {
         // code to check if an user has permission
         // to read prices or not. Loading prices without the permission will
         // lead to login page instead of
-        // the part view. So, to avoid this issue we make permission check on
+        // the part view (as consequence a browser is redirected on a login page).
+        // So, to avoid this issue we make permission check on
         // the server side and just return null
         // when user has no the required permission.
         if (httpRequest.isUserInRole("ROLE_PRICE_READ")) {
