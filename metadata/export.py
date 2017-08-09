@@ -172,19 +172,17 @@ def load_boms(cur, pid):
 
 def load_interchanges(cur, pid):
     """Load interchanges for a part."""
-    retval = []
+    retval = {}
     cur.execute('select interchange_header_id from interchange_item '
                 'where part_id=%(pid)s', {'pid': pid})
     row = cur.fetchone()
     if row is not None:
         hid = row['interchange_header_id']
+        retval['header_id'] = hid
         cur.execute('select part_id from interchange_item '
                     'where part_id!=%(pid)s and interchange_header_id=%(hid)s',
                     {'pid': pid, 'hid': hid})
-        for row in cur.fetchall():
-            ipid = row['part_id']
-            ipart = load_part_short(cur, ipid)
-            retval.append(ipart)
+        retval['members'] = [row['part_id'] for row in cur.fetchall()]
     return retval
 
 
