@@ -126,6 +126,7 @@ angular.module('ngMetaCrudApp')
     }
 
     function cbCreate(srcIds, ratings, description, attachIds) {
+$log.log('DBG: CREATE INTERCHANGE');
       // Create
       restService.createPartInterchange($scope.part.id, $scope.pickedPart.id, srcIds, ratings, description, attachIds).then(
         function() {
@@ -168,7 +169,7 @@ angular.module('ngMetaCrudApp')
     };
 
     $scope.canClear = function() {
-      return $scope.part && $scope.part.interchange;
+      return $scope.part && $scope.part.interchange && !$scope.part.interchange.alone;
     };
 
     $scope.removeInterchange = function() {

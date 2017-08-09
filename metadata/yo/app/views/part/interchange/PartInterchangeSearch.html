@@ -51,12 +51,14 @@
     <div class="alert alert-danger" data-ng-show="part.id === pickedPart.id">
       Can't pick the same part.
     </div>
-  </div>
 
-  <!-- Picked Part Interchanges -->
-  <div class="col-xs-12 col-md-6" data-ng-show="pickedPart">
-    <h3>Picked Part Interchanges</h3>
-    <interchangeable-parts part="pickedPart"></interchangeable-parts>
+    <div class="row">
+      <div class="col-xs-12" data-ng-show="pickedPart">
+        <h3>Picked Part Interchanges</h3>
+        <interchangeable-parts part="pickedPart"></interchangeable-parts>
+      </div>
+    </div>
+    
   </div>
 
 </div>
