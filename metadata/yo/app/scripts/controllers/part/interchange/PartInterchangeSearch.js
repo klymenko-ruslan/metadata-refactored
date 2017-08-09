@@ -126,7 +126,6 @@ angular.module('ngMetaCrudApp')
     }
 
     function cbCreate(srcIds, ratings, description, attachIds) {
-$log.log('DBG: CREATE INTERCHANGE');
       // Create
       restService.createPartInterchange($scope.part.id, $scope.pickedPart.id, srcIds, ratings, description, attachIds).then(
         function() {
