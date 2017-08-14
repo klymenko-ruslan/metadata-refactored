@@ -23,7 +23,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -249,12 +248,12 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
     private Set<TurboType> turboTypes = new TreeSet<>();
 
     // /* REFACTORING
-    @ManyToOne(fetch = LAZY)
-    @JoinTable(name = "interchange_item",
-            joinColumns = @JoinColumn(name = "part_id"),
-            inverseJoinColumns = @JoinColumn(name = "interchange_header_id"))
-    @JsonView({View.Detail.class})
-    private Interchange interchange;
+//    @ManyToOne(fetch = LAZY)
+//    @JoinTable(name = "interchange_item",
+//            joinColumns = @JoinColumn(name = "part_id"),
+//            inverseJoinColumns = @JoinColumn(name = "interchange_header_id"))
+//    @JsonView({View.Detail.class})
+//    private Interchange interchange;
     // */
 
     @OneToMany(mappedBy = "parent", fetch = LAZY, orphanRemoval = true)
@@ -371,7 +370,8 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
         this.inactive = inactive;
     }
 
-    // /* REFACTORING
+    /* REFACTORING
+    @JsonView({View.Detail.class})
     public Interchange getInterchange() {
         return interchange;
     }
@@ -379,7 +379,7 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
     public void setInterchange(Interchange interchange) {
         this.interchange = interchange;
     }
-    // */
+    */
 
     public Set<BOMItem> getBom() {
         return bom;

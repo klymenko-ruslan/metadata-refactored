@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -204,8 +203,7 @@ public class PartService {
     public Part updatePartDetails(HttpServletRequest request, Long id, String manfrPartNum, Long manfrId, String name,
             String description, Boolean inactive, Double dimLength, Double dimWidth, Double dimHeight, Double weight) {
         Part originPart = partDao.findOne(id);
-        if (!originPart.getManufacturer().equals(manfrId)
-                && !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
+        if (!originPart.getManufacturer().equals(manfrId) && !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
             throw new SecurityException("You have no permission to modify a manufacturer.");
         }
         if (!originPart.getManufacturerPartNumber().equals(manfrPartNum)
@@ -231,9 +229,8 @@ public class PartService {
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(id, PART0));
-        changelogService.log(PART, "Updated part " + originalPartStr + ".", "{original: " + originalPartJson +
-                ",updated: " + updatedPartJson + "}",
-                relatedParts);
+        changelogService.log(PART, "Updated part " + originalPartStr + ".",
+                "{original: " + originalPartJson + ",updated: " + updatedPartJson + "}", relatedParts);
         return retVal;
     }
 
@@ -439,13 +436,12 @@ public class PartService {
                     ab.setPartId(rPartId);
                     ab.setPartTypeName(rPartTypeName);
                     ab.setName(rPartName);
-                    Optional.ofNullable(p.getInterchange()).ifPresent(interchange -> {
-                        List<PartDesc> interchanges = interchange.getParts().stream()
-                                .filter(ip -> !ip.getManufacturerPartNumber().equals(mnfrPrtNmb))
-                                .map(ip -> new PartDesc(ip.getId(), ip.getManufacturerPartNumber()))
-                                .collect(Collectors.toList());
-                        ab.setInterchanges(interchanges);
-                    });
+                    Interchange interchange = interchangeService.findForPart(p);
+                    List<PartDesc> interchanges = interchange.getParts().stream()
+                            .filter(ip -> !ip.getManufacturerPartNumber().equals(mnfrPrtNmb))
+                            .map(ip -> new PartDesc(ip.getId(), ip.getManufacturerPartNumber()))
+                            .collect(Collectors.toList());
+                    ab.setInterchanges(interchanges);
                 }
             });
         }
@@ -458,8 +454,8 @@ public class PartService {
         Map<Long, List<Part>> retVal = new HashMap<>(boms.size());
         for (BOMItem bi : boms) {
             Long bomId = bi.getId();
-            Interchange interchange = bi.getChild().getInterchange();
-            if (interchange != null && interchange.getParts().size() > 0) {
+            Interchange interchange = interchangeService.findForPart(bi.getChild());
+            if (/*interchange != null &&*/ interchange.getParts().size() > 0) {
                 List<Part> parts = new ArrayList<>(interchange.getParts().size());
                 interchange.getParts().stream().filter(p -> p.getId() != bi.getChild().getId())
                         .forEach(p -> parts.add(p));
