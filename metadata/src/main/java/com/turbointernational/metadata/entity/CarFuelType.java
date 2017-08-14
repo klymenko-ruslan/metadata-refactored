@@ -39,8 +39,8 @@ import flexjson.JSONSerializer;
 @Entity
 @Table(name = "car_fuel_type", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 @NamedQueries({
-        @NamedQuery(name = "findCarFuelTypeByName", query = "FROM CarFuelType WHERE name=:name"),
-        @NamedQuery(name = "findAllCarFuelTypeOrderedByName", query = "FROM CarFuelType ORDER BY name")
+        @NamedQuery(name = "findCarFuelTypeByName", query = "SELECT o FROM CarFuelType o WHERE o.name=:name"),
+        @NamedQuery(name = "findAllCarFuelTypeOrderedByName", query = "SELECT o FROM CarFuelType o ORDER BY o.name")
 })
 public class CarFuelType implements Serializable, SearchableEntity {
 

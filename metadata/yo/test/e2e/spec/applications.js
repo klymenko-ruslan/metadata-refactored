@@ -790,6 +790,9 @@ describe('Applications:', function() {
         expect(browser.getCurrentUrl())
           .toBe('http://localhost:8080/application/carmodel/list');
         // Find the just created Car Make and delete it.
+        // TODO: because ElasticSearch is 'Near Real-Time Search
+        //       it is possible rails conditions here. So if this
+        //       test fails, run it again several times.
         browser.wait(function() {
           bttnClear.click();
           fltrModel.sendKeys('foo');

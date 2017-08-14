@@ -157,32 +157,32 @@ import flexjson.transformer.Transformer;
 @NamedQueries({
         @NamedQuery(
                 name = "findOnePart",
-                query = "select distinct p from Part p left join p.interchange i where p.id = :id"
+                query = "SELECT DISTINCT o FROM Part o WHERE o.id = :id"
         ),
         @NamedQuery(
                 name = "findByPartNumber",
-                query = "from Part p where p.manufacturerPartNumber = :partNumber"
+                query = "SELECT o FROM Part o WHERE o.manufacturerPartNumber = :partNumber"
         ),
         @NamedQuery(
                 name = "findByPartNumberAndManufacturer",
-                query = "from Part p where p.manufacturer.id=:manufacturerId and p.manufacturerPartNumber = :partNumber"
+                query = "SELECT o FROM Part o WHERE o.manufacturer.id=:manufacturerId AND o.manufacturerPartNumber = :partNumber"
         ),
         @NamedQuery(
                 name = "findAllPartsOrderedById",
-                query = "from Part p order by p.id"
+                query = "SELECT o FROM Part o ORDER BY o.id"
         ),
         @NamedQuery(
                 name = "findPartsByIds",
-                query = "select distinct p from Part p where p.id in :ids order by p.manufacturerPartNumber"
+                query = "SELECT DISTINCT o FROM Part o WHERE o.id IN :ids ORDER BY o.manufacturerPartNumber"
         ),
         @NamedQuery(
                 name = "findPartsByMnfrsAndNumbers",
-                query = "select distinct p " +
-                        "from Part p where p.manufacturer.id=:mnfrId and p.manufacturerPartNumber in(:mnfrPrtNmbrs)"
+                query = "SELECT DISTINCT o " +
+                        "FROM Part o WHERE o.manufacturer.id=:mnfrId AND o.manufacturerPartNumber IN(:mnfrPrtNmbrs)"
         ),
         @NamedQuery(
                 name = "numPartsOfManufacturer",
-                query = "select count(p) from Part p where p.manufacturer.id=:manufacturerId"
+                query = "SELECT COUNT(o) FROM Part o WHERE o.manufacturer.id=:manufacturerId"
         )
 })
 @JsonInclude(ALWAYS)
@@ -246,15 +246,6 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
             inverseJoinColumns = @JoinColumn(name = "turbo_type_id"))
     @JsonView({View.Detail.class})
     private Set<TurboType> turboTypes = new TreeSet<>();
-
-    // /* REFACTORING
-//    @ManyToOne(fetch = LAZY)
-//    @JoinTable(name = "interchange_item",
-//            joinColumns = @JoinColumn(name = "part_id"),
-//            inverseJoinColumns = @JoinColumn(name = "interchange_header_id"))
-//    @JsonView({View.Detail.class})
-//    private Interchange interchange;
-    // */
 
     @OneToMany(mappedBy = "parent", fetch = LAZY, orphanRemoval = true)
     @OrderBy("id")

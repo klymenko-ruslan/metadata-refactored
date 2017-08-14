@@ -28,8 +28,8 @@ import flexjson.JSONSerializer;
 @Cacheable
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "findAllPartTypes", query = "FROM PartType AS pt ORDER BY pt.name"),
-        @NamedQuery(name = "findPartTypeByValue", query = "FROM PartType AS pt WHERE pt.value=:value")
+        @NamedQuery(name = "findAllPartTypes", query = "SELECT pt FROM PartType pt ORDER BY pt.name"),
+        @NamedQuery(name = "findPartTypeByValue", query = "SELECT pt FROM PartType pt WHERE pt.value=:value")
 })
 @Table(name = "part_type")
 public class PartType implements Serializable {

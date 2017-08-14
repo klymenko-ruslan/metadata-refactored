@@ -35,7 +35,7 @@ import flexjson.transformer.Transformer;
 @NamedQueries({
     @NamedQuery(
             name = "findCriticalDimensionsForPartType",
-            query = "FROM CriticalDimension WHERE partType.id=:partTypeId ORDER BY seqNum ASC"
+            query = "SELECT o FROM CriticalDimension o WHERE o.partType.id=:partTypeId ORDER BY o.seqNum ASC"
     )
 })
 @JsonInclude(ALWAYS)

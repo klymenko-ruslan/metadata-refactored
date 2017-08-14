@@ -26,8 +26,8 @@ import com.turbointernational.metadata.util.View;
 
 @Entity
 @Table(name = "changelog_source_link_description_attachment")
-@NamedQueries({ @NamedQuery(name = "findOrphanAttachments", query = "from ChangelogSourceLinkDescriptionAttachment o "
-    + "where o.changelogSourceLink is null and current_timestamp - o.created >= :period") })
+@NamedQueries({ @NamedQuery(name = "findOrphanAttachments", query = "SELECT o FROM ChangelogSourceLinkDescriptionAttachment o "
+    + "WHERE o.changelogSourceLink IS NULL AND CURRENT_TIMESTAMP - o.created >= :period") })
 @JsonInclude(ALWAYS)
 public class ChangelogSourceLinkDescriptionAttachment implements Serializable {
 

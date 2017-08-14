@@ -364,9 +364,13 @@ describe('Turbo Models:', function() {
           //   Turbo type must not be used for any parts or turbo models.
           //   Check server log for details.
           // should be displayed.
-          expect(dlgDeleteTurboTypeFailure.isDisplayed()).toBeTruthy();
+          //expect(dlgDeleteTurboTypeFailure.isDisplayed()).toBeTruthy();
+          browser.wait(EC.visibilityOf(dlgDeleteTurboTypeFailure), 1000,
+            'A dilog with failure was not displayed.');
           bttnClose.click();
-          expect(dlgDeleteTurboTypeFailure.isPresent()).toBeFalsy();
+          //expect(dlgDeleteTurboTypeFailure.isPresent()).toBeFalsy();
+          browser.wait(EC.not(EC.presenceOf(dlgDeleteTurboTypeFailure)), 1000,
+            'A dialog with failure was not hidden.');
           elmTurboType.evaluate('turboTypes').then(function(turboTypes) {
             var found =  false;
             for(var i in turboTypes) {

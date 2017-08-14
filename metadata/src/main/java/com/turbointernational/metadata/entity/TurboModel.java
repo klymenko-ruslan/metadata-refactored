@@ -31,11 +31,11 @@ import flexjson.JSONSerializer;
 @NamedQueries({
   @NamedQuery(
     name="findTurboModelsByTurboTypeId",
-    query = "SELECT o FROM TurboModel o JOIN o.turboType WHERE o.turboType.id = :turboTypeId ORDER BY o.name"
+    query = "SELECT o FROM TurboModel o JOIN o.turboType tt WHERE o.turboType.id = :turboTypeId ORDER BY o.name"
   ),
   @NamedQuery(
     name="findTurboModelByTurboTypeIdAndName",
-    query = "SELECT o FROM TurboModel o JOIN o.turboType " +
+    query = "SELECT o FROM TurboModel o JOIN o.turboType tt " +
             "WHERE o.turboType.id = :turboTypeId AND o.name = :name"
   )
 })

@@ -49,7 +49,7 @@ import flexjson.transformer.HibernateTransformer;
         ),
         @NamedQuery(
                 name="findBomParents",
-                query="SELECT DISTINCT i FROM BOMItem i JOIN i.parent p WHERE i.child.id = :partId"
+                query="SELECT DISTINCT i FROM BOMItem i JOIN i.parent parent WHERE i.child.id = :partId"
         ),
         @NamedQuery(
                 name="findBomsOfPartWithType",

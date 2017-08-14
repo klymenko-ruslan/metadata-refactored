@@ -249,6 +249,7 @@ public class InterchangeService {
      * @param asInterchange
      */
     public void create(Part part, Part asInterchange) throws IOException {
+    	/*
         normalizePartInterchange(part);
         normalizePartInterchange(asInterchange);
         Long srcInterchangeId = part.getInterchange().getId();
@@ -260,6 +261,7 @@ public class InterchangeService {
                 interchange.toJson(), relatedParts);
         bomService.rebuildBomDescendancyForParts(asList(part.getId(), asInterchange.getId()), true);
         partChangeService.changedInterchange(srcInterchangeId, interchange.getId());
+        */
     }
 
     /**
@@ -299,6 +301,7 @@ public class InterchangeService {
     @Transactional
     public void mergePickedAloneToPart(HttpServletRequest httpRequest, long partId, long pickedPartId,
             Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) throws IOException {
+    	/*
         Part part = partDao.findOne(partId);
         normalizePartInterchange(part);
         Long interchangeId0 = part.getInterchange().getId();
@@ -316,6 +319,7 @@ public class InterchangeService {
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
         partChangeService.changedInterchange(interchangeId0, interchangeId1);
+        */
     }
 
     /**
@@ -328,6 +332,7 @@ public class InterchangeService {
     @Transactional
     public void mergePartAloneToPicked(HttpServletRequest httpRequest, long partId, long pickedPartId,
             Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) throws IOException {
+    	/*
         Part part = partDao.findOne(partId);
         normalizePartInterchange(part);
         Part pickedPart = partDao.findOne(pickedPartId);
@@ -343,6 +348,7 @@ public class InterchangeService {
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
         partChangeService.changedInterchange(part.getInterchange().getId(), pickedPart.getInterchange().getId());
+        */
     }
 
     /**
@@ -355,6 +361,7 @@ public class InterchangeService {
     @Transactional
     public void mergePickedAllToPart(HttpServletRequest httpRequest, Long partId, Long pickedPartId, Long[] sourcesIds,
             Integer[] ratings, String description, Long[] attachIds) throws IOException {
+    	/*
         ResponseEntity<CreateInterchangeResponse> responseEntity = restArangoDbService.exchange(urlMergePickedAllToPart, PUT,
                 null, CreateInterchangeResponse.class, partId, pickedPartId);
         List<RelatedPart> relatedParts = new ArrayList<>(2);
@@ -367,6 +374,7 @@ public class InterchangeService {
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
         partChangeService.changedInterchange(interchangId0, interchangeId1);
+        */
     }
 
 }

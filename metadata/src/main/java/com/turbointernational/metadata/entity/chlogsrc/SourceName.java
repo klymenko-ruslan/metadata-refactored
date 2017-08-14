@@ -21,8 +21,8 @@ import com.turbointernational.metadata.util.View;
 @Entity
 @Table(name = "source_name")
 @NamedQueries({
-        @NamedQuery(name = "findChangelogSourceNameByName", query = "from SourceName sn where sn.name=:name"),
-        @NamedQuery(name = "findAllChangelogSourceNames", query = "from SourceName sn order by sn.name")
+        @NamedQuery(name = "findChangelogSourceNameByName", query = "SELECT sn FROM SourceName sn WHERE sn.name=:name"),
+        @NamedQuery(name = "findAllChangelogSourceNames", query = "SELECT sn FROM SourceName sn ORDER BY sn.name")
 })
 public class SourceName implements Serializable {
 
