@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.turbointernational.metadata.entity.TurboType;
-import com.turbointernational.metadata.entity.part.Interchange;
+import com.turbointernational.metadata.web.dto.Interchange;
 
 /**
  * @author jrodriguez

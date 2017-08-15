@@ -48,7 +48,6 @@ import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.TurboType;
-import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.GasketKit;
@@ -56,6 +55,7 @@ import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.web.controller.PartController;
 import com.turbointernational.metadata.web.dto.AlsoBought;
+import com.turbointernational.metadata.web.dto.Interchange;
 import com.turbointernational.metadata.web.dto.Page;
 import com.turbointernational.metadata.web.dto.PartDesc;
 
@@ -144,13 +144,13 @@ public class PartService {
         // reflect changes made by the trigger.
         partDao.flush(); // make sure that an insert done
         partDao.refresh(toCreate);
+        Long partId = toCreate.getId();
         String json = partJsonSerializer.serialize(toCreate);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
-        relatedParts.add(new RelatedPart(toCreate.getId(), PART0));
+        relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(originalPartId, PART1));
         changelogService.log(PART, "Created part (cross reference) " + formatPart(toCreate) + ".", json, relatedParts);
-        Part asInterchange = partDao.findOne(originalPartId);
-        interchangeService.create(toCreate, asInterchange);
+        interchangeService.create(partId, originalPartId);
         return toCreate;
     }
 

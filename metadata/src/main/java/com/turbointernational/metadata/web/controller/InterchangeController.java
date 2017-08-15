@@ -29,9 +29,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.service.InterchangeService;
 import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.Interchange;
 
 @RequestMapping("/metadata/interchange")
 @Controller

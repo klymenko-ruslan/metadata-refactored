@@ -32,6 +32,7 @@ import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -97,6 +98,7 @@ import com.turbointernational.metadata.service.CriticalDimensionService;
 import com.turbointernational.metadata.service.SearchService;
 import com.turbointernational.metadata.service.SearchableEntity;
 import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.Interchange;
 
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
@@ -273,6 +275,15 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
     @JsonView(View.Summary.class)
     private String legendImgFilename;
 
+    /**
+     * Interchangeable of a part.
+     *
+     * This field must be initialized manually where it is needed because information about
+     * interchanges is stored in other storage (ArangoDB).
+     */
+    @Transient
+    private Interchange interchange = null;
+
     public Long getId() {
         return id;
     }
@@ -361,8 +372,8 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
         this.inactive = inactive;
     }
 
-    /* REFACTORING
     @JsonView({View.Detail.class})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public Interchange getInterchange() {
         return interchange;
     }
@@ -370,7 +381,6 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
     public void setInterchange(Interchange interchange) {
         this.interchange = interchange;
     }
-    */
 
     public Set<BOMItem> getBom() {
         return bom;

@@ -9,6 +9,7 @@ import static java.util.Arrays.asList;
 import static org.springframework.http.HttpMethod.PUT;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,12 +28,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriTemplate;
 
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.Changelog;
-import com.turbointernational.metadata.entity.part.Interchange;
+import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
+import com.turbointernational.metadata.web.dto.Interchange;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2016-11-02.
@@ -74,32 +77,40 @@ public class InterchangeService {
 
     private RestTemplate restArangoDbService;
 
-    private String urlArangoDbServiceGetInterchageById;
+    private UriTemplate uriTmplArangoDbServiceGetInterchageById;
 
-    private String urlArangoDbServiceGetInterchageForPart;
+    private UriTemplate uriTmplArangoDbServiceGetInterchageForPart;
 
-    private String urlArangoDbServiceLeaveGroup;
+    private UriTemplate uriTmplArangoDbServiceLeaveGroup;
 
-    private String urlMergePickedAllToPart;
+    private UriTemplate uriTmplMergePickedAllToPart;
+
+    private UriTemplate uriTmplMovePartToOtherGroup;
 
     public static class GetInterchangeResponse {
         private Long headerId; // interchange header ID
         private Long[] parts; // parts IDs
+
         public GetInterchangeResponse() {
         }
+
         public GetInterchangeResponse(Long headerId, Long[] parts) {
             this.headerId = headerId;
             this.parts = parts;
         }
+
         public Long getHeaderId() {
             return headerId;
         }
+
         public void setHeaderId(Long headerId) {
             this.headerId = headerId;
         }
+
         public Long[] getParts() {
             return parts;
         }
+
         public void setParts(Long[] parts) {
             this.parts = parts;
         }
@@ -146,15 +157,16 @@ public class InterchangeService {
     @PostConstruct
     public void init() {
         restArangoDbService = new RestTemplate();
-        urlArangoDbServiceGetInterchageById = restArangoDbServiceHost + "://" + restArangoDbServiceHost + ":"
-                + restArangoDbServicePort + "/interchanges/{}";
-        urlArangoDbServiceGetInterchageForPart = restArangoDbServiceHost + "://" + restArangoDbServiceHost + ":"
-                + restArangoDbServicePort + "/parts/{}/interchanges";
-        urlArangoDbServiceLeaveGroup = restArangoDbServiceHost + "://" + restArangoDbServiceHost + ":"
-                + restArangoDbServicePort + "/interchanges/{}/leave_group";
-        urlMergePickedAllToPart = restArangoDbServiceHost + "://" + restArangoDbServiceHost + ":"
-                + restArangoDbServicePort + "/{}/merge_group/{}/all";
-
+        uriTmplArangoDbServiceGetInterchageById = new UriTemplate(restArangoDbServiceProtocol + "://"
+                + restArangoDbServiceHost + ":" + restArangoDbServicePort + "/interchanges/{id}");
+        uriTmplArangoDbServiceGetInterchageForPart = new UriTemplate(restArangoDbServiceProtocol + "://"
+                + restArangoDbServiceHost + ":" + restArangoDbServicePort + "/parts/{partId}/interchanges");
+        uriTmplArangoDbServiceLeaveGroup = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost
+                + ":" + restArangoDbServicePort + "/interchanges/{partId}/leave_group");
+        uriTmplMergePickedAllToPart = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost
+                + ":" + restArangoDbServicePort + "/interchanges/{partId}/merge_group/{pickedPartId}/all");
+        uriTmplMovePartToOtherGroup = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost
+                + ":" + restArangoDbServicePort + "/interchanges/{partId}/merge_group/{pickedPartId}");
     }
 
     /**
@@ -165,8 +177,8 @@ public class InterchangeService {
      */
     @Transactional
     public Interchange findById(Long id) {
-        GetInterchangeResponse response = restArangoDbService.getForObject(urlArangoDbServiceGetInterchageById,
-                GetInterchangeResponse.class, id);
+        URI uri = uriTmplArangoDbServiceGetInterchageById.expand(id);
+        GetInterchangeResponse response = restArangoDbService.getForObject(uri, GetInterchangeResponse.class);
         Set<Part> parts = new HashSet<>();
         Optional.of(response.getParts()).ifPresent(partIds -> {
             for (Long pid : partIds) {
@@ -182,21 +194,15 @@ public class InterchangeService {
     }
 
     public Interchange findForPart(Long partId) {
-        GetInterchangeResponse response = restArangoDbService.getForObject(urlArangoDbServiceGetInterchageForPart,
-                GetInterchangeResponse.class, partId);
+        URI uri = uriTmplArangoDbServiceGetInterchageForPart.expand(partId);
+        GetInterchangeResponse response = restArangoDbService.getForObject(uri, GetInterchangeResponse.class);
         Set<Part> parts = loadParts(response);
         return new Interchange(response.getHeaderId(), parts);
     }
 
-    private Set<Part> loadParts(GetInterchangeResponse response) {
-        Set<Part> parts = new HashSet<>();
-        Optional.of(response.getParts()).ifPresent(partIds -> {
-            for (Long pid : partIds) {
-                Part p = partDao.findOne(pid);
-                parts.add(p);
-            }
-        });
-        return parts;
+    public void initInterchange(Part part) {
+        Interchange interchange = findForPart(part);
+        part.setInterchange(interchange);
     }
 
     /**
@@ -207,34 +213,27 @@ public class InterchangeService {
     public void create(HttpServletRequest httpRequest, List<Long> partIds, Long[] sourcesIds, Integer[] ratings,
             String description, Long[] attachIds) throws IOException {
         /*
-        // Link it with the Hibernate parts
-        Set<Part> canonicalParts = new HashSet<>();
-        // Map the incoming part IDs to their canonical part
-        for (Long partId : partIds) {
-            Part canonicalPart = partDao.findOne(partId);
-            if (canonicalPart.getInterchange() != null) {
-                throw new IllegalArgumentException(
-                        "Part " + formatPart(canonicalPart) + " already has interchangeable parts.");
-            }
-            canonicalParts.add(canonicalPart);
-        }
-        Interchange interchange = new Interchange();
-        interchange.getParts().addAll(canonicalParts);
-        interchangeDao.persist(interchange);
-        List<RelatedPart> relatedParts = new ArrayList<>(canonicalParts.size());
-        for (Part canonicalPart : canonicalParts) {
-            canonicalPart.setInterchange(interchange);
-            partDao.merge(canonicalPart);
-            relatedParts.add(new RelatedPart(canonicalPart.getId(), null));
-        }
-        interchangeDao.flush();
-        // Update the changelog.
-        Changelog changelog = changelogService.log(INTERCHANGE,
-                "Created interchange: " + formatInterchange(interchange) + ".", interchange.toJson(), relatedParts);
-        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
-        bomService.rebuildBomDescendancyForParts(partIds, true);
-        partChangeService.changedInterchange(interchange.getId(), null);
-        */
+         * // Link it with the Hibernate parts Set<Part> canonicalParts = new
+         * HashSet<>(); // Map the incoming part IDs to their canonical part for
+         * (Long partId : partIds) { Part canonicalPart =
+         * partDao.findOne(partId); if (canonicalPart.getInterchange() != null)
+         * { throw new IllegalArgumentException( "Part " +
+         * formatPart(canonicalPart) + " already has interchangeable parts."); }
+         * canonicalParts.add(canonicalPart); } Interchange interchange = new
+         * Interchange(); interchange.getParts().addAll(canonicalParts);
+         * interchangeDao.persist(interchange); List<RelatedPart> relatedParts =
+         * new ArrayList<>(canonicalParts.size()); for (Part canonicalPart :
+         * canonicalParts) { canonicalPart.setInterchange(interchange);
+         * partDao.merge(canonicalPart); relatedParts.add(new
+         * RelatedPart(canonicalPart.getId(), null)); } interchangeDao.flush();
+         * // Update the changelog. Changelog changelog =
+         * changelogService.log(INTERCHANGE, "Created interchange: " +
+         * formatInterchange(interchange) + ".", interchange.toJson(),
+         * relatedParts); changelogSourceService.link(httpRequest, changelog,
+         * sourcesIds, ratings, description, attachIds);
+         * bomService.rebuildBomDescendancyForParts(partIds, true);
+         * partChangeService.changedInterchange(interchange.getId(), null);
+         */
         throw new NotImplementedException();
     }
 
@@ -248,20 +247,15 @@ public class InterchangeService {
      * @param part
      * @param asInterchange
      */
-    public void create(Part part, Part asInterchange) throws IOException {
-    	/*
-        normalizePartInterchange(part);
-        normalizePartInterchange(asInterchange);
-        Long srcInterchangeId = part.getInterchange().getId();
-        Interchange interchange = moveInterchangeableGroupToOtherGroup(part, asInterchange);
+    public void create(Long partId, Long asInterchangePartId) throws IOException {
+        Interchange interchange = moveGroupToOtherInterchangeableGroup(partId, asInterchangePartId);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
-        relatedParts.add(new RelatedPart(part.getId(), PART0));
-        relatedParts.add(new RelatedPart(asInterchange.getId(), PART1));
+        relatedParts.add(new RelatedPart(partId, PART0));
+        relatedParts.add(new RelatedPart(asInterchangePartId, ChangelogPart.Role.PART1));
         changelogService.log(INTERCHANGE, "Created interchange: " + formatInterchange(interchange) + ".",
                 interchange.toJson(), relatedParts);
-        bomService.rebuildBomDescendancyForParts(asList(part.getId(), asInterchange.getId()), true);
-        partChangeService.changedInterchange(srcInterchangeId, interchange.getId());
-        */
+        bomService.rebuildBomDescendancyForParts(asList(partId, asInterchangePartId), true);
+        partChangeService.changedInterchange(asInterchangePartId, interchange.getId());
     }
 
     /**
@@ -278,8 +272,9 @@ public class InterchangeService {
     public void leaveInterchangeableGroup(Long partId) throws IOException {
         Part part = partDao.findOne(partId);
         Interchange interchange = findForPart(partId);
-        ResponseEntity<MigrateInterchangeResponse> responseEntity = restArangoDbService.exchange(
-                urlArangoDbServiceLeaveGroup, PUT, null, MigrateInterchangeResponse.class, partId);
+        URI uri = uriTmplArangoDbServiceLeaveGroup.expand(partId);
+        ResponseEntity<MigrateInterchangeResponse> responseEntity = restArangoDbService.exchange(uri, PUT, null,
+                MigrateInterchangeResponse.class);
         // Update the changelog.
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
@@ -301,25 +296,20 @@ public class InterchangeService {
     @Transactional
     public void mergePickedAloneToPart(HttpServletRequest httpRequest, long partId, long pickedPartId,
             Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) throws IOException {
-    	/*
-        Part part = partDao.findOne(partId);
-        normalizePartInterchange(part);
-        Long interchangeId0 = part.getInterchange().getId();
-        Part pickedPart = partDao.findOne(pickedPartId);
-        normalizePartInterchange(pickedPart);
-        Long interchangeId1 = pickedPart.getInterchange().getId();
-        movePartToOtherInterchangeGroup(pickedPart, part);
+        Interchange interchange0 = findForPart(pickedPartId);
+        Interchange interchange1 = movePartToOtherInterchangeGroup(pickedPartId, partId);
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(pickedPartId, PART1));
+        Part pickedPart = partDao.findOne(pickedPartId);
+        Part part = partDao.findOne(partId);
         Changelog changelog = changelogService.log(INTERCHANGE,
                 "Part " + formatPart(pickedPart) + " added to the part " + formatPart(part) + " as interchange.",
                 relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
-        partChangeService.changedInterchange(interchangeId0, interchangeId1);
-        */
+        partChangeService.changedInterchange(interchange0.getId(), interchange1.getId());
     }
 
     /**
@@ -332,23 +322,20 @@ public class InterchangeService {
     @Transactional
     public void mergePartAloneToPicked(HttpServletRequest httpRequest, long partId, long pickedPartId,
             Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) throws IOException {
-    	/*
-        Part part = partDao.findOne(partId);
-        normalizePartInterchange(part);
-        Part pickedPart = partDao.findOne(pickedPartId);
-        normalizePartInterchange(pickedPart);
-        movePartToOtherInterchangeGroup(part, pickedPart);
+        Interchange interchange0 = findForPart(partId);
+        Interchange interchange1 = movePartToOtherInterchangeGroup(partId, pickedPartId);
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(pickedPartId, PART1));
+        Part pickedPart = partDao.findOne(pickedPartId);
+        Part part = partDao.findOne(partId);
         Changelog changelog = changelogService.log(INTERCHANGE,
                 "Part " + formatPart(part) + " added to the part " + formatPart(pickedPart) + " as interchange.",
                 relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
-        partChangeService.changedInterchange(part.getInterchange().getId(), pickedPart.getInterchange().getId());
-        */
+        partChangeService.changedInterchange(interchange0.getId(), interchange1.getId());
     }
 
     /**
@@ -361,20 +348,67 @@ public class InterchangeService {
     @Transactional
     public void mergePickedAllToPart(HttpServletRequest httpRequest, Long partId, Long pickedPartId, Long[] sourcesIds,
             Integer[] ratings, String description, Long[] attachIds) throws IOException {
-    	/*
-        ResponseEntity<CreateInterchangeResponse> responseEntity = restArangoDbService.exchange(urlMergePickedAllToPart, PUT,
-                null, CreateInterchangeResponse.class, partId, pickedPartId);
+        Interchange interchange0 = findForPart(partId);
+        Interchange interchange1 = moveGroupToOtherInterchangeableGroup(pickedPartId, partId);
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(pickedPartId, PART1));
+        Part pickedPart = partDao.findOne(pickedPartId);
+        Part part = partDao.findOne(partId);
         Changelog changelog = changelogService.log(INTERCHANGE, "Part " + formatPart(pickedPart)
                 + " and all its interchanges added to the part " + formatPart(part) + " as interchanges.",
                 relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
         bomService.rebuildBomDescendancyForPart(partId, true);
         bomService.rebuildBomDescendancyForPart(pickedPartId, true);
-        partChangeService.changedInterchange(interchangId0, interchangeId1);
-        */
+        partChangeService.changedInterchange(interchange0.getId(), interchange1.getId());
+    }
+
+    private Set<Part> loadParts(GetInterchangeResponse response) {
+        return loadParts(response.getParts());
+    }
+
+    private Set<Part> loadParts(Long[] partIds) {
+        Set<Part> parts = new HashSet<>();
+        Optional.of(partIds).ifPresent(pids -> {
+            for (Long pid : pids) {
+                Part p = partDao.findOne(pid);
+                parts.add(p);
+            }
+        });
+        return parts;
+    }
+
+    private Interchange moveGroupToOtherInterchangeableGroup(Long srcPartId /* picked */, Long trgPartId) {
+        migrateRestCall(uriTmplMergePickedAllToPart, trgPartId, srcPartId);
+        return findForPart(trgPartId); // TODO: can be optimized if this info is
+                                       // returned as result in the operation
+                                       // response
+    }
+
+    private Interchange movePartToOtherInterchangeGroup(Long srcPartId /* picked */, Long trgPartId) {
+        migrateRestCall(uriTmplMovePartToOtherGroup, trgPartId, srcPartId);
+        return findForPart(trgPartId); // TODO: can be optimized if this info is
+                                       // returned as result in the operation
+                                       // response
+    }
+
+    private MigrateInterchangeResponse migrateRestCall(UriTemplate uriTmpl, Long... partIds) {
+        ResponseEntity<MigrateInterchangeResponse> responseEntity;
+        int n = partIds.length;
+        switch (n) {
+        case 1:
+            responseEntity = restArangoDbService.exchange(uriTmpl.expand(partIds[0]), PUT, null,
+                    MigrateInterchangeResponse.class);
+            break;
+        case 2:
+            responseEntity = restArangoDbService.exchange(uriTmpl.expand(partIds[0], partIds[1]), PUT, null,
+                    MigrateInterchangeResponse.class);
+            break;
+        default:
+            throw new IllegalArgumentException("Unexpected number of optional arguments: " + n);
+        }
+        return responseEntity.getBody();
     }
 
 }

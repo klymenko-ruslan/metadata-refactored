@@ -1,8 +1,8 @@
 package com.turbointernational.metadata.util;
 
 import com.turbointernational.metadata.entity.*;
-import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.web.dto.Interchange;
 
 import static org.apache.commons.lang.StringUtils.abbreviate;
 

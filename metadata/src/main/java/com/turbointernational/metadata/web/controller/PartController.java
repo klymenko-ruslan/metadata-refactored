@@ -42,10 +42,10 @@ import com.turbointernational.metadata.dao.TurboTypeDao;
 import com.turbointernational.metadata.entity.BOMAncestor;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.entity.part.PartRepository;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.BOMService;
+import com.turbointernational.metadata.service.InterchangeService;
 import com.turbointernational.metadata.service.PartService;
 import com.turbointernational.metadata.service.PriceService;
 import com.turbointernational.metadata.service.StandardOversizePartService;
@@ -79,7 +79,7 @@ public class PartController {
     private PartDao partDao;
 
     @Autowired
-    private PartRepository partRepository;
+    private InterchangeService interchangeService;
 
     static class PartCreateRequest {
 
@@ -346,6 +346,7 @@ public class PartController {
     @RequestMapping(value = "/part/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody Part getPart(@PathVariable("id") Long id) {
         Part part = partDao.findOne(id);
+        interchangeService.initInterchange(part);
         return part;
     }
 
@@ -408,7 +409,9 @@ public class PartController {
     @RequestMapping(value = "/part/numbers", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody Part findByPartNumber(@RequestParam(name = "mid") Long manufacturerId,
             @RequestParam(name = "pn") String partNumber) {
-        return partDao.findByPartNumberAndManufacturer(manufacturerId, partNumber);
+        Part part = partDao.findByPartNumberAndManufacturer(manufacturerId, partNumber);
+        interchangeService.initInterchange(part);
+        return part;
     }
 
     @JsonView(View.Summary.class)
