@@ -43,7 +43,9 @@ public class ArangoDbConnectorService {
 
     private UriTemplate uriTmplMovePartToOtherGroup;
 
-    private UriTemplate uriTmplAncestors;
+    private UriTemplate uriTmplGetAncestors;
+
+    private UriTemplate uriTmplGetBoms;
 
     public static class GetInterchangeResponse {
         private Long headerId; // interchange header ID
@@ -191,8 +193,36 @@ public class ArangoDbConnectorService {
             return rows;
         }
 
+        public GetAncestorsResponse() {
+        }
+
         public GetAncestorsResponse(Row[] rows) {
             this.rows = rows;
+        }
+
+        public void setRows(Row[] rows) {
+            this.rows = rows;
+        }
+
+    }
+
+    public static class GetBomsResponse {
+
+        public static class Row {
+
+        }
+
+        private Row[] rows;
+
+        public GetBomsResponse() {
+        }
+
+        public GetBomsResponse(Row[] rows) {
+            this.setRows(rows);
+        }
+
+        public Row[] getRows() {
+            return rows;
         }
 
         public void setRows(Row[] rows) {
@@ -214,8 +244,10 @@ public class ArangoDbConnectorService {
                 + ":" + restArangoDbServicePort + "/interchanges/{partId}/merge_group/{pickedPartId}/all");
         uriTmplMovePartToOtherGroup = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost
                 + ":" + restArangoDbServicePort + "/interchanges/{partId}/merge_group/{pickedPartId}");
-        uriTmplAncestors = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+        uriTmplGetAncestors = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
                 + restArangoDbServicePort + "/parts/{partId}/ancestors");
+        uriTmplGetBoms = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/parts/{partId}/boms");
     }
 
     public GetInterchangeResponse findInterchangeById(Long id) {
@@ -260,9 +292,15 @@ public class ArangoDbConnectorService {
     }
 
     public GetAncestorsResponse getAncestors(Long partId) {
-        URI uri = uriTmplAncestors.expand(partId);
+        URI uri = uriTmplGetAncestors.expand(partId);
         GetAncestorsResponse.Row[] rows = restArangoDbService.getForObject(uri, GetAncestorsResponse.Row[].class);
         return new GetAncestorsResponse(rows);
+    }
+
+    public GetBomsResponse getBoms(Long partId) {
+        URI uri = uriTmplGetBoms.expand(partId);
+        GetBomsResponse.Row[] rows = restArangoDbService.getForObject(uri, GetBomsResponse.Row[].class);
+        return new GetBomsResponse(rows);
     }
 
 }
