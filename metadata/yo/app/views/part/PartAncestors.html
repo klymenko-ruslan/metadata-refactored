@@ -14,11 +14,11 @@
   <div class="col-xs-12">
     <table data-ng-table="ancestorsTableParams" class="table table-bordered table-striped table-hover table-expand">
       <tr data-ng-repeat="item in $data">
-        <td title="'Part Type'" class="text-left">{{item.partTypeName}}</td>
-        <td title="'Manufacturer'" class="text-left">{{item.manufacturerName}}</td>
+        <td title="'Part Type'" class="text-left">{{item.partType}}</td>
+        <td title="'Manufacturer'" class="text-left">{{item.manufacturer}}</td>
         <td title="'Part #'" class="text-left text-nowrap">{{item.partNumber}}</td>
-        <td title="'Relation Type'" class="text-left">{{item.relationType}}</td>
-        <td title="'Relation Distance'" class="text-left">{{item.distance}}</td>
+        <td title="'Relation Type'" class="text-left">UNKNOWN</td>
+        <td title="'Relation Distance'" class="text-left">UNKNOWN</td>
         <td title="'Actions'" class="actions">
           <a authorize="ROLE_READ" data-ng-href="/part/{{item.partId}}" class="btn btn-primary btn-xs">
             <i class="fa fa-eye"></i> View

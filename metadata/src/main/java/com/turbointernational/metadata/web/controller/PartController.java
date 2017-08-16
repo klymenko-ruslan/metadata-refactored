@@ -39,11 +39,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.TurboTypeDao;
-import com.turbointernational.metadata.entity.BOMAncestor;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.Turbo;
+import com.turbointernational.metadata.service.ArangoDbConnectorService.GetAncestorsResponse;
 import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.InterchangeService;
 import com.turbointernational.metadata.service.PartService;
@@ -435,9 +435,8 @@ public class PartController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
-    public Page<BOMAncestor> ancestors(@PathVariable("id") Long partId, @RequestParam(name = "offset") int offset,
-            @RequestParam(name = "limit") int limit) throws Exception {
-        return partService.ancestors(partId, offset, limit);
+    public GetAncestorsResponse.Row[] ancestors(@PathVariable("id") Long partId) throws Exception {
+        return partService.ancestors(partId).getRows();
     }
 
     @Transactional

@@ -43,7 +43,6 @@ import org.springframework.validation.Errors;
 
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
-import com.turbointernational.metadata.entity.BOMAncestor;
 import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.Manufacturer;
@@ -52,6 +51,7 @@ import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.GasketKit;
 import com.turbointernational.metadata.entity.part.types.Turbo;
+import com.turbointernational.metadata.service.ArangoDbConnectorService.GetAncestorsResponse;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.web.controller.PartController;
 import com.turbointernational.metadata.web.dto.AlsoBought;
@@ -101,6 +101,9 @@ public class PartService {
 
     @PersistenceContext(unitName = "metadata")
     private EntityManager em;
+
+    @Autowired
+    private ArangoDbConnectorService arangoDbConnector;
 
     private JSONSerializer partJsonSerializer = new JSONSerializer().include("id").include("name")
             .include("manufacturerPartNumber").include("description").include("inactive").include("partType.id")
@@ -313,8 +316,8 @@ public class PartService {
     }
 
     @Secured("ROLE_READ")
-    public Page<BOMAncestor> ancestors(Long partId, int offset, int limit) throws Exception {
-        return partDao.ancestors(partId, offset, limit);
+    public GetAncestorsResponse ancestors(Long partId) throws Exception {
+        return arangoDbConnector.getAncestors(partId);
     }
 
     @Transactional(noRollbackFor = AssertionError.class)

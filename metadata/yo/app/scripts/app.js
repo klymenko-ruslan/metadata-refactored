@@ -244,7 +244,15 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
     });
     $routeProvider.when('/part/:id/ancestors', {
       templateUrl: 'views/part/PartAncestors.html',
-      controller: 'PartAncestorsCtrl'
+      controller: 'PartAncestorsCtrl',
+      resolve: {
+        part: ['$route', 'restService', function ($route, restService) {
+          return restService.findPart($route.current.pathParams.id);
+        }],
+        ancestors: ['$route', 'restService', function ($route, restService) {
+          return restService.loadAncestors($route.current.pathParams.id);
+        }]
+      }
     });
     $routeProvider.when('/part/:id', {
       templateUrl: 'views/part/view/PartDetail.html',
