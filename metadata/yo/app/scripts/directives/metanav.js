@@ -8,37 +8,6 @@ angular.module('ngMetaCrudApp')
       restrict: 'E',
       controller: function($scope) {
         $scope.User = User;
-//$('.dropdown-toggle').dropdown();
-        // Probably not the greatest place for this startup/teardown code,
-        // but metanav is available everywhere when logged in
-        var timer = $interval(function() {
-          restService.refreshStatus();
-        }, 1000);
-        $scope.$on('$destroy', function() {
-          $interval.cancel(timer);
-        });
-
-        $scope.rebuildBom = function() {
-          dialogs.confirm(
-            'Rebuild BOM for all parts?',
-            'You need to run this if changes have been made directly to the database. Proceed?').result.then(
-            function() {
-              // Yes
-              restService.rebuildBom({'indexBoms': true}).then(
-                function() {
-                  // Success
-                  toastr.success('Rebuilding BOM.');
-                },
-                function(response) {
-                  // Error
-                  restService.error('Could not rebuild BOM', response);
-                });
-            },
-            function() {
-              // No
-            }
-          );
-        };
 
         $scope.reindexPartSearch = function() {
           dialogs.confirm(

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .service('utils', ['$log', '$parse', function RestService($log, $parse) {
+  .service('utils', ['$log', '$parse', function($log, $parse) {
     function TheService() { // jshint ignore:line
 
       /**

@@ -12,58 +12,56 @@
 </div>
 
 <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
-  <tr data-ng-repeat="bomItem in $data">
-    <td title="'Part #'" class="text-center text-nowrap" data-sortable="'child.manufacturerPartNumber'">
-      <a data-ng-href="/part/{{bomItem.child.id}}">{{bomItem.child.manufacturerPartNumber}}</a>
+  <tr data-ng-repeat="b in $data">
+    <td title="'Part#'" class="text-center text-nowrap" data-sortable="'partNumber'">
+      <a data-ng-href="/part/{{b.partId}}">{{b.partNumber}}</a>
     </td>
-    <td title="'Qty'" class="text-right" data-sortable="'quantity'">
-      <span data-ng-hide="isModifying(bomItem)">{{bomItem.quantity}}</span>
-      <input data-ng-model="modifyValues[bomItem.id]" type="text" data-ng-show="isModifying(bomItem)"/>
+    <td title="'Qty'" class="text-right" data-sortable="'qty'">
+      <span data-ng-hide="isModifying(b)">{{b.qty}}</span>
+      <input data-ng-model="modifyValues[b.partId]" type="text" data-ng-show="isModifying(b)"/>
     </td>
-    <td title="'Type'" data-sortable="'child.partType.name'">
-      {{bomItem.child.partType.name}}
+    <td title="'Type'" data-sortable="'partType.name'">
+      {{b.partType.name}}
     </td>
     <td title="'Name'" data-sortable="'child.name'">
-      {{bomItem.child.name}}
+      {{b.name}}
     </td>
     <td title="'Interchange'">
       <ul class="list-unstyled list-inline" style="margin-bottom:0">
-      <li data-ng-repeat="p in interchangesOfThePartBoms[bomItem.id]">
-        <a data-ng-href="/part/{{p.id}}">{{p.manufacturerPartNumber}}</a><span data-ng-if="!$last">,</span>
+      <li data-ng-repeat="row in b.interchanges">
+        <a data-ng-href="/part/{{row.partId}}">{{row.partNumber}}</a><span data-ng-if="!$last">,</span>
       </li>
       </ul>
     </td>
     <td title="'Actions'" class="actions">
 
-      <button data-ng-click="modifyStart(bomItem)"
+      <button data-ng-click="modifyStart(b)"
               authorize="ROLE_BOM" class="btn btn-warning btn-xs"
-              data-ng-hide="isModifying(bomItem)">
+              data-ng-hide="isModifying(b)">
         <i class="fa fa-cog"></i> Modify
       </button>
 
-      <button data-ng-click="modifySave(bomItem)"
-              data-ng-disabled="restService.status.bomRebuilding"
+      <button data-ng-click="modifySave(b)"
               authorize="ROLE_BOM" class="btn btn-success btn-xs"
-              data-ng-show="isModifying(bomItem)">
+              data-ng-show="isModifying(b)">
         <i class="fa fa-save"></i> Save
       </button>
 
-      <button data-ng-click="modifyCancel(bomItem)"
+      <button data-ng-click="modifyCancel(b)"
               authorize="ROLE_BOM" class="btn btn-warning btn-xs"
-              data-ng-show="isModifying(bomItem)">
+              data-ng-show="isModifying(b)">
         <i class="fa fa-minus-circle"></i> Cancel
       </button>
 
-      <a data-ng-click="showAlternates(bomItem)"
+      <a data-ng-click="showAlternates(b)"
          authorize="ROLE_READ" class="btn btn-info btn-xs"
-         data-ng-hide="isModifying(bomItem)">
+         data-ng-hide="isModifying(b)">
         <i class="fa fa-random"></i> Alternates
       </a>
 
-      <button data-ng-click="remove(bomItem)"
-              data-ng-disabled="restService.status.bomRebuilding"
+      <button data-ng-click="remove(b)"
               authorize="ROLE_BOM" class="btn btn-danger btn-xs"
-              data-ng-hide="isModifying(bomItem)">
+              data-ng-hide="isModifying(b)">
         <i class="fa fa-trash-o"></i> Remove
       </button>
 
@@ -89,7 +87,6 @@
               extra-columns="{&quot;Alt Group #&quot;: &quot;item.header.id&quot;}">
 
     <button data-ng-click="removeAlternate(index, item)"
-            data-ng-disabled="restService.status.bomRebuilding"
        authorize="ROLE_BOM_ALT" class="btn btn-danger btn-xs">
       <i class="fa fa-trash-o"></i> Remove
     </button>

@@ -38,9 +38,7 @@
              authorize="ROLE_READ" class="btn btn-primary btn-xs">
             <i class="fa fa-eye"></i> View
           </a>
-          <button data-ng-click="remove(p.id)"
-                  data-ng-disabled="restService.status.bomRebuilding"
-                  authorize="ROLE_ALTER_PART" class="btn btn-danger btn-xs">
+          <button data-ng-click="remove(p.id)" authorize="ROLE_ALTER_PART" class="btn btn-danger btn-xs">
             <i class="fa fa-trash-o"></i> Remove
           </button>
         </td>

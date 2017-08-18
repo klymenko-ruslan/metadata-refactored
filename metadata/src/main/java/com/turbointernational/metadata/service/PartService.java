@@ -16,7 +16,6 @@ import static java.util.stream.Collectors.toSet;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -43,7 +42,6 @@ import org.springframework.validation.Errors;
 
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
-import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.TurboType;
@@ -57,7 +55,6 @@ import com.turbointernational.metadata.web.controller.PartController;
 import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Interchange;
 import com.turbointernational.metadata.web.dto.Page;
-import com.turbointernational.metadata.web.dto.PartDesc;
 
 import flexjson.JSONSerializer;
 
@@ -86,9 +83,6 @@ public class PartService {
 
     @Autowired
     private CriticalDimensionService criticalDimensionService;
-
-    @Autowired
-    private BOMService bomService;
 
     @Autowired
     private ProductImageDao productImageDao;
@@ -440,32 +434,9 @@ public class PartService {
                     ab.setPartTypeName(rPartTypeName);
                     ab.setName(rPartName);
                     Interchange interchange = interchangeService.findForPart(p);
-                    List<PartDesc> interchanges = interchange.getParts().stream()
-                            .filter(ip -> !ip.getManufacturerPartNumber().equals(mnfrPrtNmb))
-                            .map(ip -> new PartDesc(ip.getId(), ip.getManufacturerPartNumber()))
-                            .collect(Collectors.toList());
-                    ab.setInterchanges(interchanges);
+                    ab.setInterchanges(interchange.getParts());
                 }
             });
-        }
-        return retVal;
-    }
-
-    public Map<Long, List<Part>> getPartBomsInterchanges(Long partId) throws Exception {
-        List<BOMItem> boms = bomService.getByParentId(partId);
-        // BOMItem.id => [Part0, Part1, ...]
-        Map<Long, List<Part>> retVal = new HashMap<>(boms.size());
-        for (BOMItem bi : boms) {
-            Long bomId = bi.getId();
-            Interchange interchange = interchangeService.findForPart(bi.getChild());
-            if (/*interchange != null &&*/ interchange.getParts().size() > 0) {
-                List<Part> parts = new ArrayList<>(interchange.getParts().size());
-                interchange.getParts().stream().filter(p -> p.getId() != bi.getChild().getId())
-                        .forEach(p -> parts.add(p));
-                if (!parts.isEmpty()) {
-                    retVal.put(bomId, parts);
-                }
-            }
         }
         return retVal;
     }

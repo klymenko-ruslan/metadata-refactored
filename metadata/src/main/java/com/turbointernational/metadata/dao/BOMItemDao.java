@@ -2,13 +2,15 @@ package com.turbointernational.metadata.dao;
 
 import java.util.List;
 
-import com.turbointernational.metadata.entity.BOMItem;
 import org.springframework.stereotype.Repository;
+
+import com.turbointernational.metadata.entity.BOMItem;
 
 /**
  *
  * @author jrodriguez
  */
+@Deprecated
 @Repository
 public class BOMItemDao extends AbstractDao<BOMItem> {
 
@@ -16,11 +18,13 @@ public class BOMItemDao extends AbstractDao<BOMItem> {
         super(BOMItem.class);
     }
 
+    /*
     public List<BOMItem> findByParentId(Long partId) {
         return em.createNamedQuery("findBomsOfPart", BOMItem.class)
                 .setParameter("parentPartId", partId)
                 .getResultList();
     }
+    */
 
     public List<BOMItem> findByParentAndTypeIds(Long partId, Long partTypeId) {
         return em.createNamedQuery("findBomsOfPartWithType", BOMItem.class)

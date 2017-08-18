@@ -74,9 +74,6 @@ public class Mas90SyncService {
     private EntityManager entityManager;
 
     @Autowired
-    private BOMService bomService;
-
-    @Autowired
     private PartDao partDao;
 
     @Autowired
@@ -475,12 +472,6 @@ public class Mas90SyncService {
                 }
                 allModifications.clear();
                 mas90SyncDao.merge(record);
-                try {
-                    bomService.startRebuild(user, modifiedPartIds, true);
-                } catch (Exception e) {
-                    registerError("Critical error, processing stopped. Cause: " + getRootErrorMessage(e));
-                    syncProcessStatus.setFinished(true);
-                }
                 return null;
             });
             log.info("Synchronization with MAS90 finished.");

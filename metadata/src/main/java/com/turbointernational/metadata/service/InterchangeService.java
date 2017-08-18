@@ -5,14 +5,10 @@ import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
 import static com.turbointernational.metadata.util.FormatUtils.formatInterchange;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
-import static java.util.Arrays.asList;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,9 +33,6 @@ import com.turbointernational.metadata.web.dto.Interchange;
  */
 @Service
 public class InterchangeService {
-
-    @Autowired
-    private BOMService bomService;
 
     @Autowired
     private PartDao partDao;
@@ -69,14 +62,7 @@ public class InterchangeService {
     @Transactional
     public Interchange findById(Long id) {
         GetInterchangeResponse response = arangoDbConnector.findInterchangeById(id);
-        Set<Part> parts = new HashSet<>();
-        Optional.of(response.getParts()).ifPresent(partIds -> {
-            for (Long pid : partIds) {
-                Part p = partDao.findOne(pid);
-                parts.add(p);
-            }
-        });
-        return new Interchange(id, parts);
+        return Interchange.from(response);
     }
 
     public Interchange findForPart(Part part) {
@@ -85,8 +71,7 @@ public class InterchangeService {
 
     public Interchange findForPart(Long partId) {
         GetInterchangeResponse response = arangoDbConnector.findInterchangeForPart(partId);
-        Set<Part> parts = loadParts(response);
-        return new Interchange(response.getHeaderId(), parts);
+        return Interchange.from(response);
     }
 
     public void initInterchange(Part part) {
@@ -120,7 +105,6 @@ public class InterchangeService {
          * formatInterchange(interchange) + ".", interchange.toJson(),
          * relatedParts); changelogSourceService.link(httpRequest, changelog,
          * sourcesIds, ratings, description, attachIds);
-         * bomService.rebuildBomDescendancyForParts(partIds, true);
          * partChangeService.changedInterchange(interchange.getId(), null);
          */
         throw new NotImplementedException();
@@ -146,7 +130,6 @@ public class InterchangeService {
         relatedParts.add(new RelatedPart(asInterchangePartId, ChangelogPart.Role.PART1));
         changelogService.log(INTERCHANGE, "Created interchange: " + formatInterchange(interchange) + ".",
                 interchange.toJson(), relatedParts);
-        bomService.rebuildBomDescendancyForParts(asList(partId, asInterchangePartId), true);
         partChangeService.changedInterchange(asInterchangePartId, headerId);
     }
 
@@ -171,8 +154,6 @@ public class InterchangeService {
         Long newInterchangeId = response.getNewHeaderId();
         changelogService.log(INTERCHANGE, "The part [" + formatPart(part) + "] migrated from interchange group ["
                 + interchange.getId() + "] to [" + newInterchangeId + "].", relatedParts);
-        bomService.rebuildBomDescendancyForPart(partId, true);
-        bomService.rebuildBomDescendancyForParts(interchange.getParts().iterator(), true);
         partChangeService.changedInterchange(interchange.getId(), newInterchangeId);
     }
 
@@ -198,8 +179,6 @@ public class InterchangeService {
                 "Part " + formatPart(pickedPart) + " added to the part " + formatPart(part) + " as interchange.",
                 relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
-        bomService.rebuildBomDescendancyForPart(partId, true);
-        bomService.rebuildBomDescendancyForPart(pickedPartId, true);
         partChangeService.changedInterchange(oldInterchangeHeaderId, newInterchangeHeaderId);
     }
 
@@ -225,8 +204,6 @@ public class InterchangeService {
                 "Part " + formatPart(part) + " added to the part " + formatPart(pickedPart) + " as interchange.",
                 relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
-        bomService.rebuildBomDescendancyForPart(partId, true);
-        bomService.rebuildBomDescendancyForPart(pickedPartId, true);
         partChangeService.changedInterchange(oldInterchangeHeaderId, newInterchangeHeaderId);
     }
 
@@ -253,24 +230,7 @@ public class InterchangeService {
                 + " and all its interchanges added to the part " + formatPart(part) + " as interchanges.",
                 relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
-        bomService.rebuildBomDescendancyForPart(partId, true);
-        bomService.rebuildBomDescendancyForPart(pickedPartId, true);
         partChangeService.changedInterchange(oldInterchangeHeaderId, newInterchangeHeaderId);
-    }
-
-    private Set<Part> loadParts(GetInterchangeResponse response) {
-        return loadParts(response.getParts());
-    }
-
-    private Set<Part> loadParts(Long[] partIds) {
-        Set<Part> parts = new HashSet<>();
-        Optional.of(partIds).ifPresent(pids -> {
-            for (Long pid : pids) {
-                Part p = partDao.findOne(pid);
-                parts.add(p);
-            }
-        });
-        return parts;
     }
 
 }

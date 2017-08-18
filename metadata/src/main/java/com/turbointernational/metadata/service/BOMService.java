@@ -4,19 +4,13 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.BOM;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_CHILD;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_PARENT;
-import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
 import static com.turbointernational.metadata.service.BOMService.AddToParentBOMsRequest.ResolutionEnum.REPLACE;
-import static com.turbointernational.metadata.service.BOMService.IndexingStatus.PHASE_ESTIMATION;
-import static com.turbointernational.metadata.service.BOMService.IndexingStatus.PHASE_FINISHED;
-import static com.turbointernational.metadata.service.BOMService.IndexingStatus.PHASE_INDEXING;
 import static com.turbointernational.metadata.util.FormatUtils.formatBOMItem;
 import static java.util.Collections.binarySearch;
-import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -29,21 +23,18 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -51,10 +42,8 @@ import com.turbointernational.metadata.dao.BOMItemDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.Changelog;
-import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.service.BOMService.CreateBOMsRequest.Row;
-import com.turbointernational.metadata.service.BOMService.CreateBOMsResponse.Failure;
+import com.turbointernational.metadata.service.ArangoDbConnectorService.GetBomsResponse;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.util.View;
 
@@ -95,6 +84,9 @@ public class BOMService {
 
     @Autowired
     private PartChangeService partChangeService;
+
+    @Autowired
+    private ArangoDbConnectorService arangoDbConnector;
 
     private final IndexingStatus indexingStatus = new IndexingStatus();
 
@@ -311,144 +303,6 @@ public class BOMService {
 
         public void setBomDescendantRebuildFinished(boolean bomDescendantRebuildFinished) {
             this.bomDescendantRebuildFinished = bomDescendantRebuildFinished;
-        }
-    }
-
-    private class RebuildingJob extends Thread {
-
-        private final boolean indexBoms;
-
-        private final List<Long> turboIds; // turbos for indexing
-
-        class BomsRebuilder extends Thread {
-
-            @Override
-            public void run() {
-                super.run();
-                TransactionTemplate tt = new TransactionTemplate(txManager);
-                tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new
-                                                                     // transaction
-                tt.execute((TransactionCallback<Void>) ts -> {
-                    try {
-                        rebuildBomDescendancy(new IndexingStatusCallback() {
-
-                            @Override
-                            public void setProgressBomRebuild(boolean finished) {
-                                synchronized (indexingStatus) {
-                                    indexingStatus.setBomDescendantRebuildFinished(finished);
-                                }
-                            }
-
-                            @Override
-                            public void setProgressIndexing(int indexed) {
-                                synchronized (indexingStatus) {
-                                    indexingStatus.setBomsIndexingCurrentStep(indexed);
-                                }
-                            }
-
-                            @Override
-                            public void registerFailure(Exception e) {
-                                synchronized (indexingStatus) {
-                                    int failures = indexingStatus.getBomsIndexingFailures();
-                                    indexingStatus.setBomsIndexingFailures(failures + 1);
-                                    indexingStatus.setErrorMessage(e.getMessage());
-                                }
-                            }
-
-                        }, turboIds, indexBoms);
-                    } catch (Exception e) {
-                        synchronized (indexingStatus) {
-                            if (indexingStatus.getErrorMessage() != null) {
-                                indexingStatus.setErrorMessage(e.getMessage());
-                                indexingStatus.setBomsIndexingFailures(1);
-                            }
-                        }
-                    }
-                    return null;
-                });
-            }
-
-        }
-
-        RebuildingJob(List<Long> turboIds, boolean indexBoms) {
-            super();
-            this.turboIds = turboIds;
-            this.indexBoms = indexBoms;
-        }
-
-        @Override
-        public void run() {
-            super.run();
-            TransactionTemplate tt = new TransactionTemplate(txManager);
-            tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new
-                                                                 // transaction
-            tt.execute((TransactionCallback<Void>) ts -> {
-                try {
-                    int bomsTotal = 0;
-                    if (indexBoms) {
-                        Number n = jdbcTemplate.queryForObject("select count(distinct tcmey.part_id) "
-                                + "from turbo_car_model_engine_year as tcmey join part as p on tcmey.part_id = p.id "
-                                + "where p.part_type_id = " + PTID_TURBO, Number.class);
-                        bomsTotal = n.intValue();
-                    }
-                    Thread bomsIndexer = null;
-                    bomsIndexer = new BomsRebuilder();
-                    synchronized (indexingStatus) {
-                        indexingStatus.setBomsIndexingTotalSteps(bomsTotal);
-                        indexingStatus.setPhase(PHASE_INDEXING);
-                    }
-                    bomsIndexer.start();
-                    bomsIndexer.join();
-                } catch (Exception e) {
-                    log.error("BOMs rebuilding job failed.", e);
-                    synchronized (indexingStatus) {
-                        if (indexingStatus.getErrorMessage() == null) {
-                            indexingStatus.setErrorMessage(e.getMessage());
-                        }
-                    }
-                } finally {
-                    synchronized (indexingStatus) {
-                        indexingStatus.setPhase(PHASE_FINISHED);
-                        indexingStatus.setFinishedOn(System.currentTimeMillis());
-                    }
-                }
-                return null;
-            });
-        }
-
-    }
-
-    public IndexingStatus startRebuild(User user, List<Long> turboIds, boolean indexBoms) throws Exception {
-        IndexingStatus retVal;
-        long now = System.currentTimeMillis();
-        if (getRebuildStatus().isRebuilding()) {
-            throw new AssertionError("BOM rebuild is already in progress.");
-        }
-        synchronized (indexingStatus) {
-            int phase = indexingStatus.getPhase();
-            if (phase == PHASE_ESTIMATION || phase == PHASE_INDEXING) {
-                throw new IllegalStateException("BOMs indexing is already in progress.");
-            }
-            indexingStatus.reset();
-            indexingStatus.setPhase(PHASE_ESTIMATION);
-            indexingStatus.setStartedOn(now);
-            indexingStatus.setUserId(user.getId());
-            indexingStatus.setUserName(user.getUsername());
-            indexingStatus.setIndexBoms(indexBoms);
-            retVal = getRebuildStatus();
-        }
-        Thread job = new RebuildingJob(turboIds, indexBoms);
-        job.start();
-        return retVal;
-    }
-
-    public IndexingStatus getRebuildStatus() {
-        synchronized (indexingStatus) {
-            try {
-                return (IndexingStatus) indexingStatus.clone();
-            } catch (CloneNotSupportedException e) {
-                throw new AssertionError("Internal error. This exception should not be thrown.", e);
-            }
         }
     }
 
@@ -930,83 +784,6 @@ public class BOMService {
         }
     }
 
-    @Async("bomRebuildExecutor")
-    @Transactional
-    public void rebuildBomDescendancy(IndexingStatusCallback callback, List<Long> turboIds, boolean indexBoms) {
-        log.info("Rebuilding BOM descendancy started.");
-        try {
-            long t0 = System.currentTimeMillis();
-            em.createNativeQuery("CALL RebuildBomDescendancy()").executeUpdate();
-            em.clear();
-            AtomicLong t1 = new AtomicLong(System.currentTimeMillis());
-            log.info("CALL RebuildBomDescendancy(): {} milliseconds.", t1.get() - t0);
-            if (callback != null) {
-                callback.setProgressBomRebuild(true);
-            }
-            // Ticket #807.
-            AtomicInteger i = new AtomicInteger(0);
-            if (indexBoms) {
-                log.info("BOM indexing started.");
-                if (turboIds == null || turboIds.isEmpty()) {
-                    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-                    jdbcTemplate.query("select distinct tcmey.part_id "
-                            + "from turbo_car_model_engine_year as tcmey join part as p on tcmey.part_id = p.id "
-                            + "where p.part_type_id = " + PTID_TURBO, rs -> {
-                                long turboId = rs.getLong(1);
-                                indexBom(i, t1, callback, turboId);
-                            });
-                } else {
-                    for (Long turboId : turboIds) {
-                        indexBom(i, t1, callback, turboId);
-                    }
-                }
-                log.info("BOM indexing finished.");
-            }
-            long t3 = System.currentTimeMillis();
-            log.info("BOM descendancy rebuild completed: {} rows, {} milliseconds.", i.get(), t3 - t0);
-        } catch (Throwable th) {
-            log.error("Unexpected exception thrown during BOM rebuild.", th);
-        } finally {
-            log.info("Rebuilding BOM descendancy finished.");
-        }
-    }
-
-    @Transactional
-    public void rebuildBomDescendancyForPart(Long partId, boolean clean) {
-        if (getRebuildStatus().isRebuilding()) {
-            throw new AssertionError("BOM rebuild is already in progress.");
-        }
-        try {
-            synchronized (indexingStatus) {
-                indexingStatus.setPhase(PHASE_INDEXING);
-            }
-            Query call = em.createNativeQuery("CALL RebuildBomDescendancyForPart(:partId, :clean)");
-            call.setParameter("partId", partId);
-            call.setParameter("clean", clean ? 1 : 0);
-            call.executeUpdate();
-            searchService.indexPart(partId);
-        } finally {
-            synchronized (indexingStatus) {
-                indexingStatus.setPhase(PHASE_FINISHED);
-            }
-        }
-    }
-
-    @Transactional
-    public void rebuildBomDescendancyForParts(List<Long> partIds, boolean clean) {
-        for (Long partId : partIds) {
-            rebuildBomDescendancyForPart(partId, clean);
-        }
-    }
-
-    @Transactional
-    public void rebuildBomDescendancyForParts(Iterator<Part> parts, boolean clean) {
-        while (parts.hasNext()) {
-            Part part = parts.next();
-            rebuildBomDescendancyForPart(part.getId(), clean);
-        }
-    }
-
     @SuppressWarnings("unused")
     private class CreateBOMItemResult {
 
@@ -1065,6 +842,7 @@ public class BOMService {
 
     @Transactional(noRollbackFor = { FoundBomRecursionException.class, AssertionError.class })
     public CreateBOMsResponse createBOMs(HttpServletRequest httpRequest, CreateBOMsRequest request) throws Exception {
+        /*
         Long parentPartId = request.getParentPartId();
         Part parent = partDao.findOne(parentPartId);
         List<Failure> failures = new ArrayList<>();
@@ -1096,11 +874,13 @@ public class BOMService {
         List<BOMItem> boms = getByParentId(parentPartId);
         partChangeService.addedBoms(parentPartId, relatedPartIds);
         return new CreateBOMsResponse(failures, boms);
+        */
+        throw new NotImplementedException();
     }
 
-    @Transactional
-    public List<BOMItem> getByParentId(Long partId) throws Exception {
-        return bomItemDao.findByParentId(partId);
+    public GetBomsResponse.Row[] getByParentId(Long partId) throws Exception {
+        GetBomsResponse restBoms = arangoDbConnector.getBoms(partId);
+        return restBoms.getRows();
     }
 
     @Transactional
@@ -1170,7 +950,7 @@ public class BOMService {
             }
         }
         List<BOMItem> parents = getParentsForBom(primaryPartId);
-        rebuildBomDescendancyForPart(primaryPartId, true);
+        //rebuildBomDescendancyForPart(primaryPartId, true);
         List<Long> affectedPartIds = affectedParts.stream().map(p -> p.getId()).collect(Collectors.toList());
         // In the call below primaryPartId is actually childPartId from point of view partChangeService.
         partChangeService.addedToParentBoms(primaryPartId, affectedPartIds);
@@ -1208,7 +988,7 @@ public class BOMService {
         // Delete it.
         jdbcTemplate.update("delete from bom where id=?", id);
         bomItemDao.flush();
-        rebuildBomDescendancyForPart(parentPartId, true);
+        //rebuildBomDescendancyForPart(parentPartId, true);
         partChangeService.deletedBom(parentPartId, childPartId);
     }
 

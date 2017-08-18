@@ -43,10 +43,12 @@ import flexjson.transformer.HibernateTransformer;
 @Table(name = "bom", uniqueConstraints = @UniqueConstraint(columnNames = {"parent_part_id", "child_part_id"}))
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class", include = JsonTypeInfo.As.PROPERTY, defaultImpl = BOMItem.class)
 @NamedQueries({
+    /*
         @NamedQuery(
                 name="findBomsOfPart",
                 query = "SELECT DISTINCT i FROM BOMItem i JOIN i.child c WHERE i.parent.id = :parentPartId"
         ),
+     */
         @NamedQuery(
                 name="findBomParents",
                 query="SELECT DISTINCT i FROM BOMItem i JOIN i.parent parent WHERE i.child.id = :partId"

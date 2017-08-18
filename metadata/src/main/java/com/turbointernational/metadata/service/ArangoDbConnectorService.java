@@ -15,6 +15,9 @@ import org.springframework.web.util.UriTemplate;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.Manufacturer;
+import com.turbointernational.metadata.web.dto.Part;
+import com.turbointernational.metadata.web.dto.PartType;
 
 /**
  * @author dmytro.trunykov@zorallabs.com
@@ -47,14 +50,128 @@ public class ArangoDbConnectorService {
 
     private UriTemplate uriTmplGetBoms;
 
+    public static class GetManufacturerResponse {
+
+        private Long id;
+
+        private String name;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
+
+    public static class GetPartTypeResponse {
+
+        private Long id;
+
+        private String name;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+    }
+
+    public static class GetPartResponse {
+
+        private Long partId;
+
+        private String name;
+
+        private String descritpion;
+
+        private String partNumber;
+
+        private GetPartTypeResponse partType;
+
+        private GetManufacturerResponse manufacturer;
+
+        public Long getPartId() {
+            return partId;
+        }
+
+        public void setPartId(Long partId) {
+            this.partId = partId;
+        }
+
+        public String getPartNumber() {
+            return partNumber;
+        }
+
+        public void setManufacturerPartNumber(String partNumber) {
+            this.partNumber = partNumber;
+        }
+
+        public GetPartTypeResponse getPartType() {
+            return partType;
+        }
+
+        public void setPartType(GetPartTypeResponse partType) {
+            this.partType = partType;
+        }
+
+        public GetManufacturerResponse getManufacturer() {
+            return manufacturer;
+        }
+
+        public void setManufacturer(GetManufacturerResponse manufacturer) {
+            this.manufacturer = manufacturer;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescritpion() {
+            return descritpion;
+        }
+
+        public void setDescritpion(String descritpion) {
+            this.descritpion = descritpion;
+        }
+
+    }
+
     public static class GetInterchangeResponse {
+
         private Long headerId; // interchange header ID
-        private Long[] parts; // parts IDs
+
+        private GetPartResponse[] parts;
 
         public GetInterchangeResponse() {
         }
 
-        public GetInterchangeResponse(Long headerId, Long[] parts) {
+        public GetInterchangeResponse(Long headerId, GetPartResponse[] parts) {
             this.headerId = headerId;
             this.parts = parts;
         }
@@ -67,13 +184,14 @@ public class ArangoDbConnectorService {
             this.headerId = headerId;
         }
 
-        public Long[] getParts() {
+        public GetPartResponse[] getParts() {
             return parts;
         }
 
-        public void setParts(Long[] parts) {
+        public void setParts(GetPartResponse[] parts) {
             this.parts = parts;
         }
+
     }
 
     public static class CreateInterchangeResponse {
@@ -132,10 +250,16 @@ public class ArangoDbConnectorService {
             private String partNumber;
 
             @JsonView({ View.Summary.class })
-            private String manufacturer;
+            private Manufacturer manufacturer;
 
             @JsonView({ View.Summary.class })
-            private String partType;
+            private PartType partType;
+
+            @JsonView({ View.Summary.class })
+            private boolean relationType;
+
+            @JsonView({ View.Summary.class })
+            private int relationDistance;
 
             public Long getPartId() {
                 return partId;
@@ -169,20 +293,36 @@ public class ArangoDbConnectorService {
                 this.partNumber = partNumber;
             }
 
-            public String getManufacturer() {
+            public Manufacturer getManufacturer() {
                 return manufacturer;
             }
 
-            public void setManufacturer(String manufacturer) {
+            public void setManufacturer(Manufacturer manufacturer) {
                 this.manufacturer = manufacturer;
             }
 
-            public String getPartType() {
+            public PartType getPartType() {
                 return partType;
             }
 
-            public void setPartType(String partType) {
+            public void setPartType(PartType partType) {
                 this.partType = partType;
+            }
+
+            public boolean isRelationType() {
+                return relationType;
+            }
+
+            public void setRelationType(boolean relationType) {
+                this.relationType = relationType;
+            }
+
+            public int getRelationDistance() {
+                return relationDistance;
+            }
+
+            public void setRelationDistance(int relationDistance) {
+                this.relationDistance = relationDistance;
             }
 
         }
@@ -209,6 +349,66 @@ public class ArangoDbConnectorService {
     public static class GetBomsResponse {
 
         public static class Row {
+
+            private Long partId;
+
+            private String partNumber;
+
+            private PartType partType;
+
+            private Manufacturer manufacturer;
+
+            private Integer qty;
+
+            private Part[] interchanges;
+
+            public Long getPartId() {
+                return partId;
+            }
+
+            public void setPartId(Long partId) {
+                this.partId = partId;
+            }
+
+            public String getPartNumber() {
+                return partNumber;
+            }
+
+            public void setPartNumber(String partNumber) {
+                this.partNumber = partNumber;
+            }
+
+            public PartType getPartType() {
+                return partType;
+            }
+
+            public void setPartType(PartType partType) {
+                this.partType = partType;
+            }
+
+            public Manufacturer getManufacturer() {
+                return manufacturer;
+            }
+
+            public void setManufacturer(Manufacturer manufacturer) {
+                this.manufacturer = manufacturer;
+            }
+
+            public Integer getQty() {
+                return qty;
+            }
+
+            public void setQty(Integer qty) {
+                this.qty = qty;
+            }
+
+            public Part[] getInterchanges() {
+                return interchanges;
+            }
+
+            public void setInterchanges(Part[] interchanges) {
+                this.interchanges = interchanges;
+            }
 
         }
 

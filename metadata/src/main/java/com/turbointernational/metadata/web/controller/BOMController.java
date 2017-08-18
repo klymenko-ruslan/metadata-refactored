@@ -6,14 +6,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,11 +22,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.BOMItem;
-import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.service.ArangoDbConnectorService.GetBomsResponse.Row;
 import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsRequest;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsResponse;
 import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.Bom;
 
 @RequestMapping("/metadata/bom")
 @Controller
@@ -36,26 +35,6 @@ public class BOMController {
 
     @Autowired
     private BOMService bomService;
-
-    @RequestMapping(value = "rebuild/start", method = POST)
-    @ResponseBody
-    @JsonView(View.Summary.class)
-    @Secured("ROLE_BOM")
-    public BOMService.IndexingStatus startRebuild(Authentication authentication,
-            @RequestBody Map<String, Boolean> options) throws Exception {
-        User user = (User) authentication.getPrincipal();
-        boolean indexBoms = options.getOrDefault("indexBoms", false);
-        BOMService.IndexingStatus status = bomService.startRebuild(user, null, indexBoms);
-        return status;
-    }
-
-    @RequestMapping(value = "rebuild/status", method = GET)
-    @ResponseBody
-    @JsonView(View.Summary.class)
-    public BOMService.IndexingStatus getRebuildStatus() throws Exception {
-        BOMService.IndexingStatus status = bomService.getRebuildStatus();
-        return status;
-    }
 
     @ResponseBody
     @Transactional
@@ -71,8 +50,9 @@ public class BOMController {
     @ResponseBody
     @Secured("ROLE_READ")
     @JsonView(View.SummaryWithBOMDetail.class)
-    public List<BOMItem> getPartBOMs(@PathVariable("id") Long id) throws Exception {
-        return bomService.getByParentId(id);
+    public Bom[] getPartBOMs(@PathVariable("id") Long id) throws Exception {
+        Row[] rows = bomService.getByParentId(id);
+        return Bom.from(rows);
     }
 
     @RequestMapping(value = "/byParentPart/{partId}/type", method = GET, produces = APPLICATION_JSON_VALUE)

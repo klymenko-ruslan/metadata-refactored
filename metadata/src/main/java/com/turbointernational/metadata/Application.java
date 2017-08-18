@@ -87,14 +87,6 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
         return executor;
     }
 
-    @Bean(name = "bomRebuildExecutor")
-    protected ThreadPoolTaskExecutor bomRebuildExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setThreadNamePrefix("bom-rebuild-");
-        executor.setMaxPoolSize(1);
-        return executor;
-    }
-
     @Bean
     public JavaMailSender mail(@Value("${email.host}") String host, @Value("${email.user}") String user,
             @Value("${email.pass}") String pass) {

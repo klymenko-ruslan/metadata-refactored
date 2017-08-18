@@ -24,10 +24,9 @@ angular.module('ngMetaCrudApp')
             if (parentPartId === undefined) {
               return;
             }
-            $q.all([restService.getInterchangesOfThePartBoms(parentPartId), BOM.listByParentPartId(parentPartId)]).then(
-              function success(retVals) {
-                $scope.interchangesOfThePartBoms = retVals[0];
-                $scope.bom = retVals[1];
+            BOM.listByParentPartId(parentPartId).then(
+              function success(bom) {
+                $scope.bom = bom;
                 $scope.bomTableParams = new NgTableParams({
                   page: 1,
                   count: 10
@@ -40,7 +39,6 @@ angular.module('ngMetaCrudApp')
               }
             );
           });
-
 
           // Temp storage for quantities
           $scope.modifyValues = {};

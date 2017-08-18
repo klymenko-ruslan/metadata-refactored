@@ -1,10 +1,10 @@
 package com.turbointernational.metadata.web.dto;
 
 import java.io.Serializable;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.service.ArangoDbConnectorService.GetInterchangeResponse;
+import com.turbointernational.metadata.service.ArangoDbConnectorService.GetPartResponse;
 import com.turbointernational.metadata.util.View;
 
 import flexjson.JSONSerializer;
@@ -18,25 +18,35 @@ public class Interchange implements Serializable {
     @JsonView({ View.Summary.class })
     private final Long id;
 
-    @JsonView({ View.SummaryWithInterchangeParts.class })
-    private final Set<Part> parts;
+    @JsonView({ View.Summary.class })
+    private final Part[] parts;
 
-    public Interchange(Long id, Set<Part> parts) {
+    public Interchange(Long id, Part[] parts) {
         this.id = id;
         this.parts = parts;
+    }
+
+    public static Interchange from(GetInterchangeResponse o) {
+        GetPartResponse[] restParts = o.getParts();
+        int n = restParts.length;
+        Part[] parts = new Part[n];
+        for(int i = 0; i < n; i++) {
+            parts[i] = Part.from(restParts[i]);
+        }
+        return new Interchange(o.getHeaderId(), parts);
     }
 
     public Long getId() {
         return id;
     }
 
-    public Set<Part> getParts() {
+    public Part[] getParts() {
         return parts;
     }
 
     @JsonView({ View.Summary.class })
     public boolean isAlone() {
-        return parts.isEmpty();
+        return parts.length == 0;
     }
     // </editor-fold>
 

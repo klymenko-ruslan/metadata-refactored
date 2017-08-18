@@ -13,7 +13,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -508,14 +507,6 @@ public class PartController {
     }
 
     @Transactional
-    @Secured("ROLE_BOM")
-    @JsonView(View.Detail.class)
-    @RequestMapping(value = "/part/{id}/bom/rebuild", method = POST)
-    public @ResponseBody void rebuildBom(@PathVariable("id") Long partId) throws IOException {
-        bomService.rebuildBomDescendancyForPart(partId, true);
-    }
-
-    @Transactional
     @RequestMapping(value = "/part/{id}", method = DELETE, produces = APPLICATION_JSON_VALUE)
     @Secured("ROLE_DELETE_PART")
     public void deletePart(@PathVariable("id") Long id) {
@@ -623,27 +614,6 @@ public class PartController {
     @Secured("ROLE_ALTER_PART")
     public List<Turbo> unlinkTurboInGasketKit(@PathVariable("partId") Long partId) {
         return partService.unlinkTurboInGasketKit(partId);
-    }
-
-    @Transactional(noRollbackFor = AssertionError.class)
-    @Secured("ROLE_ALTER_PART")
-    @JsonView(View.Detail.class)
-    @ResponseBody
-    @RequestMapping(value = "/part/{partId}/gasketkits", method = PUT, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public LinkTurboResponse linkTurbosToGasketKit(@RequestBody LinkTurboRequest request) {
-        Long gasketKitId = request.getGasketKitId();
-        List<LinkTurboResponse.Row> rows = partService.linkTurbosToGasketKit(gasketKitId, request.getPickedTurbos());
-        List<Turbo> turbos = partDao.listTurbosLinkedToGasketKit(gasketKitId);
-        return new LinkTurboResponse(rows, turbos);
-    }
-
-    @RequestMapping(value = "/part/{partId}/boms/interchanges", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @Secured("ROLE_READ")
-    @JsonView(View.Summary.class)
-    // see ticket #907
-    public Map<Long, List<Part>> getPartBomsInterchanges(@PathVariable("partId") Long partId) throws Exception {
-        return partService.getPartBomsInterchanges(partId);
     }
 
 }

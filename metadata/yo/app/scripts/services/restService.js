@@ -6,33 +6,6 @@ angular.module('ngMetaCrudApp')
       function RestService($log, $http, Restangular, dialogs, $q, $rootScope, $filter, METADATA_BASE, DATE_FORMAT) {
 
     function TheService() { // jshint ignore:line
-      var RestService = this;
-      var refreshPromise = null;
-      this.status = null;
-
-      this.refreshStatus = function() {
-        if (refreshPromise !== null) {
-          return refreshPromise;
-        } else {
-
-          var url = METADATA_BASE + 'status/all';
-
-          // We use $http service instead of Restangular because
-          // we should hide indication on UI of this call by 'angular-loading-bar' service.
-          // That service relies on $http only and know nothing about Restangular.
-
-          refreshPromise = $http.get(url, {
-            ignoreLoadingBar: true
-          }).then(function(status) {
-            RestService.status = status.data;
-            return status;
-          }).finally(function() {
-            refreshPromise = null;
-          });
-
-          return refreshPromise;
-        }
-      };
 
       this.createBom = function(parentPartId, items, sourcesIds, ratings, description, attachIds) {
         var req = {
@@ -63,43 +36,6 @@ angular.module('ngMetaCrudApp')
       this.removeBomAlternative = function(altBomItemId, altItemId) {
         Restangular.setParentless(false);
         return Restangular.one('bom', altBomItemId).one('alt', altItemId).remove();
-      };
-
-      this.startBomRebuilding = function(options) {
-        // return Restangular.one('bom/rebuild').post('start', options);
-        var url = METADATA_BASE + 'bom/rebuild/start';
-        return $http.post(url, options);
-      };
-
-      this.getBomRebuildingStatus = function() {
-        // return Restangular.one('bom/rebuild/status').get();
-        var url = METADATA_BASE + 'bom/rebuild/status';
-        return $http.get(url, { ignoreLoadingBar: true });
-      };
-
-      // Wraps the BOM status logic, resolving when the BOM is not rebuilding.
-      this.getBomRebuildingCompletePromise = function() {
-        var deferred = $q.defer();
-
-        RestService.refreshStatus().then(function(status) {
-          if (status.bomRebuilding) {
-
-            var cancelWatcher = $rootScope.$watch(
-              function() {
-                return RestService.status.bomRebuilding;
-              },
-              function(bomRebuilding) {
-                if (bomRebuilding === false) {
-                  deferred.resolve();
-                  cancelWatcher();
-                }
-              }, true);
-          } else {
-            deferred.resolve();
-          }
-        });
-
-        return deferred.promise;
       };
 
       this.httpServiceError = function(title, response) {
@@ -395,15 +331,6 @@ angular.module('ngMetaCrudApp')
 
       this.updatePartDetails = function(part) {
         return Restangular.one('part', part.id).one('details').customPUT(part);
-      };
-
-      this.rebuildPartBom = function(partId) {
-        Restangular.setParentless(false);
-        return Restangular.one('part', partId).one('bom/rebuild').post();
-      };
-
-      this.getInterchangesOfThePartBoms = function(partId) {
-        return Restangular.one('part/' + partId + '/boms/interchanges').get();
       };
 
       this.addProductImage = function(file, partId, publishImage) {

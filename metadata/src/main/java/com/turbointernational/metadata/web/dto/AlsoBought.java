@@ -3,7 +3,6 @@ package com.turbointernational.metadata.web.dto;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -40,7 +39,7 @@ public class AlsoBought {
     private Integer orders;
 
     @JsonView(View.Summary.class)
-    private List<PartDesc> interchanges;
+    private Part[] interchanges;
 
     public AlsoBought() {
     }
@@ -108,11 +107,11 @@ public class AlsoBought {
         this.orders = orders;
     }
 
-    public List<PartDesc> getInterchanges() {
+    public Part[] getInterchanges() {
         return interchanges;
     }
 
-    public void setInterchanges(List<PartDesc> interchanges) {
+    public void setInterchanges(Part[] interchanges) {
         this.interchanges = interchanges;
     }
 

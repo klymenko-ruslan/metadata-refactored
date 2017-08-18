@@ -1,7 +1,6 @@
 <metanav>
   <li authorize="ROLE_READ">
-    <button data-ng-click="go('/part/' + partId)"
-       class="btn btn-primary">
+    <button data-ng-click="go('/part/' + partId)" class="btn btn-primary">
       <i class="fa fa-eye"></i>
       View Part
     </button>
@@ -9,7 +8,7 @@
 
   <li authorize="ROLE_INTERCHANGE">
     <button data-ng-click="removeInterchange()"
-       data-ng-disabled="!canClear() || restService.status.bomRebuilding"
+       data-ng-disabled="!canClear()"
        class="btn btn-danger">
       <i class="fa fa-trash-o"></i>
       Remove Interchange
@@ -18,7 +17,7 @@
 
   <li authorize="ROLE_INTERCHANGE">
     <button data-ng-click="save(partId)"
-       data-ng-disabled="!canSave() || restService.status.bomRebuilding"
+       data-ng-disabled="!canSave()"
        class="btn btn-success">
       <i class="fa fa-save"></i>
       Save
