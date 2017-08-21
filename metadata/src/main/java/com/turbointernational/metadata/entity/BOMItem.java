@@ -18,8 +18,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
@@ -39,26 +37,12 @@ import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
 
+// TODO: remove
+
 @Entity
 @Table(name = "bom", uniqueConstraints = @UniqueConstraint(columnNames = {"parent_part_id", "child_part_id"}))
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class", include = JsonTypeInfo.As.PROPERTY, defaultImpl = BOMItem.class)
-@NamedQueries({
-    /*
-        @NamedQuery(
-                name="findBomsOfPart",
-                query = "SELECT DISTINCT i FROM BOMItem i JOIN i.child c WHERE i.parent.id = :parentPartId"
-        ),
-     */
-        @NamedQuery(
-                name="findBomParents",
-                query="SELECT DISTINCT i FROM BOMItem i JOIN i.parent parent WHERE i.child.id = :partId"
-        ),
-        @NamedQuery(
-                name="findBomsOfPartWithType",
-                query = "SELECT i FROM BOMItem i JOIN i.child c " +
-                        "WHERE i.parent.id = :parentPartId " +
-                        "AND i.child.partType.id = :partTypeId"
-        )})
+@Deprecated
 public class BOMItem implements Comparable<BOMItem>, Serializable {
 
     private static final long serialVersionUID = -5429582834384738489L;

@@ -1,10 +1,15 @@
 package com.turbointernational.metadata.util;
 
-import com.turbointernational.metadata.entity.*;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.web.dto.Interchange;
-
 import static org.apache.commons.lang.StringUtils.abbreviate;
+
+import com.turbointernational.metadata.entity.BOMAlternative;
+import com.turbointernational.metadata.entity.BOMItem;
+import com.turbointernational.metadata.entity.CarModelEngineYear;
+import com.turbointernational.metadata.entity.CarYear;
+import com.turbointernational.metadata.entity.SalesNote;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.service.ArangoDbConnectorService.GetPartResponse;
+import com.turbointernational.metadata.web.dto.Interchange;
 
 /**
  * Static methods to represent various entities in a text form.
@@ -13,6 +18,7 @@ import static org.apache.commons.lang.StringUtils.abbreviate;
  */
 public class FormatUtils {
 
+    @Deprecated
     public static String formatPart(Part part) {
         if (part == null) {
             return "null";
@@ -21,6 +27,16 @@ public class FormatUtils {
             String manufacturerNumber = part.getManufacturerPartNumber();
             return formatPart(partId, manufacturerNumber);
 
+        }
+    }
+
+    public static String formatPart(com.turbointernational.metadata.web.dto.Part part) {
+        if (part == null) {
+            return "null";
+        } else {
+            Long partId = part.getPartId();
+            String manufacturerNumber = part.getPartNumber();
+            return formatPart(partId, manufacturerNumber);
         }
     }
 
@@ -56,6 +72,7 @@ public class FormatUtils {
         return "[" + cmeyId + "]";
     }
 
+    @Deprecated
     public static String formatBOMItem(BOMItem bomItem) {
         if (bomItem == null) {
             return "null";
@@ -66,6 +83,15 @@ public class FormatUtils {
             Integer qty = bomItem.getQuantity();
             return String.format("(ID:%d, PRNT:%s, CHLD:%s, QTY:%d)", id, formatPart(parent), formatPart(child), qty);
         }
+    }
+
+    public static String formatBom(GetPartResponse parent, GetPartResponse child, Integer qty) {
+        Long parentPartId = parent.getPartId();
+        String parentPartNumber = parent.getPartNumber();
+        Long childPartId = child.getPartId();
+        String childPartNumber = child.getPartNumber();
+        return String.format("(PRNT:%s, CHLD:%s, QTY:%d)", formatPart(parentPartId, parentPartNumber),
+                formatPart(childPartId, childPartNumber), qty);
     }
 
     public static String formatInterchange(Interchange interchange) {

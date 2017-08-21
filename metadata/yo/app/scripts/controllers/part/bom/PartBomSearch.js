@@ -21,8 +21,8 @@ angular.module('ngMetaCrudApp')
 
     function updateExistingBomPartIds() {
       existingBomPartIds = {};
-      _.each(boms, function(bi) {
-        existingBomPartIds[bi.child.id] = true;
+      _.each(boms, function(b) {
+        existingBomPartIds[b.partId] = true;
       });
     }
 
@@ -32,7 +32,7 @@ angular.module('ngMetaCrudApp')
       page: 1,
       count: 5
     }, {
-        counts: [5, 10, 15],
+      counts: [5, 10, 15],
       getData: utils.localPagination(boms, 'child.manufacturerPartNumber')
     });
 
@@ -77,7 +77,7 @@ angular.module('ngMetaCrudApp')
     };
 
     $scope.isBttnSaveDisabled = function() {
-      return pickedParts.length === 0 || restService.status.bomRebuilding;
+      return pickedParts.length === 0;
     };
 
     $scope.isBttnUnpickAllDisabled = function() {
@@ -86,8 +86,7 @@ angular.module('ngMetaCrudApp')
 
     $scope.isBttnPickDisabled = function(p) {
       return p === undefined || $scope.part.manufacturer.id !== p.manufacturer.id ||
-        $scope.part.id === p.id || pickedPartIds[p.id] || existingBomPartIds[p.id] ||
-        restService.status.bomRebuilding;
+        $scope.partId === p.id || pickedPartIds[p.id] || existingBomPartIds[p.id];
     };
 
     function cbSave(srcIds, ratings, description, attachIds) {
@@ -134,6 +133,7 @@ angular.module('ngMetaCrudApp')
     };
 
     $scope.removeBOM = function(bomId) {
+      // TODO
       var idx = _.findIndex(boms, function(b) {
         return b.id === bomId;
       });

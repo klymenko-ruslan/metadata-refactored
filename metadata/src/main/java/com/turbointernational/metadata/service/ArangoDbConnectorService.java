@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.service;
 
+import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.PUT;
 
 import java.net.URI;
@@ -7,6 +8,7 @@ import java.net.URI;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -36,6 +38,8 @@ public class ArangoDbConnectorService {
 
     private RestTemplate restArangoDbService;
 
+    private UriTemplate uriTmplGetPartById;
+
     private UriTemplate uriTmplGetInterchageById;
 
     private UriTemplate uriTmplGetInterchageForPart;
@@ -50,7 +54,35 @@ public class ArangoDbConnectorService {
 
     private UriTemplate uriTmplGetBoms;
 
-    public static class GetManufacturerResponse {
+    private UriTemplate uriTmplAddPartBom;
+
+    private UriTemplate uriTmplRemovePartFromBom;
+
+    public static class Response {
+
+        private boolean success;
+
+        private String msg;
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public void setSuccess(boolean success) {
+            this.success = success;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+
+        public void setMsg(String msg) {
+            this.msg = msg;
+        }
+
+    }
+
+    public static class GetManufacturerResponse extends Response {
 
         private Long id;
 
@@ -74,7 +106,7 @@ public class ArangoDbConnectorService {
 
     }
 
-    public static class GetPartTypeResponse {
+    public static class GetPartTypeResponse extends Response {
 
         private Long id;
 
@@ -98,7 +130,7 @@ public class ArangoDbConnectorService {
 
     }
 
-    public static class GetPartResponse {
+    public static class GetPartResponse extends Response {
 
         private Long partId;
 
@@ -162,7 +194,7 @@ public class ArangoDbConnectorService {
 
     }
 
-    public static class GetInterchangeResponse {
+    public static class GetInterchangeResponse extends Response {
 
         private Long headerId; // interchange header ID
 
@@ -194,7 +226,7 @@ public class ArangoDbConnectorService {
 
     }
 
-    public static class CreateInterchangeResponse {
+    public static class CreateInterchangeResponse extends Response {
 
         private Long headerId;
 
@@ -208,7 +240,7 @@ public class ArangoDbConnectorService {
 
     }
 
-    public static class MigrateInterchangeResponse {
+    public static class MigrateInterchangeResponse extends Response {
 
         private Long oldHeaderId;
 
@@ -232,7 +264,7 @@ public class ArangoDbConnectorService {
 
     }
 
-    public static class GetAncestorsResponse {
+    public static class GetAncestorsResponse extends Response {
 
         @JsonInclude(JsonInclude.Include.ALWAYS)
         public static class Row {
@@ -346,7 +378,7 @@ public class ArangoDbConnectorService {
 
     }
 
-    public static class GetBomsResponse {
+    public static class GetBomsResponse extends Response {
 
         public static class Row {
 
@@ -434,6 +466,8 @@ public class ArangoDbConnectorService {
     @PostConstruct
     public void init() {
         restArangoDbService = new RestTemplate();
+        uriTmplGetPartById = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/parts/{id}");
         uriTmplGetInterchageById = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
                 + restArangoDbServicePort + "/interchanges/{id}");
         uriTmplGetInterchageForPart = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost
@@ -448,6 +482,16 @@ public class ArangoDbConnectorService {
                 + restArangoDbServicePort + "/parts/{partId}/ancestors");
         uriTmplGetBoms = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
                 + restArangoDbServicePort + "/parts/{partId}/boms");
+        uriTmplAddPartBom = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/boms/{parentPartId}/descendant/{descendantPartId}");
+        uriTmplRemovePartFromBom = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/boms/{parentPartId}/descendant/{descendantPartId}");
+
+    }
+
+    public GetPartResponse findPartById(Long id) {
+        URI uri = uriTmplGetPartById.expand(id);
+        return restArangoDbService.getForObject(uri, GetPartResponse.class);
     }
 
     public GetInterchangeResponse findInterchangeById(Long id) {
@@ -501,6 +545,29 @@ public class ArangoDbConnectorService {
         URI uri = uriTmplGetBoms.expand(partId);
         GetBomsResponse.Row[] rows = restArangoDbService.getForObject(uri, GetBomsResponse.Row[].class);
         return new GetBomsResponse(rows);
+    }
+
+    /**
+     * Button on the UI "Add Child".
+     *
+     * @return
+     */
+    public Response addPartToBom(Long parentPartId, Long childPartId, Integer quantity) {
+        URI uri = uriTmplAddPartBom.expand(parentPartId, childPartId);
+        HttpEntity<String> body = new HttpEntity<>("{qty: " + quantity + "}");
+        ResponseEntity<Response> response = restArangoDbService.exchange(uri, PUT, body, Response.class);
+        return response.getBody();
+    }
+
+    /**
+     * @param parentPartId
+     * @param childPartId
+     * @return
+     */
+    public Response removePartFromBom(Long parentPartId, Long childPartId) {
+        URI uri = uriTmplRemovePartFromBom.expand(parentPartId, childPartId);
+        ResponseEntity<Response> response = restArangoDbService.exchange(uri, DELETE, null, Response.class);
+        return response.getBody();
     }
 
 }

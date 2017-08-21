@@ -55,6 +55,7 @@ public class BOMController {
         return Bom.from(rows);
     }
 
+    /*
     @RequestMapping(value = "/byParentPart/{partId}/type", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
@@ -63,6 +64,7 @@ public class BOMController {
             throws Exception {
         return bomService.getByParentAndTypeIds(partId, typeId);
     }
+    */
 
     @RequestMapping(value = "/part/{id}/parents", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody

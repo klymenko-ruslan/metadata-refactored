@@ -75,7 +75,7 @@ angular.module('ngMetaCrudApp')
     };
 
     $scope.isBttnSaveDisabled = function() {
-      return pickedParts.length === 0 || restService.status.bomRebuilding;
+      return pickedParts.length === 0;
     };
 
     $scope.isBttnUnpickAllDisabled = function() {
@@ -85,8 +85,7 @@ angular.module('ngMetaCrudApp')
     $scope.isBttnPickDisabled = function(p) {
       return p === undefined || $scope.part.manufacturer.id !== p.manufacturer.id ||
         $scope.part.partType.id !== p.partType.id ||
-        $scope.part.id === p.id || pickedPartIds[p.id] || existingPartIds[p.id] ||
-        restService.status.bomRebuilding;
+        $scope.part.id === p.id || pickedPartIds[p.id] || existingPartIds[p.id];
     };
 
     $scope.save = function() {
