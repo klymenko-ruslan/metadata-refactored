@@ -43,43 +43,40 @@ angular.module('ngMetaCrudApp')
           // Temp storage for quantities
           $scope.modifyValues = {};
 
-          $scope.isModifying = function(bomItem) {
-            return angular.isDefined($scope.modifyValues[bomItem.id]);
+          $scope.isModifying = function(b) {
+            return angular.isDefined($scope.modifyValues[b.partId]);
           };
 
-          $scope.modifyStart = function(bomItem) {
-            $scope.modifyValues[bomItem.id] = bomItem.quantity;
+          $scope.modifyStart = function(b) {
+            $scope.modifyValues[b.partId] = b.qty;
           };
 
-          $scope.modifyCancel = function(bomItem) {
-            delete $scope.modifyValues[bomItem.id];
+          $scope.modifyCancel = function(b) {
+            delete $scope.modifyValues[b.partId];
           };
 
-          $scope.modifySave = function(bomItem) {
-            var quantity = $scope.modifyValues[bomItem.id];
-            restService.updateBom(bomItem.id, quantity).then(
+          $scope.modifySave = function(b) {
+            var quantity = $scope.modifyValues[b.partId];
+            restService.updateBom($scope.parentPartId, b.partId, quantity).then(
               function() {
-                bomItem.quantity = quantity;
-                delete $scope.modifyValues[bomItem.id];
+                b.qty = quantity;
+                delete $scope.modifyValues[b.partId];
               },
               function() {}
             );
           };
 
-          $scope.remove = function(bomItem) {
+          $scope.remove = function(b) {
             dialogs.confirm(
               'Remove BOM Item?',
               'Remove child part from this bill of materials?').result.then(
               function() {
                 // Yes
-                BOM.removeBOM(bomItem.id).then(
-                  function success() {
+                BOM.removeBom($scope.parentPartId, b.partId).then(
+                  function success(updatedBom) {
                     // Success
-                    // Remove the BOM item from the local part and reload the table
-                    var idxToRemove = _.findIndex($scope.bom, function(e) {
-                      return e.id === bomItem.id;
-                    });
-                    $scope.bom.splice(idxToRemove, 1);
+                    $scope.bom.splice(0, $scope.bom.length);
+                    $scope.bom.push.apply(updatedBom);
                     $scope.bomTableParams.reload();
                     // Clear the alt bom item
                     $scope.altBomItem = null;

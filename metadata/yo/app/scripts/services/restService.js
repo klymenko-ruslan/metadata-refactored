@@ -24,8 +24,9 @@ angular.module('ngMetaCrudApp')
         return Restangular.all('bom').post(req);
       };
 
-      this.updateBom = function(bomItemId, quantity) {
-        return Restangular.one('bom').post(bomItemId, null, { quantity: quantity });
+      this.updateBom = function(parentPartId, childPartId, quantity) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom', parentPartId).post('descendant/' + childPartId, null, {quantity: quantity});
       };
 
       this.createBomAlternative = function(bomItemId, pickedPartId, hdr) {

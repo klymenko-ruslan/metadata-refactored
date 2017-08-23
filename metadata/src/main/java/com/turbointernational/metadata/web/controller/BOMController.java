@@ -10,7 +10,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,15 +55,18 @@ public class BOMController {
     }
 
     /*
-    @RequestMapping(value = "/byParentPart/{partId}/type", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @Secured("ROLE_READ")
-    @JsonView(View.SummaryWithBOMDetail.class)
-    public List<BOMItem> getByParentAndTypeIds(@PathVariable("partId") Long partId, @RequestParam("typeId") Long typeId)
-            throws Exception {
-        return bomService.getByParentAndTypeIds(partId, typeId);
-    }
-    */
+     * @RequestMapping(value = "/byParentPart/{partId}/type", method = GET,
+     * produces = APPLICATION_JSON_VALUE)
+     *
+     * @ResponseBody
+     *
+     * @Secured("ROLE_READ")
+     *
+     * @JsonView(View.SummaryWithBOMDetail.class) public List<BOMItem>
+     * getByParentAndTypeIds(@PathVariable("partId") Long
+     * partId, @RequestParam("typeId") Long typeId) throws Exception { return
+     * bomService.getByParentAndTypeIds(partId, typeId); }
+     */
 
     @RequestMapping(value = "/part/{id}/parents", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -85,23 +87,21 @@ public class BOMController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_BOM")
-    public void update(@PathVariable("id") Long id, @RequestParam(required = true) Integer quantity) throws Exception {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        bomService.update(id, quantity);
+    public void update(@PathVariable("parentPartId") Long parentPartId, @PathVariable("childPartId") Long childPartId,
+            @RequestParam(required = true) Integer quantity) throws Exception {
+        bomService.update(parentPartId, childPartId, quantity);
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = DELETE)
+    @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}", method = DELETE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_BOM")
-    public void delete(@PathVariable("id") Long id) throws Exception {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        bomService.delete(id);
+    public Bom[] delete(@PathVariable("parentPartId") Long parentPartId, @PathVariable("childPartId") Long childPartId)
+            throws Exception {
+        return bomService.delete(parentPartId, childPartId);
     }
 
 }

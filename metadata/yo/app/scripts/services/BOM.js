@@ -24,8 +24,9 @@ angular.module('ngMetaCrudApp').service('BOM', ['$log', 'Restangular', function 
       return Restangular.one('bom', bomItemId).get();
     };
 
-    this.removeBOM = function(bomId) {
-      return Restangular.one('bom', bomId).remove();
+    this.removeBom = function(parentPartId, childPartId) {
+      Restangular.setParentless(false);
+      return Restangular.one('bom', parentPartId).one('descendant', childPartId).remove();
     };
 
     this.addToParentsBOMs = function(partId, sourcesIds, ratings, description, rows, attachIds) {

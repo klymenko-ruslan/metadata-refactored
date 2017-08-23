@@ -157,7 +157,23 @@ def load_part_short(cur, pid):
     return p
 
 
-def load_boms(cur, pid):
+def load_bom_alternatives(cur, bomid):
+    """Load BOM alternatives for the specified BOM."""
+    retval = []
+    cur.execute('select bom_alt_header_id from bom_alt_item '
+                'where bom_id=%(bomid)s', {'bomid': bomid})
+    row = cur.fetchone()
+    if row is not None:
+        bomalthdrid = row['bom_alt_header_id']
+        cur.execute('select part_id from bom_alt_item '
+                    'where bom_alt_header_id=%(bomalthdrid)s',
+                    {'bomalthdrid': bomalthdrid})
+        retval = [{'bom_alt_hdr_id': bomalthdrid, 'part_id': row['part_id']}
+                  for row in cur.fetchall()]
+    return retval
+
+
+def load_boms(cur, cur1, pid):
     """Load parts's BOMs."""
     retval = []
     cur.execute('select id, child_part_id, quantity from bom '
@@ -166,6 +182,8 @@ def load_boms(cur, pid):
         chldpid = bom.pop('child_part_id')
         chldp = load_part_short(cur, chldpid)
         bom['child'] = chldp
+        alternatives = load_bom_alternatives(cur1, bom['id'])
+        bom['alternatives'] = alternatives
         retval.append(bom)
     return retval
 
@@ -213,6 +231,7 @@ try:
                                   password=args.db_password)
     cursor = cnx.cursor(dictionary=True, buffered=True)
     cursor2 = cnx.cursor(dictionary=True, buffered=True)
+    cursor3 = cnx.cursor(dictionary=True, buffered=True)
     # Map 'manufacturer_id' => 'manufacturer'.
     print('Load manufactureres...')
     cursor.execute('select id, name, manfr_type_id, '
@@ -259,10 +278,11 @@ try:
         cursor.execute(sql, {'id': pid})
         p = cursor.fetchone()
         normalize_part(p)
-        p['boms'] = load_boms(cursor2, pid)
+        p['boms'] = load_boms(cursor2, cursor3, pid)
         p['interchanges'] = load_interchanges(cursor2, pid)
         p['whereused'] = load_whereused(cursor2, pid)
         result.append(p)
+    cursor3.close()
     cursor2.close()
     cursor.close()
     print('Writing reslust to a file [{}]...'.format(args.out))

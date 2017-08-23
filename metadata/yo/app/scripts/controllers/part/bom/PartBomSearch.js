@@ -132,20 +132,17 @@ angular.module('ngMetaCrudApp')
       LinkSource.link(cbSave, $scope.requiredSource, '/part/' + $scope.partId + '/bom/search');
     };
 
-    $scope.removeBOM = function(bomId) {
-      // TODO
-      var idx = _.findIndex(boms, function(b) {
-        return b.id === bomId;
-      });
-      // var bomItem = boms[idx];
+    $scope.removeBom = function(childPartId) {
       dialogs.confirm(
         'Remove BOM Item?',
         'Remove this child part from the bill of materials of the parent part?').result.then(
         function() {
           // Yes
-          BOM.removeBOM(bomId).then(
-            function() {
-              boms.splice(idx, 1);
+          BOM.removeBom($scope.partId, childPartId).then(
+            // TODO
+            function(updatedBoms) {
+              boms.splice(0, boms.length);
+              boms.push.apply(updatedBoms);
               $scope.bomTableParams.reload();
               updateExistingBomPartIds();
               toastr.success('The BOM has been successfully removed.');

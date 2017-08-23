@@ -94,6 +94,16 @@ public class FormatUtils {
                 formatPart(childPartId, childPartNumber), qty);
     }
 
+    public static String formatBom(Part parentPart, Part childPart) {
+        return String.format("(PRNT:%s, CHLD:%s)", formatPart(parentPart),
+                formatPart(childPart));
+    }
+
+    public static String formatBom(Part parentPart, Part childPart, Integer qty) {
+        return String.format("(PRNT:%s, CHLD:%s, QTY:%d)", formatPart(parentPart),
+                formatPart(childPart), qty);
+    }
+
     public static String formatInterchange(Interchange interchange) {
         if (interchange == null) {
             return "null";

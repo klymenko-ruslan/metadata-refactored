@@ -31,8 +31,8 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.ChangelogPart;
+import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.GetBomsResponse;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetPartResponse;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.Response;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.util.View;
@@ -575,20 +575,24 @@ public class BOMService {
         Integer[] ratings = request.getChlogSrcRatings();
         String description = request.getChlogSrcLnkDescription();
         Long[] attachIds = request.getAttachIds();
-        GetPartResponse parent = arangoDbConnector.findPartById(parentPartId);
+        // TODO: GetPartResponse parent =
+        // arangoDbConnector.findPartById(parentPartId);
+        Part parent = partDao.findOne(parentPartId);
         List<CreateBOMsResponse.Failure> failures = new ArrayList<>();
         Collection<Long> relatedPartIds = new ArrayList<Long>(request.getRows().size());
         for (CreateBOMsRequest.Row row : request.getRows()) {
-            String failureMsg = null;
             // Create a new BOM item
-            GetPartResponse child = arangoDbConnector.findPartById(row.getChildPartId());
-            Long childId = child.getPartId();
+            Long childId = row.getChildPartId();
+            // TODO: GetPartResponse child =
+            // arangoDbConnector.findPartById(childId);
+            Part child = partDao.findOne(childId);
+            // TODO: String childPartNum = child.getPartNumber();
+            String childPartNum = child.getManufacturerPartNumber();
             if (child.getManufacturer().getId() != parent.getManufacturer().getId()) {
                 log.debug(
                         "Adding of the part [" + childId + "] to list of BOM for part [" + parentPartId + "] failed. ");
-                failures.add(
-                        new CreateBOMsResponse.Failure(childId, child.getPartType().getName(), child.getPartNumber(),
-                                row.getQuantity(), "Child part must have the same manufacturer as the parent part."));
+                failures.add(new CreateBOMsResponse.Failure(childId, child.getPartType().getName(), childPartNum,
+                        row.getQuantity(), "Child part must have the same manufacturer as the parent part."));
             } else {
                 Response response = arangoDbConnector.addPartToBom(parentPartId, childId, row.getQuantity());
                 if (response.isSuccess()) {
@@ -597,14 +601,17 @@ public class BOMService {
                     List<RelatedPart> relatedParts = new ArrayList<>(2);
                     relatedParts.add(new RelatedPart(parentPartId, ChangelogPart.Role.BOM_PARENT));
                     relatedParts.add(new RelatedPart(childId, ChangelogPart.Role.BOM_CHILD));
-                    Changelog changelog = changelogService.log(BOM,
-                            "Added bom item: " + formatBom(parent, child, row.getQuantity()), null, relatedParts);
+                    Changelog changelog = changelogService.log(BOM, "Added bom item: " + formatBom(parent,
+                            child) /*
+                                    * TODO: + formatBom(parent, child,
+                                    * row.getQuantity())
+                                    */, null, relatedParts);
                     changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
                 } else {
                     log.debug("Adding of the part [" + childId + "] to list of BOM for part [" + parentPartId
                             + "] failed.");
-                    failures.add(new CreateBOMsResponse.Failure(childId, child.getPartType().getName(),
-                            child.getPartNumber(), row.getQuantity(), response.getMsg()));
+                    failures.add(new CreateBOMsResponse.Failure(childId, child.getPartType().getName(), childPartNum,
+                            row.getQuantity(), response.getMsg()));
 
                 }
             }
@@ -716,43 +723,35 @@ public class BOMService {
         return null;
     }
 
-    // TODO: replace parameter 'id' by a pair (parentPartId, childPartId)
-    public void update(Long id, Integer quantity) throws IOException {
-        // // Get the item
-        // BOMItem item = bomItemDao.findOne(id);
-        // // Update the changelog
-        // List<RelatedPart> relatedParts = new ArrayList<>(2);
-        // Part parent = item.getParent();
-        // relatedParts.add(new RelatedPart(parent.getId(), BOM_PARENT));
-        // relatedParts.add(new RelatedPart(item.getChild().getId(),
-        // BOM_CHILD));
-        // changelogService.log(BOM, "Changed BOM " + formatBOMItem(item) + "
-        // quantity to " + quantity, item.toJson(),
-        // relatedParts);
-        // // Update
-        // item.setQuantity(quantity);
-        // bomItemDao.merge(item);
-        // partChangeService.updatedBom(parent.getId());
-        // TODO: implementation
+    public void update(Long parentPartId, Long childPartId, Integer quantity) throws IOException {
+        Part parent = partDao.findOne(parentPartId);
+        Part child = partDao.findOne(childPartId);
+        // Update the changelog.
+        List<RelatedPart> relatedParts = new ArrayList<>(2);
+        relatedParts.add(new RelatedPart(parentPartId, ChangelogPart.Role.BOM_PARENT));
+        relatedParts.add(new RelatedPart(childPartId, ChangelogPart.Role.BOM_CHILD));
+        changelogService.log(BOM, "Changed BOM " + formatBom(parent, child) + " quantity to " + quantity, null,
+                relatedParts);
+        // Update
+        arangoDbConnector.modifyPartInBom(parentPartId, childPartId, quantity);
+        partChangeService.updatedBom(parent.getId());
     }
 
-    // TODO: replace parameter 'id' by a pair (parentPartId, childPartId)
-    public void delete(Long id) throws IOException {
-        // // Get the object
-        // BOMItem item = bomItemDao.findOne(id);
-        // Long parentPartId = item.getParent().getId();
-        // Long childPartId = item.getChild().getId();
-        // // Update the changelog
-        // List<RelatedPart> relatedParts = new ArrayList<>(2);
-        // relatedParts.add(new RelatedPart(parentPartId, BOM_PARENT));
-        // relatedParts.add(new RelatedPart(childPartId, BOM_CHILD));
-        // changelogService.log(BOM, "Deleted BOM item: " + formatBOMItem(item),
-        // relatedParts);
-        // // Delete it.
-        // jdbcTemplate.update("delete from bom where id=?", id);
-        // bomItemDao.flush();
-        // //rebuildBomDescendancyForPart(parentPartId, true);
-        // partChangeService.deletedBom(parentPartId, childPartId);
+    public Bom[] delete(Long parentPartId, Long childPartId) throws IOException {
+        Part parentPart = partDao.findOne(parentPartId);
+        Part childPart = partDao.findOne(childPartId);
+        // Delete it.
+        arangoDbConnector.removePartFromBom(parentPartId, childPartId);
+        // Notify about changes.
+        partChangeService.deletedBom(parentPartId, childPartId);
+        // Update the changelog.
+        List<RelatedPart> relatedParts = new ArrayList<>(2);
+        relatedParts.add(new RelatedPart(parentPartId, ChangelogPart.Role.BOM_PARENT));
+        relatedParts.add(new RelatedPart(childPartId, ChangelogPart.Role.BOM_CHILD));
+        changelogService.log(BOM, "Deleted BOM item: " + formatBom(parentPart, childPart), relatedParts);
+        // Return list of BOMs after this delete operation.
+        GetBomsResponse bomsResponse = arangoDbConnector.getBoms(parentPartId);
+        return Bom.from(bomsResponse.getRows());
     }
 
 }
