@@ -142,7 +142,7 @@ angular.module('ngMetaCrudApp')
             // TODO
             function(updatedBoms) {
               boms.splice(0, boms.length);
-              boms.push.apply(updatedBoms);
+              boms.push.apply(boms, updatedBoms);
               $scope.bomTableParams.reload();
               updateExistingBomPartIds();
               toastr.success('The BOM has been successfully removed.');

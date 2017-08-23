@@ -160,16 +160,10 @@ def load_part_short(cur, pid):
 def load_bom_alternatives(cur, bomid):
     """Load BOM alternatives for the specified BOM."""
     retval = []
-    cur.execute('select bom_alt_header_id from bom_alt_item '
+    cur.execute('select bom_alt_header_id, part_id from bom_alt_item '
                 'where bom_id=%(bomid)s', {'bomid': bomid})
-    row = cur.fetchone()
-    if row is not None:
-        bomalthdrid = row['bom_alt_header_id']
-        cur.execute('select part_id from bom_alt_item '
-                    'where bom_alt_header_id=%(bomalthdrid)s',
-                    {'bomalthdrid': bomalthdrid})
-        retval = [{'bom_alt_hdr_id': bomalthdrid, 'part_id': row['part_id']}
-                  for row in cur.fetchall()]
+    retval = [{'bom_alt_hdr_id': row['bom_alt_header_id'],
+               'part_id': row['part_id']} for row in cur.fetchall()]
     return retval
 
 

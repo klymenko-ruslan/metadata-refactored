@@ -76,7 +76,7 @@ angular.module('ngMetaCrudApp')
                   function success(updatedBom) {
                     // Success
                     $scope.bom.splice(0, $scope.bom.length);
-                    $scope.bom.push.apply(updatedBom);
+                    $scope.bom.push.apply($scope.bom, updatedBom);
                     $scope.bomTableParams.reload();
                     // Clear the alt bom item
                     $scope.altBomItem = null;
