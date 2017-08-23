@@ -23,7 +23,7 @@ angular.module('ngMetaCrudApp')
       function updateParentPartsIds() {
         parentPartsIds = {};
         _.each(parents, function(bi) {
-          parentPartsIds[bi.parent.id] = true;
+          parentPartsIds[bi.parent.partId] = true;
         });
       }
 
@@ -118,7 +118,7 @@ angular.module('ngMetaCrudApp')
       };
 
       $scope.pick = function(pickedPart) {
-        BOM.listByParentPartAndTypeIds(pickedPart.id, $scope.part.partType.id).then(
+        BOM.listByParentPartAndTypeIds(pickedPart.partId, $scope.part.partType.id).then(
           function success(boms) {
             var resolution = null;
             if (boms.length === 0) {

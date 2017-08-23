@@ -5,8 +5,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.GetBomsResponse.Row;
 import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsRequest;
@@ -72,8 +69,9 @@ public class BOMController {
     @ResponseBody
     @Secured("ROLE_READ")
     @JsonView(View.SummaryWithBOMDetail.class)
-    public List<BOMItem> getParentsForBom(@PathVariable("id") Long id) throws Exception {
-        return bomService.getParentsForBom(id);
+    public Bom[] getParentsForBom(@PathVariable("id") Long partId) throws Exception {
+        Row[] rows = bomService.getParentsForBom(partId);
+        return Bom.from(rows);
     }
 
     @Transactional

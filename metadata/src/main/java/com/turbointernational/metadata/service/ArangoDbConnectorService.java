@@ -63,6 +63,8 @@ public class ArangoDbConnectorService {
 
     private UriTemplate uriTmplRemovePartFromBom;
 
+    private UriTemplate uriGetParentBoms;
+
     public static class Response {
 
         private boolean success;
@@ -493,6 +495,8 @@ public class ArangoDbConnectorService {
                 + restArangoDbServicePort + "/boms/{parentPartId}/descendant/{descendantPartId}");
         uriTmplRemovePartFromBom = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
                 + restArangoDbServicePort + "/boms/{parentPartId}/descendant/{descendantPartId}");
+        uriGetParentBoms = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/parts/{partId}/boms/parents");
     }
 
     public GetPartResponse findPartById(Long id) {
@@ -549,6 +553,12 @@ public class ArangoDbConnectorService {
 
     public GetBomsResponse getBoms(Long partId) {
         URI uri = uriTmplGetBoms.expand(partId);
+        GetBomsResponse.Row[] rows = restArangoDbService.getForObject(uri, GetBomsResponse.Row[].class);
+        return new GetBomsResponse(rows);
+    }
+
+    public GetBomsResponse getParentsBoms(Long partId) {
+        URI uri = uriGetParentBoms.expand(partId);
         GetBomsResponse.Row[] rows = restArangoDbService.getForObject(uri, GetBomsResponse.Row[].class);
         return new GetBomsResponse(rows);
     }

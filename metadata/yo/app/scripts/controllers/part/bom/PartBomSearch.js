@@ -139,7 +139,6 @@ angular.module('ngMetaCrudApp')
         function() {
           // Yes
           BOM.removeBom($scope.partId, childPartId).then(
-            // TODO
             function(updatedBoms) {
               boms.splice(0, boms.length);
               boms.push.apply(boms, updatedBoms);

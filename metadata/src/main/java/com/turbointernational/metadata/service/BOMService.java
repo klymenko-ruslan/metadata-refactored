@@ -627,10 +627,9 @@ public class BOMService {
         return restBoms.getRows();
     }
 
-    public List<BOMItem> getParentsForBom(Long partId) throws Exception {
-        // return bomItemDao.findParentsForBom(partId);
-        // TODO: implementation
-        return null;
+    public GetBomsResponse.Row[] getParentsForBom(Long partId) throws Exception {
+        GetBomsResponse restBoms = arangoDbConnector.getParentsBoms(partId);
+        return restBoms.getRows();
     }
 
     public List<BOMItem> getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {
