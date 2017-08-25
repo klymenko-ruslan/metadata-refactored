@@ -15,6 +15,10 @@ angular.module('ngMetaCrudApp')
           scope.fltrPart.partType = pt;
         }
       },
+      scope: {
+    	fltrInitManufacturer: '=',
+        fltrInitPartType: '='
+      },
       controller: ['$transclude', '$parse', '$sce', '$log', '$q', '$location',
                    '$scope', 'NgTableParams', 'utils',
         function($transclude, $parse, $sce, $log, $q, $location, $scope, NgTableParams, utils) {
@@ -393,6 +397,15 @@ angular.module('ngMetaCrudApp')
             $location.path('/part/' + partId);
           }
         };
+        
+        if ($scope.fltrInitManufacturer) {
+        	$scope.fltrPart.manufacturer = $scope.fltrInitManufacturer;
+        }
+        /*
+        if ($scope.fltrInitPartType) {
+        	$scope.fltrPart.turboType = $scope.fltrInitPartType;
+        }
+        */
 
       }]
     };

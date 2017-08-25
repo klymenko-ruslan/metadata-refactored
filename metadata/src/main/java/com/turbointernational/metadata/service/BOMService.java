@@ -488,13 +488,13 @@ public class BOMService {
                         List<RelatedPart> relatedParts = new ArrayList<>(2);
                         relatedParts.add(new RelatedPart(primaryPartId, ChangelogPart.Role.BOM_PARENT));
                         relatedParts.add(new RelatedPart(row.getPartId(), ChangelogPart.Role.BOM_CHILD));
-                        // TODO
-                        //changelogService.log(BOM, "Deleted BOM item: " + formatBOMItem(/*bomItem*/ null), /*strJsonBom*/ null, relatedParts);
-                        // TODO: remove
+                        arangoDbConnector.removePartFromBom(pickedPartId, primaryPartId);
+                        String txtAudit = row.toAuditLog();
+                        changelogService.log(BOM, "Deleted BOM item: " + formatBom(pickedPart, primaryPart, row.getQty()), txtAudit, relatedParts);
                     }
                 }
             }
-            boolean created = _create(httpRequest, primaryPart, pickedPart, r.getQuantity(), failures, null, null,
+            boolean created = _create(httpRequest, pickedPart, primaryPart, r.getQuantity(), failures, null, null,
                     null, null);
             if (created) {
                 relatedPartIds.add(pickedPartId);
