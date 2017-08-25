@@ -2,33 +2,29 @@ package com.turbointernational.metadata.service;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.BOM;
+import static com.turbointernational.metadata.service.BOMService.AddToParentBOMsRequest.ResolutionEnum.REPLACE;
 import static com.turbointernational.metadata.util.FormatUtils.formatBom;
-import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.part.Part;
@@ -51,9 +47,7 @@ public class BOMService {
     private PlatformTransactionManager txManager; // JPA
 
     @Autowired
-    private DataSource dataSource;
-
-    private JdbcTemplate jdbcTemplate;
+    private ObjectMapper jsonSerializer;
 
     @PersistenceContext(unitName = "metadata")
     protected EntityManager em;
@@ -68,18 +62,10 @@ public class BOMService {
     private ChangelogService changelogService;
 
     @Autowired
-    private SearchService searchService;
-
-    @Autowired
     private PartChangeService partChangeService;
 
     @Autowired
     private ArangoDbConnectorService arangoDbConnector;
-
-    @PostConstruct
-    public void init() {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-    }
 
     public static class CreateBOMsRequest {
 
@@ -396,179 +382,35 @@ public class BOMService {
 
     }
 
-    @JsonInclude(ALWAYS)
-    public static class AddToParentBOMsResponse {
-
-        @JsonInclude(ALWAYS)
-        public static class Failure {
-
-            @JsonView(View.Summary.class)
-            private Long partId;
-
-            @JsonView(View.Summary.class)
-            private String type;
-
-            @JsonView(View.Summary.class)
-            private String manufacturerPartNumber;
-
-            @JsonView(View.Summary.class)
-            private Integer quantity;
-
-            @JsonView(View.Summary.class)
-            private String errorMessage;
-
-            public Failure() {
-            }
-
-            public Failure(Long partId, String type, String manufacturerPartNumber, Integer quantity,
-                    String errorMessage) {
-                this.partId = partId;
-                this.type = type;
-                this.manufacturerPartNumber = manufacturerPartNumber;
-                this.quantity = quantity;
-                this.errorMessage = errorMessage;
-            }
-
-            public Long getPartId() {
-                return partId;
-            }
-
-            public void setPartId(Long partId) {
-                this.partId = partId;
-            }
-
-            public String getType() {
-                return type;
-            }
-
-            public void setType(String type) {
-                this.type = type;
-            }
-
-            public String getManufacturerPartNumber() {
-                return manufacturerPartNumber;
-            }
-
-            public void setManufacturerPartNumber(String manufacturerPartNumber) {
-                this.manufacturerPartNumber = manufacturerPartNumber;
-            }
-
-            public Integer getQuantity() {
-                return quantity;
-            }
-
-            public void setQuantity(Integer quantity) {
-                this.quantity = quantity;
-            }
-
-            public String getErrorMessage() {
-                return errorMessage;
-            }
-
-            public void setErrorMessage(String errorMessage) {
-                this.errorMessage = errorMessage;
-            }
+    private boolean _create(HttpServletRequest httpRequest, Part parentPart, Part childPart, Integer quantity,
+            List<CreateBOMsResponse.Failure> failures, Long[] sourcesIds, Integer[] ratings, String description,
+            Long[] attachIds) {
+        Long parentPartId = parentPart.getId();
+        Long childPartId = childPart.getId();
+        if (childPart.getManufacturer().getId() != parentPart.getManufacturer().getId()) {
+            String errMsg = "Child part must have the same manufacturer as the Parent part.";
+            failures.add(new CreateBOMsResponse.Failure(childPartId, childPart.getPartType().getName(),
+                    childPart.getManufacturerPartNumber(), quantity, errMsg));
+            return false;
         }
-
-        @JsonView(View.Summary.class)
-        private int added;
-
-        @JsonView(View.Summary.class)
-        private List<Failure> failures;
-
-        @JsonView(View.Summary.class)
-        private List<BOMItem> parents;
-
-        public AddToParentBOMsResponse(int added, List<Failure> failures, List<BOMItem> parents) {
-            this.added = added;
-            this.failures = failures;
-            this.parents = parents;
+        Response response = arangoDbConnector.addPartToBom(parentPartId, childPartId, quantity);
+        if (response.isSuccess()) {
+            // Save to the changelog.
+            List<RelatedPart> relatedParts = new ArrayList<>(2);
+            relatedParts.add(new RelatedPart(parentPartId, ChangelogPart.Role.BOM_PARENT));
+            relatedParts.add(new RelatedPart(childPartId, ChangelogPart.Role.BOM_CHILD));
+            Changelog changelog = changelogService.log(BOM,
+                    "Added bom item: " + formatBom(parentPart, childPart, quantity), null, relatedParts);
+            changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
+        } else {
+            log.debug(
+                    "Adding of the part [" + childPartId + "] to list of BOM for part [" + parentPartId + "] failed.");
+            failures.add(new CreateBOMsResponse.Failure(childPartId, childPart.getPartType().getName(),
+                    childPart.getManufacturerPartNumber(), quantity, response.getMsg()));
         }
-
-        public int getAdded() {
-            return added;
-        }
-
-        public void setAdded(int added) {
-            this.added = added;
-        }
-
-        public List<Failure> getFailures() {
-            return failures;
-        }
-
-        public void setFailures(List<Failure> failures) {
-            this.failures = failures;
-        }
-
-        public List<BOMItem> getParents() {
-            return parents;
-        }
-
-        public void setParents(List<BOMItem> parents) {
-            this.parents = parents;
-        }
-
+        return true;
     }
 
-    /**
-     * Signals that a BOMs tree has a circular recursion.
-     */
-    public static class FoundBomRecursionException extends Exception {
-
-        private static final long serialVersionUID = 7962266317894202552L;
-
-        /**
-         * An ID of a part which makes the circular recursion.
-         */
-        private Long failedId;
-
-        FoundBomRecursionException(Long failedId) {
-            this.failedId = failedId;
-        }
-
-        public Long getFailedId() {
-            return failedId;
-        }
-
-        @Override
-        public String getMessage() {
-            return failedId.toString();
-        }
-
-    }
-
-    @SuppressWarnings("unused")
-    private class CreateBOMItemResult {
-
-        private BOMItem bom;
-
-        private Changelog changelog;
-
-        public CreateBOMItemResult(BOMItem bom, Changelog changelog) {
-            this.bom = bom;
-            this.changelog = changelog;
-        }
-
-        public BOMItem getBom() {
-            return bom;
-        }
-
-        public void setBom(BOMItem bom) {
-            this.bom = bom;
-        }
-
-        public Changelog getChangelog() {
-            return changelog;
-        }
-
-        public void setChangelog(Changelog changelog) {
-            this.changelog = changelog;
-        }
-
-    }
-
-    @Transactional(noRollbackFor = { FoundBomRecursionException.class, AssertionError.class })
     public CreateBOMsResponse createBOMs(HttpServletRequest httpRequest, CreateBOMsRequest request) throws Exception {
         Long parentPartId = request.getParentPartId();
         Long[] sourcesIds = request.getSourcesIds();
@@ -579,7 +421,7 @@ public class BOMService {
         // arangoDbConnector.findPartById(parentPartId);
         Part parent = partDao.findOne(parentPartId);
         List<CreateBOMsResponse.Failure> failures = new ArrayList<>();
-        Collection<Long> relatedPartIds = new ArrayList<Long>(request.getRows().size());
+        Collection<Long> relatedPartIds = new ArrayList<Long>(request.getRows().size() + 1);
         for (CreateBOMsRequest.Row row : request.getRows()) {
             // Create a new BOM item
             Long childId = row.getChildPartId();
@@ -587,38 +429,15 @@ public class BOMService {
             // arangoDbConnector.findPartById(childId);
             Part child = partDao.findOne(childId);
             // TODO: String childPartNum = child.getPartNumber();
-            String childPartNum = child.getManufacturerPartNumber();
-            if (child.getManufacturer().getId() != parent.getManufacturer().getId()) {
-                log.debug(
-                        "Adding of the part [" + childId + "] to list of BOM for part [" + parentPartId + "] failed. ");
-                failures.add(new CreateBOMsResponse.Failure(childId, child.getPartType().getName(), childPartNum,
-                        row.getQuantity(), "Child part must have the same manufacturer as the parent part."));
-            } else {
-                Response response = arangoDbConnector.addPartToBom(parentPartId, childId, row.getQuantity());
-                if (response.isSuccess()) {
-                    relatedPartIds.add(childId);
-                    // Save to the changelog.
-                    List<RelatedPart> relatedParts = new ArrayList<>(2);
-                    relatedParts.add(new RelatedPart(parentPartId, ChangelogPart.Role.BOM_PARENT));
-                    relatedParts.add(new RelatedPart(childId, ChangelogPart.Role.BOM_CHILD));
-                    Changelog changelog = changelogService.log(BOM, "Added bom item: " + formatBom(parent,
-                            child) /*
-                                    * TODO: + formatBom(parent, child,
-                                    * row.getQuantity())
-                                    */, null, relatedParts);
-                    changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
-                } else {
-                    log.debug("Adding of the part [" + childId + "] to list of BOM for part [" + parentPartId
-                            + "] failed.");
-                    failures.add(new CreateBOMsResponse.Failure(childId, child.getPartType().getName(), childPartNum,
-                            row.getQuantity(), response.getMsg()));
-
-                }
+            boolean created = _create(httpRequest, parent, child, row.getQuantity(), failures, sourcesIds, ratings,
+                    description, attachIds);
+            if (created) {
+                relatedPartIds.add(childId);
             }
         }
         GetBomsResponse bomsResponse = arangoDbConnector.getBoms(parentPartId);
-        Bom[] boms = Bom.from(bomsResponse.getRows());
         partChangeService.addedBoms(parentPartId, relatedPartIds);
+        Bom[] boms = Bom.from(bomsResponse.getRows());
         return new CreateBOMsResponse(failures, boms);
     }
 
@@ -632,94 +451,60 @@ public class BOMService {
         return restBoms.getRows();
     }
 
-    public List<BOMItem> getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {
+    public GetBomsResponse.Row[] getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {
         // return bomItemDao.findByParentAndTypeIds(partId, partTypeId);
         // TODO: implementation
         return null;
     }
 
-    @Transactional(noRollbackFor = { FoundBomRecursionException.class, AssertionError.class }, propagation = REQUIRED)
-    public AddToParentBOMsResponse addToParentsBOMs(HttpServletRequest httpRequest, Long primaryPartId,
+    public CreateBOMsResponse addToParentsBOMs(HttpServletRequest httpRequest, Long primaryPartId,
             AddToParentBOMsRequest request) throws Exception {
-        // int added = 0;
-        // Part primaryPart = partDao.findOne(primaryPartId);
-        // Long primaryPartTypeId = primaryPart.getPartType().getId();
-        // Long primaryPartManufacturerId =
-        // primaryPart.getManufacturer().getId();
-        // List<BOMService.AddToParentBOMsRequest.Row> rows = request.getRows();
-        // List<AddToParentBOMsResponse.Failure> failures = new ArrayList<>(10);
-        // List<Part> affectedParts = new ArrayList<>(10);
-        // for (AddToParentBOMsRequest.Row r : rows) {
-        // Long pickedPartId = r.getPartId();
-        // Part pickedPart = partDao.findOne(pickedPartId);
-        // try {
-        // Long pickedPartManufacturerId = pickedPart.getManufacturer().getId();
-        // if (primaryPartManufacturerId != pickedPartManufacturerId) {
-        // throw new AssertionError(String.format(
-        // "Part type '%1$s' of the part [%2$d] - {%3$s} "
-        // + "does not match with part type '{%4$s}' of the part [{%5$d}] -
-        // {%6$s}.",
-        // primaryPart.getPartType().getName(), primaryPartId,
-        // primaryPart.getManufacturerPartNumber(),
-        // pickedPart.getPartType().getName(), pickedPartId,
-        // pickedPart.getManufacturerPartNumber()));
-        // }
-        // if (r.getResolution() == REPLACE) {
-        // // Remove existing BOMs in the picked part.
-        // for (Iterator<BOMItem> iterBoms = pickedPart.getBom().iterator();
-        // iterBoms.hasNext();) {
-        // BOMItem bomItem = iterBoms.next();
-        // Long childPartTypeId = bomItem.getChild().getPartType().getId();
-        // if (childPartTypeId.longValue() == primaryPartTypeId.longValue()) {
-        // String strJsonBom = bomItem.toJson();
-        // List<RelatedPart> relatedParts = new ArrayList<>(2);
-        // relatedParts.add(new RelatedPart(primaryPartId, BOM_PARENT));
-        // relatedParts.add(new RelatedPart(bomItem.getChild().getId(),
-        // BOM_CHILD));
-        // changelogService.log(BOM, "Deleted BOM item: " +
-        // formatBOMItem(bomItem), strJsonBom,
-        // relatedParts);
-        // iterBoms.remove();
-        // bomItemDao.remove(bomItem);
-        // }
-        // }
-        // }
-        // // Add the primary part to the list of BOMs of the picked part.
-        // _create(httpRequest, pickedPartId, primaryPartId, r.getQuantity(),
-        // request.getSourcesIds(),
-        // request.getChlogSrcRatings(), request.getChlogSrcLnkDescription(),
-        // request.getAttachIds());
-        // added++;
-        // affectedParts.add(pickedPart);
-        // } catch (FoundBomRecursionException e) {
-        // log.debug("Adding of the part [" + primaryPartId + "] to list of BOM
-        // for part [" + pickedPartId
-        // + "] failed.", e);
-        // failures.add(new AddToParentBOMsResponse.Failure(pickedPartId,
-        // pickedPart.getPartType().getName(),
-        // pickedPart.getManufacturerPartNumber(), r.getQuantity(), "Recursion
-        // check failed."));
-        // } catch (AssertionError e) {
-        // log.debug("Adding of the part [" + primaryPartId + "] to list of BOM
-        // for part [" + pickedPartId
-        // + "] failed.", e);
-        // failures.add(new AddToParentBOMsResponse.Failure(pickedPartId,
-        // pickedPart.getPartType().getName(),
-        // pickedPart.getManufacturerPartNumber(), r.getQuantity(),
-        // e.getMessage()));
-        // }
-        // }
-        // List<BOMItem> parents = getParentsForBom(primaryPartId);
-        // //rebuildBomDescendancyForPart(primaryPartId, true);
-        // List<Long> affectedPartIds = affectedParts.stream().map(p ->
-        // p.getId()).collect(Collectors.toList());
-        // // In the call below primaryPartId is actually childPartId from point
-        // of view partChangeService.
-        // partChangeService.addedToParentBoms(primaryPartId, affectedPartIds);
-        // return new BOMService.AddToParentBOMsResponse(added, failures,
-        // parents);
-        // TODO: implementation
-        return null;
+        Part primaryPart = partDao.findOne(primaryPartId);
+        Long primaryPartTypeId = primaryPart.getPartType().getId();
+        Long primaryPartManufacturerId = primaryPart.getManufacturer().getId();
+        List<BOMService.AddToParentBOMsRequest.Row> rows = request.getRows();
+        List<CreateBOMsResponse.Failure> failures = new ArrayList<>(10);
+        Collection<Long> relatedPartIds = new ArrayList<Long>(request.getRows().size() + 1);
+        for (AddToParentBOMsRequest.Row r : rows) {
+            Long pickedPartId = r.getPartId();
+            GetBomsResponse.Row[] pickedPartBoms = arangoDbConnector.getBoms(pickedPartId).getRows();
+            Part pickedPart = partDao.findOne(pickedPartId);
+            Long pickedPartManufacturerId = pickedPart.getManufacturer().getId();
+            if (primaryPartManufacturerId != pickedPartManufacturerId) {
+                throw new AssertionError(String.format(
+                    "Part type '%1$s' of the part [%2$d] - {%3$s} "
+                    + "does not match with part type '{%4$s}' of the part [{%5$d}] - {%6$s}.",
+                primaryPart.getPartType().getName(), primaryPartId,
+                primaryPart.getManufacturerPartNumber(),
+                pickedPart.getPartType().getName(), pickedPartId,
+                pickedPart.getManufacturerPartNumber()));
+            }
+            if (r.getResolution() == REPLACE) {
+                // Remove existing BOMs in the picked part.
+                for (int i = 0; i < pickedPartBoms.length; i++) {
+                    GetBomsResponse.Row row = pickedPartBoms[i];
+                    Long childPartTypeId = row.getPartType().getId();
+                    if (childPartTypeId.longValue() == primaryPartTypeId.longValue()) {
+                        List<RelatedPart> relatedParts = new ArrayList<>(2);
+                        relatedParts.add(new RelatedPart(primaryPartId, ChangelogPart.Role.BOM_PARENT));
+                        relatedParts.add(new RelatedPart(row.getPartId(), ChangelogPart.Role.BOM_CHILD));
+                        // TODO
+                        //changelogService.log(BOM, "Deleted BOM item: " + formatBOMItem(/*bomItem*/ null), /*strJsonBom*/ null, relatedParts);
+                        // TODO: remove
+                    }
+                }
+            }
+            boolean created = _create(httpRequest, primaryPart, pickedPart, r.getQuantity(), failures, null, null,
+                    null, null);
+            if (created) {
+                relatedPartIds.add(pickedPartId);
+            }
+        }
+        GetBomsResponse.Row[] parents = getParentsForBom(primaryPartId);
+        // In the call below primaryPartId is actually childPartId from point of view partChangeService.
+        partChangeService.addedToParentBoms(primaryPartId, relatedPartIds);
+        Bom[] boms = Bom.from(parents);
+        return new BOMService.CreateBOMsResponse(failures, boms);
     }
 
     public void update(Long parentPartId, Long childPartId, Integer quantity) throws IOException {

@@ -23,7 +23,7 @@ angular.module('ngMetaCrudApp')
       function updateParentPartsIds() {
         parentPartsIds = {};
         _.each(parents, function(bi) {
-          parentPartsIds[bi.parent.partId] = true;
+          parentPartsIds[bi.partId] = true;
         });
       }
 
@@ -37,7 +37,7 @@ angular.module('ngMetaCrudApp')
         page: 1,
         count: 10
       }, {
-        getData: utils.localPagination(parents, 'child.manufacturerPartNumber')
+        getData: utils.localPagination(parents, 'manufacturerPartNumber')
       });
 
       $scope.pickedPartsTableParams = new NgTableParams(
@@ -205,7 +205,7 @@ angular.module('ngMetaCrudApp')
         page: 1,
         count: 10
       }, {
-        getData: utils.localPagination(existingBoms, 'child.manufacturerPartNumber')
+        getData: utils.localPagination(existingBoms, 'manufacturerPartNumber')
       });
 
       $scope.onClose = function() {

@@ -51,19 +51,15 @@ public class BOMController {
         return Bom.from(rows);
     }
 
-    /*
-     * @RequestMapping(value = "/byParentPart/{partId}/type", method = GET,
-     * produces = APPLICATION_JSON_VALUE)
-     *
-     * @ResponseBody
-     *
-     * @Secured("ROLE_READ")
-     *
-     * @JsonView(View.SummaryWithBOMDetail.class) public List<BOMItem>
-     * getByParentAndTypeIds(@PathVariable("partId") Long
-     * partId, @RequestParam("typeId") Long typeId) throws Exception { return
-     * bomService.getByParentAndTypeIds(partId, typeId); }
-     */
+    @RequestMapping(value = "/byParentPart/{partId}/type", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    @JsonView(View.SummaryWithBOMDetail.class)
+    public Bom[] getByParentAndTypeIds(@PathVariable("partId") Long partId, @RequestParam("typeId") Long typeId)
+            throws Exception {
+        Row[] rows = bomService.getByParentAndTypeIds(partId, typeId);
+        return Bom.from(rows);
+    }
 
     @RequestMapping(value = "/part/{id}/parents", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -79,8 +75,8 @@ public class BOMController {
     @ResponseBody
     @JsonView(View.SummaryWithBOMDetail.class)
     @Secured("ROLE_BOM")
-    public BOMService.AddToParentBOMsResponse addToParentsBOMs(HttpServletRequest httpRequest,
-            @PathVariable("id") Long partId, @RequestBody BOMService.AddToParentBOMsRequest request) throws Exception {
+    public CreateBOMsResponse addToParentsBOMs(HttpServletRequest httpRequest, @PathVariable("id") Long partId,
+            @RequestBody BOMService.AddToParentBOMsRequest request) throws Exception {
         return bomService.addToParentsBOMs(httpRequest, partId, request);
     }
 

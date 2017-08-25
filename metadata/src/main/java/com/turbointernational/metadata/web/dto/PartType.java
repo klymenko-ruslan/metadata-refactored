@@ -43,4 +43,9 @@ public class PartType {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return "PartType [id=" + id + ", name=" + name + "]";
+    }
+
 }

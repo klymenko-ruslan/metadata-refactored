@@ -97,6 +97,7 @@ angular.module('ngMetaCrudApp')
               function() {
                 restService.removeBomAlternative($scope.altBomItem.id, altItem.id).then(
                   function success() {
+                    // TODO: replace splice below by returned alternatives
                     $scope.altBomItem.alternatives.splice(index, 1);
                     toastr.success('BOM alternate removed.');
                   },
@@ -107,12 +108,11 @@ angular.module('ngMetaCrudApp')
               });
           };
 
-
-          // The BOM item whose alternates we're showing
+          // The BOM item whose alternates we're showing.
           $scope.altBomItem = null;
 
-          $scope.showAlternates = function(bomItem) {
-            $scope.altBomItem = bomItem;
+          $scope.showAlternates = function(b) {
+            $scope.altBomItem = b;
           };
 
           $scope.hideAlternates = function() {

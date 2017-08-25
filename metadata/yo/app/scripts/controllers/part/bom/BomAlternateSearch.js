@@ -6,7 +6,6 @@ angular.module('ngMetaCrudApp')
         $scope.partId = $routeParams.id;
         $scope.bomItemId = $routeParams.bomId;
 
-
         $scope.pickedPart = null;
         $scope.showPickedPart = false;
 

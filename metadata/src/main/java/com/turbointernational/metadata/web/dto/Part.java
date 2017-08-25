@@ -94,4 +94,10 @@ public class Part {
         this.manufacturer = manufacturer;
     }
 
+    @Override
+    public String toString() {
+        return "Part [partId=" + partId + ", name=" + name + ", description=" + description + ", partNumber="
+                + partNumber + ", partType=" + partType + ", manufacturer=" + manufacturer + "]";
+    }
+
 }

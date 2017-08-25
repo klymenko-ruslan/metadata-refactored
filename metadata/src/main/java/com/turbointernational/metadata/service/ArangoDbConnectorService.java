@@ -6,6 +6,7 @@ import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import java.net.URI;
+import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
 
@@ -19,6 +20,7 @@ import org.springframework.web.util.UriTemplate;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.Auditable;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.Manufacturer;
 import com.turbointernational.metadata.web.dto.Part;
@@ -387,7 +389,7 @@ public class ArangoDbConnectorService {
 
     public static class GetBomsResponse extends Response {
 
-        public static class Row {
+        public static class Row implements Auditable {
 
             private Long partId;
 
@@ -447,6 +449,18 @@ public class ArangoDbConnectorService {
 
             public void setInterchanges(Part[] interchanges) {
                 this.interchanges = interchanges;
+            }
+
+            @Override
+            public String toString() {
+                return "Row [partId=" + partId + ", partNumber=" + partNumber + ", partType=" + partType
+                        + ", manufacturer=" + manufacturer + ", qty=" + qty + ", interchanges="
+                        + Arrays.toString(interchanges) + "]";
+            }
+
+            @Override
+            public String toAuditLog() {
+                return null;
             }
 
         }

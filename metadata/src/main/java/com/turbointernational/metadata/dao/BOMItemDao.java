@@ -26,6 +26,7 @@ public class BOMItemDao extends AbstractDao<BOMItem> {
     }
     */
 
+    @Deprecated
     public List<BOMItem> findByParentAndTypeIds(Long partId, Long partTypeId) {
         return em.createNamedQuery("findBomsOfPartWithType", BOMItem.class)
                 .setParameter("parentPartId", partId)
