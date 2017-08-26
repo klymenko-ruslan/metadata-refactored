@@ -58,7 +58,7 @@ import flexjson.JSONSerializer;
                         "   order by lnk.created desc)"),
         @NamedQuery(
                 name = "getNumChangelogSourcesForSourceName",
-                query = "select count(*) from Source s where s.sourceName.id=:sourceNameId")
+                query = "select count(s) from Source s where s.sourceName.id=:sourceNameId")
 })
 @JsonInclude(ALWAYS)
 public class Source implements SearchableEntity, Serializable {

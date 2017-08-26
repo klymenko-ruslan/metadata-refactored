@@ -44,7 +44,7 @@ import flexjson.JSONSerializer;
         @NamedQuery(name = "findCarModelsByFilter",
                 query = "SELECT cm FROM CarModel AS cm WHERE cm.name=:name AND cm.make.id=:makeId"),
         @NamedQuery(name = "findCarModelsByFilter2",
-                query = "SELECT cm FROM CarModel AS cm WHERE cm.id!=:id AND cm.name=:name AND cm.make.id=:makeId")
+                query = "SELECT cm FROM CarModel AS cm WHERE cm.id<>:id AND cm.name=:name AND cm.make.id=:makeId")
 })
 public class CarModel implements Serializable, SearchableEntity {
 
