@@ -8,20 +8,18 @@ angular.module('ngMetaCrudApp')
       templateUrl: '/views/component/PartSearch.html',
       transclude: true,
       link: function(scope, element, attrs) {
-        scope.defManufacturerName = scope.$eval(attrs.searchManufacturerName);
-        var partTypeId = scope.$eval(attrs.searchPartTypeId);
-        var pt = _.find(scope.partTypes, function(pt) { return pt.id === partTypeId; });
-        if (angular.isObject(pt)) {
-          scope.fltrPart.partType = pt;
+        if (attrs.fltrInitManufacturer != undefined && attrs.fltrInitManufacturer != null && attrs.fltrInitManufacturer != "") {
+          scope.fltrPart.manufacturer = attrs.fltrInitManufacturer;
         }
-      },
-      scope: {
-    	fltrInitManufacturer: '=',
-        fltrInitPartType: '='
       },
       controller: ['$transclude', '$parse', '$sce', '$log', '$q', '$location',
                    '$scope', 'NgTableParams', 'utils',
         function($transclude, $parse, $sce, $log, $q, $location, $scope, NgTableParams, utils) {
+
+          var fltrInitManufacturer = $scope.fltrInitManufacturer;
+          var fltrInitPartType = $scope.fltrInitPartType;
+          $log.log('B. fltrInitManufacturer: ' + fltrInitManufacturer);
+          $log.log('B. fltrInitPartType: ' + fltrInitPartType);
 
         $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, 'id');
 
@@ -397,15 +395,6 @@ angular.module('ngMetaCrudApp')
             $location.path('/part/' + partId);
           }
         };
-        
-        if ($scope.fltrInitManufacturer) {
-        	$scope.fltrPart.manufacturer = $scope.fltrInitManufacturer;
-        }
-        /*
-        if ($scope.fltrInitPartType) {
-        	$scope.fltrPart.turboType = $scope.fltrInitPartType;
-        }
-        */
 
       }]
     };
