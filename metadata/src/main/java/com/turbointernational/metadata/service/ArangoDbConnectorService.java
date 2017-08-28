@@ -7,12 +7,17 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,6 +25,8 @@ import org.springframework.web.util.UriTemplate;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.Auditable;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.Manufacturer;
@@ -41,7 +48,11 @@ public class ArangoDbConnectorService {
     @Value("${rest.arangodb.service.port}")
     private Integer restArangoDbServicePort;
 
+    @Autowired
     private RestTemplate restArangoDbService;
+
+    @Autowired
+    private ObjectMapper jsonSerializer;
 
     private HttpHeaders headers;
 
@@ -488,7 +499,6 @@ public class ArangoDbConnectorService {
     public void init() {
         headers = new HttpHeaders();
         headers.setContentType(APPLICATION_JSON);
-        restArangoDbService = new RestTemplate();
         uriTmplGetPartById = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
                 + restArangoDbServicePort + "/parts/{id}");
         uriTmplGetInterchageById = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
@@ -513,50 +523,134 @@ public class ArangoDbConnectorService {
                 + restArangoDbServicePort + "/parts/{partId}/boms/parents");
     }
 
+    /**
+     * Check response from ArangoDb server.
+     *
+     * If response signals that call to a GraphDb service was not successful the
+     * exception is thrown.
+     *
+     * @param response
+     * @throws DataAccessResourceFailureException
+     */
+    private void checkSuccess(Response response) throws DataAccessResourceFailureException {
+        if (!response.isSuccess()) {
+            throw new DataAccessResourceFailureException(response.getMsg());
+        }
+    }
+
+    /**
+     * A general method to do GET request to a GraphDb service.
+     *
+     * The method also do check of response and if it is not successful an
+     * exception is thrown.
+     *
+     * @param uri
+     * @param responseClazz
+     * @return
+     * @throws DataAccessResourceFailureException
+     */
+    private <T extends Response> T get(URI uri, Class<T> responseClazz) throws DataAccessResourceFailureException {
+        T response = restArangoDbService.getForObject(uri, responseClazz);
+        //checkSuccess(response);
+        return response;
+    }
+
+    private <T extends Response> T exchange(URI uri, HttpMethod method, Object body, Class<T> responseClazz)
+            throws DataAccessResourceFailureException, JsonProcessingException {
+        HttpEntity<String> requestEntity = null;
+        if (body != null) {
+            String s = jsonSerializer.writeValueAsString(body);
+            requestEntity = new HttpEntity<>(s, headers);
+        }
+        ResponseEntity<T> responseEntity = restArangoDbService.exchange(uri, method, requestEntity, responseClazz);
+        T response = responseEntity.getBody();
+        //checkSuccess(response);
+        return response;
+    }
+
+    private <T extends Response> T post(URI uri, Object body, Class<T> responseClazz)
+            throws DataAccessResourceFailureException, JsonProcessingException {
+        return exchange(uri, POST, body, responseClazz);
+    }
+
+    private Response post(URI uri, Object body) throws DataAccessResourceFailureException, JsonProcessingException {
+        return post(uri, body, Response.class);
+    }
+
+    private <T extends Response> T put(URI uri, Object body, Class<T> responseClazz)
+            throws DataAccessResourceFailureException, JsonProcessingException {
+        return exchange(uri, PUT, body, responseClazz);
+    }
+
+    private <T extends Response> T put(URI uri, Class<T> responseClazz)
+            throws DataAccessResourceFailureException, JsonProcessingException {
+        return put(uri, null, responseClazz);
+    }
+
+    private Response put(URI uri, Object body) throws DataAccessResourceFailureException, JsonProcessingException {
+        return put(uri, body, Response.class);
+    }
+
+    private <T extends Response> T delete(URI uri, Object body, Class<T> responseClazz)
+            throws DataAccessResourceFailureException, JsonProcessingException {
+        return exchange(uri, DELETE, body, responseClazz);
+    }
+
+    private <T extends Response> T delete(URI uri, Class<T> responseClazz)
+            throws DataAccessResourceFailureException, JsonProcessingException {
+        return delete(uri, null, responseClazz);
+    }
+
+    private Response delete(URI uri) throws DataAccessResourceFailureException, JsonProcessingException {
+        return delete(uri, Response.class);
+    }
+
     public GetPartResponse findPartById(Long id) {
         URI uri = uriTmplGetPartById.expand(id);
-        return restArangoDbService.getForObject(uri, GetPartResponse.class);
+        return get(uri, GetPartResponse.class);
     }
 
     public GetInterchangeResponse findInterchangeById(Long id) {
         URI uri = uriTmplGetInterchageById.expand(id);
-        return restArangoDbService.getForObject(uri, GetInterchangeResponse.class);
+        return get(uri, GetInterchangeResponse.class);
     }
 
     public GetInterchangeResponse findInterchangeForPart(Long partId) {
         URI uri = uriTmplGetInterchageForPart.expand(partId);
-        return restArangoDbService.getForObject(uri, GetInterchangeResponse.class);
+        return get(uri, GetInterchangeResponse.class);
     }
 
-    public MigrateInterchangeResponse leaveInterchangeableGroup(Long partId) {
+    public MigrateInterchangeResponse leaveInterchangeableGroup(Long partId)
+            throws DataAccessResourceFailureException, JsonProcessingException {
         URI uri = uriTmplLeaveGroup.expand(partId);
-        return restArangoDbService.exchange(uri, PUT, null, MigrateInterchangeResponse.class).getBody();
+        return put(uri, MigrateInterchangeResponse.class);
     }
 
-    public MigrateInterchangeResponse moveGroupToOtherInterchangeableGroup(Long srcPartId, Long trgPartId) {
+    public MigrateInterchangeResponse moveGroupToOtherInterchangeableGroup(Long srcPartId, Long trgPartId)
+            throws DataAccessResourceFailureException, JsonProcessingException {
         return migrateInterchange(uriTmplMergePickedAllToPart, trgPartId, srcPartId);
     }
 
-    public MigrateInterchangeResponse movePartToOtherInterchangeGroup(Long srcPartId, Long trgPartId) {
+    public MigrateInterchangeResponse movePartToOtherInterchangeGroup(Long srcPartId, Long trgPartId)
+            throws DataAccessResourceFailureException, JsonProcessingException {
         return migrateInterchange(uriTmplMovePartToOtherGroup, trgPartId, srcPartId);
     }
 
-    private MigrateInterchangeResponse migrateInterchange(UriTemplate uriTmpl, Long... partIds) {
-        ResponseEntity<MigrateInterchangeResponse> responseEntity;
+    private MigrateInterchangeResponse migrateInterchange(UriTemplate uriTmpl, Long... partIds)
+            throws DataAccessResourceFailureException, JsonProcessingException {
+        URI uri;
         int n = partIds.length;
         switch (n) {
         case 1:
-            responseEntity = restArangoDbService.exchange(uriTmpl.expand(partIds[0]), PUT, null,
-                    MigrateInterchangeResponse.class);
+            uri = uriTmpl.expand(partIds[0]);
             break;
         case 2:
-            responseEntity = restArangoDbService.exchange(uriTmpl.expand(partIds[0], partIds[1]), PUT, null,
-                    MigrateInterchangeResponse.class);
+            uri = uriTmpl.expand(partIds[0], partIds[1]);
             break;
         default:
             throw new IllegalArgumentException("Unexpected number of optional arguments: " + n);
         }
-        return responseEntity.getBody();
+        return put(uri, MigrateInterchangeResponse.class);
     }
 
     public GetAncestorsResponse getAncestors(Long partId) {
@@ -581,35 +675,41 @@ public class ArangoDbConnectorService {
      * Button on the UI "Add Child".
      *
      * @return
+     * @throws JsonProcessingException
+     * @throws DataAccessResourceFailureException
      */
-    public Response addPartToBom(Long parentPartId, Long childPartId, Integer quantity) {
+    public Response addPartToBom(Long parentPartId, Long childPartId, Integer quantity)
+            throws DataAccessResourceFailureException, JsonProcessingException {
         URI uri = uriTmplModifyBom.expand(parentPartId, childPartId);
-        HttpEntity<String> body = new HttpEntity<>("{\"qty\":" + quantity + "}", headers);
-        ResponseEntity<Response> response = restArangoDbService.exchange(uri, POST, body, Response.class);
-        return response.getBody();
+        Map<String, Integer> body = new HashMap<>();
+        body.put("qty", quantity);
+        return post(uri, body);
     }
 
     /**
      * @return
+     * @throws JsonProcessingException
+     * @throws DataAccessResourceFailureException
      */
-    public Response modifyPartInBom(Long parentPartId, Long childPartId, Integer quantity) {
+    public Response modifyPartInBom(Long parentPartId, Long childPartId, Integer quantity)
+            throws DataAccessResourceFailureException, JsonProcessingException {
         URI uri = uriTmplModifyBom.expand(parentPartId, childPartId);
-        //HttpHeaders hdrs = new HttpHeaders();
-        //hdrs.add("Content-Type", "application/json");
-        HttpEntity<String> body = new HttpEntity<>("{\"qty\":" + quantity + "}", /*hdrs*/ headers);
-        ResponseEntity<Response> response = restArangoDbService.exchange(uri, PUT, body, Response.class);
-        return response.getBody();
+        Map<String, Integer> body = new HashMap<>();
+        body.put("qty", quantity);
+        return put(uri, body);
     }
 
     /**
      * @param parentPartId
      * @param childPartId
      * @return
+     * @throws JsonProcessingException
+     * @throws DataAccessResourceFailureException
      */
-    public Response removePartFromBom(Long parentPartId, Long childPartId) {
+    public Response removePartFromBom(Long parentPartId, Long childPartId)
+            throws DataAccessResourceFailureException, JsonProcessingException {
         URI uri = uriTmplRemovePartFromBom.expand(parentPartId, childPartId);
-        ResponseEntity<Response> response = restArangoDbService.exchange(uri, DELETE, null, Response.class);
-        return response.getBody();
+        return delete(uri);
     }
 
 }

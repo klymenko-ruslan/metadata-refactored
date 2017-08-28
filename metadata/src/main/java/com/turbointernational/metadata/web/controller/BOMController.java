@@ -42,15 +42,6 @@ public class BOMController {
         return bomService.createBOMs(httpRequest, request);
     }
 
-    @RequestMapping(value = "/byParentPart/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @Secured("ROLE_READ")
-    @JsonView(View.SummaryWithBOMDetail.class)
-    public Bom[] getPartBOMs(@PathVariable("id") Long id) throws Exception {
-        Row[] rows = bomService.getByParentId(id);
-        return Bom.from(rows);
-    }
-
     @RequestMapping(value = "/byParentPart/{partId}/type", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
@@ -58,6 +49,15 @@ public class BOMController {
     public Bom[] getByParentAndTypeIds(@PathVariable("partId") Long partId, @RequestParam("typeId") Long typeId)
             throws Exception {
         Row[] rows = bomService.getByParentAndTypeIds(partId, typeId);
+        return Bom.from(rows);
+    }
+
+    @RequestMapping(value = "/byParentPart/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    @JsonView(View.SummaryWithBOMDetail.class)
+    public Bom[] getPartBOMs(@PathVariable("id") Long id) throws Exception {
+        Row[] rows = bomService.getByParentId(id);
         return Bom.from(rows);
     }
 

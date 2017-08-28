@@ -42,7 +42,7 @@
              authorize="ROLE_READ" class="btn btn-primary btn-xs">
             <i class="fa fa-eye"></i> View
           </a>
-          <button data-ng-click="removeBOM(b.partId)"
+          <button data-ng-click="removeBom(b.partId)"
                   authorize="ROLE_BOM" class="btn btn-danger btn-xs">
             <i class="fa fa-trash-o"></i> Remove
           </button>
@@ -69,12 +69,12 @@
       <table data-ng-table="pickedPartsTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="rec in $data">
           <td title="'Part Type'" class="text-nowrap">{{rec.partType.name}}</td>
-          <td title="'Part #'" class="text-nowrap">{{rec.partNumber}}</td>
+          <td title="'Part#'" class="text-nowrap">{{rec.manufacturerPartNumber}}</td>
           <td title="'Qty'">
             <input type="number" data-ng-model="rec.extra.qty" data-ng-min="0" style="width:5em;" required />
           </td>
           <td title="'Existing BOM'">
-            <span class="text-nowrap">{{rec.extra.existingBoms[0].child.partNumber}}<span data-ng-show="rec.extra.existingBoms.length > 1">,</span></span>
+            <span class="text-nowrap">{{rec.extra.existingBoms[0].partNumber}}<span data-ng-show="rec.extra.existingBoms.length > 1">,</span></span>
             &nbsp;<a href="#" title="See more..." data-ng-show="rec.extra.existingBoms.length > 1" data-ng-click="displayExistingBOMs(rec)">...</a>
           </td>
           <td title="'Resolution'">
@@ -85,7 +85,7 @@
             </select>
           </td>
           <td class="actions text-center" title="'Actions'">
-            <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpick(rec.partId)">
+            <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpick(rec.id)">
               <i class="fa fa-times"></i>
               Unpick
             </button>

@@ -76,7 +76,7 @@ angular.module('ngMetaCrudApp')
         BOM.addToParentsBOMs($scope.part.id, srcIds, ratings, description, rows, attachIds).then(
           function success(response) {
             parents.splice(0, parents.length);
-            _.each(response.parents, function(b) {
+            _.each(response.boms, function(b) {
               parents.push(b);
             });
             updateParentPartsIds();
@@ -103,8 +103,8 @@ angular.module('ngMetaCrudApp')
                 }
               });
             } else {
-              toastr.success('The part has been successfully added to ' + response.added +
-                ' parents to their BOM lists.');
+              toastr.success('The part has been successfully added to ' +
+                'parents to their BOM lists.');
             }
           },
           function failure(error) {
@@ -118,7 +118,7 @@ angular.module('ngMetaCrudApp')
       };
 
       $scope.pick = function(pickedPart) {
-        BOM.listByParentPartAndTypeIds(pickedPart.partId, $scope.part.partType.id).then(
+        BOM.listByParentPartAndTypeIds(pickedPart.id, $scope.part.partType.id).then(
           function success(boms) {
             var resolution = null;
             if (boms.length === 0) {
@@ -158,19 +158,16 @@ angular.module('ngMetaCrudApp')
         $scope.pickedPartsTableParams.reload();
       };
 
-      $scope.removeBOM = function(bomId) {
-        var idx = _.findIndex(parents, function(b) {
-          return b.id === bomId;
-        });
-        // var bomItem = parents[idx];
+      $scope.removeBom = function(partId) {
         dialogs.confirm(
           'Remove BOM Item?',
           'Remove this child part from the bill of materials of the parent part?').result.then(
           function() {
             // Yes
-            BOM.removeBOM(bomId).then(
-              function() {
-                parents.splice(idx, 1);
+            BOM.removeBom(partId, $scope.part.id).then(
+              function(updatedBoms) {
+                parents.splice(0, parents.length);
+                parents.push.apply(parents, updatedBoms);
                 $scope.bomTableParams.reload();
                 updateParentPartsIds();
                 toastr.success('The BOM has been successfully removed.');

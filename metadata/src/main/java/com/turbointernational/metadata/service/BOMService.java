@@ -18,12 +18,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.ChangelogPart;
@@ -45,9 +46,6 @@ public class BOMService {
     @Qualifier("transactionManager")
     @Autowired
     private PlatformTransactionManager txManager; // JPA
-
-    @Autowired
-    private ObjectMapper jsonSerializer;
 
     @PersistenceContext(unitName = "metadata")
     protected EntityManager em;
@@ -384,7 +382,7 @@ public class BOMService {
 
     private boolean _create(HttpServletRequest httpRequest, Part parentPart, Part childPart, Integer quantity,
             List<CreateBOMsResponse.Failure> failures, Long[] sourcesIds, Integer[] ratings, String description,
-            Long[] attachIds) {
+            Long[] attachIds) throws DataAccessResourceFailureException, JsonProcessingException {
         Long parentPartId = parentPart.getId();
         Long childPartId = childPart.getId();
         if (childPart.getManufacturer().getId() != parentPart.getManufacturer().getId()) {
@@ -452,9 +450,19 @@ public class BOMService {
     }
 
     public GetBomsResponse.Row[] getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {
-        // return bomItemDao.findByParentAndTypeIds(partId, partTypeId);
-        // TODO: implementation
-        return null;
+        // TODO: this method should be implemented on the service side
+        GetBomsResponse.Row[] parents = getParentsForBom(partId);
+        int n = parents.length;
+        List<GetBomsResponse.Row> filtered = new ArrayList<>(n);
+        for (int i = 0; i < n; i++) {
+            GetBomsResponse.Row row = parents[i];
+            if (row.getPartType().getId().equals(partTypeId)) {
+                filtered.add(row);
+            }
+        }
+        GetBomsResponse.Row[] retVal = new GetBomsResponse.Row[filtered.size()];
+        filtered.toArray(retVal);
+        return retVal;
     }
 
     public CreateBOMsResponse addToParentsBOMs(HttpServletRequest httpRequest, Long primaryPartId,
@@ -472,12 +480,10 @@ public class BOMService {
             Long pickedPartManufacturerId = pickedPart.getManufacturer().getId();
             if (primaryPartManufacturerId != pickedPartManufacturerId) {
                 throw new AssertionError(String.format(
-                    "Part type '%1$s' of the part [%2$d] - {%3$s} "
-                    + "does not match with part type '{%4$s}' of the part [{%5$d}] - {%6$s}.",
-                primaryPart.getPartType().getName(), primaryPartId,
-                primaryPart.getManufacturerPartNumber(),
-                pickedPart.getPartType().getName(), pickedPartId,
-                pickedPart.getManufacturerPartNumber()));
+                        "Part type '%1$s' of the part [%2$d] - {%3$s} "
+                                + "does not match with part type '{%4$s}' of the part [{%5$d}] - {%6$s}.",
+                        primaryPart.getPartType().getName(), primaryPartId, primaryPart.getManufacturerPartNumber(),
+                        pickedPart.getPartType().getName(), pickedPartId, pickedPart.getManufacturerPartNumber()));
             }
             if (r.getResolution() == REPLACE) {
                 // Remove existing BOMs in the picked part.
@@ -490,18 +496,21 @@ public class BOMService {
                         relatedParts.add(new RelatedPart(row.getPartId(), ChangelogPart.Role.BOM_CHILD));
                         arangoDbConnector.removePartFromBom(pickedPartId, primaryPartId);
                         String txtAudit = row.toAuditLog();
-                        changelogService.log(BOM, "Deleted BOM item: " + formatBom(pickedPart, primaryPart, row.getQty()), txtAudit, relatedParts);
+                        changelogService.log(BOM,
+                                "Deleted BOM item: " + formatBom(pickedPart, primaryPart, row.getQty()), txtAudit,
+                                relatedParts);
                     }
                 }
             }
-            boolean created = _create(httpRequest, pickedPart, primaryPart, r.getQuantity(), failures, null, null,
-                    null, null);
+            boolean created = _create(httpRequest, pickedPart, primaryPart, r.getQuantity(), failures, null, null, null,
+                    null);
             if (created) {
                 relatedPartIds.add(pickedPartId);
             }
         }
         GetBomsResponse.Row[] parents = getParentsForBom(primaryPartId);
-        // In the call below primaryPartId is actually childPartId from point of view partChangeService.
+        // In the call below primaryPartId is actually childPartId from point of
+        // view partChangeService.
         partChangeService.addedToParentBoms(primaryPartId, relatedPartIds);
         Bom[] boms = Bom.from(parents);
         return new BOMService.CreateBOMsResponse(failures, boms);

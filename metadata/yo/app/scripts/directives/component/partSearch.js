@@ -16,11 +16,6 @@ angular.module('ngMetaCrudApp')
                    '$scope', 'NgTableParams', 'utils',
         function($transclude, $parse, $sce, $log, $q, $location, $scope, NgTableParams, utils) {
 
-          var fltrInitManufacturer = $scope.fltrInitManufacturer;
-          var fltrInitPartType = $scope.fltrInitPartType;
-          $log.log('B. fltrInitManufacturer: ' + fltrInitManufacturer);
-          $log.log('B. fltrInitPartType: ' + fltrInitPartType);
-
         $scope.critDimEnumValsMap = _.indexBy($scope.critDimEnumVals, 'id');
 
         // Filter
