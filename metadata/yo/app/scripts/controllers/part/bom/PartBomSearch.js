@@ -146,7 +146,9 @@ angular.module('ngMetaCrudApp')
               updateExistingBomPartIds();
               toastr.success('The BOM has been successfully removed.');
             },
-            restService.error
+            function(response) {
+              dialogs.error('Could delete BOM', 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
+            }
           );
         }
       );

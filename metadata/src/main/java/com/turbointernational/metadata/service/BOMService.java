@@ -2,6 +2,7 @@ package com.turbointernational.metadata.service;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.BOM;
+import static com.turbointernational.metadata.service.ArangoDbConnectorService.checkSuccess;
 import static com.turbointernational.metadata.service.BOMService.AddToParentBOMsRequest.ResolutionEnum.REPLACE;
 import static com.turbointernational.metadata.util.FormatUtils.formatBom;
 
@@ -494,7 +495,8 @@ public class BOMService {
                         List<RelatedPart> relatedParts = new ArrayList<>(2);
                         relatedParts.add(new RelatedPart(primaryPartId, ChangelogPart.Role.BOM_PARENT));
                         relatedParts.add(new RelatedPart(row.getPartId(), ChangelogPart.Role.BOM_CHILD));
-                        arangoDbConnector.removePartFromBom(pickedPartId, primaryPartId);
+                        Response response = arangoDbConnector.removePartFromBom(pickedPartId, primaryPartId);
+                        checkSuccess(response);
                         String txtAudit = row.toAuditLog();
                         changelogService.log(BOM,
                                 "Deleted BOM item: " + formatBom(pickedPart, primaryPart, row.getQty()), txtAudit,
@@ -526,7 +528,8 @@ public class BOMService {
         changelogService.log(BOM, "Changed BOM " + formatBom(parent, child) + " quantity to " + quantity, null,
                 relatedParts);
         // Update
-        arangoDbConnector.modifyPartInBom(parentPartId, childPartId, quantity);
+        Response response = arangoDbConnector.modifyPartInBom(parentPartId, childPartId, quantity);
+        checkSuccess(response);
         partChangeService.updatedBom(parent.getId());
     }
 
@@ -534,7 +537,8 @@ public class BOMService {
         Part parentPart = partDao.findOne(parentPartId);
         Part childPart = partDao.findOne(childPartId);
         // Delete it.
-        arangoDbConnector.removePartFromBom(parentPartId, childPartId);
+        Response response = arangoDbConnector.removePartFromBom(parentPartId, childPartId);
+        checkSuccess(response);
         // Notify about changes.
         partChangeService.deletedBom(parentPartId, childPartId);
         // Update the changelog.

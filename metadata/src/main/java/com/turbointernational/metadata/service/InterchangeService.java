@@ -3,6 +3,7 @@ package com.turbointernational.metadata.service;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.INTERCHANGE;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
+import static com.turbointernational.metadata.service.ArangoDbConnectorService.checkSuccess;
 import static com.turbointernational.metadata.util.FormatUtils.formatInterchange;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 
@@ -123,6 +124,7 @@ public class InterchangeService {
     public void create(Long partId, Long asInterchangePartId) throws IOException {
         MigrateInterchangeResponse response = arangoDbConnector.moveGroupToOtherInterchangeableGroup(partId,
                 asInterchangePartId);
+        checkSuccess(response);
         Long headerId = response.getNewHeaderId();
         Interchange interchange = findById(headerId);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
@@ -148,6 +150,7 @@ public class InterchangeService {
         Part part = partDao.findOne(partId);
         Interchange interchange = findForPart(partId);
         MigrateInterchangeResponse response = arangoDbConnector.leaveInterchangeableGroup(partId);
+        checkSuccess(response);
         // Update the changelog.
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
@@ -168,6 +171,7 @@ public class InterchangeService {
     public void mergePickedAloneToPart(HttpServletRequest httpRequest, long partId, long pickedPartId,
             Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) throws IOException {
         MigrateInterchangeResponse response = arangoDbConnector.movePartToOtherInterchangeGroup(pickedPartId, partId);
+        checkSuccess(response);
         Long oldInterchangeHeaderId = response.getOldHeaderId();
         Long newInterchangeHeaderId = response.getNewHeaderId();
         List<RelatedPart> relatedParts = new ArrayList<>(2);
@@ -193,6 +197,7 @@ public class InterchangeService {
     public void mergePartAloneToPicked(HttpServletRequest httpRequest, long partId, long pickedPartId,
             Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) throws IOException {
         MigrateInterchangeResponse response = arangoDbConnector.movePartToOtherInterchangeGroup(partId, pickedPartId);
+        checkSuccess(response);
         Long oldInterchangeHeaderId = response.getOldHeaderId();
         Long newInterchangeHeaderId = response.getNewHeaderId();
         List<RelatedPart> relatedParts = new ArrayList<>(2);
@@ -219,6 +224,7 @@ public class InterchangeService {
             Integer[] ratings, String description, Long[] attachIds) throws IOException {
         MigrateInterchangeResponse response = arangoDbConnector.moveGroupToOtherInterchangeableGroup(pickedPartId,
                 partId);
+        checkSuccess(response);
         Long oldInterchangeHeaderId = response.getOldHeaderId();
         Long newInterchangeHeaderId = response.getNewHeaderId();
         List<RelatedPart> relatedParts = new ArrayList<>(2);
