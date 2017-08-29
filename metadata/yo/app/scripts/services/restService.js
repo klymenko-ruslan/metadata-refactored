@@ -616,18 +616,6 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('interchange', id).get();
       };
 
-      this.createPartInterchange = function(partId, pickedPartId, sourcesIds, ratings, description, attachIds) {
-        var req = {
-          partId:  partId,
-          pickedPartId: pickedPartId,
-          sourcesIds: sourcesIds,
-          attachIds: attachIds,
-          chlogSrcRatings: ratings,
-          chlogSrcLnkDescription: description
-        };
-        return Restangular.all('interchange').post(req);
-      };
-
       this.updatePartInterchange = function(partId, pickedPartId, mergeChoice, sourcesIds, ratings, description, attachIds) {
         Restangular.setParentless(false);
         var req = {

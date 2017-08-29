@@ -1,14 +1,9 @@
 package com.turbointernational.metadata.web.controller;
 
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,9 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -210,21 +203,6 @@ public class InterchangeController {
             this.attachIds = attachIds;
         }
 
-    }
-
-    @Transactional
-    @RequestMapping(method = POST, consumes = APPLICATION_JSON_VALUE)
-    @Secured("ROLE_INTERCHANGE")
-    public ResponseEntity<String> create(HttpServletRequest httpRequest, CreateInterchangeRequest request)
-            throws Exception {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        List<Long> partIds = new ArrayList<>(2);
-        partIds.add(request.getPartId());
-        partIds.add(request.getPickedPartId());
-        interchangeService.create(httpRequest, partIds, request.getSourcesIds(), request.getChlogSrcRatings(),
-                request.getChlogSrcLnkDescription(), request.getAttachIds());
-        return new ResponseEntity<>("ok", headers, OK);
     }
 
     @Transactional

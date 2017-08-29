@@ -13,7 +13,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -78,37 +77,6 @@ public class InterchangeService {
     public void initInterchange(Part part) {
         Interchange interchange = findForPart(part);
         part.setInterchange(interchange);
-    }
-
-    /**
-     * Persists interchangeable in a storage.
-     */
-    @Transactional
-    @Deprecated
-    public void create(HttpServletRequest httpRequest, List<Long> partIds, Long[] sourcesIds, Integer[] ratings,
-            String description, Long[] attachIds) throws IOException {
-        /*
-         * // Link it with the Hibernate parts Set<Part> canonicalParts = new
-         * HashSet<>(); // Map the incoming part IDs to their canonical part for
-         * (Long partId : partIds) { Part canonicalPart =
-         * partDao.findOne(partId); if (canonicalPart.getInterchange() != null)
-         * { throw new IllegalArgumentException( "Part " +
-         * formatPart(canonicalPart) + " already has interchangeable parts."); }
-         * canonicalParts.add(canonicalPart); } Interchange interchange = new
-         * Interchange(); interchange.getParts().addAll(canonicalParts);
-         * interchangeDao.persist(interchange); List<RelatedPart> relatedParts =
-         * new ArrayList<>(canonicalParts.size()); for (Part canonicalPart :
-         * canonicalParts) { canonicalPart.setInterchange(interchange);
-         * partDao.merge(canonicalPart); relatedParts.add(new
-         * RelatedPart(canonicalPart.getId(), null)); } interchangeDao.flush();
-         * // Update the changelog. Changelog changelog =
-         * changelogService.log(INTERCHANGE, "Created interchange: " +
-         * formatInterchange(interchange) + ".", interchange.toJson(),
-         * relatedParts); changelogSourceService.link(httpRequest, changelog,
-         * sourcesIds, ratings, description, attachIds);
-         * partChangeService.changedInterchange(interchange.getId(), null);
-         */
-        throw new NotImplementedException();
     }
 
     /**
