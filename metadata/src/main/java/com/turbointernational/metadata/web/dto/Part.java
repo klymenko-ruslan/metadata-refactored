@@ -46,6 +46,15 @@ public class Part {
         return new Part(o.getPartId(), o.getName(), o.getDescritpion(), o.getPartNumber(), partType, manufacturer);
     }
 
+    public static Part[] from(GetPartResponse[] a) {
+        int n = a.length;
+        Part[] retVal = new Part[n];
+        for (int i = 0; i < n; i++) {
+            retVal[i] = from(a[i]);
+        }
+        return retVal;
+    }
+
     public Long getPartId() {
         return partId;
     }

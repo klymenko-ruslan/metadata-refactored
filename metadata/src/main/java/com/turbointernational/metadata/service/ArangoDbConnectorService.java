@@ -39,668 +39,727 @@ import com.turbointernational.metadata.web.dto.PartType;
 @Service
 public class ArangoDbConnectorService {
 
-	@Value("${rest.arangodb.service.protocol}")
-	private String restArangoDbServiceProtocol;
+    @Value("${rest.arangodb.service.protocol}")
+    private String restArangoDbServiceProtocol;
 
-	@Value("${rest.arangodb.service.host}")
-	private String restArangoDbServiceHost;
+    @Value("${rest.arangodb.service.host}")
+    private String restArangoDbServiceHost;
 
-	@Value("${rest.arangodb.service.port}")
-	private Integer restArangoDbServicePort;
+    @Value("${rest.arangodb.service.port}")
+    private Integer restArangoDbServicePort;
 
-	@Autowired
-	private RestTemplate restArangoDbService;
+    @Autowired
+    private RestTemplate restArangoDbService;
 
-	@Autowired
-	private ObjectMapper jsonSerializer;
+    @Autowired
+    private ObjectMapper jsonSerializer;
 
-	private HttpHeaders headers;
+    private HttpHeaders headers;
 
-	private UriTemplate uriTmplGetPartById;
+    private UriTemplate uriTmplGetPartById;
 
-	private UriTemplate uriTmplGetInterchageById;
+    private UriTemplate uriTmplGetInterchageById;
 
-	private UriTemplate uriTmplGetInterchageForPart;
+    private UriTemplate uriTmplGetInterchageForPart;
 
-	private UriTemplate uriTmplLeaveGroup;
+    private UriTemplate uriTmplLeaveGroup;
 
-	private UriTemplate uriTmplMergePickedAllToPart;
+    private UriTemplate uriTmplMergePickedAllToPart;
 
-	private UriTemplate uriTmplMovePartToOtherGroup;
+    private UriTemplate uriTmplMovePartToOtherGroup;
 
-	private UriTemplate uriTmplGetAncestors;
+    private UriTemplate uriTmplGetAncestors;
 
-	private UriTemplate uriTmplGetBoms;
+    private UriTemplate uriTmplGetBoms;
 
-	private UriTemplate uriTmplModifyBom;
+    private UriTemplate uriTmplModifyBom;
 
-	private UriTemplate uriTmplRemovePartFromBom;
+    private UriTemplate uriTmplRemovePartFromBom;
 
-	private UriTemplate uriGetParentBoms;
+    private UriTemplate uriTmplGetParentBoms;
 
-	public static class Response {
+    private UriTemplate uriTmplGetAltBoms;
 
-		private boolean success;
+    private UriTemplate uriTmplCreateAltBom;
 
-		private String msg;
+    public static class Response {
 
-		public boolean isSuccess() {
-			return success;
-		}
+        private boolean success;
 
-		public void setSuccess(boolean success) {
-			this.success = success;
-		}
+        private String msg;
 
-		public String getMsg() {
-			return msg;
-		}
+        public boolean isSuccess() {
+            return success;
+        }
 
-		public void setMsg(String msg) {
-			this.msg = msg;
-		}
+        public void setSuccess(boolean success) {
+            this.success = success;
+        }
 
-	}
+        public String getMsg() {
+            return msg;
+        }
 
-	public static class GetManufacturerResponse extends Response {
+        public void setMsg(String msg) {
+            this.msg = msg;
+        }
 
-		private Long id;
+    }
 
-		private String name;
+    public static class GetManufacturerResponse extends Response {
 
-		public Long getId() {
-			return id;
-		}
+        private Long id;
 
-		public void setId(Long id) {
-			this.id = id;
-		}
+        private String name;
 
-		public String getName() {
-			return name;
-		}
+        public Long getId() {
+            return id;
+        }
 
-		public void setName(String name) {
-			this.name = name;
-		}
+        public void setId(Long id) {
+            this.id = id;
+        }
 
-	}
+        public String getName() {
+            return name;
+        }
 
-	public static class GetPartTypeResponse extends Response {
+        public void setName(String name) {
+            this.name = name;
+        }
 
-		private Long id;
+    }
 
-		private String name;
+    public static class GetPartTypeResponse extends Response {
 
-		public Long getId() {
-			return id;
-		}
+        private Long id;
 
-		public void setId(Long id) {
-			this.id = id;
-		}
+        private String name;
 
-		public String getName() {
-			return name;
-		}
+        public Long getId() {
+            return id;
+        }
 
-		public void setName(String name) {
-			this.name = name;
-		}
+        public void setId(Long id) {
+            this.id = id;
+        }
 
-	}
+        public String getName() {
+            return name;
+        }
 
-	public static class GetPartResponse extends Response {
+        public void setName(String name) {
+            this.name = name;
+        }
 
-		private Long partId;
+    }
 
-		private String name;
+    public static class GetPartResponse extends Response {
 
-		private String descritpion;
+        private Long partId;
 
-		private String partNumber;
+        private String name;
 
-		private GetPartTypeResponse partType;
+        private String descritpion;
 
-		private GetManufacturerResponse manufacturer;
+        private String partNumber;
 
-		public Long getPartId() {
-			return partId;
-		}
+        private GetPartTypeResponse partType;
 
-		public void setPartId(Long partId) {
-			this.partId = partId;
-		}
+        private GetManufacturerResponse manufacturer;
 
-		public String getPartNumber() {
-			return partNumber;
-		}
+        public Long getPartId() {
+            return partId;
+        }
 
-		public void setManufacturerPartNumber(String partNumber) {
-			this.partNumber = partNumber;
-		}
+        public void setPartId(Long partId) {
+            this.partId = partId;
+        }
 
-		public GetPartTypeResponse getPartType() {
-			return partType;
-		}
+        public String getPartNumber() {
+            return partNumber;
+        }
 
-		public void setPartType(GetPartTypeResponse partType) {
-			this.partType = partType;
-		}
+        public void setManufacturerPartNumber(String partNumber) {
+            this.partNumber = partNumber;
+        }
 
-		public GetManufacturerResponse getManufacturer() {
-			return manufacturer;
-		}
+        public GetPartTypeResponse getPartType() {
+            return partType;
+        }
 
-		public void setManufacturer(GetManufacturerResponse manufacturer) {
-			this.manufacturer = manufacturer;
-		}
+        public void setPartType(GetPartTypeResponse partType) {
+            this.partType = partType;
+        }
 
-		public String getName() {
-			return name;
-		}
+        public GetManufacturerResponse getManufacturer() {
+            return manufacturer;
+        }
 
-		public void setName(String name) {
-			this.name = name;
-		}
+        public void setManufacturer(GetManufacturerResponse manufacturer) {
+            this.manufacturer = manufacturer;
+        }
 
-		public String getDescritpion() {
-			return descritpion;
-		}
+        public String getName() {
+            return name;
+        }
 
-		public void setDescritpion(String descritpion) {
-			this.descritpion = descritpion;
-		}
+        public void setName(String name) {
+            this.name = name;
+        }
 
-	}
+        public String getDescritpion() {
+            return descritpion;
+        }
 
-	public static class GetInterchangeResponse extends Response {
+        public void setDescritpion(String descritpion) {
+            this.descritpion = descritpion;
+        }
 
-		private Long headerId; // interchange header ID
+    }
 
-		private GetPartResponse[] parts;
+    public static class GetInterchangeResponse extends Response {
 
-		public GetInterchangeResponse() {
-		}
+        private Long headerId; // interchange header ID
 
-		public GetInterchangeResponse(Long headerId, GetPartResponse[] parts) {
-			this.headerId = headerId;
-			this.parts = parts;
-		}
+        private GetPartResponse[] parts;
 
-		public Long getHeaderId() {
-			return headerId;
-		}
+        public GetInterchangeResponse() {
+        }
 
-		public void setHeaderId(Long headerId) {
-			this.headerId = headerId;
-		}
+        public GetInterchangeResponse(Long headerId, GetPartResponse[] parts) {
+            this.headerId = headerId;
+            this.parts = parts;
+        }
 
-		public GetPartResponse[] getParts() {
-			return parts;
-		}
+        public Long getHeaderId() {
+            return headerId;
+        }
 
-		public void setParts(GetPartResponse[] parts) {
-			this.parts = parts;
-		}
+        public void setHeaderId(Long headerId) {
+            this.headerId = headerId;
+        }
 
-	}
+        public GetPartResponse[] getParts() {
+            return parts;
+        }
 
-	public static class CreateInterchangeResponse extends Response {
+        public void setParts(GetPartResponse[] parts) {
+            this.parts = parts;
+        }
 
-		private Long headerId;
+    }
 
-		public Long getHeaderId() {
-			return headerId;
-		}
+    public static class CreateInterchangeResponse extends Response {
 
-		public void setHeaderId(Long headerId) {
-			this.headerId = headerId;
-		}
+        private Long headerId;
 
-	}
+        public Long getHeaderId() {
+            return headerId;
+        }
 
-	public static class MigrateInterchangeResponse extends Response {
+        public void setHeaderId(Long headerId) {
+            this.headerId = headerId;
+        }
 
-		private Long oldHeaderId;
+    }
 
-		private Long newHeaderId;
+    public static class MigrateInterchangeResponse extends Response {
 
-		public Long getOldHeaderId() {
-			return oldHeaderId;
-		}
+        private Long oldHeaderId;
 
-		public void setOldHeaderId(Long oldHeaderId) {
-			this.oldHeaderId = oldHeaderId;
-		}
+        private Long newHeaderId;
 
-		public Long getNewHeaderId() {
-			return newHeaderId;
-		}
+        public Long getOldHeaderId() {
+            return oldHeaderId;
+        }
 
-		public void setNewHeaderId(Long newHeaderId) {
-			this.newHeaderId = newHeaderId;
-		}
+        public void setOldHeaderId(Long oldHeaderId) {
+            this.oldHeaderId = oldHeaderId;
+        }
 
-	}
+        public Long getNewHeaderId() {
+            return newHeaderId;
+        }
 
-	public static class GetAncestorsResponse extends Response {
+        public void setNewHeaderId(Long newHeaderId) {
+            this.newHeaderId = newHeaderId;
+        }
 
-		@JsonInclude(JsonInclude.Include.ALWAYS)
-		public static class Row {
+    }
 
-			@JsonView({ View.Summary.class })
-			private Long partId;
+    public static class GetAncestorsResponse extends Response {
 
-			@JsonView({ View.Summary.class })
-			private String name;
+        @JsonInclude(JsonInclude.Include.ALWAYS)
+        public static class Row {
 
-			@JsonView({ View.Summary.class })
-			private String descritption;
+            @JsonView({ View.Summary.class })
+            private Long partId;
 
-			@JsonView({ View.Summary.class })
-			private String partNumber;
+            @JsonView({ View.Summary.class })
+            private String name;
 
-			@JsonView({ View.Summary.class })
-			private Manufacturer manufacturer;
+            @JsonView({ View.Summary.class })
+            private String descritption;
 
-			@JsonView({ View.Summary.class })
-			private PartType partType;
+            @JsonView({ View.Summary.class })
+            private String partNumber;
 
-			@JsonView({ View.Summary.class })
-			private boolean relationType;
+            @JsonView({ View.Summary.class })
+            private Manufacturer manufacturer;
 
-			@JsonView({ View.Summary.class })
-			private int relationDistance;
+            @JsonView({ View.Summary.class })
+            private PartType partType;
 
-			public Long getPartId() {
-				return partId;
-			}
+            @JsonView({ View.Summary.class })
+            private boolean relationType;
 
-			public void setPartId(Long partId) {
-				this.partId = partId;
-			}
+            @JsonView({ View.Summary.class })
+            private int relationDistance;
 
-			public String getName() {
-				return name;
-			}
+            public Long getPartId() {
+                return partId;
+            }
 
-			public void setName(String name) {
-				this.name = name;
-			}
+            public void setPartId(Long partId) {
+                this.partId = partId;
+            }
 
-			public String getDescritption() {
-				return descritption;
-			}
+            public String getName() {
+                return name;
+            }
 
-			public void setDescritption(String descritption) {
-				this.descritption = descritption;
-			}
+            public void setName(String name) {
+                this.name = name;
+            }
 
-			public String getPartNumber() {
-				return partNumber;
-			}
+            public String getDescritption() {
+                return descritption;
+            }
 
-			public void setPartNumber(String partNumber) {
-				this.partNumber = partNumber;
-			}
+            public void setDescritption(String descritption) {
+                this.descritption = descritption;
+            }
 
-			public Manufacturer getManufacturer() {
-				return manufacturer;
-			}
+            public String getPartNumber() {
+                return partNumber;
+            }
 
-			public void setManufacturer(Manufacturer manufacturer) {
-				this.manufacturer = manufacturer;
-			}
+            public void setPartNumber(String partNumber) {
+                this.partNumber = partNumber;
+            }
 
-			public PartType getPartType() {
-				return partType;
-			}
+            public Manufacturer getManufacturer() {
+                return manufacturer;
+            }
 
-			public void setPartType(PartType partType) {
-				this.partType = partType;
-			}
+            public void setManufacturer(Manufacturer manufacturer) {
+                this.manufacturer = manufacturer;
+            }
 
-			public boolean isRelationType() {
-				return relationType;
-			}
+            public PartType getPartType() {
+                return partType;
+            }
 
-			public void setRelationType(boolean relationType) {
-				this.relationType = relationType;
-			}
+            public void setPartType(PartType partType) {
+                this.partType = partType;
+            }
 
-			public int getRelationDistance() {
-				return relationDistance;
-			}
+            public boolean isRelationType() {
+                return relationType;
+            }
 
-			public void setRelationDistance(int relationDistance) {
-				this.relationDistance = relationDistance;
-			}
+            public void setRelationType(boolean relationType) {
+                this.relationType = relationType;
+            }
 
-		}
+            public int getRelationDistance() {
+                return relationDistance;
+            }
 
-		private Row[] rows;
+            public void setRelationDistance(int relationDistance) {
+                this.relationDistance = relationDistance;
+            }
 
-		public Row[] getRows() {
-			return rows;
-		}
+        }
 
-		public GetAncestorsResponse() {
-		}
+        private Row[] rows;
 
-		public GetAncestorsResponse(Row[] rows) {
-			this.rows = rows;
-		}
+        public Row[] getRows() {
+            return rows;
+        }
 
-		public void setRows(Row[] rows) {
-			this.rows = rows;
-		}
+        public GetAncestorsResponse() {
+        }
 
-	}
+        public GetAncestorsResponse(Row[] rows) {
+            this.rows = rows;
+        }
 
-	public static class GetBomsResponse extends Response {
+        public void setRows(Row[] rows) {
+            this.rows = rows;
+        }
 
-		public static class Row implements Auditable {
+    }
 
-			private Long partId;
+    public static class GetBomsResponse extends Response {
 
-			private String partNumber;
+        public static class Row implements Auditable {
 
-			private PartType partType;
+            private Long partId;
 
-			private Manufacturer manufacturer;
+            private String partNumber;
 
-			private Integer qty;
+            private PartType partType;
 
-			private Part[] interchanges;
+            private Manufacturer manufacturer;
 
-			public Long getPartId() {
-				return partId;
-			}
+            private Integer qty;
 
-			public void setPartId(Long partId) {
-				this.partId = partId;
-			}
+            private Part[] interchanges;
 
-			public String getPartNumber() {
-				return partNumber;
-			}
+            public Long getPartId() {
+                return partId;
+            }
 
-			public void setPartNumber(String partNumber) {
-				this.partNumber = partNumber;
-			}
+            public void setPartId(Long partId) {
+                this.partId = partId;
+            }
 
-			public PartType getPartType() {
-				return partType;
-			}
+            public String getPartNumber() {
+                return partNumber;
+            }
 
-			public void setPartType(PartType partType) {
-				this.partType = partType;
-			}
+            public void setPartNumber(String partNumber) {
+                this.partNumber = partNumber;
+            }
 
-			public Manufacturer getManufacturer() {
-				return manufacturer;
-			}
+            public PartType getPartType() {
+                return partType;
+            }
 
-			public void setManufacturer(Manufacturer manufacturer) {
-				this.manufacturer = manufacturer;
-			}
+            public void setPartType(PartType partType) {
+                this.partType = partType;
+            }
 
-			public Integer getQty() {
-				return qty;
-			}
+            public Manufacturer getManufacturer() {
+                return manufacturer;
+            }
 
-			public void setQty(Integer qty) {
-				this.qty = qty;
-			}
+            public void setManufacturer(Manufacturer manufacturer) {
+                this.manufacturer = manufacturer;
+            }
 
-			public Part[] getInterchanges() {
-				return interchanges;
-			}
+            public Integer getQty() {
+                return qty;
+            }
 
-			public void setInterchanges(Part[] interchanges) {
-				this.interchanges = interchanges;
-			}
+            public void setQty(Integer qty) {
+                this.qty = qty;
+            }
 
-			@Override
-			public String toString() {
-				return "Row [partId=" + partId + ", partNumber=" + partNumber + ", partType=" + partType
-						+ ", manufacturer=" + manufacturer + ", qty=" + qty + ", interchanges="
-						+ Arrays.toString(interchanges) + "]";
-			}
+            public Part[] getInterchanges() {
+                return interchanges;
+            }
 
-			@Override
-			public String toAuditLog() {
-				return null;
-			}
+            public void setInterchanges(Part[] interchanges) {
+                this.interchanges = interchanges;
+            }
 
-		}
+            @Override
+            public String toString() {
+                return "Row [partId=" + partId + ", partNumber=" + partNumber + ", partType=" + partType
+                        + ", manufacturer=" + manufacturer + ", qty=" + qty + ", interchanges="
+                        + Arrays.toString(interchanges) + "]";
+            }
 
-		private Row[] rows;
+            @Override
+            public String toAuditLog() {
+                return null;
+            }
 
-		public GetBomsResponse() {
-		}
+        }
 
-		public GetBomsResponse(Row[] rows) {
-			this.setRows(rows);
-		}
+        private Row[] rows;
 
-		public Row[] getRows() {
-			return rows;
-		}
+        public GetBomsResponse() {
+        }
 
-		public void setRows(Row[] rows) {
-			this.rows = rows;
-		}
+        public GetBomsResponse(Row[] rows) {
+            this.setRows(rows);
+        }
 
-	}
+        public Row[] getRows() {
+            return rows;
+        }
 
-	@PostConstruct
-	public void init() {
-		headers = new HttpHeaders();
-		headers.setContentType(APPLICATION_JSON);
-		uriTmplGetPartById = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
-				+ restArangoDbServicePort + "/parts/{id}");
-		uriTmplGetInterchageById = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
-				+ restArangoDbServicePort + "/interchanges/{id}");
-		uriTmplGetInterchageForPart = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost
-				+ ":" + restArangoDbServicePort + "/parts/{partId}/interchanges");
-		uriTmplLeaveGroup = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
-				+ restArangoDbServicePort + "/interchanges/{partId}/leave_group");
-		uriTmplMergePickedAllToPart = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost
-				+ ":" + restArangoDbServicePort + "/interchanges/{partId}/merge_group/{pickedPartId}/all");
-		uriTmplMovePartToOtherGroup = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost
-				+ ":" + restArangoDbServicePort + "/interchanges/{partId}/merge_group/{pickedPartId}");
-		uriTmplGetAncestors = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
-				+ restArangoDbServicePort + "/parts/{partId}/ancestors");
-		uriTmplGetBoms = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
-				+ restArangoDbServicePort + "/parts/{partId}/boms");
-		uriTmplModifyBom = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
-				+ restArangoDbServicePort + "/boms/{parentPartId}/descendant/{descendantPartId}");
-		uriTmplRemovePartFromBom = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
-				+ restArangoDbServicePort + "/boms/{parentPartId}/descendant/{descendantPartId}");
-		uriGetParentBoms = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
-				+ restArangoDbServicePort + "/parts/{partId}/boms/parents");
-	}
+        public void setRows(Row[] rows) {
+            this.rows = rows;
+        }
 
-	/**
-	 * Check response from ArangoDb server.
-	 *
-	 * If response signals that call to a GraphDb service was not successful the
-	 * exception is thrown.
-	 *
-	 * @param response
-	 * @throws DataAccessResourceFailureException
-	 */
-	public static void checkSuccess(Response response) throws DataAccessResourceFailureException {
-		if (!response.isSuccess()) {
-			throw new DataAccessResourceFailureException(response.getMsg());
-		}
-	}
+    }
 
-	/**
-	 * A general method to do GET request to a GraphDb service.
-	 *
-	 * The method also do check of response and if it is not successful an exception
-	 * is thrown.
-	 *
-	 * @param uri
-	 * @param responseClazz
-	 * @return
-	 * @throws DataAccessResourceFailureException
-	 */
-	private <T extends Response> T get(URI uri, Class<T> responseClazz) {
-		T response = restArangoDbService.getForObject(uri, responseClazz);
-		// checkSuccess(response);
-		return response;
-	}
+    public static class GetAltBomsResponse extends Response {
 
-	private <T extends Response> T exchange(URI uri, HttpMethod method, Object body, Class<T> responseClazz)
-			throws JsonProcessingException {
-		HttpEntity<String> requestEntity = null;
-		if (body != null) {
-			String s = jsonSerializer.writeValueAsString(body);
-			requestEntity = new HttpEntity<>(s, headers);
-		}
-		ResponseEntity<T> responseEntity = restArangoDbService.exchange(uri, method, requestEntity, responseClazz);
-		T response = responseEntity.getBody();
-		return response;
-	}
-
-	private <T extends Response> T post(URI uri, Object body, Class<T> responseClazz) throws JsonProcessingException {
-		return exchange(uri, POST, body, responseClazz);
-	}
-
-	private Response post(URI uri, Object body) throws JsonProcessingException {
-		return post(uri, body, Response.class);
-	}
-
-	private <T extends Response> T put(URI uri, Object body, Class<T> responseClazz) throws JsonProcessingException {
-		return exchange(uri, PUT, body, responseClazz);
-	}
-
-	private <T extends Response> T put(URI uri, Class<T> responseClazz) throws JsonProcessingException {
-		return put(uri, null, responseClazz);
-	}
-
-	private Response put(URI uri, Object body) throws JsonProcessingException {
-		return put(uri, body, Response.class);
-	}
-
-	private <T extends Response> T delete(URI uri, Object body, Class<T> responseClazz) throws JsonProcessingException {
-		return exchange(uri, DELETE, body, responseClazz);
-	}
-
-	private <T extends Response> T delete(URI uri, Class<T> responseClazz) throws JsonProcessingException {
-		return delete(uri, null, responseClazz);
-	}
-
-	private Response delete(URI uri) throws JsonProcessingException {
-		return delete(uri, Response.class);
-	}
-
-	public GetPartResponse findPartById(Long id) {
-		URI uri = uriTmplGetPartById.expand(id);
-		return get(uri, GetPartResponse.class);
-	}
-
-	public GetInterchangeResponse findInterchangeById(Long id) {
-		URI uri = uriTmplGetInterchageById.expand(id);
-		return get(uri, GetInterchangeResponse.class);
-	}
-
-	public GetInterchangeResponse findInterchangeForPart(Long partId) {
-		URI uri = uriTmplGetInterchageForPart.expand(partId);
-		return get(uri, GetInterchangeResponse.class);
-	}
-
-	public MigrateInterchangeResponse leaveInterchangeableGroup(Long partId) throws JsonProcessingException {
-		URI uri = uriTmplLeaveGroup.expand(partId);
-		return put(uri, MigrateInterchangeResponse.class);
-	}
-
-	public MigrateInterchangeResponse moveGroupToOtherInterchangeableGroup(Long srcPartId, Long trgPartId)
-			throws JsonProcessingException {
-		return migrateInterchange(uriTmplMergePickedAllToPart, trgPartId, srcPartId);
-	}
-
-	public MigrateInterchangeResponse movePartToOtherInterchangeGroup(Long srcPartId, Long trgPartId)
-			throws JsonProcessingException {
-		return migrateInterchange(uriTmplMovePartToOtherGroup, trgPartId, srcPartId);
-	}
-
-	private MigrateInterchangeResponse migrateInterchange(UriTemplate uriTmpl, Long... partIds)
-			throws JsonProcessingException {
-		URI uri;
-		int n = partIds.length;
-		switch (n) {
-		case 1:
-			uri = uriTmpl.expand(partIds[0]);
-			break;
-		case 2:
-			uri = uriTmpl.expand(partIds[0], partIds[1]);
-			break;
-		default:
-			throw new IllegalArgumentException("Unexpected number of optional arguments: " + n);
-		}
-		return put(uri, MigrateInterchangeResponse.class);
-	}
-
-	public GetAncestorsResponse getAncestors(Long partId) {
-		URI uri = uriTmplGetAncestors.expand(partId);
-		GetAncestorsResponse.Row[] rows = restArangoDbService.getForObject(uri, GetAncestorsResponse.Row[].class);
-		return new GetAncestorsResponse(rows);
-	}
-
-	public GetBomsResponse getBoms(Long partId) {
-		URI uri = uriTmplGetBoms.expand(partId);
-		GetBomsResponse.Row[] rows = restArangoDbService.getForObject(uri, GetBomsResponse.Row[].class);
-		return new GetBomsResponse(rows);
-	}
-
-	public GetBomsResponse getParentsBoms(Long partId) {
-		URI uri = uriGetParentBoms.expand(partId);
-		GetBomsResponse.Row[] rows = restArangoDbService.getForObject(uri, GetBomsResponse.Row[].class);
-		return new GetBomsResponse(rows);
-	}
-
-	/**
-	 * Button on the UI "Add Child".
-	 *
-	 * @return
-	 * @throws JsonProcessingException
-	 * @throws DataAccessResourceFailureException
-	 */
-	public Response addPartToBom(Long parentPartId, Long childPartId, Integer quantity) throws JsonProcessingException {
-		URI uri = uriTmplModifyBom.expand(parentPartId, childPartId);
-		Map<String, Integer> body = new HashMap<>();
-		body.put("qty", quantity);
-		return post(uri, body);
-	}
-
-	/**
-	 * @return
-	 * @throws JsonProcessingException
-	 * @throws DataAccessResourceFailureException
-	 */
-	public Response modifyPartInBom(Long parentPartId, Long childPartId, Integer quantity)
-			throws JsonProcessingException {
-		URI uri = uriTmplModifyBom.expand(parentPartId, childPartId);
-		Map<String, Integer> body = new HashMap<>();
-		body.put("qty", quantity);
-		return put(uri, body);
-	}
-
-	/**
-	 * @param parentPartId
-	 * @param childPartId
-	 * @return
-	 * @throws JsonProcessingException
-	 * @throws DataAccessResourceFailureException
-	 */
-	public Response removePartFromBom(Long parentPartId, Long childPartId) throws JsonProcessingException {
-		URI uri = uriTmplRemovePartFromBom.expand(parentPartId, childPartId);
-		return delete(uri);
-	}
+        private Long altHeaderId;
+
+        private GetPartResponse[] parts;
+
+        public Long getHeaderId() {
+            return altHeaderId;
+        }
+
+        public void setHeaderId(Long headerId) {
+            this.altHeaderId = headerId;
+        }
+
+        public GetPartResponse[] getParts() {
+            return parts;
+        }
+
+        public void setParts(GetPartResponse[] parts) {
+            this.parts = parts;
+        }
+
+    }
+
+    public static class CreateAltBomResponse extends Response {
+
+        private Long altHeaderId;
+
+        public Long getAltHeaderId() {
+            return altHeaderId;
+        }
+
+        public void setAltHeaderId(Long altHeaderId) {
+            this.altHeaderId = altHeaderId;
+        }
+
+    };
+
+    @PostConstruct
+    public void init() {
+        headers = new HttpHeaders();
+        headers.setContentType(APPLICATION_JSON);
+        uriTmplGetPartById = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/parts/{id}");
+        uriTmplGetInterchageById = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/interchanges/{id}");
+        uriTmplGetInterchageForPart = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost
+                + ":" + restArangoDbServicePort + "/parts/{partId}/interchanges");
+        uriTmplLeaveGroup = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/interchanges/{partId}/leave_group");
+        uriTmplMergePickedAllToPart = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost
+                + ":" + restArangoDbServicePort + "/interchanges/{partId}/merge_group/{pickedPartId}/all");
+        uriTmplMovePartToOtherGroup = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost
+                + ":" + restArangoDbServicePort + "/interchanges/{partId}/merge_group/{pickedPartId}");
+        uriTmplGetAncestors = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/parts/{partId}/ancestors");
+        uriTmplGetBoms = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/parts/{partId}/boms");
+        uriTmplModifyBom = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/boms/{parentPartId}/descendant/{descendantPartId}");
+        uriTmplRemovePartFromBom = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/boms/{parentPartId}/descendant/{descendantPartId}");
+        uriTmplGetParentBoms = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/parts/{partId}/boms/parents");
+        uriTmplGetAltBoms = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/boms/{parentPartId}/children/{childPartId}/alternatives");
+        uriTmplCreateAltBom = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/boms/{parentPartId}/children/{childPartId}/alternatives/parts/{partId}");
+    }
+
+    /**
+     * Check response from ArangoDb server.
+     *
+     * If response signals that call to a GraphDb service was not successful the
+     * exception is thrown.
+     *
+     * @param response
+     * @throws DataAccessResourceFailureException
+     */
+    public static void checkSuccess(Response response) throws DataAccessResourceFailureException {
+        if (!response.isSuccess()) {
+            throw new DataAccessResourceFailureException(response.getMsg());
+        }
+    }
+
+    /**
+     * A general method to do GET request to a GraphDb service.
+     *
+     * The method also do check of response and if it is not successful an
+     * exception is thrown.
+     *
+     * @param uri
+     * @param responseClazz
+     * @return
+     * @throws DataAccessResourceFailureException
+     */
+    private <T extends Response> T get(URI uri, Class<T> responseClazz) {
+        T response = restArangoDbService.getForObject(uri, responseClazz);
+        // checkSuccess(response);
+        return response;
+    }
+
+    private <T extends Response> T exchange(URI uri, HttpMethod method, Object body, Class<T> responseClazz)
+            throws JsonProcessingException {
+        HttpEntity<String> requestEntity = null;
+        if (body != null) {
+            String s = jsonSerializer.writeValueAsString(body);
+            requestEntity = new HttpEntity<>(s, headers);
+        }
+        ResponseEntity<T> responseEntity = restArangoDbService.exchange(uri, method, requestEntity, responseClazz);
+        T response = responseEntity.getBody();
+        return response;
+    }
+
+    private <T extends Response> T post(URI uri, Object body, Class<T> responseClazz) throws JsonProcessingException {
+        return exchange(uri, POST, body, responseClazz);
+    }
+
+    private Response post(URI uri, Object body) throws JsonProcessingException {
+        return post(uri, body, Response.class);
+    }
+
+    private <T extends Response> T put(URI uri, Object body, Class<T> responseClazz) throws JsonProcessingException {
+        return exchange(uri, PUT, body, responseClazz);
+    }
+
+    private <T extends Response> T put(URI uri, Class<T> responseClazz) throws JsonProcessingException {
+        return put(uri, null, responseClazz);
+    }
+
+    private Response put(URI uri, Object body) throws JsonProcessingException {
+        return put(uri, body, Response.class);
+    }
+
+    private <T extends Response> T delete(URI uri, Object body, Class<T> responseClazz) throws JsonProcessingException {
+        return exchange(uri, DELETE, body, responseClazz);
+    }
+
+    private <T extends Response> T delete(URI uri, Class<T> responseClazz) throws JsonProcessingException {
+        return delete(uri, null, responseClazz);
+    }
+
+    private Response delete(URI uri) throws JsonProcessingException {
+        return delete(uri, Response.class);
+    }
+
+    public GetPartResponse findPartById(Long id) {
+        URI uri = uriTmplGetPartById.expand(id);
+        return get(uri, GetPartResponse.class);
+    }
+
+    public GetInterchangeResponse findInterchangeById(Long id) {
+        URI uri = uriTmplGetInterchageById.expand(id);
+        return get(uri, GetInterchangeResponse.class);
+    }
+
+    public GetInterchangeResponse findInterchangeForPart(Long partId) {
+        URI uri = uriTmplGetInterchageForPart.expand(partId);
+        return get(uri, GetInterchangeResponse.class);
+    }
+
+    public MigrateInterchangeResponse leaveInterchangeableGroup(Long partId) throws JsonProcessingException {
+        URI uri = uriTmplLeaveGroup.expand(partId);
+        return put(uri, MigrateInterchangeResponse.class);
+    }
+
+    public MigrateInterchangeResponse moveGroupToOtherInterchangeableGroup(Long srcPartId, Long trgPartId)
+            throws JsonProcessingException {
+        return migrateInterchange(uriTmplMergePickedAllToPart, trgPartId, srcPartId);
+    }
+
+    public MigrateInterchangeResponse movePartToOtherInterchangeGroup(Long srcPartId, Long trgPartId)
+            throws JsonProcessingException {
+        return migrateInterchange(uriTmplMovePartToOtherGroup, trgPartId, srcPartId);
+    }
+
+    private MigrateInterchangeResponse migrateInterchange(UriTemplate uriTmpl, Long... partIds)
+            throws JsonProcessingException {
+        URI uri;
+        int n = partIds.length;
+        switch (n) {
+        case 1:
+            uri = uriTmpl.expand(partIds[0]);
+            break;
+        case 2:
+            uri = uriTmpl.expand(partIds[0], partIds[1]);
+            break;
+        default:
+            throw new IllegalArgumentException("Unexpected number of optional arguments: " + n);
+        }
+        return put(uri, MigrateInterchangeResponse.class);
+    }
+
+    public GetAncestorsResponse getAncestors(Long partId) {
+        URI uri = uriTmplGetAncestors.expand(partId);
+        GetAncestorsResponse.Row[] rows = restArangoDbService.getForObject(uri, GetAncestorsResponse.Row[].class);
+        return new GetAncestorsResponse(rows);
+    }
+
+    public GetBomsResponse getBoms(Long partId) {
+        URI uri = uriTmplGetBoms.expand(partId);
+        GetBomsResponse.Row[] rows = restArangoDbService.getForObject(uri, GetBomsResponse.Row[].class);
+        return new GetBomsResponse(rows);
+    }
+
+    public GetBomsResponse getParentsBoms(Long partId) {
+        URI uri = uriTmplGetParentBoms.expand(partId);
+        GetBomsResponse.Row[] rows = restArangoDbService.getForObject(uri, GetBomsResponse.Row[].class);
+        return new GetBomsResponse(rows);
+    }
+
+    /**
+     * Button on the UI "Add Child".
+     *
+     * @return
+     * @throws JsonProcessingException
+     * @throws DataAccessResourceFailureException
+     */
+    public Response addPartToBom(Long parentPartId, Long childPartId, Integer quantity) throws JsonProcessingException {
+        URI uri = uriTmplModifyBom.expand(parentPartId, childPartId);
+        Map<String, Integer> body = new HashMap<>();
+        body.put("qty", quantity);
+        return post(uri, body);
+    }
+
+    /**
+     * @return
+     * @throws JsonProcessingException
+     * @throws DataAccessResourceFailureException
+     */
+    public Response modifyPartInBom(Long parentPartId, Long childPartId, Integer quantity)
+            throws JsonProcessingException {
+        URI uri = uriTmplModifyBom.expand(parentPartId, childPartId);
+        Map<String, Integer> body = new HashMap<>();
+        body.put("qty", quantity);
+        return put(uri, body);
+    }
+
+    /**
+     * @param parentPartId
+     * @param childPartId
+     * @return
+     * @throws JsonProcessingException
+     * @throws DataAccessResourceFailureException
+     */
+    public Response removePartFromBom(Long parentPartId, Long childPartId) throws JsonProcessingException {
+        URI uri = uriTmplRemovePartFromBom.expand(parentPartId, childPartId);
+        return delete(uri);
+    }
+
+    public GetAltBomsResponse getAltBoms(Long parentPartId, Long childPartId) {
+        URI uri = uriTmplGetAltBoms.expand(parentPartId, childPartId);
+        return get(uri, GetAltBomsResponse.class);
+    }
+
+    public CreateAltBomResponse createAltBom(Long parentPartId, Long childPartId, Long partId)
+            throws JsonProcessingException {
+        URI uri = uriTmplCreateAltBom.expand(parentPartId, childPartId, partId);
+        Map<String, Long> body = new HashMap<>();
+        body.put("altHeaderId", null);
+        return post(uri, body, CreateAltBomResponse.class);
+    }
 
 }

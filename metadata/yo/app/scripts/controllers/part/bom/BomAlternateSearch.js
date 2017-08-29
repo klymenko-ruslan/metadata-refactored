@@ -1,30 +1,35 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('BomAlternateSearchCtrl', function ($log, $scope, $location, $routeParams, BOM, restService, dialogs, toastr) {
+    .controller('BomAlternateSearchCtrl', function ($log, $scope, $location, $routeParams, NgTableParams, utils, 
+      restService, dialogs, toastr, partTypes, part, bom, altBom)
+    {
         $scope.restService = restService;
+        $scope.partTypes = partTypes;
+        $scope.part = part;
         $scope.partId = $routeParams.id;
         $scope.bomItemId = $routeParams.bomId;
 
         $scope.pickedPart = null;
-        $scope.showPickedPart = false;
 
-        // The part whose bom we're editing
-        $scope.part = restService.findPart($scope.partId).then(
-            function (parentPart) {
-                $scope.part = parentPart;
-            }, restService.error);
+        $scope.bomTableParams = new NgTableParams({
+            page: 1,
+            count: 10
+          }, {
+            getData: utils.localPagination(bom, 'partNumber')
+          }
+        );
 
-        BOM.listByParentPartId($scope.partId)
-            .then(function(bom) {
-                $scope.bom = bom;
-                $scope.bomItem = _.find(bom, function(bomItem) {
-                    return bomItem.id === $scope.bomItemId;
-                });
-            }, restService.error);
+        $scope.altBomTableParams = new NgTableParams({
+            page: 1,
+            count: 10
+          }, {
+            getData: utils.localPagination(altBom, 'partNumber')
+          }
+        );
 
         $scope.save = function () {
-          restService.createBomAlternative($scope.bomItem.id, $scope.pickedPart.id, $scope.header).then(
+          restService.createBomAlternative($scope.bomItem.id, $scope.pickedPart.id).then(
             function success() {
               toastr.success('BOM alternate added.');
               $location.path('/part/' + $scope.partId);
@@ -44,4 +49,5 @@ angular.module('ngMetaCrudApp')
                     restService.error('Could not pick part.', errorResponse);
                 });
         };
+        
     });

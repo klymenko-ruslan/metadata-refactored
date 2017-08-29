@@ -23,7 +23,9 @@ import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsRequest;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsResponse;
 import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.AltBom;
 import com.turbointernational.metadata.web.dto.Bom;
+import com.turbointernational.metadata.web.dto.Part;
 
 @RequestMapping("/metadata/bom")
 @Controller
@@ -96,6 +98,15 @@ public class BOMController {
     public Bom[] delete(@PathVariable("parentPartId") Long parentPartId, @PathVariable("childPartId") Long childPartId)
             throws Exception {
         return bomService.delete(parentPartId, childPartId);
+    }
+
+    @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_BOM")
+    public Part[] getAlternatives(@PathVariable("parentPartId") Long parentPartId,
+            @PathVariable("childPartId") Long childPartId) {
+         AltBom alternatives = bomService.getAlternatives(parentPartId, childPartId);
+         return alternatives.getParts();
     }
 
 }

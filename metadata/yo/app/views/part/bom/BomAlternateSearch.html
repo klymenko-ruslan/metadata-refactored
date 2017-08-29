@@ -1,19 +1,19 @@
 <metanav>
   <li>
     <a data-ng-href="/part/{{ partId }}"
-       class="btn btn-primary">
+       class="btn btn-primary btn-lg">
       <i class="fa fa-eye"></i>
       View Part
     </a>
   </li>
 
   <li>
-    <a data-ng-click="save()"
+    <button data-ng-click="save()"
        data-ng-disabled="!pickedPart || !bomItem"
-       class="btn btn-success">
+       class="btn btn-success btn-lg">
       <i class="fa fa-save"></i>
       Add Alternate
-    </a>
+    </button>
   </li>
 </metanav>
 
@@ -24,7 +24,18 @@
   <!-- Bill of Materials -->
   <div class="col-xs-6">
     <h3>Part BOM</h3>
-    <part-table parts="bom" key="child"></part-table>
+    <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
+      <tr data-ng-repeat="b in $data">
+        <td title="'Part Type'" data-sortable="'partType.name'">{{b.partType.name}}</td>
+        <td title="'Manufacturer'" data-sortable="'manufacturer.name'">{{b.manufacturer.name}}</td>
+        <td title="'Part#'" class="text-nowrap" data-sortable="'partNumber'">
+          <a data-ng-href="/part/{{ab.partId}}">{{b.partNumber}}</a>
+        </td>
+      </tr>
+      <tr data-ng-hide="$data.length > 0">
+        <td colspan="3">No parts to display.</td>
+      </tr>
+    </table>
   </div>
 
   <!-- BOM Item -->
@@ -39,7 +50,18 @@
   <!-- Current Alternates -->
   <div class="col-xs-6">
     <h3>Current Alternates</h3>
-    <part-table parts="bomItem.alternatives" key="part" extra-columns="{&quot;Alt Group #&quot;: &quot;item.header.id&quot;}"></part-table>
+    <table data-ng-table="altBomTableParams" class="table table-bordered table-striped table-hover table-responsive">
+      <tr data-ng-repeat="ab in $data">
+        <td title="'Part Type'" data-sortable="'partType.name'">{{ab.partType.name}}</td>
+        <td title="'Manufacturer'" data-sortable="'manufacturer.name'">{{ab.manufacturer.name}}</td>
+        <td title="'Part#'" class="text-nowrap" data-sortable="'partNumber'">
+          <a data-ng-href="/part/{{ab.partId}}">{{ab.partNumber}}</a>
+        </td>
+      </tr>
+      <tr data-ng-hide="$data.length > 0">
+        <td colspan="3">No parts to display.</td>
+      </tr>
+    </table>
   </div>
 
   <!-- Picked Alternate -->
@@ -56,17 +78,17 @@
 
 <hr/>
 
-<part-search class="well well-lg">
+<part-search>
 
   <a authorize="ROLE_READ"
-     data-ng-href="/part/{{partId}}"
+     data-ng-href="/part/{{$part._source.id}}"
      class="btn btn-primary btn-xs">
     <i class="fa fa-eye"></i>
     View
   </a>
 
   <a authorize="ROLE_BOM"
-     data-ng-click="pickPart(partId)"
+     data-ng-click="pickPart($part._source.id)"
      class="btn btn-success btn-xs">
     <i class="fa fa-bullseye"></i>
     Pick

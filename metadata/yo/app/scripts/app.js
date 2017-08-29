@@ -221,12 +221,21 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         }]
       }
     });
-    $routeProvider.when('/part/:id/bom/:bomId/search', {
+    $routeProvider.when('/part/:id/bom/:childId/search', {
       templateUrl: 'views/part/bom/BomAlternateSearch.html',
       controller: 'BomAlternateSearchCtrl',
       resolve: {
         partTypes: ['restService', function(restService) {
           return restService.listPartTypes();
+        }],
+        part: ['$route', 'restService', function($route, restService) {
+          return restService.findPart($route.current.pathParams.id);
+        }],
+        bom: ['$route', 'BOM', 'restService', function($route, BOM, restService) {
+          return BOM.listByParentPartId($route.current.pathParams.id);
+        }],
+        altBom: ['$route', 'restService', function(restService) {
+          return restService.getBomAlternatives($route.current.pathParams.id, $route.current.pathParams.childId);
         }]
       }
     });

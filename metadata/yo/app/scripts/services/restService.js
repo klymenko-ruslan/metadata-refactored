@@ -29,9 +29,15 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('bom', parentPartId).post('descendant/' + childPartId, null, {quantity: quantity});
       };
 
-      this.createBomAlternative = function(bomItemId, pickedPartId, hdr) {
-        return Restangular.one('bom/' + bomItemId + '/alt')
-                  .post(pickedPartId, {header: hdr});
+      this.getBomAlternatives = function(parentPartId, childPartId) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom', parentPartId).one('descendant', childPartId).getList('alternatives');
+      }
+
+      this.createBomAlternative = function(parentPartId, childPartId, pickedPartId) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom', parentPartId).one('descendant', childPartId).one('alternatives', pickedPartId)
+          .post();
       };
 
       this.removeBomAlternative = function(altBomItemId, altItemId) {

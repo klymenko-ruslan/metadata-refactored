@@ -9,8 +9,9 @@ angular.module('ngMetaCrudApp')
       templateUrl: '/views/component/bom.html',
       restrict: 'E',
       link: function postLink() {},
-      controller: ['dialogs', '$scope', '$q', '$parse', 'BOM', 'NgTableParams', 'toastr', 'utils', 'restService',
-        function(dialogs, $scope, $q, $parse, BOM, NgTableParams, toastr, utils, restService) {
+      controller: ['dialogs', '$scope', '$log', '$q', '$parse', 'BOM', 'NgTableParams', 'toastr', 'utils',
+          'restService', function(dialogs, $scope, $log, $q, $parse, BOM, NgTableParams, toastr, utils, restService)
+        {
           $scope.restService = restService;
 
           $scope.bomTableParams = new NgTableParams({
@@ -31,7 +32,7 @@ angular.module('ngMetaCrudApp')
                   page: 1,
                   count: 10
                 }, {
-                  getData: utils.localPagination($scope.bom, 'child.manufacturerPartNumber')
+                  getData: utils.localPagination($scope.bom, 'partNumber')
                 });
               },
               function failure(response) {
@@ -80,6 +81,7 @@ angular.module('ngMetaCrudApp')
                     $scope.bomTableParams.reload();
                     // Clear the alt bom item
                     $scope.altBomItem = null;
+                    $scope.altBomTableParams = null;
                     toastr.success('Child part removed from BOM.');
                   },
                   function failure(response) {
@@ -90,7 +92,9 @@ angular.module('ngMetaCrudApp')
             );
           };
 
-          $scope.removeAlternate = function(index, altItem) {
+          $scope.removeAlternate = function(partId) {
+            alert('Under development.');
+            /*
             dialogs.confirm(
               'Remove alternate item?',
               'This will remove the alternate part from this BOM item.').result.then(
@@ -106,17 +110,30 @@ angular.module('ngMetaCrudApp')
                   }
                 );
               });
+              */
           };
 
           // The BOM item whose alternates we're showing.
           $scope.altBomItem = null;
+          $scope.altBomTableParams = null;
 
           $scope.showAlternates = function(b) {
-            $scope.altBomItem = b;
-          };
-
-          $scope.hideAlternates = function() {
-            $scope.altBomItem = null;
+            restService.getBomAlternatives($scope.parentPartId, b.partId).then(
+              function success(alternatives) {
+                $scope.altBomTableParams = new NgTableParams({
+                  page: 1,
+                  count: 10
+                }, {
+                  getData: utils.localPagination(alternatives, 'partNumber')
+                });
+                $scope.altBomItem = b;
+              },
+              function failure(response) {
+                $scope.altBomItem = null;
+                $scope.altBomTableParams = null;
+                restService.error('Can\'t retrive a list of alternative BOMs.', response);
+              }
+            );
           };
 
         }

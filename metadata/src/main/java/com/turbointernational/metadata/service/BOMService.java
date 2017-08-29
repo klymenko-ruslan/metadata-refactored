@@ -30,10 +30,13 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.service.ArangoDbConnectorService.CreateAltBomResponse;
+import com.turbointernational.metadata.service.ArangoDbConnectorService.GetAltBomsResponse;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.GetBomsResponse;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.Response;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.AltBom;
 import com.turbointernational.metadata.web.dto.Bom;
 
 /**
@@ -549,6 +552,16 @@ public class BOMService {
         // Return list of BOMs after this delete operation.
         GetBomsResponse bomsResponse = arangoDbConnector.getBoms(parentPartId);
         return Bom.from(bomsResponse.getRows());
+    }
+
+    public AltBom getAlternatives(Long parentPartId, Long childPartId) {
+        GetAltBomsResponse altBomsResponse = arangoDbConnector.getAltBoms(parentPartId, childPartId);
+        return AltBom.from(altBomsResponse);
+    }
+
+    public Long createAltBom(Long parentPartId, Long childPartId, Long partId) throws JsonProcessingException {
+        CreateAltBomResponse response = arangoDbConnector.createAltBom(parentPartId, childPartId, partId);
+        return response.getAltHeaderId();
     }
 
 }

@@ -2,7 +2,6 @@ package com.turbointernational.metadata.util;
 
 import static org.apache.commons.lang.StringUtils.abbreviate;
 
-import com.turbointernational.metadata.entity.BOMAlternative;
 import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.CarModelEngineYear;
 import com.turbointernational.metadata.entity.CarYear;
@@ -96,13 +95,11 @@ public class FormatUtils {
     }
 
     public static String formatBom(Part parentPart, Part childPart) {
-        return String.format("(PRNT:%s, CHLD:%s)", formatPart(parentPart),
-                formatPart(childPart));
+        return String.format("(PRNT:%s, CHLD:%s)", formatPart(parentPart), formatPart(childPart));
     }
 
     public static String formatBom(Part parentPart, Part childPart, Integer qty) {
-        return String.format("(PRNT:%s, CHLD:%s, QTY:%d)", formatPart(parentPart),
-                formatPart(childPart), qty);
+        return String.format("(PRNT:%s, CHLD:%s, QTY:%d)", formatPart(parentPart), formatPart(childPart), qty);
     }
 
     public static String formatBom(Part parentPart, GetBomsResponse.Row bom) {
@@ -133,14 +130,8 @@ public class FormatUtils {
         }
     }
 
-    public static String formatBOMAlternative(BOMAlternative bomAlternative) {
-        if (bomAlternative == null) {
-            return "null";
-        } else {
-            Long id = bomAlternative.getId();
-            Part part = bomAlternative.getPart();
-            return "[" + id + "] - PRT: " + formatPart(part);
-        }
+    public static String formatBOMAlternative(Long parentPartId, Long childPartId, Long altPartId) {
+        return "[" + parentPartId + ", " + childPartId + ", " + altPartId + "]";
     }
 
 }
