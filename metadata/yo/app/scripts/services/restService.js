@@ -612,10 +612,6 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('other/turboModel', tmId).remove();
       };
 
-      this.findInterchange = function(id) {
-        return Restangular.one('interchange', id).get();
-      };
-
       this.updatePartInterchange = function(partId, pickedPartId, mergeChoice, sourcesIds, ratings, description, attachIds) {
         Restangular.setParentless(false);
         var req = {

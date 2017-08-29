@@ -43,7 +43,6 @@ import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.GetAncestorsResponse;
-import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.InterchangeService;
 import com.turbointernational.metadata.service.PartService;
 import com.turbointernational.metadata.service.PriceService;
@@ -61,9 +60,6 @@ public class PartController {
 
     @Autowired
     private PartService partService;
-
-    @Autowired
-    private BOMService bomService;
 
     @Autowired
     private PriceService priceService;

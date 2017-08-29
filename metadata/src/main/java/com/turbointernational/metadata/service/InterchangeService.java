@@ -69,6 +69,14 @@ public class InterchangeService {
         return findForPart(part.getId());
     }
 
+    /**
+     * Get interchange for a part.
+     *
+     * Returned interchange contains all parts except this one.
+     *
+     * @param partId
+     * @return return interchange for a part.
+     */
     public Interchange findForPart(Long partId) {
         GetInterchangeResponse response = arangoDbConnector.findInterchangeForPart(partId);
         return Interchange.from(response);
@@ -95,7 +103,7 @@ public class InterchangeService {
         checkSuccess(response);
         Long headerId = response.getNewHeaderId();
         Interchange interchange = findById(headerId);
-        List<RelatedPart> relatedParts = new ArrayList<>(1);
+        List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(asInterchangePartId, ChangelogPart.Role.PART1));
         changelogService.log(INTERCHANGE, "Created interchange: " + formatInterchange(interchange) + ".",

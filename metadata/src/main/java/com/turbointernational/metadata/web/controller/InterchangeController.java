@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.service.InterchangeService;
 import com.turbointernational.metadata.util.View;
-import com.turbointernational.metadata.web.dto.Interchange;
 
 @RequestMapping("/metadata/interchange")
 @Controller
@@ -239,15 +237,6 @@ public class InterchangeController {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-    }
-
-    @ResponseBody
-    // Commented as fix for #536. @Secured("ROLE_INTERCHANGE")
-    @Secured("ROLE_READ") // Ticket #536.
-    @JsonView({ View.SummaryWithInterchangeParts.class })
-    @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Interchange get(@PathVariable("id") long interchangeId) {
-        return interchangeService.findById(interchangeId);
     }
 
     @Transactional
