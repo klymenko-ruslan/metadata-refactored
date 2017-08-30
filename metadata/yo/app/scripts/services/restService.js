@@ -36,8 +36,8 @@ angular.module('ngMetaCrudApp')
 
       this.createBomAlternative = function(parentPartId, childPartId, altHeaderId, pickedPartId) {
         Restangular.setParentless(false);
-        return Restangular.one('bom', parentPartId).one('descendant', childPartId).one('alternatives', pickedPartId)
-          .one('headers', altHeaderId).post();
+        return Restangular.one('bom', parentPartId).one('descendant', childPartId).all('alternatives/' + pickedPartId)
+          .post({'altHeaderId': altHeaderId});
       };
 
       this.removeBomAlternative = function(altHeaderId, partId) {

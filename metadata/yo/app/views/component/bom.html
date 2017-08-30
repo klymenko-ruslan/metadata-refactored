@@ -94,7 +94,7 @@
         </td>
         <td title="'Header Id'" data-sortable="'altHeaderId'" class="text-right">{{ab.altHeaderId | number:0}}</td>
         <td title="'Actions'" class="actions">
-          <button data-ng-click="removeAlternate(ab.partId)" authorize="ROLE_BOM_ALT" class="btn btn-danger btn-xs">
+          <button data-ng-click="removeAlternate(ab.altHeaderId, ab.partId)" authorize="ROLE_BOM_ALT" class="btn btn-danger btn-xs">
             <i class="fa fa-trash-o"></i> Remove
           </button>
         </td>

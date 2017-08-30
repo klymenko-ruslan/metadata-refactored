@@ -12,6 +12,8 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessResourceFailureException;
@@ -38,6 +40,8 @@ import com.turbointernational.metadata.web.dto.PartType;
  */
 @Service
 public class ArangoDbConnectorService {
+	
+	private final static Logger log = LoggerFactory.getLogger(ArangoDbConnectorService.class);
 
     @Value("${rest.arangodb.service.protocol}")
     private String restArangoDbServiceProtocol;
@@ -612,6 +616,7 @@ public class ArangoDbConnectorService {
      */
     public static void checkSuccess(Response response) throws DataAccessResourceFailureException {
         if (!response.isSuccess()) {
+            log.warn("Call to GraphDb searvice returns an error: " + response.getMsg());
             throw new DataAccessResourceFailureException(response.getMsg());
         }
     }
