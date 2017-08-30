@@ -8,7 +8,7 @@ angular.module('ngMetaCrudApp')
       templateUrl: '/views/component/PartSearch.html',
       transclude: true,
       link: function(scope, element, attrs) {
-        if (attrs.fltrInitManufacturer != undefined && attrs.fltrInitManufacturer != null && attrs.fltrInitManufacturer != "") {
+        if (attrs.fltrInitManufacturer !== undefined && attrs.fltrInitManufacturer !== null && attrs.fltrInitManufacturer !== '') {
           scope.fltrPart.manufacturer = attrs.fltrInitManufacturer;
         }
       },

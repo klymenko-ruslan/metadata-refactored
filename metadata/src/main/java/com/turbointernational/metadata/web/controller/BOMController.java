@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.service.ArangoDbConnectorService.CreateAltBomResponse;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.GetBomsResponse.Row;
 import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsRequest;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsResponse;
 import com.turbointernational.metadata.util.View;
-import com.turbointernational.metadata.web.dto.AltBom;
 import com.turbointernational.metadata.web.dto.Bom;
-import com.turbointernational.metadata.web.dto.Part;
+import com.turbointernational.metadata.web.dto.PartGroup;
 
 @RequestMapping("/metadata/bom")
 @Controller
@@ -103,10 +103,28 @@ public class BOMController {
     @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_BOM")
-    public Part[] getAlternatives(@PathVariable("parentPartId") Long parentPartId,
+    public PartGroup[] getAlternatives(@PathVariable("parentPartId") Long parentPartId,
             @PathVariable("childPartId") Long childPartId) {
-         AltBom alternatives = bomService.getAlternatives(parentPartId, childPartId);
-         return alternatives.getParts();
+        return bomService.getAlternatives(parentPartId, childPartId);
+    }
+
+    @Secured("ROLE_BOM_ALT")
+    @ResponseBody
+    @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives/{altPartId}/headers/{altHeaderId}", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public Long createBomAlternative(@PathVariable("parentPartId") Long parentPartId,
+            @PathVariable("childPartId") Long childPartId, @PathVariable("altHeaderId") Long altHeaderId,
+            @PathVariable("altPartId") Long altPartId) throws Exception {
+        CreateAltBomResponse response = bomService.createAltBom(parentPartId, childPartId, altHeaderId, altPartId);
+        Long altBomId = response.getAltHeaderId();
+        return altBomId;
+    }
+
+    @Secured("ROLE_BOM_ALT")
+    @ResponseBody
+    @RequestMapping(value = "/alternatives/{altPartId}/headers/{altHeaderId}", method = DELETE, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public PartGroup[] removePartFromAltBom(@PathVariable("altHeaderId") Long altHeaderId,
+            @PathVariable("altPartId") Long altPartId) throws Exception {
+        return bomService.deleteAltBom(altHeaderId, altPartId);
     }
 
 }

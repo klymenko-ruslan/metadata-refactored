@@ -92,17 +92,29 @@ angular.module('ngMetaCrudApp')
             );
           };
 
-          $scope.removeAlternate = function(partId) {
-            alert('Under development.');
-            /*
+          $scope.removeAlternate = function(headerId, partId) {
             dialogs.confirm(
               'Remove alternate item?',
               'This will remove the alternate part from this BOM item.').result.then(
               function() {
-                restService.removeBomAlternative($scope.altBomItem.id, altItem.id).then(
-                  function success() {
-                    // TODO: replace splice below by returned alternatives
-                    $scope.altBomItem.alternatives.splice(index, 1);
+                restService.removeBomAlternative(headerId, partId).then(
+                  function success(partGroups) {
+                    // TODO: move out to a function
+                    var alternatives = [];
+                    _.each(partGroups, function(pg) {
+                      var grpId = pg.id;
+                      var parts = pg.parts;
+                      _.each(parts, function(p) {
+                         p['altHeaderId'] = grpId;
+                         alternatives.push(p);
+                      });
+                    });
+                    $scope.altBomTableParams = new NgTableParams({
+                      page: 1,
+                      count: 10
+                    }, {
+                      getData: utils.localPagination(alternatives, 'partNumber')
+                    });
                     toastr.success('BOM alternate removed.');
                   },
                   function failure(response) {
@@ -110,7 +122,6 @@ angular.module('ngMetaCrudApp')
                   }
                 );
               });
-              */
           };
 
           // The BOM item whose alternates we're showing.
@@ -119,7 +130,17 @@ angular.module('ngMetaCrudApp')
 
           $scope.showAlternates = function(b) {
             restService.getBomAlternatives($scope.parentPartId, b.partId).then(
-              function success(alternatives) {
+              function success(partGroups) {
+                // TODO: move out to a function
+                var alternatives = [];
+                _.each(partGroups, function(pg) {
+                  var grpId = pg.id;
+                  var parts = pg.parts;
+                  _.each(parts, function(p) {
+                    p['altHeaderId'] = grpId;
+                    alternatives.push(p);
+                  });
+                });
                 $scope.altBomTableParams = new NgTableParams({
                   page: 1,
                   count: 10

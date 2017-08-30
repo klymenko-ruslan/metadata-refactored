@@ -9,7 +9,7 @@
 
   <li>
     <button data-ng-click="save()"
-       data-ng-disabled="!pickedPart || !bomItem"
+       data-ng-disabled="!pickedPart"
        class="btn btn-success btn-lg">
       <i class="fa fa-save"></i>
       Add Alternate
@@ -29,7 +29,7 @@
         <td title="'Part Type'" data-sortable="'partType.name'">{{b.partType.name}}</td>
         <td title="'Manufacturer'" data-sortable="'manufacturer.name'">{{b.manufacturer.name}}</td>
         <td title="'Part#'" class="text-nowrap" data-sortable="'partNumber'">
-          <a data-ng-href="/part/{{ab.partId}}">{{b.partNumber}}</a>
+          <a data-ng-href="/part/{{b.partId}}">{{b.partNumber}}</a>
         </td>
       </tr>
       <tr data-ng-hide="$data.length > 0">
@@ -38,10 +38,9 @@
     </table>
   </div>
 
-  <!-- BOM Item -->
   <div class="col-xs-6">
     <h3>BOM Item</h3>
-    <part-summary part="bomItem.child"></part-summary>
+    <part-summary part="selectedBom"></part-summary>
   </div>
 </div>
 
@@ -57,9 +56,10 @@
         <td title="'Part#'" class="text-nowrap" data-sortable="'partNumber'">
           <a data-ng-href="/part/{{ab.partId}}">{{ab.partNumber}}</a>
         </td>
+        <td title="'Header Id'" data-sortable="'altHeaderId'" class="text-right">{{ab.altHeaderId | number:0}}</td>
       </tr>
       <tr data-ng-hide="$data.length > 0">
-        <td colspan="3">No parts to display.</td>
+        <td colspan="4">No parts to display.</td>
       </tr>
     </table>
   </div>

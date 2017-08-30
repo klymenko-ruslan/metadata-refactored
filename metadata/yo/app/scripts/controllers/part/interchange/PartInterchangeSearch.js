@@ -111,6 +111,7 @@ angular.module('ngMetaCrudApp')
       );
     }
 
+    /* Unused
     function cbMergeAloneToPicked(srcIds, ratings, description, attachIds) {
       // Add this part to the picked part's interchange
       restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, MERGE_OPTIONS.PART_ALONE_TO_PICKED,
@@ -124,6 +125,7 @@ angular.module('ngMetaCrudApp')
         }
       );
     }
+    */
 
     $scope.save = function() {
       if (!$scope.pickedPart.interchange || $scope.pickedPart.interchange.alone) {

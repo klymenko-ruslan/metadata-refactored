@@ -4,6 +4,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.BOM;
 import static com.turbointernational.metadata.service.ArangoDbConnectorService.checkSuccess;
 import static com.turbointernational.metadata.service.BOMService.AddToParentBOMsRequest.ResolutionEnum.REPLACE;
+import static com.turbointernational.metadata.util.FormatUtils.formatBOMAlternative;
 import static com.turbointernational.metadata.util.FormatUtils.formatBom;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -31,13 +33,14 @@ import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.CreateAltBomResponse;
+import com.turbointernational.metadata.service.ArangoDbConnectorService.DeleteAltBomResponse;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.GetAltBomsResponse;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.GetBomsResponse;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.Response;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.util.View;
-import com.turbointernational.metadata.web.dto.AltBom;
 import com.turbointernational.metadata.web.dto.Bom;
+import com.turbointernational.metadata.web.dto.PartGroup;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2016-02-18.
@@ -554,14 +557,40 @@ public class BOMService {
         return Bom.from(bomsResponse.getRows());
     }
 
-    public AltBom getAlternatives(Long parentPartId, Long childPartId) {
-        GetAltBomsResponse altBomsResponse = arangoDbConnector.getAltBoms(parentPartId, childPartId);
-        return AltBom.from(altBomsResponse);
+    public PartGroup[] getAlternatives(Long parentPartId, Long childPartId) {
+        GetAltBomsResponse.Group[] response = arangoDbConnector.getAltBoms(parentPartId, childPartId);
+        return PartGroup.from(response);
     }
 
-    public Long createAltBom(Long parentPartId, Long childPartId, Long partId) throws JsonProcessingException {
-        CreateAltBomResponse response = arangoDbConnector.createAltBom(parentPartId, childPartId, partId);
-        return response.getAltHeaderId();
+    @Transactional
+    public CreateAltBomResponse createAltBom(Long parentPartId, Long childPartId, Long altHeaderId, Long altPartId)
+            throws JsonProcessingException {
+        CreateAltBomResponse response = arangoDbConnector.createAltBom(parentPartId, childPartId, altHeaderId,
+                altPartId);
+        checkSuccess(response);
+        // Update the changelog
+        List<RelatedPart> relatedParts = new ArrayList<>(3);
+        relatedParts.add(new RelatedPart(altPartId, ChangelogPart.Role.PART0));
+        relatedParts.add(new RelatedPart(parentPartId, ChangelogPart.Role.BOM_PARENT));
+        relatedParts.add(new RelatedPart(childPartId, ChangelogPart.Role.BOM_CHILD));
+        changelogService.log(BOM,
+                "Added bom alternative " + formatBOMAlternative(parentPartId, childPartId, altPartId) + ".",
+                relatedParts);
+        return response;
+    }
+
+    @Transactional
+    public PartGroup[] deleteAltBom(Long altHeaderId, Long altPartId)
+            throws JsonProcessingException {
+        DeleteAltBomResponse response = arangoDbConnector.deleteAltBom(altHeaderId, altPartId);
+        checkSuccess(response);
+        // Update the changelog
+        List<RelatedPart> relatedParts = new ArrayList<>(3);
+        relatedParts.add(new RelatedPart(altPartId, ChangelogPart.Role.PART0));
+        changelogService.log(BOM,
+                "Deleted part [" + altPartId + "] in an alternative page group [" + altHeaderId + "].",
+                relatedParts);
+        return PartGroup.from(response.getGroups());
     }
 
 }

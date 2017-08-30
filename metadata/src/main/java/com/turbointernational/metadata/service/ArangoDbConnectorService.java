@@ -82,6 +82,8 @@ public class ArangoDbConnectorService {
 
     private UriTemplate uriTmplCreateAltBom;
 
+    private UriTemplate uriTmplDeleteAltBom;
+
     public static class Response {
 
         private boolean success;
@@ -501,24 +503,38 @@ public class ArangoDbConnectorService {
 
     public static class GetAltBomsResponse extends Response {
 
-        private Long altHeaderId;
+        public static class Group {
 
-        private GetPartResponse[] parts;
+            private Long altHeaderId;
 
-        public Long getHeaderId() {
-            return altHeaderId;
+            public Long getAltHeaderId() {
+                return altHeaderId;
+            }
+
+            public void setAltHeaderId(Long headerId) {
+                this.altHeaderId = headerId;
+            }
+
+            private GetPartResponse[] parts;
+
+            public GetPartResponse[] getParts() {
+                return parts;
+            }
+
+            public void setParts(GetPartResponse[] parts) {
+                this.parts = parts;
+            }
+
         }
 
-        public void setHeaderId(Long headerId) {
-            this.altHeaderId = headerId;
+        private Group[] groups;
+
+        public Group[] getGroups() {
+            return groups;
         }
 
-        public GetPartResponse[] getParts() {
-            return parts;
-        }
-
-        public void setParts(GetPartResponse[] parts) {
-            this.parts = parts;
+        public void setGroups(Group[] groups) {
+            this.groups = groups;
         }
 
     }
@@ -536,6 +552,20 @@ public class ArangoDbConnectorService {
         }
 
     };
+
+    public static class DeleteAltBomResponse extends Response {
+
+        private GetAltBomsResponse.Group[] groups;
+
+        public GetAltBomsResponse.Group[] getGroups() {
+            return groups;
+        }
+
+        public void setGroups(GetAltBomsResponse.Group[] groups) {
+            this.groups = groups;
+        }
+
+    }
 
     @PostConstruct
     public void init() {
@@ -567,6 +597,8 @@ public class ArangoDbConnectorService {
                 + restArangoDbServicePort + "/boms/{parentPartId}/children/{childPartId}/alternatives");
         uriTmplCreateAltBom = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
                 + restArangoDbServicePort + "/boms/{parentPartId}/children/{childPartId}/alternatives/parts/{partId}");
+        uriTmplDeleteAltBom = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/boms/alternatives/{altHeaderId}/parts/{partId}");
     }
 
     /**
@@ -749,17 +781,22 @@ public class ArangoDbConnectorService {
         return delete(uri);
     }
 
-    public GetAltBomsResponse getAltBoms(Long parentPartId, Long childPartId) {
+    public GetAltBomsResponse.Group[] getAltBoms(Long parentPartId, Long childPartId) {
         URI uri = uriTmplGetAltBoms.expand(parentPartId, childPartId);
-        return get(uri, GetAltBomsResponse.class);
+        return restArangoDbService.getForObject(uri, GetAltBomsResponse.Group[].class);
     }
 
-    public CreateAltBomResponse createAltBom(Long parentPartId, Long childPartId, Long partId)
+    public CreateAltBomResponse createAltBom(Long parentPartId, Long childPartId, Long altHeaderId, Long altPartId)
             throws JsonProcessingException {
-        URI uri = uriTmplCreateAltBom.expand(parentPartId, childPartId, partId);
+        URI uri = uriTmplCreateAltBom.expand(parentPartId, childPartId, altPartId);
         Map<String, Long> body = new HashMap<>();
-        body.put("altHeaderId", null);
+        body.put("altHeaderId", altHeaderId);
         return post(uri, body, CreateAltBomResponse.class);
+    }
+
+    public DeleteAltBomResponse deleteAltBom(Long altHeaderId, Long altPartId) throws JsonProcessingException {
+        URI uri = uriTmplDeleteAltBom.expand(altHeaderId, altPartId);
+        return delete(uri, DeleteAltBomResponse.class);
     }
 
 }

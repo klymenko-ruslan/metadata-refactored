@@ -32,17 +32,17 @@ angular.module('ngMetaCrudApp')
       this.getBomAlternatives = function(parentPartId, childPartId) {
         Restangular.setParentless(false);
         return Restangular.one('bom', parentPartId).one('descendant', childPartId).getList('alternatives');
-      }
-
-      this.createBomAlternative = function(parentPartId, childPartId, pickedPartId) {
-        Restangular.setParentless(false);
-        return Restangular.one('bom', parentPartId).one('descendant', childPartId).one('alternatives', pickedPartId)
-          .post();
       };
 
-      this.removeBomAlternative = function(altBomItemId, altItemId) {
+      this.createBomAlternative = function(parentPartId, childPartId, altHeaderId, pickedPartId) {
         Restangular.setParentless(false);
-        return Restangular.one('bom', altBomItemId).one('alt', altItemId).remove();
+        return Restangular.one('bom', parentPartId).one('descendant', childPartId).one('alternatives', pickedPartId)
+          .one('headers', altHeaderId).post();
+      };
+
+      this.removeBomAlternative = function(altHeaderId, partId) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom/alternatives', partId).one('headers', altHeaderId).remove();
       };
 
       this.httpServiceError = function(title, response) {

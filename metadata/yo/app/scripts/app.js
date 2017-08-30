@@ -231,10 +231,13 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         part: ['$route', 'restService', function($route, restService) {
           return restService.findPart($route.current.pathParams.id);
         }],
-        bom: ['$route', 'BOM', 'restService', function($route, BOM, restService) {
+        selectedBom: ['$route', 'restService', function($route, restService) {
+          return restService.findPart($route.current.pathParams.childId);
+        }],
+        bom: ['$route', 'BOM', function($route, BOM) {
           return BOM.listByParentPartId($route.current.pathParams.id);
         }],
-        altBom: ['$route', 'restService', function(restService) {
+        altBom: ['$route', 'restService', function($route, restService) {
           return restService.getBomAlternatives($route.current.pathParams.id, $route.current.pathParams.childId);
         }]
       }
