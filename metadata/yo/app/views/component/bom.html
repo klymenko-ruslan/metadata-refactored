@@ -89,8 +89,14 @@
         </div>
       </div>
     </div>
+    
+    <pre>{{altBoms | json:2}}</pre>
 
-    <ul class="list-unstyled">
+    <p data-ng-show="!altBoms || altBoms.length === 0">
+      There are no any Alternative BOM group(s). Use button "New Group" to add a new one.
+    </p>
+
+    <ul class="list-unstyled" data-ng-hide="!altBoms || altBoms.length === 0">
     <li data-ng-repeat="g in altBoms">
       <hr>
       <div class="row" style="margin-bottom: 5px;">
