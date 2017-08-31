@@ -12,7 +12,7 @@
 </div>
 
 <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
-  <tr data-ng-repeat="b in $data">
+  <tr data-ng-repeat="b in $data" data-ng-class="{selected: b === selectedBom}">
     <td title="'Part#'" class="text-center text-nowrap" data-sortable="'partNumber'">
       <a data-ng-href="/part/{{b.partId}}">{{b.partNumber}}</a>
     </td>
@@ -55,7 +55,7 @@
 
       <button data-ng-click="showAlternates(b)"
          authorize="ROLE_READ" class="btn btn-info btn-xs"
-         data-ng-hide="isModifying(b)">
+         data-ng-hide="isModifying(b)" data-ng-disabled="b === selectedBom">
         <i class="fa fa-random"></i> Alternates
       </button>
 
@@ -73,36 +73,64 @@
   </tr>
 </table>
 
-<div class="row" data-ng-show="altBomItem">
+<div class="row" data-ng-show="selectedBom">
   <div class="col-xs-12">
-    <h4 part-name="altBomItem" part-name-suffix="Alternates"></h4>
 
-    <div class="pull-right" style="margin-bottom: 5px;">
-      <a authorize="ROLE_BOM" class="btn btn-info pull-right"
-        data-ng-href="/part/{{parentPartId}}/bom/{{altBomItem.partId}}/search">
-        <i class="fa fa-cogs"></i>
-        Add Alternate
-      </a>
+    <div class="row" style="margin-top:35px">
+      <div class="col-xs-12">
+        <div class="pull-right">
+          <button class="btn btn-warning" data-ng-click="newAltGroup()">
+            <i class="fa fa-plus"></i>
+            New Group
+          </button>
+        </div>
+        <div class="pull-left">
+          <h4 part-name="selectedBom" part-name-suffix="Alternates" class="selected" style="display:inline-block;padding:4px 5px;"></h4>
+        </div>
+      </div>
     </div>
 
-    <table data-ng-table="altBomTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <ul class="list-unstyled">
+    <li data-ng-repeat="g in altBoms">
+      <hr>
+      <div class="row" style="margin-bottom: 5px;">
+        <div class="col-xs-12">
+          <div class="pull-right">
+            <button class="btn btn-danger btn-sm" authorize="ROLE_BOM_ALT" data-ng-click="removeAltGroup(g.altHeaderId)">
+              <i class="fa fa-trash-o"></i>
+              Delete Group
+            </button>
+            <button class="btn btn-info btn-sm" authorize="ROLE_BOM_ALT" data-ng-click="openAddAlternativeView(g.altHeaderId)">
+              <i class="fa fa-plus"></i>
+              Add Alternate
+            </button>
+          </div>
+          <div class="pull-left">
+            <h5 style="display:inline-block">Group: [{{g.altHeaderId}}]</h5>
+          </div>
+        </div>
+      </div>
+
+      <table data-ng-table="g.ngTableParams" class="table table-bordered table-striped table-hover table-responsive">
       <tr data-ng-repeat="ab in $data">
         <td title="'Part Type'" data-sortable="'partType.name'">{{ab.partType.name}}</td>
         <td title="'Manufacturer'" data-sortable="'manufacturer.name'">{{ab.manufacturer.name}}</td>
         <td title="'Part#'" class="text-nowrap" data-sortable="'partNumber'">
           <a data-ng-href="/part/{{ab.partId}}">{{ab.partNumber}}</a>
         </td>
-        <td title="'Header Id'" data-sortable="'altHeaderId'" class="text-right">{{ab.altHeaderId | number:0}}</td>
         <td title="'Actions'" class="actions">
-          <button data-ng-click="removeAlternate(ab.altHeaderId, ab.partId)" authorize="ROLE_BOM_ALT" class="btn btn-danger btn-xs">
+          <button data-ng-click="removeAlternate(g.altHeaderId, ab.partId)" authorize="ROLE_BOM_ALT" class="btn btn-danger btn-xs">
             <i class="fa fa-trash-o"></i> Remove
           </button>
         </td>
       </tr>
       <tr data-ng-hide="$data.length > 0">
-        <td colspan="5">No parts to display.</td>
+        <td colspan="4">No parts to display.</td>
       </tr>
-    </table>
+      </table>
+
+    </li>
+    </ul>
 
   </div>
 </div>

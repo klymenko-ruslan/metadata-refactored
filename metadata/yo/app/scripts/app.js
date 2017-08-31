@@ -221,10 +221,13 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         }]
       }
     });
-    $routeProvider.when('/part/:id/bom/:childId/search', {
+    $routeProvider.when('/part/:id/bom/:childId/alt/:altHeaderId', {
       templateUrl: 'views/part/bom/BomAlternateSearch.html',
       controller: 'BomAlternateSearchCtrl',
       resolve: {
+        altHeaderId: ['$route', function($route) {
+          return parseInt($route.current.pathParams.altHeaderId);
+        }],
         partTypes: ['restService', function(restService) {
           return restService.listPartTypes();
         }],

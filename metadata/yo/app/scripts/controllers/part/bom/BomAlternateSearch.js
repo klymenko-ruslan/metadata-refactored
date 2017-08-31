@@ -2,9 +2,9 @@
 
 angular.module('ngMetaCrudApp')
 .controller('BomAlternateSearchCtrl', ['$log', '$scope', '$location', '$routeParams', 'NgTableParams', 'utils',
-  'restService', 'dialogs', 'toastr', 'partTypes', 'part', 'selectedBom', 'bom', 'altBom',
+  'restService', 'dialogs', 'toastr', 'partTypes', 'part', 'selectedBom', 'bom', 'altBom', 'altHeaderId',
   function ($log, $scope, $location, $routeParams, NgTableParams, utils, restService, dialogs, toastr, partTypes,
-    part, selectedBom, bom, altBom)
+    part, selectedBom, bom, altBom, altHeaderId)
   {
     $scope.partTypes = partTypes;
     $scope.part = part;
@@ -23,19 +23,14 @@ angular.module('ngMetaCrudApp')
       }
     );
 
-    var alternatives = [];
-    _.each(altBom, function(pg) {
-      var grpId = pg.id;
-      var parts = pg.parts;
-      _.each(parts, function(p) {
-        p['altHeaderId'] = grpId;
-        alternatives.push(p);
-      });
-    });
-    
-    if (alternatives.length) {
-      $scope.headerId = alternatives[0]['altHeaderId'];
-    }
+    $scope.altHeaderId = altHeaderId;
+
+    var alternatives = _.chain(altBom)
+      .filter(function(pg) {return pg.id === altHeaderId;})
+      .map(function(pg) {return pg.parts;})
+      // Return first item from array (the array must have 0 or 1 element.
+      .reduce(function(memo, parts) {return memo.concat(parts);})
+      .value();
 
     $scope.altBomTableParams = new NgTableParams({
         page: 1,
@@ -46,7 +41,7 @@ angular.module('ngMetaCrudApp')
     );
 
     $scope.save = function () {
-      restService.createBomAlternative($scope.partId, $scope.selectedBom.id, $scope.headerId, $scope.pickedPart.id).then(
+      restService.createBomAlternative($scope.partId, $scope.selectedBom.id, $scope.altHeaderId, $scope.pickedPart.id).then(
         function success() {
           toastr.success('BOM alternate added.');
           $location.path('/part/' + $scope.partId);

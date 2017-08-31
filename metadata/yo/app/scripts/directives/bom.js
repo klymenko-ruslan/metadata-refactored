@@ -9,10 +9,15 @@ angular.module('ngMetaCrudApp')
       templateUrl: '/views/component/bom.html',
       restrict: 'E',
       link: function postLink() {},
-      controller: ['dialogs', '$scope', '$log', '$q', '$parse', 'BOM', 'NgTableParams', 'toastr', 'utils',
-          'restService', function(dialogs, $scope, $log, $q, $parse, BOM, NgTableParams, toastr, utils, restService)
+      controller: ['dialogs', '$scope', '$log', '$location', '$q', '$parse', 'BOM', 'NgTableParams', 'toastr', 'utils',
+          'restService', function(dialogs, $scope, $log, $location, $q, $parse, BOM, NgTableParams, toastr, utils, restService)
         {
-          $scope.restService = restService;
+          // The BOM item whose alternates we're showing.
+          $scope.selectedBom = null;
+          // List of groups of alternatives.
+          $scope.altBoms = null;
+          // Temp storage for quantities
+          $scope.modifyValues = {};
 
           $scope.bomTableParams = new NgTableParams({
             page: 1,
@@ -40,9 +45,6 @@ angular.module('ngMetaCrudApp')
               }
             );
           });
-
-          // Temp storage for quantities
-          $scope.modifyValues = {};
 
           $scope.isModifying = function(b) {
             return angular.isDefined($scope.modifyValues[b.partId]);
@@ -80,8 +82,7 @@ angular.module('ngMetaCrudApp')
                     $scope.bom.push.apply($scope.bom, updatedBom);
                     $scope.bomTableParams.reload();
                     // Clear the alt bom item
-                    $scope.altBomItem = null;
-                    $scope.altBomTableParams = null;
+                    $scope.selectedBom = null;
                     toastr.success('Child part removed from BOM.');
                   },
                   function failure(response) {
@@ -92,6 +93,46 @@ angular.module('ngMetaCrudApp')
             );
           };
 
+          $scope.newAltGroup = function() {
+            alert('Uder development.');
+            /*
+            restService.createAltBomGroup($scope.parentPartId, $selectedBom.partId).then(
+              function success(partGroups) {
+                _updateAltBoms(partGroups);
+              },
+              function failure(response) {
+                restService.error('Creation of a new BOM alternate group failed.', response);
+              }
+            );
+            */
+          };
+
+          $scope.removeAltGroup = function(altHeaderId) {
+            alert('Under development: ' + altHeaderId);
+          };
+
+          $scope.openAddAlternativeView = function(altHeaderId) {
+            $location.path('/part/' + $scope.parentPartId + '/bom/' + $scope.selectedBom.partId + '/alt/' + altHeaderId);
+          };
+
+          function _updateAltBoms(partGroups) {
+            var result = [];
+            _.each(partGroups, function(pg) {
+              result.push({
+                altHeaderId: pg.id,
+                ngTableParams: new NgTableParams(
+                  {
+                    page: 1,
+                    count: 10
+                  }, {
+                    getData: utils.localPagination(pg.parts, 'partNumber')
+                  }
+                )
+              });
+            });
+            $scope.altBoms = _.sortBy(result, 'altHeaderId');
+          }
+
           $scope.removeAlternate = function(headerId, partId) {
             dialogs.confirm(
               'Remove alternate item?',
@@ -99,23 +140,8 @@ angular.module('ngMetaCrudApp')
               function() {
                 restService.removeBomAlternative(headerId, partId).then(
                   function success(partGroups) {
-                    // TODO: move out to a function
-                    var alternatives = [];
-                    _.each(partGroups, function(pg) {
-                      var grpId = pg.id;
-                      var parts = pg.parts;
-                      _.each(parts, function(p) {
-                         p['altHeaderId'] = grpId;
-                         alternatives.push(p);
-                      });
-                    });
-                    $scope.altBomTableParams = new NgTableParams({
-                      page: 1,
-                      count: 10
-                    }, {
-                      getData: utils.localPagination(alternatives, 'partNumber')
-                    });
-                    toastr.success('BOM alternate removed.');
+                    _updateAltBoms(partGroups);
+                    toastr.success('BOM alternative has been successfully removed.');
                   },
                   function failure(response) {
                     restService.error('Removing of the Alternate failed.', response);
@@ -124,34 +150,14 @@ angular.module('ngMetaCrudApp')
               });
           };
 
-          // The BOM item whose alternates we're showing.
-          $scope.altBomItem = null;
-          $scope.altBomTableParams = null;
-
           $scope.showAlternates = function(b) {
             restService.getBomAlternatives($scope.parentPartId, b.partId).then(
               function success(partGroups) {
-                // TODO: move out to a function
-                var alternatives = [];
-                _.each(partGroups, function(pg) {
-                  var grpId = pg.id;
-                  var parts = pg.parts;
-                  _.each(parts, function(p) {
-                    p['altHeaderId'] = grpId;
-                    alternatives.push(p);
-                  });
-                });
-                $scope.altBomTableParams = new NgTableParams({
-                  page: 1,
-                  count: 10
-                }, {
-                  getData: utils.localPagination(alternatives, 'partNumber')
-                });
-                $scope.altBomItem = b;
+                _updateAltBoms(partGroups);
+                $scope.selectedBom = b;
               },
               function failure(response) {
                 $scope.altBomItem = null;
-                $scope.altBomTableParams = null;
                 restService.error('Can\'t retrive a list of alternative BOMs.', response);
               }
             );

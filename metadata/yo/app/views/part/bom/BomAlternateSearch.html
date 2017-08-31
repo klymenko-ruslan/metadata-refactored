@@ -48,7 +48,8 @@
 
   <!-- Current Alternates -->
   <div class="col-xs-6">
-    <h3>Current Alternates</h3>
+    <h5></h5>
+    <h3>Current Alternates in Group [{{altHeaderId}}]</h3>
     <table data-ng-table="altBomTableParams" class="table table-bordered table-striped table-hover table-responsive">
       <tr data-ng-repeat="ab in $data">
         <td title="'Part Type'" data-sortable="'partType.name'">{{ab.partType.name}}</td>
@@ -56,10 +57,9 @@
         <td title="'Part#'" class="text-nowrap" data-sortable="'partNumber'">
           <a data-ng-href="/part/{{ab.partId}}">{{ab.partNumber}}</a>
         </td>
-        <td title="'Header Id'" data-sortable="'altHeaderId'" class="text-right">{{ab.altHeaderId | number:0}}</td>
       </tr>
       <tr data-ng-hide="$data.length > 0">
-        <td colspan="4">No parts to display.</td>
+        <td colspan="3">No parts to display.</td>
       </tr>
     </table>
   </div>

@@ -107,19 +107,34 @@ public class BOMController {
             @PathVariable("childPartId") Long childPartId) {
         return bomService.getAlternatives(parentPartId, childPartId);
     }
-    
+
     public static class CreateAltBomRequest {
-        
+
         private Long altHeaderId;
 
         public Long getAltHeaderId() {
-			return altHeaderId;
-		}
+            return altHeaderId;
+        }
 
-		public void setAltHeaderId(Long altHeaderId) {
-			this.altHeaderId = altHeaderId;
-		}
-        
+        public void setAltHeaderId(Long altHeaderId) {
+            this.altHeaderId = altHeaderId;
+        }
+
+    }
+
+    @Secured("ROLE_BOM_ALT")
+    @ResponseBody
+    @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public PartGroup[] createBomAlternativeGroup(@PathVariable("parentPartId") Long parentPartId,
+            @PathVariable("childPartId") Long childPartId) throws Exception {
+        return null; // TODO
+    }
+
+    @Secured("ROLE_BOM_ALT")
+    @ResponseBody
+    @RequestMapping(value = "/alternatives/{headerId}", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public PartGroup[] deleteBomAlternativeGroup(@PathVariable("headerId") Long headerId) throws Exception {
+        return null; // TODO
     }
 
     @Secured("ROLE_BOM_ALT")
@@ -129,7 +144,7 @@ public class BOMController {
             @PathVariable("childPartId") Long childPartId, @PathVariable("altPartId") Long altPartId,
             @RequestBody CreateAltBomRequest request) throws Exception {
         CreateAltBomResponse response = bomService.createAltBom(parentPartId, childPartId, request.getAltHeaderId(),
-            altPartId);
+                altPartId);
         Long altBomId = response.getAltHeaderId();
         return altBomId;
     }

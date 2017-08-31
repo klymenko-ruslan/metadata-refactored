@@ -583,7 +583,7 @@ public class BOMService {
     public PartGroup[] deleteAltBom(Long altHeaderId, Long altPartId)
             throws JsonProcessingException {
         DeleteAltBomResponse response = arangoDbConnector.deleteAltBom(altHeaderId, altPartId);
-        //checkSuccess(response);
+        checkSuccess(response);
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(3);
         relatedParts.add(new RelatedPart(altPartId, ChangelogPart.Role.PART0));
