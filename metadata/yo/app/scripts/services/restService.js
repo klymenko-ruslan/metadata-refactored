@@ -39,9 +39,11 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('bom', parentPartId).one('descendant', childPartId).post('alternatives');
       };
 
-      this.deleteAltBomGroup = function(altHeaderId) {
+    // TODO: parameters 'parentPartId' and 'childPartId' are excessive and useless
+      this.deleteAltBomGroup = function(parentPartId, childPartId, altHeaderId) {
         Restangular.setParentless(false);
-        return Restangular.one('bom').one('alternatives', altHeaderId).remove();
+        return Restangular.one('bom', parentPartId).one('descendant', childPartId)
+          .one('alternatives', altHeaderId).remove();
       };
 
       this.createBomAlternative = function(parentPartId, childPartId, altHeaderId, pickedPartId) {

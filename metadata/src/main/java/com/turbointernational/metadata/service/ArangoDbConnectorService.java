@@ -40,8 +40,8 @@ import com.turbointernational.metadata.web.dto.PartType;
  */
 @Service
 public class ArangoDbConnectorService {
-	
-	private final static Logger log = LoggerFactory.getLogger(ArangoDbConnectorService.class);
+
+    private final static Logger log = LoggerFactory.getLogger(ArangoDbConnectorService.class);
 
     @Value("${rest.arangodb.service.protocol}")
     private String restArangoDbServiceProtocol;
@@ -87,6 +87,10 @@ public class ArangoDbConnectorService {
     private UriTemplate uriTmplCreateAltBom;
 
     private UriTemplate uriTmplDeleteAltBom;
+
+    private UriTemplate uriTmplCreateAltBomGroup;
+
+    private UriTemplate uriTmplDeleteAltBomGroup;
 
     public static class Response {
 
@@ -571,6 +575,34 @@ public class ArangoDbConnectorService {
 
     }
 
+    public static class CreateAltBomGroupResponse extends Response {
+
+        private Long altHeaderId;
+
+        public Long getAltHeaderId() {
+            return altHeaderId;
+        }
+
+        public void setAltHeaderId(Long altHeaderId) {
+            this.altHeaderId = altHeaderId;
+        }
+
+    }
+
+    public static class DeleteAltBomGroupResponse extends Response {
+
+        private GetAltBomsResponse.Group[] groups;
+
+        public GetAltBomsResponse.Group[] getGroups() {
+            return groups;
+        }
+
+        public void setGroups(GetAltBomsResponse.Group[] groups) {
+            this.groups = groups;
+        }
+
+    }
+
     @PostConstruct
     public void init() {
         headers = new HttpHeaders();
@@ -603,13 +635,17 @@ public class ArangoDbConnectorService {
                 + restArangoDbServicePort + "/boms/{parentPartId}/children/{childPartId}/alternatives/parts/{partId}");
         uriTmplDeleteAltBom = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
                 + restArangoDbServicePort + "/boms/alternatives/{altHeaderId}/parts/{partId}");
+        uriTmplCreateAltBomGroup = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/boms/{parentPartId}/children/{childPartId}/alternatives");
+        uriTmplDeleteAltBomGroup = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/boms/{parentPartId}/children/{childPartId}/alternatives/{altHeaderId}");
+
     }
 
     /**
      * Check response from ArangoDb server.
      *
-     * If response signals that call to a GraphDb service was not successful the
-     * exception is thrown.
+     * If response signals that call to a GraphDb service was not successful the exception is thrown.
      *
      * @param response
      * @throws DataAccessResourceFailureException
@@ -624,8 +660,7 @@ public class ArangoDbConnectorService {
     /**
      * A general method to do GET request to a GraphDb service.
      *
-     * The method also do check of response and if it is not successful an
-     * exception is thrown.
+     * The method also do check of response and if it is not successful an exception is thrown.
      *
      * @param uri
      * @param responseClazz
@@ -648,6 +683,10 @@ public class ArangoDbConnectorService {
         ResponseEntity<T> responseEntity = restArangoDbService.exchange(uri, method, requestEntity, responseClazz);
         T response = responseEntity.getBody();
         return response;
+    }
+
+    private <T extends Response> T post(URI uri, Class<T> responseClazz) throws JsonProcessingException {
+        return exchange(uri, POST, null, responseClazz);
     }
 
     private <T extends Response> T post(URI uri, Object body, Class<T> responseClazz) throws JsonProcessingException {
@@ -802,6 +841,19 @@ public class ArangoDbConnectorService {
     public DeleteAltBomResponse deleteAltBom(Long altHeaderId, Long altPartId) throws JsonProcessingException {
         URI uri = uriTmplDeleteAltBom.expand(altHeaderId, altPartId);
         return delete(uri, DeleteAltBomResponse.class);
+    }
+
+    public CreateAltBomGroupResponse createAltBomGroup(Long parentPartId, Long childPartId)
+            throws JsonProcessingException {
+        URI uri = uriTmplCreateAltBomGroup.expand(parentPartId, childPartId);
+        return post(uri, CreateAltBomGroupResponse.class);
+    }
+
+    // TODO: parameters 'parentPartId' and 'childPartId' are excessive and useless
+    public DeleteAltBomGroupResponse deleteAltBomGroup(Long parentPartId, Long childPartId, Long altHeaderId)
+            throws JsonProcessingException {
+        URI uri = uriTmplDeleteAltBomGroup.expand(parentPartId, childPartId, altHeaderId);
+        return delete(uri, DeleteAltBomGroupResponse.class);
     }
 
 }

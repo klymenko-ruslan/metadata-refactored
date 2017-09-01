@@ -127,14 +127,18 @@ public class BOMController {
     @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public PartGroup[] createBomAlternativeGroup(@PathVariable("parentPartId") Long parentPartId,
             @PathVariable("childPartId") Long childPartId) throws Exception {
-        return null; // TODO
+        bomService.createAltBomGroup(parentPartId, childPartId);
+        return bomService.getAlternatives(parentPartId, childPartId);
     }
 
     @Secured("ROLE_BOM_ALT")
     @ResponseBody
-    @RequestMapping(value = "/alternatives/{headerId}", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public PartGroup[] deleteBomAlternativeGroup(@PathVariable("headerId") Long headerId) throws Exception {
-        return null; // TODO
+    // TODO: parameters 'parentPartId' and 'childPartId' are excessive and useless
+    @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives/{altHeaderId}", method = DELETE, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public PartGroup[] deleteBomAlternativeGroup(@PathVariable("parentPartId") Long parentPartId,
+            @PathVariable("childPartId") Long childPartId, @PathVariable("altHeaderId") Long altHeaderId)
+            throws Exception {
+        return bomService.deleteAltBomGroup(parentPartId, childPartId, altHeaderId);
     }
 
     @Secured("ROLE_BOM_ALT")

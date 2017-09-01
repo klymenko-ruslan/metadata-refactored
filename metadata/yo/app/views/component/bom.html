@@ -79,7 +79,7 @@
     <div class="row" style="margin-top:35px">
       <div class="col-xs-12">
         <div class="pull-right">
-          <button class="btn btn-warning" data-ng-click="newAltGroup()">
+          <button class="btn btn-warning" data-ng-click="newAltGroup()" title="Add a new group of alternative BOM">
             <i class="fa fa-plus"></i>
             New Group
           </button>
@@ -89,16 +89,13 @@
         </div>
       </div>
     </div>
-    
-    <pre>{{altBoms | json:2}}</pre>
 
-    <p data-ng-show="!altBoms || altBoms.length === 0">
-      There are no any Alternative BOM group(s). Use button "New Group" to add a new one.
+    <p data-ng-hide="hasAnyAltBomGroup()">
+      There are no any Alternative BOM group(s). Click button "New Group" to add a new one.
     </p>
 
-    <ul class="list-unstyled" data-ng-hide="!altBoms || altBoms.length === 0">
+    <ul class="list-unstyled" data-ng-show="hasAnyAltBomGroup()">
     <li data-ng-repeat="g in altBoms">
-      <hr>
       <div class="row" style="margin-bottom: 5px;">
         <div class="col-xs-12">
           <div class="pull-right">
@@ -112,7 +109,7 @@
             </button>
           </div>
           <div class="pull-left">
-            <h5 style="display:inline-block">Group: [{{g.altHeaderId}}]</h5>
+            <h5 style="display:inline-block">[{{g.altHeaderId}}] Group</h5>
           </div>
         </div>
       </div>

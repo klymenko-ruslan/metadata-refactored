@@ -93,22 +93,42 @@ angular.module('ngMetaCrudApp')
             );
           };
 
+          $scope.hasAnyAltBomGroup = function() {
+            return $scope.altBoms && $scope.altBoms.length > 0 && $scope.altBoms[0].altHeaderId;
+          };
+
           $scope.newAltGroup = function() {
-            alert('Uder development.');
-            /*
-            restService.createAltBomGroup($scope.parentPartId, $selectedBom.partId).then(
+            restService.createAltBomGroup($scope.parentPartId, $scope.selectedBom.partId).then(
               function success(partGroups) {
                 _updateAltBoms(partGroups);
+                 toastr.success('The alternative BOM group has been successfully created.');
               },
               function failure(response) {
                 restService.error('Creation of a new BOM alternate group failed.', response);
               }
             );
-            */
           };
 
           $scope.removeAltGroup = function(altHeaderId) {
-            alert('Under development: ' + altHeaderId);
+$log.log('DEBUG: 0: ' + altHeaderId);
+            dialogs.confirm('Confirmation', 'Are you sure? Do you really want to remove this group ' +
+              'of alternative BOM [' + altHeaderId + ']?').result.then(
+              function yes() {
+$log.log('DEBUG: 1: ' + altHeaderId);
+                restService.deleteAltBomGroup($scope.parentPartId, $scope.selectedBom.partId, altHeaderId).then(
+                  function success(partGroups) {
+                    _updateAltBoms(partGroups);
+                    toastr.success('The alternative BOM group [" + altHeaderId + "] has been successfully removed.');
+                  },
+                  function failure(response) {
+                    restService.error('Removing of the alternative BOM group [" + altHeaderId + "] failed.', response);
+                  }
+                );
+              },
+              function no() {
+                // ignore
+              }
+            );
           };
 
           $scope.openAddAlternativeView = function(altHeaderId) {
@@ -131,7 +151,7 @@ angular.module('ngMetaCrudApp')
               });
             });
             $scope.altBoms = _.sortBy(result, 'altHeaderId');
-          }
+          };
 
           $scope.removeAlternate = function(headerId, partId) {
             dialogs.confirm(

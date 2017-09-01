@@ -32,7 +32,9 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.service.ArangoDbConnectorService.CreateAltBomGroupResponse;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.CreateAltBomResponse;
+import com.turbointernational.metadata.service.ArangoDbConnectorService.DeleteAltBomGroupResponse;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.DeleteAltBomResponse;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.GetAltBomsResponse;
 import com.turbointernational.metadata.service.ArangoDbConnectorService.GetBomsResponse;
@@ -104,8 +106,7 @@ public class BOMService {
         private Long parentPartId;
 
         /**
-         * Changelog source IDs which should be linked to the changelog. See
-         * ticket #891 for details.
+         * Changelog source IDs which should be linked to the changelog. See ticket #891 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] sourcesIds;
@@ -117,8 +118,7 @@ public class BOMService {
         private String chlogSrcLnkDescription;
 
         /**
-         * IDs of uploaded files which should be attached to this changelog. See
-         * ticket #933 for details.
+         * IDs of uploaded files which should be attached to this changelog. See ticket #933 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] attachIds;
@@ -323,15 +323,13 @@ public class BOMService {
         }
 
         /**
-         * Changelog source IDs which should be linked to the changelog. See
-         * ticket #891 for details.
+         * Changelog source IDs which should be linked to the changelog. See ticket #891 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] sourcesIds;
 
         /**
-         * IDs of uploaded files which should be attached to this changelog. See
-         * ticket #933 for details.
+         * IDs of uploaded files which should be attached to this changelog. See ticket #933 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] attachIds;
@@ -580,16 +578,41 @@ public class BOMService {
     }
 
     @Transactional
-    public PartGroup[] deleteAltBom(Long altHeaderId, Long altPartId)
-            throws JsonProcessingException {
+    public PartGroup[] deleteAltBom(Long altHeaderId, Long altPartId) throws JsonProcessingException {
         DeleteAltBomResponse response = arangoDbConnector.deleteAltBom(altHeaderId, altPartId);
         checkSuccess(response);
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(3);
         relatedParts.add(new RelatedPart(altPartId, ChangelogPart.Role.PART0));
         changelogService.log(BOM,
-                "Deleted part [" + altPartId + "] in an alternative page group [" + altHeaderId + "].",
-                relatedParts);
+                "Deleted part [" + altPartId + "] in an alternative page group [" + altHeaderId + "].", relatedParts);
+        return PartGroup.from(response.getGroups());
+    }
+
+    @Transactional
+    public Long createAltBomGroup(Long parentPartId, Long childPartId) throws JsonProcessingException {
+        CreateAltBomGroupResponse response = arangoDbConnector.createAltBomGroup(parentPartId, childPartId);
+        checkSuccess(response);
+        Long altHeaderId = response.getAltHeaderId();
+        // Update the changelog
+        List<RelatedPart> relatedParts = new ArrayList<>(3);
+        relatedParts.add(new RelatedPart(parentPartId, ChangelogPart.Role.BOM_PARENT));
+        relatedParts.add(new RelatedPart(childPartId, ChangelogPart.Role.BOM_CHILD));
+        changelogService.log(BOM, "Added alternative BOM group [" + altHeaderId + "].", relatedParts);
+        return altHeaderId;
+    }
+
+    // TODO: parameters 'parentPartId' and 'childPartId' are excessive and useless
+    @Transactional
+    public PartGroup[] deleteAltBomGroup(Long parentPartId, Long childPartId, Long altHeaderId)
+            throws JsonProcessingException {
+        DeleteAltBomGroupResponse response = arangoDbConnector.deleteAltBomGroup(parentPartId, childPartId,
+                altHeaderId);
+        checkSuccess(response);
+        List<RelatedPart> relatedParts = new ArrayList<>(3);
+        // TODO: BOM_PARENT should be replaced on ALT_BOM_GROUP.
+        relatedParts.add(new RelatedPart(altHeaderId, ChangelogPart.Role.BOM_PARENT));
+        changelogService.log(BOM, "Deleted alternative BOM group [" + altHeaderId + "].", relatedParts);
         return PartGroup.from(response.getGroups());
     }
 
