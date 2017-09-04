@@ -19,6 +19,9 @@ module.exports = function (grunt) {
 //    cdnify: 'grunt-google-cdn'
   });
 
+
+  grunt.loadNpmTasks('grunt-connect-proxy');
+
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
@@ -75,20 +78,38 @@ module.exports = function (grunt) {
         hostname: 'localhost',
         livereload: 35729
       },
+      proxies: [
+        {
+          context: [
+            '/metadata'
+            /*
+            '/metadata/security/login',
+            '/metadata/security/user/me',
+            '/metadata/parttype/json/list',
+            '/metadata/criticaldimension/byparttypes',
+            '/metadata/criticaldimension/enums/vals',
+            '/metadata/search/parts',
+            '/part/list'
+            */
+          ],
+          host: '127.0.0.1',
+          port: 8080,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      ],
       livereload: {
         options: {
           open: true,
-          middleware: function (connect) {
-            return [
-              connect.static('.tmp'),
-              connect().use(
-                '/bower_components',
-                connect.static('./bower_components')
-              ),
-              connect().use(
-                '/app/styles',
-                connect.static('./app/styles')
-              ),
+          base: [
+            '.tmp',
+            appConfig.app
+          ],
+          middleware: function (connect, options) {
+            var middlewares = [
+              connect().use('/bower_components', connect.static('./bower_components')),
+              connect().use('/app/styles', connect.static('./app/styles')),
               connect().use(
                 '/styles/ng-table.min.css',
                 connect.static('./node_modules/ng-table/bundles/ng-table.min.css')
@@ -101,8 +122,20 @@ module.exports = function (grunt) {
                 '/styles/fonts/',
                 connect.static('./bower_components/fontawesome/fonts')
               ),
-              connect.static(appConfig.app)
+              connect().use('/', connect.static('./app/index.html')),
+              connect().use('views/part/PartList.html', connect.static('./app/views/part/PartList.html')),
+              connect().use('**/*.html', connect.static('./app/views')),
             ];
+            if (!Array.isArray(options.base)) {
+              options.base = [options.base];
+            }
+            // Setup the proxy
+            middlewares.push(require('grunt-connect-proxy/lib/utils').proxyRequest);
+            // Serve static files
+            options.base.forEach(function(base) {
+              middlewares.push(connect.static(base));
+            });
+            return middlewares;
           }
         }
       },
@@ -490,6 +523,7 @@ module.exports = function (grunt) {
       'wiredep',
       'concurrent:server',
       'postcss:server',
+      'configureProxies:server',
       'connect:livereload',
       'watch'
     ]);
