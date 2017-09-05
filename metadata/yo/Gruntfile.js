@@ -82,21 +82,9 @@ module.exports = function (grunt) {
         {
           context: [
             '/metadata'
-            /*
-            '/metadata/security/login',
-            '/metadata/security/user/me',
-            '/metadata/parttype/json/list',
-            '/metadata/criticaldimension/byparttypes',
-            '/metadata/criticaldimension/enums/vals',
-            '/metadata/search/parts',
-            '/part/list'
-            */
           ],
           host: '127.0.0.1',
-          port: 8080,
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          port: 8080
         }
       ],
       livereload: {
@@ -107,7 +95,10 @@ module.exports = function (grunt) {
             appConfig.app
           ],
           middleware: function (connect, options) {
+            var index_html = connect.static('./app/index.html');
             var middlewares = [
+              //connect().use(index_html),
+              require('grunt-connect-proxy/lib/utils').proxyRequest,
               connect().use('/bower_components', connect.static('./bower_components')),
               connect().use('/app/styles', connect.static('./app/styles')),
               connect().use(
@@ -122,15 +113,32 @@ module.exports = function (grunt) {
                 '/styles/fonts/',
                 connect.static('./bower_components/fontawesome/fonts')
               ),
-              connect().use('/', connect.static('./app/index.html')),
-              connect().use('views/part/PartList.html', connect.static('./app/views/part/PartList.html')),
-              connect().use('**/*.html', connect.static('./app/views')),
+              connect().use('/', index_html),
+              connect().use('/part/2318', index_html),
+              connect().use('/part/list', index_html),
+              connect().use('/service/list', index_html),
+              connect().use('/changelog/list', index_html),
+              connect().use('/parttype', index_html),
+              connect().use('/other', index_html),
+              connect().use('/security', index_html),
+              connect().use('/password', index_html),
+              connect().use('/application', index_html),
+              connect().use('/bom', index_html),
+              connect().use('/changelog', index_html),
+              connect().use('/changelog/source', index_html),
+              connect().use('/mas90/sync/status', index_html),
+              connect().use('/manufacturer/list', index_html),
+              connect().use('/changelog/source/name/list', index_html),
+              connect().use('/changelog/source/list', index_html),
+              connect().use('/changelog/source/create', index_html),
+              connect().use('/changelog/source', index_html),
+              connect().use('/criticaldimension/enums', index_html),
             ];
             if (!Array.isArray(options.base)) {
               options.base = [options.base];
             }
             // Setup the proxy
-            middlewares.push(require('grunt-connect-proxy/lib/utils').proxyRequest);
+            // middlewares.push(require('grunt-connect-proxy/lib/utils').proxyRequest);
             // Serve static files
             options.base.forEach(function(base) {
               middlewares.push(connect.static(base));
