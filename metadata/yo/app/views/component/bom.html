@@ -1,18 +1,26 @@
-<div class="pull-right" style="margin-bottom: 5px;">
-  <a authorize="ROLE_BOM"
-     class="btn btn-primary"
-     data-ng-href="/part/{{parentPartId}}/parentbom/search">
-    <i class="fa fa-plus"></i> Add to Parent
-  </a>
-  <a authorize="ROLE_BOM"
-     class="btn btn-primary"
-     data-ng-href="/part/{{parentPartId}}/bom/search">
-    <i class="fa fa-plus"></i> Add Child
-  </a>
+<div class="row">
+  <div class="col-xs-6">
+    <button class="btn btn-default btn-sm" title="Delete selected..." data-ng-click="onRemoveSelectedBoms()">
+      <i class="fa fa-trash-o"></i>
+    </button>
+  </div>
+  <div class="col-xs-6">
+    <div class="pull-right" style="margin-bottom: 5px;">
+      <a authorize="ROLE_BOM" class="btn btn-primary" data-ng-href="/part/{{parentPartId}}/parentbom/search">
+        <i class="fa fa-plus"></i> Add to Parent
+      </a>
+      <a authorize="ROLE_BOM" class="btn btn-primary" data-ng-href="/part/{{parentPartId}}/bom/search">
+        <i class="fa fa-plus"></i> Add Child
+      </a>
+    </div>
+  </div>
 </div>
 
 <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
-  <tr data-ng-repeat="b in $data" data-ng-class="{selected: b === selectedBom}">
+  <tr data-ng-repeat="b in $data" data-ng-class="{selected: b === highlightedBom}" data-ng-click="showAlternates(b)" style="cursor:pointer">
+    <td width="30" style="text-align: left" header="'ng-table/headers/checkbox.html'">
+      <input type="checkbox" data-ng-model="selectedItems.bom[b._rowid]" data-ng-click="$event.stopPropagation();"/>
+    </td>
     <td title="'Part#'" class="text-center text-nowrap" data-sortable="'partNumber'">
       <a data-ng-href="/part/{{b.partId}}">{{b.partNumber}}</a>
     </td>
@@ -53,27 +61,18 @@
         <i class="fa fa-minus-circle"></i> Cancel
       </button>
 
-      <button data-ng-click="showAlternates(b)"
-         authorize="ROLE_READ" class="btn btn-info btn-xs"
-         data-ng-hide="isModifying(b)" data-ng-disabled="b === selectedBom">
-        <i class="fa fa-random"></i> Alternates
-      </button>
-
-      <button data-ng-click="remove(b)"
-              authorize="ROLE_BOM" class="btn btn-danger btn-xs"
-              data-ng-hide="isModifying(b)">
-        <i class="fa fa-trash-o"></i> Remove
-      </button>
-
     </td>
   </tr>
 
   <tr data-ng-hide="$data.length > 0">
-    <td colspan="6">No parts to display.</td>
+    <td colspan="7">No parts to display.</td>
   </tr>
 </table>
+<script type="text/ng-template" id="ng-table/headers/checkbox.html">
+  <input type="checkbox" data-ng-model="selectedItems.allBomChecked" />
+</script>
 
-<div class="row" data-ng-show="selectedBom">
+<div class="row" data-ng-show="highlightedBom">
   <div class="col-xs-12">
 
     <div class="row" style="margin-top:35px">
@@ -85,7 +84,7 @@
           </button>
         </div>
         <div class="pull-left">
-          <h4 part-name="selectedBom" part-name-suffix="Alternates" class="selected" style="display:inline-block;padding:4px 5px;"></h4>
+          <h4 part-name="highlightedBom" part-name-suffix="Alternates" class="selected" style="display:inline-block;padding:4px 5px;"></h4>
         </div>
       </div>
     </div>

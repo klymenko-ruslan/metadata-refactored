@@ -95,9 +95,9 @@ module.exports = function (grunt) {
             appConfig.app
           ],
           middleware: function (connect, options) {
-            var index_html = connect.static('./app/index.html');
+            var indexHtml = connect.static('./app/index.html');
             var middlewares = [
-              //connect().use(index_html),
+              //connect().use(indexHtml),
               require('grunt-connect-proxy/lib/utils').proxyRequest,
               connect().use('/bower_components', connect.static('./bower_components')),
               connect().use('/app/styles', connect.static('./app/styles')),
@@ -113,26 +113,26 @@ module.exports = function (grunt) {
                 '/styles/fonts/',
                 connect.static('./bower_components/fontawesome/fonts')
               ),
-              connect().use('/', index_html),
-              connect().use('/part/2318', index_html),
-              connect().use('/part/list', index_html),
-              connect().use('/service/list', index_html),
-              connect().use('/changelog/list', index_html),
-              connect().use('/parttype', index_html),
-              connect().use('/other', index_html),
-              connect().use('/security', index_html),
-              connect().use('/password', index_html),
-              connect().use('/application', index_html),
-              connect().use('/bom', index_html),
-              connect().use('/changelog', index_html),
-              connect().use('/changelog/source', index_html),
-              connect().use('/mas90/sync/status', index_html),
-              connect().use('/manufacturer/list', index_html),
-              connect().use('/changelog/source/name/list', index_html),
-              connect().use('/changelog/source/list', index_html),
-              connect().use('/changelog/source/create', index_html),
-              connect().use('/changelog/source', index_html),
-              connect().use('/criticaldimension/enums', index_html),
+              connect().use('/', indexHtml),
+              connect().use('/part/2318', indexHtml),
+              connect().use('/part/list', indexHtml),
+              connect().use('/service/list', indexHtml),
+              connect().use('/changelog/list', indexHtml),
+              connect().use('/parttype', indexHtml),
+              connect().use('/other', indexHtml),
+              connect().use('/security', indexHtml),
+              connect().use('/password', indexHtml),
+              connect().use('/application', indexHtml),
+              connect().use('/bom', indexHtml),
+              connect().use('/changelog', indexHtml),
+              connect().use('/changelog/source', indexHtml),
+              connect().use('/mas90/sync/status', indexHtml),
+              connect().use('/manufacturer/list', indexHtml),
+              connect().use('/changelog/source/name/list', indexHtml),
+              connect().use('/changelog/source/list', indexHtml),
+              connect().use('/changelog/source/create', indexHtml),
+              connect().use('/changelog/source', indexHtml),
+              connect().use('/criticaldimension/enums', indexHtml),
             ];
             if (!Array.isArray(options.base)) {
               options.base = [options.base];

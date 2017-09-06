@@ -13,7 +13,15 @@ angular.module('ngMetaCrudApp')
           'restService', function(dialogs, $scope, $log, $location, $q, $parse, BOM, NgTableParams, toastr, utils, restService)
         {
           // The BOM item whose alternates we're showing.
-          $scope.selectedBom = null;
+          $scope.highlightedBom = null;
+
+          $scope.selectedItems = {
+            allBomChecked: false,
+            bom: {}
+          };
+
+          // BOM of the part.
+          $scope.bom =  null;
           // List of groups of alternatives.
           $scope.altBoms = null;
           // Temp storage for quantities
@@ -32,18 +40,38 @@ angular.module('ngMetaCrudApp')
             }
             BOM.listByParentPartId(parentPartId).then(
               function success(bom) {
-                $scope.bom = bom;
-                $scope.bomTableParams = new NgTableParams({
-                  page: 1,
-                  count: 10
-                }, {
-                  getData: utils.localPagination($scope.bom, 'partNumber')
-                });
+                _initBoms(bom);
               },
               function failure(response) {
                 restService.error('Loading of BOMs failed.', response);
               }
             );
+          });
+
+          function _initBoms(bom) {
+            $scope.selectedItems.allBomChecked = false;
+            $scope.selectedItems.bom = {};
+            // As BOM has complex primary key which is not suitable for processing in UI
+            // we assign artificial "_rowid" property.
+            var rowid = 1;
+            _.each(bom, function(b) {
+              b._rowid = rowid++;
+            });
+            $scope.bom = bom;
+            $scope.bomTableParams = new NgTableParams({
+              page: 1,
+              count: 10
+            }, {
+              getData: utils.localPagination($scope.bom, 'partNumber')
+            });
+          };
+
+          $scope.$watch('selectedItems.allBomChecked', function(val) {
+            if ($scope.bom) {
+              _.each($scope.bom, function(b) {
+                $scope.selectedItems.bom[b._rowid] = val;
+              });
+            }
           });
 
           $scope.isModifying = function(b) {
@@ -69,6 +97,27 @@ angular.module('ngMetaCrudApp')
             );
           };
 
+          $scope.onRemoveSelectedBoms = function() {
+            dialogs.confirm('Delete BOM item(s)?',
+              'Do you really want to remove selected part(s) from the BOM? ' +
+              'Corresponding alternative BOM will be removed too.').result
+              .then(
+                function yes() {
+                  var children = _.chain($scope.selectedItems.bom).reduce(function(memo, v, k) {
+                    if (v === true) {
+                      var b = _.chain($scope.bom).find(function(e) { return e._rowid == k; }).value();
+                      if (!b) {
+                        throw "Internal error. Part not found, _rowid: " + k;
+                      }
+                      memo.push(b.partId);
+                    }
+                    return memo;
+                  }, []).value();
+                  $log.log('To removed: ' + angular.toJson(children));
+                }
+              );
+          };
+
           $scope.remove = function(b) {
             dialogs.confirm(
               'Remove BOM Item?',
@@ -82,7 +131,7 @@ angular.module('ngMetaCrudApp')
                     $scope.bom.push.apply($scope.bom, updatedBom);
                     $scope.bomTableParams.reload();
                     // Clear the alt bom item
-                    $scope.selectedBom = null;
+                    $scope.highlightedBom = null;
                     toastr.success('Child part removed from BOM.');
                   },
                   function failure(response) {
@@ -98,7 +147,7 @@ angular.module('ngMetaCrudApp')
           };
 
           $scope.newAltGroup = function() {
-            restService.createAltBomGroup($scope.parentPartId, $scope.selectedBom.partId).then(
+            restService.createAltBomGroup($scope.parentPartId, $scope.highlightedBom.partId).then(
               function success(partGroups) {
                 _updateAltBoms(partGroups);
                  toastr.success('The alternative BOM group has been successfully created.');
@@ -110,12 +159,10 @@ angular.module('ngMetaCrudApp')
           };
 
           $scope.removeAltGroup = function(altHeaderId) {
-$log.log('DEBUG: 0: ' + altHeaderId);
             dialogs.confirm('Confirmation', 'Are you sure? Do you really want to remove this group ' +
               'of alternative BOM [' + altHeaderId + ']?').result.then(
               function yes() {
-$log.log('DEBUG: 1: ' + altHeaderId);
-                restService.deleteAltBomGroup($scope.parentPartId, $scope.selectedBom.partId, altHeaderId).then(
+                restService.deleteAltBomGroup($scope.parentPartId, $scope.highlightedBom.partId, altHeaderId).then(
                   function success(partGroups) {
                     _updateAltBoms(partGroups);
                     toastr.success('The alternative BOM group [" + altHeaderId + "] has been successfully removed.');
@@ -132,7 +179,7 @@ $log.log('DEBUG: 1: ' + altHeaderId);
           };
 
           $scope.openAddAlternativeView = function(altHeaderId) {
-            $location.path('/part/' + $scope.parentPartId + '/bom/' + $scope.selectedBom.partId + '/alt/' + altHeaderId);
+            $location.path('/part/' + $scope.parentPartId + '/bom/' + $scope.highlightedBom.partId + '/alt/' + altHeaderId);
           };
 
           function _updateAltBoms(partGroups) {
@@ -151,7 +198,7 @@ $log.log('DEBUG: 1: ' + altHeaderId);
               });
             });
             $scope.altBoms = _.sortBy(result, 'altHeaderId');
-          };
+          }
 
           $scope.removeAlternate = function(headerId, partId) {
             dialogs.confirm(
@@ -174,7 +221,7 @@ $log.log('DEBUG: 1: ' + altHeaderId);
             restService.getBomAlternatives($scope.parentPartId, b.partId).then(
               function success(partGroups) {
                 _updateAltBoms(partGroups);
-                $scope.selectedBom = b;
+                $scope.highlightedBom = b;
               },
               function failure(response) {
                 $scope.altBomItem = null;

@@ -222,7 +222,9 @@ try:
     cnx = mysql.connector.connect(host=args.db_host, port=args.db_port,
                                   database=args.db_name,
                                   user=args.db_username,
-                                  password=args.db_password)
+                                  password=args.db_password,
+                                  connection_timeout=3600000,
+                                  use_pure=False)
     cursor = cnx.cursor(dictionary=True, buffered=True)
     cursor2 = cnx.cursor(dictionary=True, buffered=True)
     cursor3 = cnx.cursor(dictionary=True, buffered=True)
