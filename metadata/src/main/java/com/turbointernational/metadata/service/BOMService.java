@@ -537,7 +537,7 @@ public class BOMService {
         partChangeService.updatedBom(parent.getId());
     }
 
-    public Bom[] delete(Long parentPartId, Long childPartId) throws IOException {
+    private void deleteBomItem(Long parentPartId, Long childPartId) throws IOException {
         Part parentPart = partDao.findOne(parentPartId);
         Part childPart = partDao.findOne(childPartId);
         // Delete it.
@@ -550,6 +550,19 @@ public class BOMService {
         relatedParts.add(new RelatedPart(parentPartId, ChangelogPart.Role.BOM_PARENT));
         relatedParts.add(new RelatedPart(childPartId, ChangelogPart.Role.BOM_CHILD));
         changelogService.log(BOM, "Deleted BOM item: " + formatBom(parentPart, childPart), relatedParts);
+    }
+
+    public Bom[] delete(Long parentPartId, Long childPartId) throws IOException {
+        deleteBomItem(parentPartId, childPartId);
+        // Return list of BOMs after this delete operation.
+        GetBomsResponse bomsResponse = arangoDbConnector.getBoms(parentPartId);
+        return Bom.from(bomsResponse.getRows());
+    }
+
+    public Bom[] delete(Long parentPartId, Long[] childrenIds) throws IOException {
+        for (Long id : childrenIds) {
+            deleteBomItem(parentPartId, id);
+        }
         // Return list of BOMs after this delete operation.
         GetBomsResponse bomsResponse = arangoDbConnector.getBoms(parentPartId);
         return Bom.from(bomsResponse.getRows());
@@ -577,8 +590,7 @@ public class BOMService {
         return response;
     }
 
-    @Transactional
-    public PartGroup[] deleteAltBom(Long altHeaderId, Long altPartId) throws JsonProcessingException {
+    private DeleteAltBomResponse removePartFromAltBom(Long altHeaderId, Long altPartId) throws JsonProcessingException {
         DeleteAltBomResponse response = arangoDbConnector.deleteAltBom(altHeaderId, altPartId);
         checkSuccess(response);
         // Update the changelog
@@ -586,7 +598,21 @@ public class BOMService {
         relatedParts.add(new RelatedPart(altPartId, ChangelogPart.Role.PART0));
         changelogService.log(BOM,
                 "Deleted part [" + altPartId + "] in an alternative page group [" + altHeaderId + "].", relatedParts);
+        return response;
+    }
+
+    @Transactional
+    public PartGroup[] removeFromAltBom(Long altHeaderId, Long altPartId) throws JsonProcessingException {
+        DeleteAltBomResponse response = removePartFromAltBom(altHeaderId, altPartId);
         return PartGroup.from(response.getGroups());
+    }
+
+    @Transactional
+    public PartGroup[] removeFromAltBom(Long parentPartId, Long childPartId, Long altHeaderId, Long[] altPartIds) throws JsonProcessingException {
+        for(Long partId : altPartIds) {
+            removePartFromAltBom(altHeaderId, partId);
+        }
+        return getAlternatives(parentPartId, childPartId);
     }
 
     @Transactional

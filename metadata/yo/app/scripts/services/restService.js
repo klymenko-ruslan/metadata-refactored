@@ -29,6 +29,11 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('bom', parentPartId).post('descendant/' + childPartId, null, {quantity: quantity});
       };
 
+      this.removeBomItems = function(parentPartId, childrenIds) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom', parentPartId).one('descendant').customDELETE(childrenIds);
+      };
+
       this.getBomAlternatives = function(parentPartId, childPartId) {
         Restangular.setParentless(false);
         return Restangular.one('bom', parentPartId).one('descendant', childPartId).getList('alternatives');
@@ -38,8 +43,14 @@ angular.module('ngMetaCrudApp')
         Restangular.setParentless(false);
         return Restangular.one('bom', parentPartId).one('descendant', childPartId).post('alternatives');
       };
+ 
+      this.removeAltBomItems = function(parentPartId, childPartId, altHeaderId, altPartIds) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom', parentPartId).one('descendant', childPartId).one('headers', altHeaderId)
+          .customDELETE(altPartIds);
+      };
 
-    // TODO: parameters 'parentPartId' and 'childPartId' are excessive and useless
+      // TODO: parameters 'parentPartId' and 'childPartId' are excessive and useless
       this.deleteAltBomGroup = function(parentPartId, childPartId, altHeaderId) {
         Restangular.setParentless(false);
         return Restangular.one('bom', parentPartId).one('descendant', childPartId)

@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-xs-6">
-    <button class="btn btn-default btn-sm" title="Delete selected..." data-ng-click="onRemoveSelectedBoms()">
+    <button class="btn btn-default btn-sm" style="margin-top:6px" title="Remove selected part(s) from the BOM." data-ng-disabled="!isThereAnySelectedBomItem()" data-ng-click="onRemoveSelectedBoms()">
       <i class="fa fa-trash-o"></i>
     </button>
   </div>
@@ -15,11 +15,10 @@
     </div>
   </div>
 </div>
-
 <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
   <tr data-ng-repeat="b in $data" data-ng-class="{selected: b === highlightedBom}" data-ng-click="showAlternates(b)" style="cursor:pointer">
-    <td width="30" style="text-align: left" header="'ng-table/headers/checkbox.html'">
-      <input type="checkbox" data-ng-model="selectedItems.bom[b._rowid]" data-ng-click="$event.stopPropagation();"/>
+    <td width="30" style="text-align: left" header="'ng-table/headers/checkbox_bom.html'">
+      <input type="checkbox" data-ng-model="selectedItems.bom.parts[b._rowid]" data-ng-click="$event.stopPropagation();"/>
     </td>
     <td title="'Part#'" class="text-center text-nowrap" data-sortable="'partNumber'">
       <a data-ng-href="/part/{{b.partId}}">{{b.partNumber}}</a>
@@ -68,8 +67,8 @@
     <td colspan="7">No parts to display.</td>
   </tr>
 </table>
-<script type="text/ng-template" id="ng-table/headers/checkbox.html">
-  <input type="checkbox" data-ng-model="selectedItems.allBomChecked" />
+<script type="text/ng-template" id="ng-table/headers/checkbox_bom.html">
+  <input type="checkbox" data-ng-model="selectedItems.bom.allBomChecked" />
 </script>
 
 <div class="row" data-ng-show="highlightedBom">
@@ -95,8 +94,14 @@
 
     <ul class="list-unstyled" data-ng-show="hasAnyAltBomGroup()">
     <li data-ng-repeat="g in altBoms">
+      <h5 style="display:inline-block">[{{g.altHeaderId}}] Group</h5>
       <div class="row" style="margin-bottom: 5px;">
-        <div class="col-xs-12">
+        <div class="col-xs-6">
+          <button class="btn btn-default btn-sm" title="Remove selected parts from this alternative BOM." data-ng-disabled="!isThereAnySelectedAltBomItem(g.altHeaderId)" data-ng-click="onRemoveSelectedAltBoms(g.altHeaderId)">
+            <i class="fa fa-trash-o"></i>
+          </button>
+        </div>
+        <div class="col-xs-6">
           <div class="pull-right">
             <button class="btn btn-danger btn-sm" authorize="ROLE_BOM_ALT" data-ng-click="removeAltGroup(g.altHeaderId)">
               <i class="fa fa-trash-o"></i>
@@ -107,23 +112,18 @@
               Add Alternate
             </button>
           </div>
-          <div class="pull-left">
-            <h5 style="display:inline-block">[{{g.altHeaderId}}] Group</h5>
-          </div>
         </div>
       </div>
 
       <table data-ng-table="g.ngTableParams" class="table table-bordered table-striped table-hover table-responsive">
       <tr data-ng-repeat="ab in $data">
+        <td width="30" style="text-align: left" header="'ng-table/headers/checkbox_altbom.html'">
+          <input type="checkbox" data-ng-model="selectedItems.altbom[g.altHeaderId]['parts'][ab.partId]" data-ng-click="$event.stopPropagation();"/>
+        </td>
         <td title="'Part Type'" data-sortable="'partType.name'">{{ab.partType.name}}</td>
         <td title="'Manufacturer'" data-sortable="'manufacturer.name'">{{ab.manufacturer.name}}</td>
         <td title="'Part#'" class="text-nowrap" data-sortable="'partNumber'">
           <a data-ng-href="/part/{{ab.partId}}">{{ab.partNumber}}</a>
-        </td>
-        <td title="'Actions'" class="actions">
-          <button data-ng-click="removeAlternate(g.altHeaderId, ab.partId)" authorize="ROLE_BOM_ALT" class="btn btn-danger btn-xs">
-            <i class="fa fa-trash-o"></i> Remove
-          </button>
         </td>
       </tr>
       <tr data-ng-hide="$data.length > 0">
@@ -133,6 +133,10 @@
 
     </li>
     </ul>
+
+    <script type="text/ng-template" id="ng-table/headers/checkbox_altbom.html">
+      <input type="checkbox" data-ng-model="selectedItems.altbom[g.altHeaderId].allAltBomChecked" data-ng-change="onCheckAllAltBomItems(g.altHeaderId)" />
+    </script>
 
   </div>
 </div>

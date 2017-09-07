@@ -5,6 +5,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,13 +93,26 @@ public class BOMController {
         bomService.update(parentPartId, childPartId, quantity);
     }
 
+    /*
+     * @Transactional
+     *
+     * @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}",
+     * method = DELETE, produces = APPLICATION_JSON_VALUE)
+     *
+     * @ResponseBody
+     *
+     * @Secured("ROLE_BOM") public Bom[] delete(@PathVariable("parentPartId")
+     * Long parentPartId, @PathVariable("childPartId") Long childPartId) throws
+     * Exception { return bomService.delete(parentPartId, childPartId); }
+     */
+
     @Transactional
     @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}", method = DELETE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_BOM")
-    public Bom[] delete(@PathVariable("parentPartId") Long parentPartId, @PathVariable("childPartId") Long childPartId)
-            throws Exception {
-        return bomService.delete(parentPartId, childPartId);
+    public Bom[] deleteBomItems(@PathVariable("parentPartId") Long parentPartId,
+            @PathVariable("childPartId") Long[] childrenIds) throws IOException {
+        return bomService.delete(parentPartId, childrenIds);
     }
 
     @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -133,7 +148,8 @@ public class BOMController {
 
     @Secured("ROLE_BOM_ALT")
     @ResponseBody
-    // TODO: parameters 'parentPartId' and 'childPartId' are excessive and useless
+    // TODO: parameters 'parentPartId' and 'childPartId' are excessive and
+    // useless
     @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives/{altHeaderId}", method = DELETE, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public PartGroup[] deleteBomAlternativeGroup(@PathVariable("parentPartId") Long parentPartId,
             @PathVariable("childPartId") Long childPartId, @PathVariable("altHeaderId") Long altHeaderId)
@@ -155,10 +171,11 @@ public class BOMController {
 
     @Secured("ROLE_BOM_ALT")
     @ResponseBody
-    @RequestMapping(value = "/alternatives/{altPartId}/headers/{altHeaderId}", method = DELETE, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public PartGroup[] removePartFromAltBom(@PathVariable("altHeaderId") Long altHeaderId,
-            @PathVariable("altPartId") Long altPartId) throws Exception {
-        return bomService.deleteAltBom(altHeaderId, altPartId);
+    @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives/headers/{altHeaderId}/{altPartIds}", method = DELETE, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public PartGroup[] removePartFromAltBom(@PathVariable("parentPartId") Long parentPartId,
+            @PathVariable("childPartId") Long childPartId, @PathVariable("altHeaderIds") Long altHeaderId,
+            @PathVariable("altPartIds") Long[] altPartIds) throws Exception {
+        return bomService.removeFromAltBom(parentPartId, childPartId, altHeaderId, altPartIds);
     }
 
 }
