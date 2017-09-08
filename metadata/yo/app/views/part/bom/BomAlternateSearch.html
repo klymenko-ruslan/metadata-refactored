@@ -87,11 +87,12 @@
     View
   </a>
 
-  <a authorize="ROLE_BOM"
+  <button authorize="ROLE_BOM"
      data-ng-click="pickPart($part._source.id)"
+     data-ng-disabled="isPickBttnDisabled($part._source.id)"
      class="btn btn-success btn-xs">
     <i class="fa fa-bullseye"></i>
     Pick
-  </a>
+  </button>
 
 </part-search>

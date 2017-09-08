@@ -261,7 +261,7 @@ angular.module('ngMetaCrudApp')
             $scope.selectedItems.altbom = {};
             var result = [];
             _.chain(partGroups)
-              .filter(function(pg) { return pg && pg.id; }) // TODO: hack
+              //.filter(function(pg) { return pg && pg.id; }) // TODO: hack
               .each(function(pg) {
                 result.push({
                   altHeaderId: pg.id,

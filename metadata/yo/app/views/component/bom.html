@@ -77,7 +77,7 @@
     <div class="row" style="margin-top:35px">
       <div class="col-xs-12">
         <div class="pull-right">
-          <button class="btn btn-warning" data-ng-click="newAltGroup()" title="Add a new group of alternative BOM">
+          <button class="btn btn-warning" data-ng-click="newAltGroup()" data-ng-hide="hasAnyAltBomGroup()" title="Add a new group of alternative BOM">
             <i class="fa fa-plus"></i>
             New Group
           </button>
@@ -94,7 +94,7 @@
 
     <ul class="list-unstyled" data-ng-show="hasAnyAltBomGroup()">
     <li data-ng-repeat="g in altBoms">
-      <h5 style="display:inline-block">[{{g.altHeaderId}}] Group</h5>
+      <!-- h5 style="display:inline-block">[{{g.altHeaderId}}] Group</h5 -->
       <div class="row" style="margin-bottom: 5px;">
         <div class="col-xs-6">
           <button class="btn btn-default btn-sm" title="Remove selected parts from this alternative BOM." data-ng-disabled="!isThereAnySelectedAltBomItem(g.altHeaderId)" data-ng-click="onRemoveSelectedAltBoms(g.altHeaderId)">

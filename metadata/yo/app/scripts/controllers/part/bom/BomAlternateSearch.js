@@ -32,6 +32,8 @@ angular.module('ngMetaCrudApp')
       .reduce(function(memo, parts) {return memo.concat(parts);})
       .value();
 
+    var alternativesIdx = _.reduce(alternatives, function(memo, val) { memo[val.partId] = true; return memo; }, {});
+
     $scope.altBomTableParams = new NgTableParams({
         page: 1,
         count: 10
@@ -50,6 +52,13 @@ angular.module('ngMetaCrudApp')
           dialogs.error('Could not add BOM alternate', 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
         }
       );
+    };
+
+    $scope.isPickBttnDisabled = function(partId) {
+      if (partId === undefined) {
+        return false;
+      }
+      return $scope.pickedPart && $scope.pickedPart.id === partId || alternativesIdx[partId.toString()];
     };
 
     $scope.pickPart = function (partId) {
