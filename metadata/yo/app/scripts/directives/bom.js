@@ -260,20 +260,22 @@ angular.module('ngMetaCrudApp')
           function _updateAltBoms(partGroups) {
             $scope.selectedItems.altbom = {};
             var result = [];
-            _.each(partGroups, function(pg) {
-              result.push({
-                altHeaderId: pg.id,
-                ngTableParams: new NgTableParams(
-                  {
-                    page: 1,
-                    count: 10
-                  }, {
-                    getData: utils.localPagination(pg.parts, 'partNumber')
-                  }
-                )
+            _.chain(partGroups)
+              .filter(function(pg) { return pg && pg.id; }) // TODO: hack
+              .each(function(pg) {
+                result.push({
+                  altHeaderId: pg.id,
+                  ngTableParams: new NgTableParams(
+                    {
+                      page: 1,
+                      count: 10
+                    }, {
+                      getData: utils.localPagination(pg.parts, 'partNumber')
+                    }
+                  )
+                });
+                $scope.selectedItems.altbom[pg.id.toString()] = {allAltBomChecked: false, parts:{}};
               });
-              $scope.selectedItems.altbom[pg.id.toString()] = {allAltBomChecked: false, parts:{}};
-            });
             $scope.altBoms = _.sortBy(result, 'altHeaderId');
           }
 

@@ -46,8 +46,8 @@ angular.module('ngMetaCrudApp')
  
       this.removeAltBomItems = function(parentPartId, childPartId, altHeaderId, altPartIds) {
         Restangular.setParentless(false);
-        return Restangular.one('bom', parentPartId).one('descendant', childPartId).one('headers', altHeaderId)
-          .customDELETE(altPartIds);
+        return Restangular.one('bom', parentPartId).one('descendant', childPartId).one('alternatives')
+          .one('headers', altHeaderId).customDELETE(altPartIds);
       };
 
       // TODO: parameters 'parentPartId' and 'childPartId' are excessive and useless

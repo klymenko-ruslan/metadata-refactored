@@ -173,7 +173,7 @@ public class BOMController {
     @ResponseBody
     @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives/headers/{altHeaderId}/{altPartIds}", method = DELETE, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public PartGroup[] removePartFromAltBom(@PathVariable("parentPartId") Long parentPartId,
-            @PathVariable("childPartId") Long childPartId, @PathVariable("altHeaderIds") Long altHeaderId,
+            @PathVariable("childPartId") Long childPartId, @PathVariable("altHeaderId") Long altHeaderId,
             @PathVariable("altPartIds") Long[] altPartIds) throws Exception {
         return bomService.removeFromAltBom(parentPartId, childPartId, altHeaderId, altPartIds);
     }
