@@ -3,7 +3,7 @@ package com.turbointernational.metadata.service;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.INTERCHANGE;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
-import static com.turbointernational.metadata.service.ArangoDbConnectorService.checkSuccess;
+import static com.turbointernational.metadata.service.GraphDbService.checkSuccess;
 import static com.turbointernational.metadata.util.FormatUtils.formatInterchange;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 
@@ -23,9 +23,9 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetInterchangeResponse;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.MigrateInterchangeResponse;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
+import com.turbointernational.metadata.service.GraphDbService.GetInterchangeResponse;
+import com.turbointernational.metadata.service.GraphDbService.MigrateInterchangeResponse;
 import com.turbointernational.metadata.web.dto.Interchange;
 
 /**
@@ -51,7 +51,7 @@ public class InterchangeService {
     private PartChangeService partChangeService;
 
     @Autowired
-    private ArangoDbConnectorService arangoDbConnector;
+    private GraphDbService graphDbService;
 
     /**
      * Find an interchangeable by its ID.
@@ -61,8 +61,8 @@ public class InterchangeService {
      */
     @Transactional
     public Interchange findById(Long id) {
-        GetInterchangeResponse response = arangoDbConnector.findInterchangeById(id);
-        return Interchange.from(response);
+        GetInterchangeResponse response = graphDbService.findInterchangeById(id);
+        return Interchange.from(partDao, response);
     }
 
     public Interchange findForPart(Part part) {
@@ -78,8 +78,8 @@ public class InterchangeService {
      * @return return interchange for a part.
      */
     public Interchange findForPart(Long partId) {
-        GetInterchangeResponse response = arangoDbConnector.findInterchangeForPart(partId);
-        return Interchange.from(response);
+        GetInterchangeResponse response = graphDbService.findInterchangeForPart(partId);
+        return Interchange.from(partDao, response);
     }
 
     public void initInterchange(Part part) {
@@ -98,7 +98,7 @@ public class InterchangeService {
      * @param asInterchange
      */
     public void create(Long partId, Long asInterchangePartId) throws IOException {
-        MigrateInterchangeResponse response = arangoDbConnector.moveGroupToOtherInterchangeableGroup(partId,
+        MigrateInterchangeResponse response = graphDbService.moveGroupToOtherInterchangeableGroup(partId,
                 asInterchangePartId);
         checkSuccess(response);
         Long headerId = response.getNewHeaderId();
@@ -125,7 +125,7 @@ public class InterchangeService {
     public void leaveInterchangeableGroup(Long partId) throws IOException {
         Part part = partDao.findOne(partId);
         Interchange interchange = findForPart(partId);
-        MigrateInterchangeResponse response = arangoDbConnector.leaveInterchangeableGroup(partId);
+        MigrateInterchangeResponse response = graphDbService.leaveInterchangeableGroup(partId);
         checkSuccess(response);
         // Update the changelog.
         List<RelatedPart> relatedParts = new ArrayList<>(1);
@@ -146,7 +146,7 @@ public class InterchangeService {
     @Transactional
     public void mergePickedAloneToPart(HttpServletRequest httpRequest, long partId, long pickedPartId,
             Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) throws IOException {
-        MigrateInterchangeResponse response = arangoDbConnector.movePartToOtherInterchangeGroup(pickedPartId, partId);
+        MigrateInterchangeResponse response = graphDbService.movePartToOtherInterchangeGroup(pickedPartId, partId);
         checkSuccess(response);
         Long oldInterchangeHeaderId = response.getOldHeaderId();
         Long newInterchangeHeaderId = response.getNewHeaderId();
@@ -172,7 +172,7 @@ public class InterchangeService {
     @Transactional
     public void mergePartAloneToPicked(HttpServletRequest httpRequest, long partId, long pickedPartId,
             Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) throws IOException {
-        MigrateInterchangeResponse response = arangoDbConnector.movePartToOtherInterchangeGroup(partId, pickedPartId);
+        MigrateInterchangeResponse response = graphDbService.movePartToOtherInterchangeGroup(partId, pickedPartId);
         checkSuccess(response);
         Long oldInterchangeHeaderId = response.getOldHeaderId();
         Long newInterchangeHeaderId = response.getNewHeaderId();
@@ -198,7 +198,7 @@ public class InterchangeService {
     @Transactional
     public void mergePickedAllToPart(HttpServletRequest httpRequest, Long partId, Long pickedPartId, Long[] sourcesIds,
             Integer[] ratings, String description, Long[] attachIds) throws IOException {
-        MigrateInterchangeResponse response = arangoDbConnector.moveGroupToOtherInterchangeableGroup(pickedPartId,
+        MigrateInterchangeResponse response = graphDbService.moveGroupToOtherInterchangeableGroup(pickedPartId,
                 partId);
         checkSuccess(response);
         Long oldInterchangeHeaderId = response.getOldHeaderId();

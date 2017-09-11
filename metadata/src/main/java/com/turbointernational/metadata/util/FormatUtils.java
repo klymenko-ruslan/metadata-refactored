@@ -7,8 +7,7 @@ import com.turbointernational.metadata.entity.CarModelEngineYear;
 import com.turbointernational.metadata.entity.CarYear;
 import com.turbointernational.metadata.entity.SalesNote;
 import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetBomsResponse;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetPartResponse;
+import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
 import com.turbointernational.metadata.web.dto.Interchange;
 
 /**
@@ -83,15 +82,6 @@ public class FormatUtils {
             Integer qty = bomItem.getQuantity();
             return String.format("(ID:%d, PRNT:%s, CHLD:%s, QTY:%d)", id, formatPart(parent), formatPart(child), qty);
         }
-    }
-
-    public static String formatBom(GetPartResponse parent, GetPartResponse child, Integer qty) {
-        Long parentPartId = parent.getPartId();
-        String parentPartNumber = parent.getPartNumber();
-        Long childPartId = child.getPartId();
-        String childPartNumber = child.getPartNumber();
-        return String.format("(PRNT:%s, CHLD:%s, QTY:%d)", formatPart(parentPartId, parentPartNumber),
-                formatPart(childPartId, childPartNumber), qty);
     }
 
     public static String formatBom(Part parentPart, Part childPart) {

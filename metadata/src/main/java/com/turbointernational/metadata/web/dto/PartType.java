@@ -1,7 +1,6 @@
 package com.turbointernational.metadata.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetPartTypeResponse;
 import com.turbointernational.metadata.util.View;
 
 /**
@@ -23,8 +22,8 @@ public class PartType {
         this.name = name;
     }
 
-    public static PartType from(GetPartTypeResponse o) {
-        return new PartType(o.getId(), o.getName());
+    public static PartType from(com.turbointernational.metadata.entity.PartType pt) {
+        return new PartType(pt.getId(), pt.getName());
     }
 
     public Long getId() {

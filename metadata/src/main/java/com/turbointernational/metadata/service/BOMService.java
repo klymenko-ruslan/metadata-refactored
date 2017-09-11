@@ -2,8 +2,8 @@ package com.turbointernational.metadata.service;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.BOM;
-import static com.turbointernational.metadata.service.ArangoDbConnectorService.checkSuccess;
 import static com.turbointernational.metadata.service.BOMService.AddToParentBOMsRequest.ResolutionEnum.REPLACE;
+import static com.turbointernational.metadata.service.GraphDbService.checkSuccess;
 import static com.turbointernational.metadata.util.FormatUtils.formatBOMAlternative;
 import static com.turbointernational.metadata.util.FormatUtils.formatBom;
 
@@ -32,14 +32,14 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.CreateAltBomGroupResponse;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.CreateAltBomResponse;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.DeleteAltBomGroupResponse;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.DeleteAltBomResponse;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetAltBomsResponse;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetBomsResponse;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.Response;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
+import com.turbointernational.metadata.service.GraphDbService.CreateAltBomGroupResponse;
+import com.turbointernational.metadata.service.GraphDbService.CreateAltBomResponse;
+import com.turbointernational.metadata.service.GraphDbService.DeleteAltBomGroupResponse;
+import com.turbointernational.metadata.service.GraphDbService.DeleteAltBomResponse;
+import com.turbointernational.metadata.service.GraphDbService.GetAltBomsResponse;
+import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
+import com.turbointernational.metadata.service.GraphDbService.Response;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.Bom;
 import com.turbointernational.metadata.web.dto.PartGroup;
@@ -72,7 +72,7 @@ public class BOMService {
     private PartChangeService partChangeService;
 
     @Autowired
-    private ArangoDbConnectorService arangoDbConnector;
+    private GraphDbService graphDbService;
 
     public static class CreateBOMsRequest {
 
@@ -106,7 +106,8 @@ public class BOMService {
         private Long parentPartId;
 
         /**
-         * Changelog source IDs which should be linked to the changelog. See ticket #891 for details.
+         * Changelog source IDs which should be linked to the changelog. See
+         * ticket #891 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] sourcesIds;
@@ -118,7 +119,8 @@ public class BOMService {
         private String chlogSrcLnkDescription;
 
         /**
-         * IDs of uploaded files which should be attached to this changelog. See ticket #933 for details.
+         * IDs of uploaded files which should be attached to this changelog. See
+         * ticket #933 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] attachIds;
@@ -323,13 +325,15 @@ public class BOMService {
         }
 
         /**
-         * Changelog source IDs which should be linked to the changelog. See ticket #891 for details.
+         * Changelog source IDs which should be linked to the changelog. See
+         * ticket #891 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] sourcesIds;
 
         /**
-         * IDs of uploaded files which should be attached to this changelog. See ticket #933 for details.
+         * IDs of uploaded files which should be attached to this changelog. See
+         * ticket #933 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] attachIds;
@@ -396,7 +400,7 @@ public class BOMService {
                     childPart.getManufacturerPartNumber(), quantity, errMsg));
             return false;
         }
-        Response response = arangoDbConnector.addPartToBom(parentPartId, childPartId, quantity);
+        Response response = graphDbService.addPartToBom(parentPartId, childPartId, quantity);
         if (response.isSuccess()) {
             // Save to the changelog.
             List<RelatedPart> relatedParts = new ArrayList<>(2);
@@ -438,19 +442,19 @@ public class BOMService {
                 relatedPartIds.add(childId);
             }
         }
-        GetBomsResponse bomsResponse = arangoDbConnector.getBoms(parentPartId);
+        GetBomsResponse bomsResponse = graphDbService.getBoms(parentPartId);
         partChangeService.addedBoms(parentPartId, relatedPartIds);
         Bom[] boms = Bom.from(bomsResponse.getRows());
         return new CreateBOMsResponse(failures, boms);
     }
 
     public GetBomsResponse.Row[] getByParentId(Long partId) throws Exception {
-        GetBomsResponse restBoms = arangoDbConnector.getBoms(partId);
+        GetBomsResponse restBoms = graphDbService.getBoms(partId);
         return restBoms.getRows();
     }
 
     public GetBomsResponse.Row[] getParentsForBom(Long partId) throws Exception {
-        GetBomsResponse restBoms = arangoDbConnector.getParentsBoms(partId);
+        GetBomsResponse restBoms = graphDbService.getParentsBoms(partId);
         return restBoms.getRows();
     }
 
@@ -480,7 +484,7 @@ public class BOMService {
         Collection<Long> relatedPartIds = new ArrayList<Long>(request.getRows().size() + 1);
         for (AddToParentBOMsRequest.Row r : rows) {
             Long pickedPartId = r.getPartId();
-            GetBomsResponse.Row[] pickedPartBoms = arangoDbConnector.getBoms(pickedPartId).getRows();
+            GetBomsResponse.Row[] pickedPartBoms = graphDbService.getBoms(pickedPartId).getRows();
             Part pickedPart = partDao.findOne(pickedPartId);
             Long pickedPartManufacturerId = pickedPart.getManufacturer().getId();
             if (primaryPartManufacturerId != pickedPartManufacturerId) {
@@ -499,7 +503,7 @@ public class BOMService {
                         List<RelatedPart> relatedParts = new ArrayList<>(2);
                         relatedParts.add(new RelatedPart(primaryPartId, ChangelogPart.Role.BOM_PARENT));
                         relatedParts.add(new RelatedPart(row.getPartId(), ChangelogPart.Role.BOM_CHILD));
-                        Response response = arangoDbConnector.removePartFromBom(pickedPartId, primaryPartId);
+                        Response response = graphDbService.removePartFromBom(pickedPartId, primaryPartId);
                         checkSuccess(response);
                         String txtAudit = row.toAuditLog();
                         changelogService.log(BOM,
@@ -532,7 +536,7 @@ public class BOMService {
         changelogService.log(BOM, "Changed BOM " + formatBom(parent, child) + " quantity to " + quantity, null,
                 relatedParts);
         // Update
-        Response response = arangoDbConnector.modifyPartInBom(parentPartId, childPartId, quantity);
+        Response response = graphDbService.modifyPartInBom(parentPartId, childPartId, quantity);
         checkSuccess(response);
         partChangeService.updatedBom(parent.getId());
     }
@@ -541,7 +545,7 @@ public class BOMService {
         Part parentPart = partDao.findOne(parentPartId);
         Part childPart = partDao.findOne(childPartId);
         // Delete it.
-        Response response = arangoDbConnector.removePartFromBom(parentPartId, childPartId);
+        Response response = graphDbService.removePartFromBom(parentPartId, childPartId);
         checkSuccess(response);
         // Notify about changes.
         partChangeService.deletedBom(parentPartId, childPartId);
@@ -555,7 +559,7 @@ public class BOMService {
     public Bom[] delete(Long parentPartId, Long childPartId) throws IOException {
         deleteBomItem(parentPartId, childPartId);
         // Return list of BOMs after this delete operation.
-        GetBomsResponse bomsResponse = arangoDbConnector.getBoms(parentPartId);
+        GetBomsResponse bomsResponse = graphDbService.getBoms(parentPartId);
         return Bom.from(bomsResponse.getRows());
     }
 
@@ -564,20 +568,19 @@ public class BOMService {
             deleteBomItem(parentPartId, id);
         }
         // Return list of BOMs after this delete operation.
-        GetBomsResponse bomsResponse = arangoDbConnector.getBoms(parentPartId);
+        GetBomsResponse bomsResponse = graphDbService.getBoms(parentPartId);
         return Bom.from(bomsResponse.getRows());
     }
 
     public PartGroup[] getAlternatives(Long parentPartId, Long childPartId) {
-        GetAltBomsResponse.Group[] response = arangoDbConnector.getAltBoms(parentPartId, childPartId);
-        return PartGroup.from(response);
+        GetAltBomsResponse.Group[] response = graphDbService.getAltBoms(parentPartId, childPartId);
+        return PartGroup.from(partDao, response);
     }
 
     @Transactional
     public CreateAltBomResponse createAltBom(Long parentPartId, Long childPartId, Long altHeaderId, Long altPartId)
             throws JsonProcessingException {
-        CreateAltBomResponse response = arangoDbConnector.createAltBom(parentPartId, childPartId, altHeaderId,
-                altPartId);
+        CreateAltBomResponse response = graphDbService.createAltBom(parentPartId, childPartId, altHeaderId, altPartId);
         checkSuccess(response);
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(3);
@@ -591,7 +594,7 @@ public class BOMService {
     }
 
     private DeleteAltBomResponse removePartFromAltBom(Long altHeaderId, Long altPartId) throws JsonProcessingException {
-        DeleteAltBomResponse response = arangoDbConnector.deleteAltBom(altHeaderId, altPartId);
+        DeleteAltBomResponse response = graphDbService.deleteAltBom(altHeaderId, altPartId);
         checkSuccess(response);
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(3);
@@ -604,12 +607,13 @@ public class BOMService {
     @Transactional
     public PartGroup[] removeFromAltBom(Long altHeaderId, Long altPartId) throws JsonProcessingException {
         DeleteAltBomResponse response = removePartFromAltBom(altHeaderId, altPartId);
-        return PartGroup.from(response.getGroups());
+        return PartGroup.from(partDao, response.getGroups());
     }
 
     @Transactional
-    public PartGroup[] removeFromAltBom(Long parentPartId, Long childPartId, Long altHeaderId, Long[] altPartIds) throws JsonProcessingException {
-        for(Long partId : altPartIds) {
+    public PartGroup[] removeFromAltBom(Long parentPartId, Long childPartId, Long altHeaderId, Long[] altPartIds)
+            throws JsonProcessingException {
+        for (Long partId : altPartIds) {
             removePartFromAltBom(altHeaderId, partId);
         }
         return getAlternatives(parentPartId, childPartId);
@@ -617,7 +621,7 @@ public class BOMService {
 
     @Transactional
     public Long createAltBomGroup(Long parentPartId, Long childPartId) throws JsonProcessingException {
-        CreateAltBomGroupResponse response = arangoDbConnector.createAltBomGroup(parentPartId, childPartId);
+        CreateAltBomGroupResponse response = graphDbService.createAltBomGroup(parentPartId, childPartId);
         checkSuccess(response);
         Long altHeaderId = response.getAltHeaderId();
         // Update the changelog
@@ -628,18 +632,18 @@ public class BOMService {
         return altHeaderId;
     }
 
-    // TODO: parameters 'parentPartId' and 'childPartId' are excessive and useless
+    // TODO: parameters 'parentPartId' and 'childPartId' are excessive and
+    // useless
     @Transactional
     public PartGroup[] deleteAltBomGroup(Long parentPartId, Long childPartId, Long altHeaderId)
             throws JsonProcessingException {
-        DeleteAltBomGroupResponse response = arangoDbConnector.deleteAltBomGroup(parentPartId, childPartId,
-                altHeaderId);
+        DeleteAltBomGroupResponse response = graphDbService.deleteAltBomGroup(parentPartId, childPartId, altHeaderId);
         checkSuccess(response);
         List<RelatedPart> relatedParts = new ArrayList<>(3);
         // TODO: BOM_PARENT should be replaced on ALT_BOM_GROUP.
         relatedParts.add(new RelatedPart(altHeaderId, ChangelogPart.Role.BOM_PARENT));
         changelogService.log(BOM, "Deleted alternative BOM group [" + altHeaderId + "].", relatedParts);
-        return PartGroup.from(response.getGroups());
+        return PartGroup.from(partDao, response.getGroups());
     }
 
 }

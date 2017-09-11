@@ -2,7 +2,8 @@ package com.turbointernational.metadata.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetAltBomsResponse;
+import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.service.GraphDbService.GetAltBomsResponse;
 import com.turbointernational.metadata.util.View;
 
 /**
@@ -28,13 +29,13 @@ public class PartGroup {
         this.parts = parts;
     }
 
-    public static PartGroup[] from(GetAltBomsResponse.Group[] groups) {
+    public static PartGroup[] from(PartDao partDao, GetAltBomsResponse.Group[] groups) {
         int n = groups.length;
         PartGroup[] retVal = new PartGroup[n];
         for (int i = 0; i < n; i++) {
             GetAltBomsResponse.Group g = groups[i];
             Long altHeaderId = g.getAltHeaderId();
-            Part[] parts = Part.from(g.getParts());
+            Part[] parts = Part.from(partDao, g.getParts());
             retVal[i] = new PartGroup(altHeaderId, parts);
         }
         return retVal;

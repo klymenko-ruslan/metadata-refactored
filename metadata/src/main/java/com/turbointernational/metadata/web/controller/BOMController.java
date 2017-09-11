@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.CreateAltBomResponse;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetBomsResponse.Row;
+import com.turbointernational.metadata.service.GraphDbService.CreateAltBomResponse;
+import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse.Row;
 import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsRequest;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsResponse;

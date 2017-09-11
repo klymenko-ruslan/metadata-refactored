@@ -49,7 +49,7 @@ import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.GasketKit;
 import com.turbointernational.metadata.entity.part.types.Turbo;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetAncestorsResponse;
+import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.web.controller.PartController;
 import com.turbointernational.metadata.web.dto.AlsoBought;
@@ -97,7 +97,7 @@ public class PartService {
     private EntityManager em;
 
     @Autowired
-    private ArangoDbConnectorService arangoDbConnector;
+    private GraphDbService graphDbService;
 
     private JSONSerializer partJsonSerializer = new JSONSerializer().include("id").include("name")
             .include("manufacturerPartNumber").include("description").include("inactive").include("partType.id")
@@ -311,7 +311,7 @@ public class PartService {
 
     @Secured("ROLE_READ")
     public GetAncestorsResponse ancestors(Long partId) throws Exception {
-        return arangoDbConnector.getAncestors(partId);
+        return graphDbService.getAncestors(partId);
     }
 
     @Transactional(noRollbackFor = AssertionError.class)

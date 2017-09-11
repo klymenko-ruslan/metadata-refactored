@@ -36,12 +36,25 @@ import com.turbointernational.metadata.web.dto.Part;
 import com.turbointernational.metadata.web.dto.PartType;
 
 /**
+ * A connector to a REST service of GraphDb.
+ *
+ * The service contains information (in a form of graphs) about BOMs, Alternate BOMs and Interchanges.
+ * The BOMs, Alternate BOMs and Interchanges are Parts. But the GraphDb contains only limited
+ * set of attributes about Part. They are:
+ *  * Part ID
+ *  * Manufacturer ID
+ *  * Part type ID
+ *
+ * This service make calls to the GraphDB and converts 'Part ID' in responses
+ * to a regular {@link com.turbointernational.metadata.entity.part.Part} entities
+ * from a database (or {@link Part}).
+ *
  * @author dmytro.trunykov@zorallabs.com
  */
 @Service
-public class ArangoDbConnectorService {
+public class GraphDbService {
 
-    private final static Logger log = LoggerFactory.getLogger(ArangoDbConnectorService.class);
+    private final static Logger log = LoggerFactory.getLogger(GraphDbService.class);
 
     @Value("${rest.arangodb.service.protocol}")
     private String restArangoDbServiceProtocol;
@@ -59,8 +72,6 @@ public class ArangoDbConnectorService {
     private ObjectMapper jsonSerializer;
 
     private HttpHeaders headers;
-
-    private UriTemplate uriTmplGetPartById;
 
     private UriTemplate uriTmplGetInterchageById;
 
@@ -116,128 +127,16 @@ public class ArangoDbConnectorService {
 
     }
 
-    public static class GetManufacturerResponse extends Response {
-
-        private Long id;
-
-        private String name;
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-    }
-
-    public static class GetPartTypeResponse extends Response {
-
-        private Long id;
-
-        private String name;
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-    }
-
-    public static class GetPartResponse extends Response {
-
-        private Long partId;
-
-        private String name;
-
-        private String descritpion;
-
-        private String partNumber;
-
-        private GetPartTypeResponse partType;
-
-        private GetManufacturerResponse manufacturer;
-
-        public Long getPartId() {
-            return partId;
-        }
-
-        public void setPartId(Long partId) {
-            this.partId = partId;
-        }
-
-        public String getPartNumber() {
-            return partNumber;
-        }
-
-        public void setManufacturerPartNumber(String partNumber) {
-            this.partNumber = partNumber;
-        }
-
-        public GetPartTypeResponse getPartType() {
-            return partType;
-        }
-
-        public void setPartType(GetPartTypeResponse partType) {
-            this.partType = partType;
-        }
-
-        public GetManufacturerResponse getManufacturer() {
-            return manufacturer;
-        }
-
-        public void setManufacturer(GetManufacturerResponse manufacturer) {
-            this.manufacturer = manufacturer;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getDescritpion() {
-            return descritpion;
-        }
-
-        public void setDescritpion(String descritpion) {
-            this.descritpion = descritpion;
-        }
-
-    }
-
-    public static class GetInterchangeResponse extends Response {
+    public static class GetInterchangeResponse {
 
         private Long headerId; // interchange header ID
 
-        private GetPartResponse[] parts;
+        private Long[] parts;
 
         public GetInterchangeResponse() {
         }
 
-        public GetInterchangeResponse(Long headerId, GetPartResponse[] parts) {
+        public GetInterchangeResponse(Long headerId, Long[] parts) {
             this.headerId = headerId;
             this.parts = parts;
         }
@@ -250,11 +149,11 @@ public class ArangoDbConnectorService {
             this.headerId = headerId;
         }
 
-        public GetPartResponse[] getParts() {
+        public Long[] getParts() {
             return parts;
         }
 
-        public void setParts(GetPartResponse[] parts) {
+        public void setParts(Long[] parts) {
             this.parts = parts;
         }
 
@@ -298,7 +197,8 @@ public class ArangoDbConnectorService {
 
     }
 
-    public static class GetAncestorsResponse extends Response {
+    // TODO: move inner Row class to DTO.
+    public static class GetAncestorsResponse {
 
         @JsonInclude(JsonInclude.Include.ALWAYS)
         public static class Row {
@@ -523,13 +423,13 @@ public class ArangoDbConnectorService {
                 this.altHeaderId = headerId;
             }
 
-            private GetPartResponse[] parts;
+            private Long[] parts;
 
-            public GetPartResponse[] getParts() {
+            public Long[] getParts() {
                 return parts;
             }
 
-            public void setParts(GetPartResponse[] parts) {
+            public void setParts(Long[] parts) {
                 this.parts = parts;
             }
 
@@ -607,8 +507,6 @@ public class ArangoDbConnectorService {
     public void init() {
         headers = new HttpHeaders();
         headers.setContentType(APPLICATION_JSON);
-        uriTmplGetPartById = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
-                + restArangoDbServicePort + "/parts/{id}");
         uriTmplGetInterchageById = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
                 + restArangoDbServicePort + "/interchanges/{id}");
         uriTmplGetInterchageForPart = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost
@@ -667,7 +565,7 @@ public class ArangoDbConnectorService {
      * @return
      * @throws DataAccessResourceFailureException
      */
-    private <T extends Response> T get(URI uri, Class<T> responseClazz) {
+    private <T> T get(URI uri, Class<T> responseClazz) {
         T response = restArangoDbService.getForObject(uri, responseClazz);
         // checkSuccess(response);
         return response;
@@ -719,11 +617,6 @@ public class ArangoDbConnectorService {
 
     private Response delete(URI uri) throws JsonProcessingException {
         return delete(uri, Response.class);
-    }
-
-    public GetPartResponse findPartById(Long id) {
-        URI uri = uriTmplGetPartById.expand(id);
-        return get(uri, GetPartResponse.class);
     }
 
     public GetInterchangeResponse findInterchangeById(Long id) {

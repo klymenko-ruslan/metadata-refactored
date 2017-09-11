@@ -3,8 +3,8 @@ package com.turbointernational.metadata.web.dto;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetInterchangeResponse;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetPartResponse;
+import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.service.GraphDbService.GetInterchangeResponse;
 import com.turbointernational.metadata.util.View;
 
 import flexjson.JSONSerializer;
@@ -29,12 +29,12 @@ public class Interchange implements Serializable {
         this.parts = parts;
     }
 
-    public static Interchange from(GetInterchangeResponse o) {
-        GetPartResponse[] restParts = o.getParts();
-        int n = restParts.length;
+    public static Interchange from(PartDao partDao, GetInterchangeResponse o) {
+        Long[] partIds = o.getParts();
+        int n = partIds.length;
         Part[] parts = new Part[n];
-        for(int i = 0; i < n; i++) {
-            parts[i] = Part.from(restParts[i]);
+        for (int i = 0; i < n; i++) {
+            parts[i] = Part.from(partDao, partIds[i]);
         }
         return new Interchange(o.getHeaderId(), parts);
     }

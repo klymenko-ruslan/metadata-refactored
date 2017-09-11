@@ -1,7 +1,7 @@
 package com.turbointernational.metadata.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetBomsResponse;
+import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
 import com.turbointernational.metadata.util.View;
 
 /**

@@ -1,7 +1,6 @@
 package com.turbointernational.metadata.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetManufacturerResponse;
 import com.turbointernational.metadata.util.View;
 
 /**
@@ -23,7 +22,7 @@ public class Manufacturer {
         this.name = name;
     }
 
-    public static Manufacturer from(GetManufacturerResponse o) {
+    public static Manufacturer from(com.turbointernational.metadata.entity.Manufacturer o) {
         return new Manufacturer(o.getId(), o.getName());
     }
 

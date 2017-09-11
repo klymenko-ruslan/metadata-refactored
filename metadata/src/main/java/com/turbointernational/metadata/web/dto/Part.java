@@ -1,7 +1,7 @@
 package com.turbointernational.metadata.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.service.ArangoDbConnectorService.GetPartResponse;
+import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.util.View;
 
 /**
@@ -40,17 +40,18 @@ public class Part {
         this.manufacturer = manufacturer;
     }
 
-    public static Part from(GetPartResponse o) {
-        PartType partType = PartType.from(o.getPartType());
-        Manufacturer manufacturer = Manufacturer.from(o.getManufacturer());
-        return new Part(o.getPartId(), o.getName(), o.getDescritpion(), o.getPartNumber(), partType, manufacturer);
+    public static Part from(PartDao dao, Long partID) {
+        com.turbointernational.metadata.entity.part.Part p = dao.findOne(partID);
+        PartType pt = PartType.from(p.getPartType());
+        Manufacturer m = Manufacturer.from(p.getManufacturer());
+        return new Part(partID, p.getName(), p.getDescription(), p.getManufacturerPartNumber(), pt, m);
     }
 
-    public static Part[] from(GetPartResponse[] a) {
-        int n = a.length;
+    public static Part[] from(PartDao dao, Long[] partIDs) {
+        int n = partIDs.length;
         Part[] retVal = new Part[n];
         for (int i = 0; i < n; i++) {
-            retVal[i] = from(a[i]);
+            retVal[i] = from(dao, partIDs[i]);
         }
         return retVal;
     }
