@@ -49,10 +49,12 @@ import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.GasketKit;
 import com.turbointernational.metadata.entity.part.types.Turbo;
-import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
+import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse;
+import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse.Row;
 import com.turbointernational.metadata.web.controller.PartController;
 import com.turbointernational.metadata.web.dto.AlsoBought;
+import com.turbointernational.metadata.web.dto.Ancestor;
 import com.turbointernational.metadata.web.dto.Interchange;
 import com.turbointernational.metadata.web.dto.Page;
 
@@ -310,8 +312,22 @@ public class PartService {
     }
 
     @Secured("ROLE_READ")
-    public GetAncestorsResponse ancestors(Long partId) throws Exception {
+    public GetAncestorsResponse ancestorsIds(Long partId) throws Exception {
         return graphDbService.getAncestors(partId);
+    }
+
+    @Secured("ROLE_READ")
+    public Ancestor[] ancestors(Long partId) throws Exception {
+        GetAncestorsResponse response = ancestorsIds(partId);
+        Row[] rows = response.getRows();
+        int n = rows.length;
+        Ancestor[] retVal = new Ancestor[n];
+        for (int i = 0; i < n; i++) {
+            Row r = rows[i];
+            Part p = partDao.findOne(r.getPartId());
+            retVal[i] = Ancestor.from(p, r.getRelationDistance());
+        }
+        return retVal;
     }
 
     @Transactional(noRollbackFor = AssertionError.class)

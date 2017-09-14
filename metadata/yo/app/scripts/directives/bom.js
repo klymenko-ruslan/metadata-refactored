@@ -78,6 +78,7 @@ angular.module('ngMetaCrudApp')
             });
             $scope.bom.splice(0, $scope.bom.length);
             $scope.bom.push.apply($scope.bom, bom);
+$log.log('bom: ' + angular.toJson($scope.bom, 2));
             $scope.bomTableParams.reload();
           }
 

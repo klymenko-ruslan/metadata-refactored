@@ -43,7 +43,6 @@ import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.Turbo;
-import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse;
 import com.turbointernational.metadata.service.InterchangeService;
 import com.turbointernational.metadata.service.PartService;
 import com.turbointernational.metadata.service.PriceService;
@@ -52,6 +51,7 @@ import com.turbointernational.metadata.service.StandardOversizePartService.Creat
 import com.turbointernational.metadata.service.StandardOversizePartService.CreateStandardOversizePartResponse;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.AlsoBought;
+import com.turbointernational.metadata.web.dto.Ancestor;
 import com.turbointernational.metadata.web.dto.Page;
 import com.turbointernational.metadata.web.dto.ProductPricesDto;
 
@@ -431,8 +431,8 @@ public class PartController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
-    public GetAncestorsResponse.Row[] ancestors(@PathVariable("id") Long partId) throws Exception {
-        GetAncestorsResponse.Row[] ancestors = partService.ancestors(partId).getRows();
+    public Ancestor[] ancestors(@PathVariable("id") Long partId) throws Exception {
+        Ancestor[] ancestors = partService.ancestors(partId);
         Arrays.sort(ancestors, (a0, a1) -> a0.getRelationDistance() - a1.getRelationDistance());
         return ancestors;
     }
