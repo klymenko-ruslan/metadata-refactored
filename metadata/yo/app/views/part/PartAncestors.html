@@ -18,8 +18,8 @@
         <td title="'Manufacturer'" class="text-left">{{item.manufacturer.name}}</td>
         <td title="'Part #'" class="text-left text-nowrap">{{item.partNumber}}</td>
         <td title="'Relation Type'" class="text-left">
-            <span data-ng-show="item.relationType">direct</span>
-            <span data-ng-hide="item.relationType">interchange</span>
+            <span data-ng-show="item.relationDistance === 1">direct</span>
+            <span data-ng-hide="item.relationDistance !== 1">interchange</span>
         </td>
         <td title="'Relation Distance'" class="text-left">{{item.relationDistance}}</td>
         <td title="'Actions'" class="actions">

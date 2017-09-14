@@ -219,9 +219,6 @@ public class GraphDbService {
             private Manufacturer manufacturer;
 
             @JsonView({ View.Summary.class })
-            private PartType partType;
-
-            @JsonView({ View.Summary.class })
             private boolean relationType;
 
             @JsonView({ View.Summary.class })
@@ -265,14 +262,6 @@ public class GraphDbService {
 
             public void setManufacturer(Manufacturer manufacturer) {
                 this.manufacturer = manufacturer;
-            }
-
-            public PartType getPartType() {
-                return partType;
-            }
-
-            public void setPartType(PartType partType) {
-                this.partType = partType;
             }
 
             public boolean isRelationType() {
