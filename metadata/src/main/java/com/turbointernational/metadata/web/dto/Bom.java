@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
 import com.turbointernational.metadata.util.View;
 
@@ -40,20 +41,25 @@ public class Bom {
         this.interchanges = interchanges;
     }
 
-    public Bom(GetBomsResponse.Row o) {
-        this.partId = o.getPartId();
-        this.partNumber = o.getPartNumber();
-        this.partType = o.getPartType();
-        this.manufacturer = o.getManufacturer();
-        this.qty = o.getQty();
-        this.interchanges = o.getInterchanges();
+    public static Bom from(PartDao dao, GetBomsResponse.Row r) {
+        Long id = r.getPartId();
+        com.turbointernational.metadata.entity.part.Part p = dao.findOne(id);
+        PartType pt = PartType.from(p.getPartType());
+        Manufacturer m = Manufacturer.from(p.getManufacturer());
+        Part[] interchanges;
+        if (r.getInterchanges() != null) {
+            interchanges = Part.from(dao, r.getInterchanges());
+        } else  {
+            interchanges = new Part[0];
+        }
+        return new Bom(id, p.getManufacturerPartNumber(), pt, m, r.getQty(), interchanges);
     }
 
-    public static Bom[] from(GetBomsResponse.Row[] rows) {
+    public static Bom[] from(PartDao dao, GetBomsResponse.Row[] rows) {
         int n = rows.length;
         Bom[] retVal = new Bom[n];
         for (int i = 0; i < n; i++) {
-            retVal[i] = new Bom(rows[i]);
+            retVal[i] = from(dao, rows[i]);
         }
         return retVal;
     }

@@ -1,16 +1,18 @@
 package com.turbointernational.metadata.dao;
 
-import com.turbointernational.metadata.entity.StandardOversizePart;
-import com.turbointernational.metadata.entity.StandardOversizePartId;
-import com.turbointernational.metadata.entity.part.Part;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
+import com.turbointernational.metadata.entity.StandardOversizePart;
+import com.turbointernational.metadata.entity.StandardOversizePartId;
+import com.turbointernational.metadata.entity.part.Part;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-02-13.

@@ -23,25 +23,30 @@ public class Ancestor {
     private String partNumber;
 
     @JsonView({ View.Summary.class })
+    private PartType partType;
+
+    @JsonView({ View.Summary.class })
     private Manufacturer manufacturer;
 
     @JsonView({ View.Summary.class })
     private int relationDistance;
 
-    public Ancestor(Long partId, String name, String descritption, String partNumber, Manufacturer manufacturer,
-            int relationDistance) {
+    public Ancestor(Long partId, String name, String descritption, String partNumber, PartType partType,
+            Manufacturer manufacturer, int relationDistance) {
         this.partId = partId;
         this.name = name;
         this.descritption = descritption;
         this.partNumber = partNumber;
+        this.partType = partType;
         this.manufacturer = manufacturer;
         this.relationDistance = relationDistance;
     }
 
     public static Ancestor from(com.turbointernational.metadata.entity.part.Part p, int distance) {
+        PartType partType = PartType.from(p.getPartType());
         Manufacturer manufacturer = Manufacturer.from(p.getManufacturer());
-        return new Ancestor(p.getId(), p.getName(), p.getDescription(), p.getManufacturerPartNumber(), manufacturer,
-                distance);
+        return new Ancestor(p.getId(), p.getName(), p.getDescription(), p.getManufacturerPartNumber(),
+                partType, manufacturer, distance);
     }
 
     public Long getPartId() {

@@ -120,11 +120,11 @@
         <td width="30" style="text-align: left" header="'ng-table/headers/checkbox_altbom.html'">
           <input type="checkbox" data-ng-model="selectedItems.altbom[g.altHeaderId]['parts'][ab.partId]" data-ng-click="$event.stopPropagation();"/>
         </td>
-        <td title="'Part Type'" data-sortable="'partType.name'">{{ab.partType.name}}</td>
-        <td title="'Manufacturer'" data-sortable="'manufacturer.name'">{{ab.manufacturer.name}}</td>
         <td title="'Part#'" class="text-nowrap" data-sortable="'partNumber'">
           <a data-ng-href="/part/{{ab.partId}}">{{ab.partNumber}}</a>
         </td>
+        <td title="'Type'" data-sortable="'partType.name'">{{ab.partType.name}}</td>
+        <td title="'Manufacturer'" data-sortable="'manufacturer.name'">{{ab.manufacturer.name}}</td>
       </tr>
       <tr data-ng-hide="$data.length > 0">
         <td colspan="4">No parts to display.</td>

@@ -7,7 +7,6 @@ import com.turbointernational.metadata.entity.CarModelEngineYear;
 import com.turbointernational.metadata.entity.CarYear;
 import com.turbointernational.metadata.entity.SalesNote;
 import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
 import com.turbointernational.metadata.web.dto.Interchange;
 
 /**
@@ -17,7 +16,6 @@ import com.turbointernational.metadata.web.dto.Interchange;
  */
 public class FormatUtils {
 
-    @Deprecated
     public static String formatPart(Part part) {
         if (part == null) {
             return "null";
@@ -90,11 +88,6 @@ public class FormatUtils {
 
     public static String formatBom(Part parentPart, Part childPart, Integer qty) {
         return String.format("(PRNT:%s, CHLD:%s, QTY:%d)", formatPart(parentPart), formatPart(childPart), qty);
-    }
-
-    public static String formatBom(Part parentPart, GetBomsResponse.Row bom) {
-        return String.format("(PRNT:%s, CHLD:%s, QTY:%d)", formatPart(parentPart),
-                formatPart(bom.getPartId(), bom.getPartNumber()), bom.getQty());
     }
 
     public static String formatInterchange(Interchange interchange) {

@@ -444,32 +444,32 @@ public class BOMService {
         }
         GetBomsResponse bomsResponse = graphDbService.getBoms(parentPartId);
         partChangeService.addedBoms(parentPartId, relatedPartIds);
-        Bom[] boms = Bom.from(bomsResponse.getRows());
+        Bom[] boms = Bom.from(partDao, bomsResponse.getRows());
         return new CreateBOMsResponse(failures, boms);
     }
 
-    public GetBomsResponse.Row[] getByParentId(Long partId) throws Exception {
-        GetBomsResponse restBoms = graphDbService.getBoms(partId);
-        return restBoms.getRows();
+    public Bom[] getByParentId(Long partId) throws Exception {
+        GetBomsResponse response = graphDbService.getBoms(partId);
+        return Bom.from(partDao, response.getRows());
     }
 
-    public GetBomsResponse.Row[] getParentsForBom(Long partId) throws Exception {
-        GetBomsResponse restBoms = graphDbService.getParentsBoms(partId);
-        return restBoms.getRows();
+    public Bom[] getParentsForBom(Long partId) throws Exception {
+        GetBomsResponse response = graphDbService.getParentsBoms(partId);
+        return Bom.from(partDao, response.getRows());
     }
 
-    public GetBomsResponse.Row[] getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {
-        // TODO: this method should be implemented on the service side
-        GetBomsResponse.Row[] parents = getParentsForBom(partId);
+    public Bom[] getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {
+        Bom[] parents = getParentsForBom(partId);
         int n = parents.length;
-        List<GetBomsResponse.Row> filtered = new ArrayList<>(n);
+        List<Bom> filtered = new ArrayList<>(n);
+        // TODO: batch?
         for (int i = 0; i < n; i++) {
-            GetBomsResponse.Row row = parents[i];
-            if (row.getPartType().getId().equals(partTypeId)) {
-                filtered.add(row);
+            Bom b = parents[i];
+            if (b.getPartType().getId().equals(partTypeId)) {
+                filtered.add(b);
             }
         }
-        GetBomsResponse.Row[] retVal = new GetBomsResponse.Row[filtered.size()];
+        Bom[] retVal = new Bom[filtered.size()];
         filtered.toArray(retVal);
         return retVal;
     }
@@ -498,8 +498,9 @@ public class BOMService {
                 // Remove existing BOMs in the picked part.
                 for (int i = 0; i < pickedPartBoms.length; i++) {
                     GetBomsResponse.Row row = pickedPartBoms[i];
-                    Long childPartTypeId = row.getPartType().getId();
-                    if (childPartTypeId.longValue() == primaryPartTypeId.longValue()) {
+                    Part ppb = partDao.findOne(row.getPartId());
+                    Long childPartTypeId = ppb.getPartType().getId();
+                    if (childPartTypeId.equals(primaryPartTypeId)) {
                         List<RelatedPart> relatedParts = new ArrayList<>(2);
                         relatedParts.add(new RelatedPart(primaryPartId, ChangelogPart.Role.BOM_PARENT));
                         relatedParts.add(new RelatedPart(row.getPartId(), ChangelogPart.Role.BOM_CHILD));
@@ -518,11 +519,10 @@ public class BOMService {
                 relatedPartIds.add(pickedPartId);
             }
         }
-        GetBomsResponse.Row[] parents = getParentsForBom(primaryPartId);
+        Bom[] boms = getParentsForBom(primaryPartId);
         // In the call below primaryPartId is actually childPartId from point of
         // view partChangeService.
         partChangeService.addedToParentBoms(primaryPartId, relatedPartIds);
-        Bom[] boms = Bom.from(parents);
         return new BOMService.CreateBOMsResponse(failures, boms);
     }
 
@@ -560,7 +560,7 @@ public class BOMService {
         deleteBomItem(parentPartId, childPartId);
         // Return list of BOMs after this delete operation.
         GetBomsResponse bomsResponse = graphDbService.getBoms(parentPartId);
-        return Bom.from(bomsResponse.getRows());
+        return Bom.from(partDao, bomsResponse.getRows());
     }
 
     public Bom[] delete(Long parentPartId, Long[] childrenIds) throws IOException {
@@ -569,7 +569,7 @@ public class BOMService {
         }
         // Return list of BOMs after this delete operation.
         GetBomsResponse bomsResponse = graphDbService.getBoms(parentPartId);
-        return Bom.from(bomsResponse.getRows());
+        return Bom.from(partDao, bomsResponse.getRows());
     }
 
     public PartGroup[] getAlternatives(Long parentPartId, Long childPartId) {

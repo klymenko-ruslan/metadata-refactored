@@ -12,7 +12,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -432,9 +431,7 @@ public class PartController {
     @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
     public Ancestor[] ancestors(@PathVariable("id") Long partId) throws Exception {
-        Ancestor[] ancestors = partService.ancestors(partId);
-        Arrays.sort(ancestors, (a0, a1) -> a0.getRelationDistance() - a1.getRelationDistance());
-        return ancestors;
+        return partService.ancestors(partId);
     }
 
     @Transactional

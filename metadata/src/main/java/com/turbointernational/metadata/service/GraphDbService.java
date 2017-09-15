@@ -6,7 +6,6 @@ import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,9 +30,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.Auditable;
 import com.turbointernational.metadata.util.View;
-import com.turbointernational.metadata.web.dto.Manufacturer;
 import com.turbointernational.metadata.web.dto.Part;
-import com.turbointernational.metadata.web.dto.PartType;
 
 /**
  * A connector to a REST service of GraphDb.
@@ -252,15 +249,9 @@ public class GraphDbService {
 
             private Long partId;
 
-            private String partNumber;
-
-            private PartType partType;
-
-            private Manufacturer manufacturer;
-
             private Integer qty;
 
-            private Part[] interchanges;
+            private Long[] interchanges;
 
             public Long getPartId() {
                 return partId;
@@ -268,30 +259,6 @@ public class GraphDbService {
 
             public void setPartId(Long partId) {
                 this.partId = partId;
-            }
-
-            public String getPartNumber() {
-                return partNumber;
-            }
-
-            public void setPartNumber(String partNumber) {
-                this.partNumber = partNumber;
-            }
-
-            public PartType getPartType() {
-                return partType;
-            }
-
-            public void setPartType(PartType partType) {
-                this.partType = partType;
-            }
-
-            public Manufacturer getManufacturer() {
-                return manufacturer;
-            }
-
-            public void setManufacturer(Manufacturer manufacturer) {
-                this.manufacturer = manufacturer;
             }
 
             public Integer getQty() {
@@ -302,19 +269,12 @@ public class GraphDbService {
                 this.qty = qty;
             }
 
-            public Part[] getInterchanges() {
+            public Long[] getInterchanges() {
                 return interchanges;
             }
 
-            public void setInterchanges(Part[] interchanges) {
+            public void setInterchanges(Long[] interchanges) {
                 this.interchanges = interchanges;
-            }
-
-            @Override
-            public String toString() {
-                return "Row [partId=" + partId + ", partNumber=" + partNumber + ", partType=" + partType
-                        + ", manufacturer=" + manufacturer + ", qty=" + qty + ", interchanges="
-                        + Arrays.toString(interchanges) + "]";
             }
 
             @Override

@@ -20,11 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.service.GraphDbService.CreateAltBomResponse;
-import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse.Row;
 import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsRequest;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsResponse;
+import com.turbointernational.metadata.service.GraphDbService.CreateAltBomResponse;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.Bom;
 import com.turbointernational.metadata.web.dto.PartGroup;
@@ -52,8 +51,7 @@ public class BOMController {
     @JsonView(View.SummaryWithBOMDetail.class)
     public Bom[] getByParentAndTypeIds(@PathVariable("partId") Long partId, @RequestParam("typeId") Long typeId)
             throws Exception {
-        Row[] rows = bomService.getByParentAndTypeIds(partId, typeId);
-        return Bom.from(rows);
+        return bomService.getByParentAndTypeIds(partId, typeId);
     }
 
     @RequestMapping(value = "/byParentPart/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -61,8 +59,7 @@ public class BOMController {
     @Secured("ROLE_READ")
     @JsonView(View.SummaryWithBOMDetail.class)
     public Bom[] getPartBOMs(@PathVariable("id") Long id) throws Exception {
-        Row[] rows = bomService.getByParentId(id);
-        return Bom.from(rows);
+        return bomService.getByParentId(id);
     }
 
     @RequestMapping(value = "/part/{id}/parents", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -70,8 +67,7 @@ public class BOMController {
     @Secured("ROLE_READ")
     @JsonView(View.SummaryWithBOMDetail.class)
     public Bom[] getParentsForBom(@PathVariable("id") Long partId) throws Exception {
-        Row[] rows = bomService.getParentsForBom(partId);
-        return Bom.from(rows);
+        return bomService.getParentsForBom(partId);
     }
 
     @Transactional

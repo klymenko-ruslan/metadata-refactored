@@ -9,8 +9,8 @@ angular.module('ngMetaCrudApp')
       templateUrl: '/views/component/bom.html',
       restrict: 'E',
       link: function postLink() {},
-      controller: ['dialogs', '$scope', '$log', '$location', '$q', '$parse', 'BOM', 'NgTableParams', 'toastr', 'utils',
-          'restService', function(dialogs, $scope, $log, $location, $q, $parse, BOM, NgTableParams, toastr, utils, restService)
+      controller: ['dialogs', '$scope', '$log', '$location', '$q', '$parse', 'BOM', 'NgTableParams', 'toastr',
+          'restService', function(dialogs, $scope, $log, $location, $q, $parse, BOM, NgTableParams, toastr, restService)
         {
           // The BOM item whose alternates we're showing.
           $scope.highlightedBom = null;
@@ -78,15 +78,16 @@ angular.module('ngMetaCrudApp')
             });
             $scope.bom.splice(0, $scope.bom.length);
             $scope.bom.push.apply($scope.bom, bom);
-$log.log('bom: ' + angular.toJson($scope.bom, 2));
-            $scope.bomTableParams.reload();
+            //$scope.bomTableParams.reload();
+            $scope.bomTableParams.settings({
+              dataset: $scope.bom
+            });
           }
 
           $scope.bomTableParams = new NgTableParams({
             page: 1,
-            count: 10
-          }, {
-            getData: utils.localPagination($scope.bom, 'partNumber')
+            count: 10,
+            sorting: {'partNumber': 'asc'}
           });
 
           $scope.$watch('parentPartId', function(parentPartId) {
@@ -269,9 +270,10 @@ $log.log('bom: ' + angular.toJson($scope.bom, 2));
                   ngTableParams: new NgTableParams(
                     {
                       page: 1,
-                      count: 10
+                      count: 10,
+                      sorting: {'partNumber': 'asc'}
                     }, {
-                      getData: utils.localPagination(pg.parts, 'partNumber')
+                      dataset: pg.parts
                     }
                   )
                 });
