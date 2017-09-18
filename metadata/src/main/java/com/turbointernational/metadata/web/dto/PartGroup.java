@@ -16,10 +16,10 @@ public class PartGroup {
      * Group ID.
      */
     @JsonView(View.Summary.class)
-    private Long id;
+    protected Long id;
 
     @JsonView(View.Summary.class)
-    private Part[] parts;
+    protected Part[] parts;
 
     public PartGroup() {
     }

@@ -69,19 +69,6 @@ public class FormatUtils {
         return "[" + cmeyId + "]";
     }
 
-    @Deprecated
-    public static String formatBOMItem(BOMItem bomItem) {
-        if (bomItem == null) {
-            return "null";
-        } else {
-            Long id = bomItem.getId();
-            Part parent = bomItem.getParent();
-            Part child = bomItem.getChild();
-            Integer qty = bomItem.getQuantity();
-            return String.format("(ID:%d, PRNT:%s, CHLD:%s, QTY:%d)", id, formatPart(parent), formatPart(child), qty);
-        }
-    }
-
     public static String formatBom(Part parentPart, Part childPart) {
         return String.format("(PRNT:%s, CHLD:%s)", formatPart(parentPart), formatPart(childPart));
     }

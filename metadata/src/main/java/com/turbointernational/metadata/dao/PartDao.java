@@ -24,8 +24,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.turbointernational.mas90.entity.ArInvoiceHistoryDetail;
@@ -65,9 +63,6 @@ public class PartDao extends AbstractDao<Part> {
     @PersistenceContext(unitName = "mas90")
     private EntityManager emMas90;
 
-    @Autowired
-    private JdbcTemplate db;
-
     public PartDao() {
         super(Part.class);
     }
@@ -75,9 +70,8 @@ public class PartDao extends AbstractDao<Part> {
     /**
      * Get list of parts ordered by 'id'.
      *
-     * Ordering is important when parts are processed by batches (as in Magmi
-     * CSV export). Unordered (sub)list can contain duplications or skip some
-     * rows.
+     * Ordering is important when parts are processed by batches (as in Magmi CSV export). Unordered (sub)list can
+     * contain duplications or skip some rows.
      *
      * @param firstResult
      * @param maxResults
@@ -86,6 +80,10 @@ public class PartDao extends AbstractDao<Part> {
     public List<Part> findAllOrderedById(int firstResult, int maxResults) {
         return em.createNamedQuery("findAllPartsOrderedById", Part.class).setFirstResult(firstResult)
                 .setMaxResults(maxResults).getResultList();
+    }
+
+    public List<Part> findPartsByIds(Collection<Long> ids) {
+        return em.createNamedQuery("findPartsByIds", Part.class).setParameter(1, ids).getResultList();
     }
 
     public List<ProductImage> findProductImages(Collection<Long> productIds) {

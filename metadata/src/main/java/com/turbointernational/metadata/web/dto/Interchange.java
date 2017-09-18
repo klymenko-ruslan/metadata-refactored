@@ -1,7 +1,5 @@
 package com.turbointernational.metadata.web.dto;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.service.GraphDbService.GetInterchangeResponse;
@@ -9,20 +7,9 @@ import com.turbointernational.metadata.util.View;
 
 import flexjson.JSONSerializer;
 
-public class Interchange implements Serializable {
+public class Interchange extends PartGroup {
 
     // <editor-fold defaultstate="collapsed" desc="Properties">
-
-    private static final long serialVersionUID = -4602654865509535526L;
-
-    /**
-     * Interchange header ID.
-     */
-    @JsonView({ View.Summary.class })
-    private final Long id;
-
-    @JsonView({ View.Summary.class })
-    private final Part[] parts;
 
     public Interchange(Long id, Part[] parts) {
         this.id = id;
@@ -37,14 +24,6 @@ public class Interchange implements Serializable {
             parts[i] = Part.from(partDao, partIds[i]);
         }
         return new Interchange(o.getHeaderId(), parts);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Part[] getParts() {
-        return parts;
     }
 
     @JsonView({ View.Summary.class })
