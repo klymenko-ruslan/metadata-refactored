@@ -185,12 +185,7 @@ import flexjson.transformer.Transformer;
         @NamedQuery(
                 name = "numPartsOfManufacturer",
                 query = "SELECT COUNT(o) FROM Part o WHERE o.manufacturer.id=:manufacturerId"
-        ),
-        @NamedQuery(
-                name = "findPartsByIds",
-                query = "SELECT o FROM Part o WHERE o.id IN :ids"
-        ),
-
+        )
 })
 @JsonInclude(ALWAYS)
 public abstract class Part implements Comparable<Part>, Serializable, SearchableEntity {

@@ -24,7 +24,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.google.common.collect.Iterables;
-import com.turbointernational.metadata.dao.InterchangeDao;
 import com.turbointernational.metadata.dao.ManufacturerDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.PartTypeDao;
@@ -71,9 +70,6 @@ public class SalesNoteRepositoryImplTest {
 
     @Autowired(required=true)
     PartDao partDao;
-
-    @Autowired(required=true)
-    InterchangeDao interchangeDao;
 
     @Autowired(required=true)
     PartTypeDao partTypeDao;
