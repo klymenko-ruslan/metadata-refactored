@@ -2,8 +2,8 @@
 
 angular.module('ngMetaCrudApp')
     .controller('CriticalDimensionEnumsCtrl', [
-      '$scope', '$log', 'toastr', 'Restangular', 'NgTableParams', 'restService', 'utils', 'critDimEnums',
-      function($scope, $log, toastr, Restangular, NgTableParams, restService, utils, critDimEnums) {
+      '$scope', '$log', 'toastr', 'Restangular', 'NgTableParams', 'restService', 'critDimEnums',
+      function($scope, $log, toastr, Restangular, NgTableParams, restService, critDimEnums) {
 
         $scope.selectedRow = null;
 
@@ -28,7 +28,7 @@ angular.module('ngMetaCrudApp')
           page: 1,
           count: 10
         }, {
-          getData: utils.localPagination(critDimEnums)
+          dataset: critDimEnums
         });
 
         $scope.critDimEnumValsTableParams = null;
@@ -56,7 +56,7 @@ angular.module('ngMetaCrudApp')
                   page: 1,
                   count: 10
                 }, {
-                  getData: utils.localPagination($scope.critDimEnumItms)
+                  dataset: $scope.critDimEnumItms
                 });
                 $scope.selectedRow = row;
               },
@@ -94,7 +94,7 @@ angular.module('ngMetaCrudApp')
           restService.addCritDimEnum($scope.cdEnumToAdd).then(
             function success(addedCde) {
               critDimEnums.push(addedCde);
-              $scope.critDimEnumsTableParams.reload();
+              $scope.critDimEnumsTableParams.settings({dataset: critDimEnums});
               $('#addEnumDlg').modal('hide');
             },
             function failure(response) {
@@ -122,7 +122,7 @@ angular.module('ngMetaCrudApp')
                 });
                 if (foundIdx > -1) {
                   critDimEnums.splice(foundIdx, 1);
-                  $scope.critDimEnumsTableParams.reload();
+                  $scope.critDimEnumsTableParams.settings({dataset: critDimEnums});
                 }
                 if (id === $scope.selectedRow.id) {
                   var selected = $scope.selectFirstEnum();
@@ -131,7 +131,7 @@ angular.module('ngMetaCrudApp')
                       page: 1,
                       count: 10
                     }, {
-                      getData: utils.localPagination(null)
+                      dataset: []
                     });
                   }
                 }
@@ -158,7 +158,7 @@ angular.module('ngMetaCrudApp')
           restService.addCritDimEnumItm($scope.selectedRow.id, $scope.cdEnumItmToAdd).then(
             function success(addedCdeItm) {
               $scope.critDimEnumItms.push(addedCdeItm);
-              $scope.critDimEnumValsTableParams.reload();
+              $scope.critDimEnumValsTableParams.settings({dataset: $scope.critDimEnumItms});
               $('#addEnumItmDlg').modal('hide');
             },
             function failure(response) {
@@ -187,7 +187,7 @@ angular.module('ngMetaCrudApp')
                 });
                 if (foundIdx > -1) {
                   $scope.critDimEnumItms.splice(foundIdx, 1);
-                  $scope.critDimEnumValsTableParams.reload();
+                  $scope.critDimEnumValsTableParams.settings({dataset: $scope.critDimEnumItms});
                 }
                 $('#delEnumItmDlg').modal('hide');
               },

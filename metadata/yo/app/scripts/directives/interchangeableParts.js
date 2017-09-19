@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .directive('interchangeableParts', ['$log', 'utils', 'restService', 'NgTableParams',
-    function($log, utils, restService, NgTableParams) {
+  .directive('interchangeableParts', ['$log', 'restService', 'NgTableParams',
+    function($log, restService, NgTableParams) {
       return {
         restrict: 'E',
         scope: {
@@ -16,9 +16,10 @@ angular.module('ngMetaCrudApp')
             }
             $scope.interchangeablePartsTableParams = new NgTableParams({
               page: 1,
-              count: 10
+              count: 10,
+              sorting: {'manufacturer.name': 'asc'}
             }, {
-              getData: utils.localPagination($scope.part.interchange.parts, 'manufacturer.name')
+              dataset: $scope.part.interchange.parts
             });
           });
         }]

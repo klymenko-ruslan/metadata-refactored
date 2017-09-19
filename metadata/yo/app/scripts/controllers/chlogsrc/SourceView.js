@@ -3,11 +3,10 @@
 angular.module('ngMetaCrudApp')
 
 .controller('ChangelogSourcesViewCtrl', [
-    '$scope', '$log', '$location', 'toastr', 'NgTableParams', '$uibModal', 'utils', 'restService', 'source',
-  function($scope, $log, $location, toastr, NgTableParams, $uibModal, utils, restService, source) {
+    '$scope', '$log', '$location', 'toastr', 'NgTableParams', '$uibModal', 'restService', 'source',
+  function($scope, $log, $location, toastr, NgTableParams, $uibModal, restService, source) {
 
     $scope.source = source;
-    
     $scope.attachmentsTableParams = new NgTableParams(
       {
         page: 1,
@@ -15,7 +14,7 @@ angular.module('ngMetaCrudApp')
         sorting: {}
       },
       {
-        getData: utils.localPagination($scope.source.attachments)
+        dataset: $scope.source.attachments
       }
     );
 

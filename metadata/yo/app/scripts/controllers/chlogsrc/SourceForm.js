@@ -3,9 +3,9 @@
 angular.module('ngMetaCrudApp')
 
 .controller('ChangelogSourcesFormCtrl', [
-    '$scope', '$log', '$location', 'toastr', 'dialogs', 'NgTableParams', 'Restangular', 'restService', 'utils', 'begin',
+    '$scope', '$log', '$location', 'toastr', 'dialogs', 'NgTableParams', 'Restangular', 'restService', 'begin',
     'sourcesNames', 'source',
-  function($scope, $log, $location, toastr, dialogs, NgTableParams, Restangular, restService, utils, begin,
+  function($scope, $log, $location, toastr, dialogs, NgTableParams, Restangular, restService, begin,
     sourcesNames, source) {
 
     $scope.source = source;
@@ -43,9 +43,8 @@ angular.module('ngMetaCrudApp')
         page: 1,
         count: 10,
         sorting: {}
-      },
-      {
-        getData: utils.localPagination(attachments)
+      }, {
+        dataset: attachments
       }
     );
 
@@ -103,7 +102,7 @@ angular.module('ngMetaCrudApp')
       _.each(updatedAttachments, function (e) {
         attachments.push(e);
       });
-      $scope.attachmentsTableParams.reload();
+      $scope.attachmentsTableParams.settings({dataset: attachments});
       formData = new FormData();
       $scope.forms.changelogSourceForm.$setDirty();
     }

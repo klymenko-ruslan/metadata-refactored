@@ -12,9 +12,9 @@ angular.module('ngMetaCrudApp')
       replace: false,
       templateUrl: '/views/application/carmodelengineyear/form.html',
       controller: ['restService', '$q', '$scope', '$location', '$parse', '$log', '$routeParams', 'toastr',
-        '$uibModal', 'NgTableParams', 'utils',
+        '$uibModal', 'NgTableParams',
         function(restService, $q, $scope, $location, $parse, $log, $routeParams, toastr, $uibModal,
-          NgTableParams, utils)
+          NgTableParams)
         {
 
           $scope.$on('form:created', function(event, data) {
@@ -257,7 +257,7 @@ angular.module('ngMetaCrudApp')
               sorting: {}
             },
             {
-              getData: utils.localPagination($scope.pickedModels)
+              dataset: $scope.pickedModels
             }
           );
 
@@ -283,7 +283,7 @@ angular.module('ngMetaCrudApp')
               }
               $scope.pickedModels.push(carModel);
               $scope.pickedModelIds[modelId] = true;
-              $scope.pickedModelsTableParams.reload();
+              $scope.pickedModelsTableParams.settings({dataset: $scope.pickedModels});
             }
           };
 
@@ -294,7 +294,7 @@ angular.module('ngMetaCrudApp')
             var carModel = $scope.pickedModels[idx];
             delete $scope.pickedModelIds[carModel.id];
             $scope.pickedModels.splice(idx, 1);
-            $scope.pickedModelsTableParams.reload();
+            $scope.pickedModelsTableParams.settings({dataset: $scope.pickedModels});
           };
 
           $scope.unpickAllCarModels = function() {
@@ -302,7 +302,7 @@ angular.module('ngMetaCrudApp')
               delete $scope.pickedModelIds[carModel.id];
             });
             $scope.pickedModels.splice(0, $scope.pickedModels.length);
-            $scope.pickedModelsTableParams.reload();
+            $scope.pickedModelsTableParams.settings({dataset: $scope.pickedModels});
           };
 
           $scope.pickedEngines = [];
@@ -315,7 +315,7 @@ angular.module('ngMetaCrudApp')
               sorting: {}
             },
             {
-              getData: utils.localPagination($scope.pickedEngines)
+              dataset: $scope.pickedEngines
             }
           );
 
@@ -332,7 +332,7 @@ angular.module('ngMetaCrudApp')
               angular.copy(pickedEngine, carEngine);
               $scope.pickedEngines.push(carEngine);
               $scope.pickedEngineIds[engineId] = true;
-              $scope.pickedEnginesTableParams.reload();
+              $scope.pickedEnginesTableParams.settings({dataset: $scope.pickedEngines});
             }
           };
 
@@ -343,7 +343,7 @@ angular.module('ngMetaCrudApp')
             var carEngine = $scope.pickedEngines[idx];
             delete $scope.pickedEngineIds[carEngine.id];
             $scope.pickedEngines.splice(idx, 1);
-            $scope.pickedEnginesTableParams.reload();
+            $scope.pickedEnginesTableParams.settings({dataset: $scope.pickedEngines});
           };
 
           $scope.unpickAllCarEngines = function() {
@@ -351,7 +351,7 @@ angular.module('ngMetaCrudApp')
               delete $scope.pickedEngineIds[carEngine.id];
             });
             $scope.pickedEngines.splice(0, $scope.pickedEngines.length);
-            $scope.pickedEnginesTableParams.reload();
+            $scope.pickedEnginesTableParams.settings({dataset: $scope.pickedEngines});
           };
 
           $scope.pickedYears = [];
@@ -364,7 +364,7 @@ angular.module('ngMetaCrudApp')
               sorting: {}
             },
             {
-              getData: utils.localPagination($scope.pickedYears)
+              dataset: $scope.pickedYears
             }
           );
 
@@ -374,7 +374,7 @@ angular.module('ngMetaCrudApp')
             angular.copy($scope.cmey.year, carYear);
             $scope.pickedYears.push(carYear);
             $scope.pickedYearNames[yearName] = true;
-            $scope.pickedYearsTableParams.reload();
+            $scope.pickedYearsTableParams.settings({dataset: $scope.pickedYears});
           };
 
           $scope.unpickCarYear = function(carYearName) {
@@ -384,7 +384,7 @@ angular.module('ngMetaCrudApp')
             var carYear = $scope.pickedYears[idx];
             delete $scope.pickedYearNames[carYear.name];
             $scope.pickedYears.splice(idx, 1);
-            $scope.pickedYearsTableParams.reload();
+            $scope.pickedYearsTableParams.settings({dataset: $scope.pickedYears});
           };
 
           $scope.unpickAllCarYears = function() {
@@ -392,7 +392,7 @@ angular.module('ngMetaCrudApp')
               delete $scope.pickedYearNames[carYear.name];
             });
             $scope.pickedYears.splice(0, $scope.pickedYears.length);
-            $scope.pickedYearsTableParams.reload();
+            $scope.pickedYearsTableParams.settings({dataset: $scope.pickedYears});
           };
 
           $scope.bulkGeneration = function() {
@@ -408,19 +408,19 @@ angular.module('ngMetaCrudApp')
                   delete $scope.pickedModelIds[cm.id];
                 });
                 $scope.pickedModels.splice(0, $scope.pickedModels.length);
-                $scope.pickedModelsTableParams.reload();
+                $scope.pickedModelsTableParams.settings({dataset: $scope.pickedModels});
 
                 _.each($scope.pickedEngines, function(ce) {
                   delete $scope.pickedEngineIds[ce.id];
                 });
                 $scope.pickedEngines.splice(0, $scope.pickedEngines.length);
-                $scope.pickedEnginesTableParams.reload();
+                $scope.pickedEnginesTableParams.settings({dataset: $scope.pickedEngines});
 
                 _.each($scope.pickedYears, function(cy) {
                   delete $scope.pickedYearNames[cy.name];
                 });
                 $scope.pickedYears.splice(0, $scope.pickedYears.length);
-                $scope.pickedYearsTableParams.reload();
+                $scope.pickedYearsTableParams.settings({dataset: $scope.pickedYears});
                 toastr.success('Created ' + result.created + ' applications. ' + result.ignored + ' ignored.');
               },
               function failure(errorResponse) {

@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('PartTypeListCtrl', ['$scope', 'NgTableParams', 'utils', 'partTypes',
-    function ($scope, NgTableParams, utils, partTypes) {
+  .controller('PartTypeListCtrl', ['$scope', 'NgTableParams', 'partTypes',
+    function ($scope, NgTableParams, partTypes) {
       $scope.partTypesTableParams = new NgTableParams({
         'page': 1,
         'count': 10,
@@ -10,7 +10,7 @@ angular.module('ngMetaCrudApp')
           'id': 'asc'
         }
       }, {
-        'getData': utils.localPagination(partTypes, 'id')
+        'dataset': partTypes
       });
     }
   ]);

@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-.controller('BomAlternateSearchCtrl', ['$log', '$scope', '$location', '$routeParams', 'NgTableParams', 'utils',
+.controller('BomAlternateSearchCtrl', ['$log', '$scope', '$location', '$routeParams', 'NgTableParams',
   'restService', 'dialogs', 'toastr', 'partTypes', 'part', 'selectedBom', 'bom', 'altBom', 'altHeaderId',
-  function ($log, $scope, $location, $routeParams, NgTableParams, utils, restService, dialogs, toastr, partTypes,
+  function ($log, $scope, $location, $routeParams, NgTableParams, restService, dialogs, toastr, partTypes,
     part, selectedBom, bom, altBom, altHeaderId)
   {
     $scope.partTypes = partTypes;
@@ -17,9 +17,10 @@ angular.module('ngMetaCrudApp')
 
     $scope.bomTableParams = new NgTableParams({
         page: 1,
-        count: 10
+        count: 10,
+        sorting: {'partNumber': 'asc'}
       }, {
-        getData: utils.localPagination(bom, 'partNumber')
+        dataset: bom
       }
     );
 
@@ -36,9 +37,10 @@ angular.module('ngMetaCrudApp')
 
     $scope.altBomTableParams = new NgTableParams({
         page: 1,
-        count: 10
+        count: 10,
+        sorting: 'partNumber'
       }, {
-        getData: utils.localPagination(alternatives, 'partNumber')
+        dataset: alternatives
       }
     );
 

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .directive('turboTypes', ['$log', 'utils', 'NgTableParams', function($log, utils, NgTableParams) {
+  .directive('turboTypes', ['$log', 'NgTableParams', function($log, NgTableParams) {
     return {
       restrict: 'E',
       scope: {
@@ -12,9 +12,10 @@ angular.module('ngMetaCrudApp')
         function($scope, $parse, dialogs, toastr, restService) {
           $scope.turboTypesTableParams = new NgTableParams({
             page: 1,
-            count: 10
+            count: 10,
+            sorting: {'manufacturer.name': 'asc'}
           }, {
-            getData: utils.localPagination($scope.part.turboTypes, 'manufacturer.name')
+            dataset: $scope.part.turboTypes
           });
 
           // Turbo Types

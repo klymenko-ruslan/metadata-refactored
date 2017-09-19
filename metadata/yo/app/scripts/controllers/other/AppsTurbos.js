@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-.controller('AppsTurbosCtrl', ['$scope', '$log', 'NgTableParams', '$uibModal', 'toastr', 'utils', 'restService', 'partTypes',
-  function($scope, $log, NgTableParams, $uibModal, toastr, utils, restService, partTypes) {
+.controller('AppsTurbosCtrl', ['$scope', '$log', 'NgTableParams', '$uibModal', 'toastr', 'restService', 'partTypes',
+  function($scope, $log, NgTableParams, $uibModal, toastr, restService, partTypes) {
 
     $scope.partTypes = partTypes;
 
@@ -19,7 +19,7 @@ angular.module('ngMetaCrudApp')
         sorting: {}
       },
       {
-        getData: utils.localPagination($scope.pickedParts)
+        dataset: $scope.pickedParts
       }
     );
 
@@ -30,14 +30,14 @@ angular.module('ngMetaCrudApp')
         sorting: {}
       },
       {
-        getData: utils.localPagination($scope.pickedApps)
+        dataset: $scope.pickedApps
       }
     );
 
     $scope.pickPart = function(part) {
       $scope.pickedParts.push(part);
       $scope.pickedPartsIds[part.id] = true;
-      $scope.pickedPartsTableParams.reload();
+      $scope.pickedPartsTableParams.settings({dataset: $scope.pickedParts});
     };
 
     $scope.unpickPart = function(id) {
@@ -47,7 +47,7 @@ angular.module('ngMetaCrudApp')
       var t = $scope.pickedParts[idx];
       $scope.pickedParts.splice(idx, 1);
       delete $scope.pickedPartsIds[t.id];
-      $scope.pickedPartsTableParams.reload();
+      $scope.pickedPartsTableParams.settings({dataset: $scope.pickedParts});
     };
 
     $scope.unpickAllParts = function() {
@@ -55,13 +55,13 @@ angular.module('ngMetaCrudApp')
         delete $scope.pickedPartsIds[pt.id];
       });
       $scope.pickedParts.splice(0, $scope.pickedParts.length);
-      $scope.pickedPartsTableParams.reload();
+      $scope.pickedPartsTableParams.settings({dataset: $scope.pickedParts});
     };
 
     $scope.pickApp = function(app) {
       $scope.pickedApps.push(app);
       $scope.pickedAppsIds[app.id] = true;
-      $scope.pickedAppsTableParams.reload();
+      $scope.pickedAppsTableParams.settings({dataset: $scope.pickedApps});
     };
 
     $scope.unpickApp = function(id) {
@@ -71,7 +71,7 @@ angular.module('ngMetaCrudApp')
       var a = $scope.pickedApps[idx];
       $scope.pickedApps.splice(idx, 1);
       delete $scope.pickedAppsIds[a.id];
-      $scope.pickedAppsTableParams.reload();
+      $scope.pickedAppsTableParams.settings({dataset: $scope.pickedApps});
     };
 
     $scope.unpickAllApps = function() {
@@ -79,7 +79,7 @@ angular.module('ngMetaCrudApp')
         delete $scope.pickedAppsIds[pa.id];
       });
       $scope.pickedApps.splice(0, $scope.pickedApps.length);
-      $scope.pickedAppsTableParams.reload();
+      $scope.pickedAppsTableParams.settings({dataset: $scope.pickedApps});
     };
 
     $scope.doIt = function() {
@@ -118,16 +118,17 @@ angular.module('ngMetaCrudApp')
   }
 ])
 .controller('FailuresDlgCtrl', ['$scope', '$log', '$location', '$uibModalInstance', 'NgTableParams',
-    'utils', 'response',
-  function($scope, $log, $location, $uibModalInstance, NgTableParams, utils, response) {
+    'response',
+  function($scope, $log, $location, $uibModalInstance, NgTableParams, response) {
 
     $scope.response = response;
 
     $scope.failuresTableParams = new NgTableParams({
       page: 1,
-      count: 10
+      count: 10,
+      sorting: {'manufacturerPartNumber': 'asc'}
     }, {
-      getData: utils.localPagination(response.failures, 'manufacturerPartNumber')
+      dataset: response.failures
     });
 
     $scope.onClose = function() {

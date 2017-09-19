@@ -3,9 +3,9 @@
 angular.module('ngMetaCrudApp')
   .controller('TurboSearchCtrl', [
     '$log', '$scope', '$location', 'NgTableParams', '$uibModal', 'dialogs', 'toastr', 'restService',
-    'BOM', 'utils', 'part', 'partTypes', 'turbos',
+    'BOM', 'part', 'partTypes', 'turbos',
     function ($log, $scope, $location, NgTableParams, $uibModal, dialogs, toastr, restService,
-              BOM, utils, part, partTypes, turbos)
+              BOM, part, partTypes, turbos)
     {
 
       $scope.part = part; // primary part
@@ -26,9 +26,10 @@ angular.module('ngMetaCrudApp')
       function _updateLinkedTurbosTableParams(turbos) {
         $scope.linkedTurbosTableParams = new NgTableParams({
           page: 1,
-          count: 10
+          count: 10,
+          sorting: {'id': 'asc'}
         }, {
-          getData: utils.localPagination(turbos, 'id')
+          dataset: turbos
         });
       }
 
@@ -41,7 +42,7 @@ angular.module('ngMetaCrudApp')
           sorting: {}
         },
         {
-          getData: utils.localPagination(pickedParts)
+          dataset: pickedParts
         }
       );
 
@@ -94,7 +95,7 @@ angular.module('ngMetaCrudApp')
       $scope.pick = function(pickedPart) {
         pickedParts.push(pickedPart);
         pickedPartIds[pickedPart.id] = true;
-        $scope.pickedPartsTableParams.reload();
+        $scope.pickedPartsTableParams.settings({dataset: pickedParts});
       };
 
       $scope.unpick = function(partId) {
@@ -105,7 +106,7 @@ angular.module('ngMetaCrudApp')
         delete p.extra;
         pickedParts.splice(idx, 1);
         delete pickedPartIds[partId];
-        $scope.pickedPartsTableParams.reload();
+        $scope.pickedPartsTableParams.settings({dataset: pickedParts});
       };
 
       $scope.unpickAll = function() {
@@ -113,21 +114,22 @@ angular.module('ngMetaCrudApp')
           delete pickedPartIds[pp.id];
         });
         pickedParts.splice(0, pickedParts.length);
-        $scope.pickedPartsTableParams.reload();
+        $scope.pickedPartsTableParams.settings({dataset: pickedParts});
       };
 
     }
   ]).controller('FailedTurbosDlgCtrl', ['$scope', '$log', '$location', '$uibModalInstance', 'NgTableParams',
-      'utils', 'part', 'failures',
-    function($scope, $log, $location, $uibModalInstance, NgTableParams, utils, part, failures) {
+      'part', 'failures',
+    function($scope, $log, $location, $uibModalInstance, NgTableParams, part, failures) {
 
       $scope.part = part;
 
       $scope.failuresTableParams = new NgTableParams({
         page: 1,
-        count: 10
+        count: 10,
+        sorting: {'manufacturerPartNumber': 'asc'}
       }, {
-        getData: utils.localPagination(failures, 'manufacturerPartNumber')
+        dataset: failures
       });
 
       $scope.onClose = function() {

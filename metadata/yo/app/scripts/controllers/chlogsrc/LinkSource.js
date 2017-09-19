@@ -77,10 +77,10 @@ angular.module('ngMetaCrudApp')
   }
 ])
 .controller('ChlogSrcLinkDlgCtrl', ['$scope', '$log', '$location', 'dialogs',
-  'toastr', 'NgTableParams', '$uibModalInstance', 'utils', 'restService',
+  'toastr', 'NgTableParams', '$uibModalInstance', 'restService',
   'cbSave', 'sourcesNames', 'lastPicked', 'User', 'cancelUrl', 'begin',
   function($scope, $log, $location, dialogs, toastr, NgTableParams,
-    $uibModalInstance, utils, restService, cbSave, sourcesNames, lastPicked,
+    $uibModalInstance, restService, cbSave, sourcesNames, lastPicked,
     User, cancelUrl, begin)
   { // injection "begin" is important
     begin = null; // dummy statement to avoid jshint
@@ -255,7 +255,7 @@ angular.module('ngMetaCrudApp')
       },
       {
         counts: [5, 10, 15],
-        getData: utils.localPagination(lastPicked)
+        dataset: lastPicked
       }
     );
 
@@ -264,10 +264,9 @@ angular.module('ngMetaCrudApp')
         page: 1,
         count: 5,
         sorting: {}
-      },
-      {
+      }, {
         counts: [5, 10, 15],
-        getData: utils.localPagination(pickedSources)
+        dataset: pickedSources
       }
     );
 
@@ -317,9 +316,8 @@ angular.module('ngMetaCrudApp')
         page: 1,
         count: 10,
         sorting: {}
-      },
-      {
-        getData: utils.localPagination(sourceAttachments)
+      }, {
+        dataset: sourceAttachments
       }
     );
 
@@ -450,7 +448,7 @@ angular.module('ngMetaCrudApp')
       pickedSources.push(pickedSrc);
       $scope.pickedSourcesRatings.push(0);
       pickedSourceIds[pickedSrc.id] = true;
-      $scope.pickedSourcesTableParams.reload();
+      $scope.pickedSourcesTableParams.settings({dataset: pickedSources});
     };
 
     $scope.unpick = function(srcId) {
@@ -460,7 +458,7 @@ angular.module('ngMetaCrudApp')
       pickedSources.splice(idx, 1);
       $scope.pickedSourcesRatings.splice(idx, 1);
       delete pickedSourceIds[srcId];
-      $scope.pickedSourcesTableParams.reload();
+      $scope.pickedSourcesTableParams.settings({dataset: pickedSources});
     };
 
     $scope.unpickAll = function() {
@@ -470,7 +468,7 @@ angular.module('ngMetaCrudApp')
       pickedSources.splice(0, pickedSources.length);
       $scope.pickedSourcesRatings.splice(0, $scope.pickedSourcesRatings
         .length);
-      $scope.pickedSourcesTableParams.reload();
+      $scope.pickedSourcesTableParams.settings({dataset: pickedSources});
     };
 
     $scope.clearFilter = function() {
@@ -508,7 +506,7 @@ angular.module('ngMetaCrudApp')
       _.each(updatedSourceAttachments, function (e) {
         sourceAttachments.push(e);
       });
-      $scope.sourceAttachmentsTableParams.reload();
+      $scope.sourceAttachmentsTableParams.settings({dataset: sourceAttachments});
     }
 
     $scope.uploadSourceAttachment = function() {

@@ -2,9 +2,9 @@
 
 angular.module('ngMetaCrudApp')
 .controller('PartDetailCtrl', ['$scope', '$log', '$q', '$location', '$cookies', '$route', '$routeParams', 'Kits',
-    'NgTableParams', 'utils', 'restService', 'Restangular', 'User', '$uibModal', 'dialogs', 'toastr',
+    'NgTableParams', 'restService', 'Restangular', 'User', '$uibModal', 'dialogs', 'toastr',
     'part', 'criticalDimensions', 'partTypes', 'manufacturers', 'turbos', 'oversizeParts', 'standardParts', 'prices',
-    function ($scope, $log, $q, $location, $cookies, $route, $routeParams, Kits, NgTableParams, utils,
+    function ($scope, $log, $q, $location, $cookies, $route, $routeParams, Kits, NgTableParams,
     restService, Restangular, User, $uibModal, dialogs, toastr, part, criticalDimensions, partTypes, manufacturers,
     turbos, oversizeParts, standardParts, prices) {
   $scope.partId = part.id;
@@ -151,11 +151,9 @@ angular.module('ngMetaCrudApp')
     $scope.turbosTableParams = new NgTableParams({
       'page': 1,
       'count': 10,
-      'sorting': {
-        'id': 'asc'
-      }
+      'sorting': { 'id': 'asc' }
       }, {
-        'getData': utils.localPagination(turbos, 'id')
+        'dataset': turbos
       });
   }
 
@@ -653,7 +651,7 @@ angular.module('ngMetaCrudApp')
       'manufacturerPartNumber': 'asc'
     }
   }, {
-    'getData': utils.localPagination($scope.oversizeParts, 'manufacturerPartNumber')
+    'dataset': $scope.oversizeParts
   });
 
   $scope.standardPartsTableParams = new NgTableParams({
@@ -663,7 +661,7 @@ angular.module('ngMetaCrudApp')
       'manufacturerPartNumber': 'asc'
     }
   }, {
-    'getData': utils.localPagination($scope.standardParts, 'manufacturerPartNumber')
+    'dataset': $scope.standardParts
   });
 
   $scope.onDeleteOversizePart = function(oversizePart) {
@@ -680,7 +678,7 @@ angular.module('ngMetaCrudApp')
               return op.id === oversizePart.id;
             });
             $scope.oversizeParts.splice(idx, 1);
-            $scope.oversizePartsTableParams.reload();
+            $scope.oversizePartsTableParams.settings({dataset: $scope.oversizeParts});
           },
           function(error) {
             // Error
@@ -708,7 +706,7 @@ angular.module('ngMetaCrudApp')
               return op.id === standardPart.id;
             });
             $scope.standardParts.splice(idx, 1);
-            $scope.standardPartsTableParams.reload();
+            $scope.standardPartsTableParams.settings({dataset: $scope.standardParts});
           },
           function failure(result) {
             // Error
