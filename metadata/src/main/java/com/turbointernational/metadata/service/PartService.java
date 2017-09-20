@@ -52,6 +52,7 @@ import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse;
 import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse.Row;
+import com.turbointernational.metadata.service.GraphDbService.Response;
 import com.turbointernational.metadata.web.controller.PartController;
 import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Ancestor;
@@ -122,14 +123,18 @@ public class PartService {
             origin.setId(null);
             origin.setManufacturerPartNumber(mpn);
             partDao.persist(origin);
+            Long originId = origin.getId();
+            Response response = graphDbService.registerPart(originId, origin.getPartType().getId(),
+                origin.getManufacturer().getId());
+            GraphDbService.checkSuccess(response);
             // Update the changelog.
             String json = partJsonSerializer.serialize(origin);
             List<RelatedPart> relatedParts = new ArrayList<>(1);
-            relatedParts.add(new RelatedPart(origin.getId(), PART0));
+            relatedParts.add(new RelatedPart(originId, PART0));
             Changelog chlog = changelogService.log(PART, "Created part " + formatPart(origin) + ".", json,
                     relatedParts);
             changelogSourceService.link(httpRequest, chlog, sourcesIds, ratings, description, attachIds);
-            results.add(new PartController.PartCreateResponse.Row(origin.getId(), mpn, true, null));
+            results.add(new PartController.PartCreateResponse.Row(originId, mpn, true, null));
             added.add(mpn);
         }
         return results;

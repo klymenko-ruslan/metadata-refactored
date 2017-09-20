@@ -70,6 +70,8 @@ public class GraphDbService {
 
     private HttpHeaders headers;
 
+    private UriTemplate uriTmplRegisterPart;
+
     private UriTemplate uriTmplGetInterchageById;
 
     private UriTemplate uriTmplGetInterchageForPart;
@@ -401,6 +403,8 @@ public class GraphDbService {
     public void init() {
         headers = new HttpHeaders();
         headers.setContentType(APPLICATION_JSON);
+        uriTmplRegisterPart = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
+                + restArangoDbServicePort + "/parts/{id}");
         uriTmplGetInterchageById = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
                 + restArangoDbServicePort + "/interchanges/{id}");
         uriTmplGetInterchageForPart = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost
@@ -511,6 +515,20 @@ public class GraphDbService {
 
     private Response delete(URI uri) throws JsonProcessingException {
         return delete(uri, Response.class);
+    }
+    
+    /**
+     * Register a part in the Graph DB.
+     * 
+     * @param partId
+     * @throws JsonProcessingException 
+     */
+    public Response registerPart(Long partId, Long partTypeId, Long manufacturerId) throws JsonProcessingException {
+        URI uri = uriTmplRegisterPart.expand(partId);
+        Map<String, Long> body = new HashMap<>(2);
+        body.put("partTypeId", partTypeId);
+        body.put("manufacturerId", manufacturerId);
+        return post(uri, body);
     }
 
     public GetInterchangeResponse findInterchangeById(Long id) {

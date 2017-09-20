@@ -83,8 +83,10 @@ public class InterchangeService {
     }
 
     public void initInterchange(Part part) {
-        Interchange interchange = findForPart(part);
-        part.setInterchange(interchange);
+        if (part != null) {
+            Interchange interchange = findForPart(part);
+            part.setInterchange(interchange);
+        }
     }
 
     /**
