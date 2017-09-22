@@ -47,8 +47,9 @@ public class Bom {
         PartType pt = PartType.from(p.getPartType());
         Manufacturer m = Manufacturer.from(p.getManufacturer());
         Part[] interchanges;
+        Long[] interchangesIds = r.getInterchanges();
         if (r.getInterchanges() != null) {
-            interchanges = Part.from(dao, r.getInterchanges());
+            interchanges = Part.from(dao, interchangesIds);
         } else  {
             interchanges = new Part[0];
         }

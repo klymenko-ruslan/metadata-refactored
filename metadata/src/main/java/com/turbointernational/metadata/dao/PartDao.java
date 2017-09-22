@@ -83,7 +83,7 @@ public class PartDao extends AbstractDao<Part> {
     }
 
     public List<Part> findPartsByIds(Collection<Long> ids) {
-        return em.createNamedQuery("findPartsByIds", Part.class).setParameter(1, ids).getResultList();
+        return em.createNamedQuery("findPartsByIds", Part.class).setParameter("ids", ids).getResultList();
     }
 
     public List<ProductImage> findProductImages(Collection<Long> productIds) {

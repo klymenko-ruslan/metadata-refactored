@@ -1,5 +1,9 @@
 package com.turbointernational.metadata.web.dto;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.util.View;
@@ -42,18 +46,28 @@ public class Part {
 
     public static Part from(PartDao dao, Long partID) {
         com.turbointernational.metadata.entity.part.Part p = dao.findOne(partID);
-        PartType pt = PartType.from(p.getPartType());
-        Manufacturer m = Manufacturer.from(p.getManufacturer());
-        return new Part(partID, p.getName(), p.getDescription(), p.getManufacturerPartNumber(), pt, m);
+        return entity2dto(p);
     }
 
     public static Part[] from(PartDao dao, Long[] partIDs) {
         int n = partIDs.length;
         Part[] retVal = new Part[n];
-        for (int i = 0; i < n; i++) {
-            retVal[i] = from(dao, partIDs[i]);
+        if (retVal.length > 0) {
+            List<com.turbointernational.metadata.entity.part.Part> parts = dao.findPartsByIds(Arrays.asList(partIDs));
+            for (ListIterator<com.turbointernational.metadata.entity.part.Part> it = parts.listIterator(); it
+                    .hasNext();) {
+                int i = it.nextIndex();
+                com.turbointernational.metadata.entity.part.Part p = it.next();
+                retVal[i] = entity2dto(p);
+            }
         }
         return retVal;
+    }
+
+    private static Part entity2dto(com.turbointernational.metadata.entity.part.Part p) {
+        PartType pt = PartType.from(p.getPartType());
+        Manufacturer m = Manufacturer.from(p.getManufacturer());
+        return new Part(p.getId(), p.getName(), p.getDescription(), p.getManufacturerPartNumber(), pt, m);
     }
 
     public Long getPartId() {
