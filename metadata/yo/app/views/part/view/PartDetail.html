@@ -146,6 +146,11 @@
   $('#partTabs a').click(function (e) {
     e.preventDefault();
     $(this).tab('show');
+  }).on('show.bs.tab', function(e) {
+    var $scope = angular.element('#partTabs').$rootScope;
+    //$scope.onChangeTab(e);
+    console.log('$scope.onChangeTab: ' + $scope);
+    //$scope.$apply();
   });
   var h = window.location.hash;
   if (h === '#details') {

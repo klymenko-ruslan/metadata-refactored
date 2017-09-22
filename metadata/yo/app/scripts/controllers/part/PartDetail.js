@@ -60,16 +60,8 @@ angular.module('ngMetaCrudApp')
     );
   };
 
-  $scope.onRebuildBom = function() {
-      restService.rebuildPartBom($scope.partId).then(
-        function success() {
-          $route.reload();
-          toastr.success('BOMs for the part have been successfully rebuilt.');
-        },
-        function failure(error) {
-          restService.error('The rebuild BOM request failed.', error);
-        }
-      );
+  $scope.onChangeTab = function(e) {
+    $log.log('onChangeTab: ' + e);
   };
 
   $scope.changelogTableParams = new NgTableParams({
