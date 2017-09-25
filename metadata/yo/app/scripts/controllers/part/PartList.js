@@ -17,9 +17,8 @@ angular.module('ngMetaCrudApp')
 
   }
 ])
-.controller('PartCreateModalCtrl', ['$scope', '$uibModalInstance', '$log', '$location', 'PartTypes',
-  function ($scope, $uibModalInstance, $log, $location, PartTypes) {
-    $scope.PartTypes = PartTypes;
+.controller('PartCreateModalCtrl', ['$scope', '$uibModalInstance', '$log', '$location',
+  function ($scope, $uibModalInstance, $log, $location) {
     $scope.selection = {};
 
     $scope.create = function () {
@@ -31,10 +30,13 @@ angular.module('ngMetaCrudApp')
       $uibModalInstance.dismiss('cancel');
     };
 
+    /*
+    TODO: obsolete
     $scope.refresh = function () {
       $scope.selection = {};
       PartTypes.refresh();
     };
+    */
 
   }
 ]);
