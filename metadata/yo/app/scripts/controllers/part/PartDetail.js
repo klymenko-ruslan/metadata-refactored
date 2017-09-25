@@ -12,7 +12,6 @@ angular.module('ngMetaCrudApp')
   $scope.partTypeOpts = _.map(partTypes, function (pt) {
     return {'id': pt.value, 'title': pt.name};
   });
-  $scope.partTypeOpts.unshift({'id': null, 'title': ''});
   $scope.oversizeParts = oversizeParts;
   $scope.standardParts = standardParts;
   $scope.prices = prices;

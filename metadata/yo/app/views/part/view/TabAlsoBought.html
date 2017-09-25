@@ -1,38 +1,44 @@
-<table data-ng-table="alsoBoughtTableParams" show-filter="true" class="table table-bordered table-striped table-hover table-responsive">
-  <tr data-ng-repeat="r in $data">
-    <td data-title="'Mfr Part #'" data-sortable="'manufacturerPartNumber'" filter="{manufacturerPartNumber: 'text'}" class="text-left">
-      <a data-ng-href="/part/{{r.partId}}" data-ng-if="r.partId">{{r.manufacturerPartNumber}}</a>
-      <span data-ng-if="!r.partId">{{r.manufacturerPartNumber}}</span>
-    </td>
-    <td data-title="'Part Type'" filter="{partTypeValue: 'select'}" filter-data="partTypeOpts" class="text-left">
-      {{r.partTypeName}}
-    </td>
-    <td data-title="'Name'" class="text-left">
-      {{r.name}}
-    </td>
-    <td data-title="'Description'" class="text-left">
-      {{r.description}}
-    </td>
-    <td data-title="'Interchanges'" class="text-left">
-      <ul class="list-unstyled list-inline" style="margin-bottom:0">
-      <li data-ng-repeat="pd in r.interchanges">
-        <a data-ng-href="/part/{{pd.id}}">{{pd.manufacturerPartNumber}}</a><span data-ng-if="!$last">,</span>
-      </li>
-      </ul>
-    </td>
-    <td data-title="'Qty Shipped'" data-sortable="'qtyShipped'" class="text-right">
-      {{r.qtyShipped | number}}
-    </td>
-    <td data-title="'Sale Amt'" data-sortable="'saleAmount'" class="text-right">
-      {{r.saleAmount | number:2}}
-    </td>
-    <td data-title="'Orders'" data-sortable="'orders'" class="text-right">
-      {{r.orders | number}}
-    </td>
-  </tr>
+<div class="row">
+  <div class="col-xs-12">
 
-  <tr data-ng-hide="$data.length > 0">
-    <td colspan="8">No records to display.</td>
-  </tr>
+    <table data-ng-table="alsoBoughtTableParams" show-filter="true" class="table table-bordered table-striped table-hover table-responsive">
+      <tr data-ng-repeat="r in $data">
+        <td data-title="'Mfr Part #'" data-sortable="'manufacturerPartNumber'" filter="{manufacturerPartNumber: 'text'}" class="text-left">
+          <a data-ng-href="/part/{{r.partId}}" data-ng-if="r.partId">{{r.manufacturerPartNumber}}</a>
+          <span data-ng-if="!r.partId">{{r.manufacturerPartNumber}}</span>
+        </td>
+        <td data-title="'Part Type'" filter="{partTypeValue: 'select'}" filter-data="partTypeOpts" class="text-left">
+          {{r.partTypeName}}
+        </td>
+        <td data-title="'Name'" class="text-left">
+          {{r.name}}
+        </td>
+        <td data-title="'Description'" class="text-left">
+          {{r.description}}
+        </td>
+        <td data-title="'Interchanges'" class="text-left">
+          <ul class="list-unstyled list-inline" style="margin-bottom:0">
+            <li data-ng-repeat="pd in r.interchanges">
+              <a data-ng-href="/part/{{pd.id}}">{{pd.manufacturerPartNumber}}</a><span data-ng-if="!$last">,</span>
+            </li>
+          </ul>
+        </td>
+        <td data-title="'Qty Shipped'" data-sortable="'qtyShipped'" class="text-right">
+          {{r.qtyShipped | number}}
+        </td>
+        <td data-title="'Sale Amt'" data-sortable="'saleAmount'" class="text-right">
+          {{r.saleAmount | number:2}}
+        </td>
+        <td data-title="'Orders'" data-sortable="'orders'" class="text-right">
+          {{r.orders | number}}
+        </td>
+      </tr>
 
-</table>
+      <tr data-ng-hide="$data.length > 0">
+        <td colspan="8">No records to display.</td>
+      </tr>
+
+    </table>
+
+  </div>
+</div>
