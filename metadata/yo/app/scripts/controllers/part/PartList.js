@@ -30,13 +30,5 @@ angular.module('ngMetaCrudApp')
       $uibModalInstance.dismiss('cancel');
     };
 
-    /*
-    TODO: obsolete
-    $scope.refresh = function () {
-      $scope.selection = {};
-      PartTypes.refresh();
-    };
-    */
-
   }
 ]);
