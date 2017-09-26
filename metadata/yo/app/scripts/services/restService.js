@@ -43,7 +43,7 @@ angular.module('ngMetaCrudApp')
         Restangular.setParentless(false);
         return Restangular.one('bom', parentPartId).one('descendant', childPartId).post('alternatives');
       };
- 
+
       this.removeAltBomItems = function(parentPartId, childPartId, altHeaderId, altPartIds) {
         Restangular.setParentless(false);
         return Restangular.one('bom', parentPartId).one('descendant', childPartId).one('alternatives')
@@ -193,7 +193,7 @@ angular.module('ngMetaCrudApp')
       // Specify class depending on part type.
       this._partType2class = function(partTypeId) {
         var clazz = 'com.turbointernational.metadata.entity.part.types.';
-        
+
         switch (partTypeId) {
         case 30:
           clazz += 'Actuator';
@@ -329,7 +329,7 @@ angular.module('ngMetaCrudApp')
           break;
         default:
           clazz = 'com.turbointernational.metadata.entity.part.Part';
-        } 
+        }
         return clazz;
       };
 
@@ -546,7 +546,7 @@ angular.module('ngMetaCrudApp')
         Restangular.setParentless(false);
         return Restangular.one('other/manufacturer', manufacturerId).remove();
       };
- 
+
      this.listTurbosLinkedToGasketKit = function(gasketkitId) {
         return Restangular.one('part/' + gasketkitId + '/gasketkit').getList('turbos');
       };
@@ -830,7 +830,7 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('search/parts').get(params);
       };
 
-      this.filterAlsoBought = function(manufacturerPartNumber, fltrManufacturerPartNumber, fltrPartTypeValue, 
+      this.filterAlsoBought = function(manufacturerPartNumber, fltrManufacturerPartNumber, fltrPartTypeValue,
           sortProperty, sortOrder, offset, limit) {
         var params = {
           manufacturerPartNumber: manufacturerPartNumber,
@@ -1126,15 +1126,9 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('/criticaldimension/part', id).get();
       };
 
-      this.getCritDimsByPartTypes = function(indexBy) {
-        if (!indexBy) {
-          indexBy = 'ID';
-        }
-        if (indexBy !== 'ID' && indexBy !== 'NAME') {
-          throw 'Unexpected value of "indexBy": ' + angular.toJson(indexBy);
-        }
+      this.getCritDimsByPartTypes = function() {
         return Restangular.one('/criticaldimension/byparttypes').get({
-          'indexBy': indexBy
+          'indexBy': 'ID'
         });
       };
 
@@ -1227,7 +1221,7 @@ angular.module('ngMetaCrudApp')
       };
 
       this.updateUser = function(user) {
-       return Restangular.all('security/user').post(user); 
+       return Restangular.all('security/user').post(user);
       };
 
       this.removeUser = function(id) {
@@ -1294,7 +1288,7 @@ angular.module('ngMetaCrudApp')
       };
 
       this.reindexAllApplications = function() {
-        return Restangular.all('search/application/indexAll').post(); 
+        return Restangular.all('search/application/indexAll').post();
       };
 
       this.reindexAllSalesNotes = function() {

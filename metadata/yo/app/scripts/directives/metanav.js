@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .directive('metanav', function(dialogs, $interval, toastr, User, restService) {
+  .directive('metanav', function(dialogs, $interval, toastr, User, restService, cachedDictionaries) {
     return {
       transclude: true,
       templateUrl: '/views/component/Metanav.html',
@@ -83,10 +83,12 @@ angular.module('ngMetaCrudApp')
 
         $scope.clearHibernate = function() {
           dialogs.confirm(
-            'Clear Hibernate cache?',
-            'You need to run this if changes have been made directly to the database. Proceed?').result.then(
+            'Clear Hibernate cache on the server side and local JavaScript caches?',
+            'You need to run this if changes have been made directly to the database. ' +
+            'Or modified dictionaries like Part Types, Manufacturers etc. Proceed?').result.then(
             function() {
               // Yes
+              cachedDictionaries.reset();
               restService.clearHibernate().then(
                 function() {
                   // Success
