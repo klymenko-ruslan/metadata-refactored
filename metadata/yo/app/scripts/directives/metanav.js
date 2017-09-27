@@ -92,7 +92,7 @@ angular.module('ngMetaCrudApp')
               restService.clearHibernate().then(
                 function() {
                   // Success
-                  toastr.success('Hibernate cache cleared.');
+                  toastr.success('Hibernate local caches have been cleared.');
                 },
                 function(response) {
                   // Error
