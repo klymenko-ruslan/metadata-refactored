@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-.controller('PartDetailCtrl', ['$scope', '$log', '$q', '$location', '$cookies', '$route', '$routeParams', 'Kits',
+.controller('PartDetailCtrl', ['$scope', '$log', '$q', '$location', '$cookies', '$routeParams', 'Kits',
     'NgTableParams', 'restService', 'Restangular', 'User', '$uibModal', 'dialogs', 'toastr',
     'part', 'criticalDimensions', 'partTypes', 'manufacturers', 'turbos', 'oversizeParts', 'standardParts', 'prices',
-    function ($scope, $log, $q, $location, $cookies, $route, $routeParams, Kits, NgTableParams,
+    function ($scope, $log, $q, $location, $cookies, $routeParams, Kits, NgTableParams,
     restService, Restangular, User, $uibModal, dialogs, toastr, part, criticalDimensions, partTypes, manufacturers,
     turbos, oversizeParts, standardParts, prices) {
   $scope.partId = part.id;
@@ -44,10 +44,6 @@ angular.module('ngMetaCrudApp')
 
   $scope.images.pgSzVal = _imgPgSzTxt2Val($scope.images.pgSzTxt);
 
-  $scope.onReload = function() {
-    $route.reload();
-  };
-
   $scope.onReindex = function() {
     restService.indexPartSync($scope.partId).then(
       function success() {
@@ -59,8 +55,8 @@ angular.module('ngMetaCrudApp')
     );
   };
 
-  $scope.onChangeTab = function(e) {
-    $log.log('onChangeTab: ' + e);
+  $scope.onChangeTab = function(tabId) {
+    $log.log('onChangeTab: ' + tabId);
   };
 
   $scope.changelogTableParams = new NgTableParams({

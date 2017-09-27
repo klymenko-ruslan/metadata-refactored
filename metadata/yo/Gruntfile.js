@@ -119,9 +119,9 @@ module.exports = function (grunt) {
               connect().use('/part/2', indexHtml),
               connect().use('/part/3', indexHtml),
               connect().use('/part/2318', indexHtml),
-              connect().use('/part/6233', indexHtml),
-              connect().use('/part/45456', indexHtml),
-              connect().use('/part/45328', indexHtml),
+              connect().use('/part/6233', indexHtml),  // Tabs: 'Prices', 'Also Bought'
+              connect().use('/part/45456', indexHtml), // Tabs: 'Prices', 'Also Bought' + tab 'Turbo Types' has record
+              connect().use('/part/45328', indexHtml), // Tabs: 'Prices', 'Also Bought' + tab 'Turbo Types' has many records
               connect().use('/part/45328/ancestors', indexHtml),
               connect().use('/part/33284', indexHtml),
               connect().use('/part/6246', indexHtml),

@@ -45,133 +45,95 @@
       <button type="button" class="btn btn-success" data-ng-click="onReindex()" authorize="ROLE_READ">
         <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i> Reindex
       </button>
-      <button type="button" class="btn btn-success" data-ng-click="onReload()" authorize="ROLE_READ">
-        <i class="fa fa-refresh" aria-hidden="true"></i> Reload
-      </button>
     </div>
   </div>
 </div>
 
-<ul id="partTabs" class="nav nav-tabs" role="tablist">
-  <li role="presentation">
-    <a id="tab-details" href="#details" aria-controls="details" role="tab" data-toggle="tab">
+<uib-tabset active="0" type="tabs">
+  <uib-tab index="0" select="onChangeTab('part_details')">
+    <uib-tab-heading>
       <i class="fa fa-bars" aria-hidden="true"></i>
       Part Details
-    </a>
-  </li>
-  <li role="presentation">
-    <a id="tab-critical-dimensions" href="#critical_dimensions" aria-controls="critical_dimensions" role="tab" data-toggle="tab">
+    </uib-tab-heading>
+    <div role="tabpanel" class="tab-pane tab-part-detail">
+      <data-ng-include src="'/views/part/view/TabDetails.html'"></data-ng-include>
+    </div>
+  </uib-tab>
+  <uib-tab index="1" select="onChangeTab('critical_dimensions')">
+    <uib-tab-heading>
       <i class="fa fa-arrows" aria-hidden="true"></i>
       Critical Dimensions
-    </a>
-  </li>
-  <li role="presentation">
-    <a id="tab-turbo-types" href="#turbo_types" aria-controls="turbo_types" role="tab" data-toggle="tab">
+    </uib-tab-heading>
+    <div role="tabpanel" class="tab-pane tab-part-detail">
+      <critical-dimensions part="part" descriptors="criticalDimensions"></critical-dimensions>
+    </div>
+  </uib-tab>
+  <uib-tab index="2" select="onChangeTab('turbo_types')">
+    <uib-tab-heading>
       <i class="fa fa-cog" aria-hidden="true"></i>
       Turbo Types
-    </a>
-  </li>
-  <li role="presentation" data-ng-show="part.partType.value == 'turbo'">
-    <a id="tab-applications" href="#applications" aria-controls="applications" role="tab" data-toggle="tab">
+    </uib-tab-heading>
+    <div role="tabpanel" class="tab-pane tab-part-detail">
+      <turbo-types part="part"></turbo-types>
+    </div>
+  </uib-tab>
+  <uib-tab index="3" select="onChangeTab('applications')" classes="'tab-content'" data-ng-show="part.partType.value == 'turbo'">
+    <uib-tab-heading>
       <i class="fa fa-book" aria-hidden="true"></i>
       Applications
-    </a>
-  </li>
-  <li role="presentation" data-ng-show="part.partType.value == 'gasket_kit'">
-    <a id="tab-turbos" href="#turbos" aria-controls="turbos" role="tab" data-toggle="tab">
+    </uib-tab-heading>
+    <div role="tabpanel" class="tab-pane tab-part-detail">
+      <a authorize="ROLE_APPLICATION_CRUD" class="btn btn-primary pull-right" style="margin-bottom:10px;" data-ng-href="/part/{{partId}}/application/search">
+        <i class="fa fa-plus"></i>
+        Add Application
+      </a>
+      <part-application-table />
+    </div>
+  </uib-tab>
+  <uib-tab index="4" select="onChangeTab('turbos')" classes="'tab-content'" data-ng-show="part.partType.value == 'gasket_kit'">
+    <uib-tab-heading>
       <i class="fa fa-book" aria-hidden="true"></i>
       Turbos
-    </a>
-  </li>
-  <li role="presentation" data-ng-show="part.partType.value == 'journal_bearing' || part.partType.value == 'journal_bearing_spacer' || part.partType.value == 'piston_ring'">
-    <a id="tab-nonstandard" href="#nonstandard" aria-controls="non standard" role="tab" data-toggle="tab">
+    </uib-tab-heading>
+    <div role="tabpanel" class="tab-pane  tab-part-detail">
+      <data-ng-include src="'/views/part/view/TabTurbos.html'"></data-ng-include>
+    </div>
+  </uib-tab>
+  <uib-tab index="5" select="onChangeTab('non_standard')" classes="'tab-content'" data-ng-show="part.partType.value == 'journal_bearing' || part.partType.value == 'journal_bearing_spacer' || part.partType.value == 'piston_ring'">
+    <uib-tab-heading>
       <i class="fa fa-slack" aria-hidden="true"></i>
       Non Standard
-    </a>
-  </li>
-  <li role="presentation">
-    <a id="tab-audit-log" href="#audit_log" aria-controls="audit log" role="tab" data-toggle="tab">
+    </uib-tab-heading>
+    <div role="tabpanel" class="tab-pane  tab-part-detail">
+      <data-ng-include src="'/views/part/view/TabNonstandard.html'"></data-ng-include>
+    </div>
+  </uib-tab>
+  <uib-tab index="6" select="onChangeTab('audit_log')" classes="'tab-content'">
+    <uib-tab-heading>
       <i class="fa fa-book" aria-hidden="true"></i>
       Audit Log
-    </a>
-  </li>
-  <li role="presentation" authorize="ROLE_PRICE_READ" data-ng-show="part.manufacturer.name == 'Turbo International'">
-    <a id="tab-prices" href="#prices" aria-controls="prices" role="tab" data-toggle="tab">
+    </uib-tab-heading>
+    <div role="tabpanel" class="tab-pane  tab-part-detail">
+      <data-ng-include src="'/views/part/view/TabAuditLog.html'"></data-ng-include>
+    </div>
+  </uib-tab>
+  <uib-tab index="7" select="onChangeTab('prices')" classes="'tab-content'" data-ng-show="part.manufacturer.name == 'Turbo International'">
+    <uib-tab-heading>
       <i class="fa fa-usd" aria-hidden="true"></i>
       Prices
-    </a>
-  </li>
-  <li role="presentation" authorize="ROLE_PRICE_READ" data-ng-show="part.manufacturer.name == 'Turbo International'">
-    <a id="tab-also-bought" href="#also_bought" aria-controls="also bought" role="tab" data-toggle="tab">
+    </uib-tab-heading>
+    <div role="tabpanel" class="tab-pane  tab-part-detail">
+      <data-ng-include src="'/views/part/view/TabPrices.html'"></data-ng-include>
+    </div>
+  </uib-tab>
+  <uib-tab index="8" select="onChangeTab('also_bought')" classes="'tab-content'" data-ng-show="part.manufacturer.name == 'Turbo International'">
+    <uib-tab-heading>
       <i class="fa fa-shopping-cart" aria-hidden="true"></i>
       Also Bought
-    </a>
-  </li>
-</ul>
+    </uib-tab-heading>
+    <div role="tabpanel" class="tab-pane  tab-part-detail">
+      <data-ng-include src="'/views/part/view/TabAlsoBought.html'"></data-ng-include>
+    </div>
+  </uib-tab>
+</uib-tabset>
 
-<div class="tab-content">
-  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="details">
-    <data-ng-include src="'/views/part/view/TabDetails.html'"></data-ng-include>
-  </div>
-  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="critical_dimensions">
-    <critical-dimensions part="part" descriptors="criticalDimensions"></critical-dimensions>
-  </div>
-  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="turbo_types">
-    <turbo-types part="part"></turbo-types>
-  </div>
-  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="applications">
-    <a authorize="ROLE_APPLICATION_CRUD" class="btn btn-primary pull-right" style="margin-bottom:10px;" data-ng-href="/part/{{partId}}/application/search">
-      <i class="fa fa-plus"></i>
-      Add Application
-    </a>
-    <part-application-table />
-  </div>
-  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="turbos">
-    <data-ng-include src="'/views/part/view/TabTurbos.html'"></data-ng-include>
-  </div>
-  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="nonstandard">
-    <data-ng-include src="'/views/part/view/TabNonstandard.html'"></data-ng-include>
-  </div>
-  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="audit_log">
-    <data-ng-include src="'/views/part/view/TabAuditLog.html'"></data-ng-include>
-  </div>
-  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="prices">
-    <data-ng-include src="'/views/part/view/TabPrices.html'"></data-ng-include>
-  </div>
-  <div role="tabpanel" class="tab-pane fade tab-part-detail" id="also_bought">
-    <data-ng-include src="'/views/part/view/TabAlsoBought.html'"></data-ng-include>
-  </div>
-</div>
-<script>
-  $('#partTabs a').click(function (e) {
-    e.preventDefault();
-    $(this).tab('show');
-  }).on('show.bs.tab', function(e) {
-    var $scope = angular.element('#partTabs').$rootScope;
-    //$scope.onChangeTab(e);
-    console.log('$scope.onChangeTab: ' + $scope);
-    //$scope.$apply();
-  });
-  var h = window.location.hash;
-  if (h === '#details') {
-    $('#tab-details').tab('show');
-  } else if (h === '#critical_dimensions') {
-    $('#tab-critical-dimensions').tab('show');
-  } else if (h === '#turbo_types') {
-    $('tab-turbo-types').tab('show');
-  } else if (h === '#applications') {
-    $('#tab-applications').tab('show');
-  } else if (h === '#turbos') {
-    $('#tab-turbos').tab('show');
-  } else if (h === '#nonstandard') {
-    $('#tab-nonstandard').tab('show');
-  } else if (h === '#audit_log') {
-    $('#tab-auditlog').tab('show');
-  } else if (h === '#prices') {
-    $('#tab-prices').tab('show');
-  } else if (h === '#also_bought') {
-    $('#tab-also-bought').tab('show');
-  } else {
-    $('#partTabs a:first').tab('show');
-  }
-</script>
