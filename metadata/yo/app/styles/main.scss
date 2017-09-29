@@ -496,13 +496,22 @@ h4.selected {
 }
 
 .vcenter {
-    display: inline-block;
-    vertical-align: middle;
-    float: none;
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
 }
 
 .vbottom {
-    display: inline-block;
-    vertical-align: bottom;
-    float: none;
+  display: inline-block;
+  vertical-align: bottom;
+  float: none;
+}
+
+div.tab-head {
+  white-space: nowrap;
+}
+
+div.tab-title {
+  display: inline-block;
+  padding-right: 10px;
 }

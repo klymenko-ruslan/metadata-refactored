@@ -49,11 +49,18 @@
   </div>
 </div>
 
-<uib-tabset active="0" type="tabs">
+<uib-tabset active="activeTabIndex" type="tabs">
   <uib-tab index="0" select="onChangeTab('part_details')">
     <uib-tab-heading>
-      <i class="fa fa-bars" aria-hidden="true"></i>
-      Part Details
+      <div class="tab-head">
+        <div class="tab-title">
+          <i class="fa fa-bars" aria-hidden="true"></i>
+          Part Details
+        </div>
+        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabPartDetails($event)" data-ng-show="activeTabIndex === 0">
+          <i class="fa fa-refresh" aria-hidden="true"></i>
+        </button>
+      </div>
     </uib-tab-heading>
     <div role="tabpanel" class="tab-pane tab-part-detail">
       <data-ng-include src="'/views/part/view/TabDetails.html'"></data-ng-include>
@@ -79,7 +86,7 @@
   </uib-tab>
   <uib-tab index="3" select="onChangeTab('applications')" classes="'tab-content'" data-ng-show="part.partType.value == 'turbo'">
     <uib-tab-heading>
-      <i class="fa fa-book" aria-hidden="true"></i>
+      <i class="fa fa-paperclip" aria-hidden="true"></i>
       Applications
     </uib-tab-heading>
     <div role="tabpanel" class="tab-pane tab-part-detail">
@@ -110,8 +117,15 @@
   </uib-tab>
   <uib-tab index="6" select="onChangeTab('audit_log')" classes="'tab-content'">
     <uib-tab-heading>
-      <i class="fa fa-book" aria-hidden="true"></i>
-      Audit Log
+      <div class="tab-head">
+        <div class="tab-title">
+          <i class="fa fa-book" aria-hidden="true"></i>
+          Audit Log
+        </div>
+        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabAuditLog($event)" data-ng-show="activeTabIndex === 6">
+          <i class="fa fa-refresh" aria-hidden="true"></i>
+        </button>
+      </div>
     </uib-tab-heading>
     <div role="tabpanel" class="tab-pane  tab-part-detail">
       <data-ng-include src="'/views/part/view/TabAuditLog.html'"></data-ng-include>

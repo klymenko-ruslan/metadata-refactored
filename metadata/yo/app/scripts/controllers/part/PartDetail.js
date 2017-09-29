@@ -21,6 +21,8 @@ angular.module('ngMetaCrudApp')
   // Make sure we're using the correct part type
   $scope.partType = part.partType.name;
 
+  $scope.activeTabIndex = 0;
+
   $scope.images = {
     pgNum: 1,
     pgSzVal: 2,
@@ -55,54 +57,66 @@ angular.module('ngMetaCrudApp')
     );
   };
 
+  $scope.onChangeTab = function(tabId) {
+// TODO: remove
+$log.log('onChangeTab: ' + tabId);
+    if (tabId === 'part_details') {
+      $scope.refreshTabPartDetails();
+    } else if (tabId === 'audit_log') {
+      if ($scope.changelogTableParams === null) {
+        $scope.refreshTabAuditLog();
+      }
+    }
+  };
+
+  $scope.refreshTabPartDetails = function() {
+  }
+
   $scope.changelogTableParams = null;
   $scope.changelogTableParamsLoading = true; // to shop icon for progress
 
-  $scope.onChangeTab = function(tabId) {
-    $log.log('onChangeTab: ' + tabId);
-    if (tabId === 'audit_log') {
-      $scope.changelogTableParams = new NgTableParams({
-        page: 1,
-        count: 10,
-        sorting: {
-          changeDate: 'desc'
+  $scope.refreshTabAuditLog = function($event) {
+    $scope.changelogTableParams = new NgTableParams({
+      page: 1,
+      count: 10,
+      sorting: {
+        changeDate: 'desc'
+      }
+    }, {
+      getData: function(params) {
+        var sortOrder;
+        var sorting = params.sorting();
+        for (var sortProperty in sorting) {
+          break;
         }
-      }, {
-        getData: function(params) {
-          var sortOrder;
-          var sorting = params.sorting();
-          for (var sortProperty in sorting) {
-            break;
-          }
-          if (sortProperty) {
-            sortOrder = sorting[sortProperty];
-          }
-          var offset = params.count() * (params.page() - 1);
-          var limit = params.count();
-          // var userId = null;
-          var retVal = restService.filterChangelog(null, null, null, null, null, null, $scope.partId,
-            sortProperty, sortOrder, offset, limit).then(
-              function(result) {
-                // Update the total and slice the result
-                params.total(result.total);
-                return result.recs;
-              },
-              function(errorResponse) {
-                restService.error('Search in the changelog failed.', errorResponse);
-              }
-            );
-          retVal.then(
-            function success() {
-               $scope.changelogTableParamsLoading = false;
-            },
-            function failure() {
-               $scope.changelogTableParamsLoading = false;
-            }
-          );
-          return retVal;
+        if (sortProperty) {
+          sortOrder = sorting[sortProperty];
         }
-      });
-    }
+        var offset = params.count() * (params.page() - 1);
+        var limit = params.count();
+        // var userId = null;
+        var retVal = restService.filterChangelog(null, null, null, null, null, null, $scope.partId,
+        sortProperty, sortOrder, offset, limit).then(
+          function(result) {
+            // Update the total and slice the result
+            params.total(result.total);
+            return result.recs;
+          },
+          function(errorResponse) {
+            restService.error('Search in the changelog failed.', errorResponse);
+          }
+        );
+        retVal.then(
+          function success() {
+            $scope.changelogTableParamsLoading = false;
+          },
+          function failure() {
+            $scope.changelogTableParamsLoading = false;
+          }
+        );
+        return retVal;
+      }
+    });
   };
 
   if ($scope.part.manufacturer.name === 'Turbo International') {
