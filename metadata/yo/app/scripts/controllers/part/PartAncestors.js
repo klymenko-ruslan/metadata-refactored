@@ -10,8 +10,7 @@ angular.module('ngMetaCrudApp')
 
     $scope.ancestorsTableParams = new NgTableParams({
         page: 1,
-        count: 25,
-        sorting: {'relationDistance': 'asc'}
+        count: 25
       }, {
         dataset: ancestors,
       }

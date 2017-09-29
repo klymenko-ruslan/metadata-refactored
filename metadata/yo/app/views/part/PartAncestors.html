@@ -22,8 +22,8 @@
         <td title="'Part Type'" class="text-left" data-sortable="'partType.name'">{{item.partType.name}}</td>
         <td title="'Manufacturer'" class="text-left" data-sortable="'manufacturer.name'">{{item.manufacturer.name}}</td>
         <td title="'Relation Type'" class="text-left">
-            <span data-ng-show="item.relationDistance === 1">direct</span>
-            <span data-ng-show="item.relationDistance !== 1">interchange</span>
+            <span data-ng-hide="item.relationType">direct</span>
+            <span data-ng-show="item.relationType">interchange</span>
         </td>
         <td title="'Relation Distance'" class="text-left" data-sortable="'relationDistance'">{{item.relationDistance}}</td>
       </tr>

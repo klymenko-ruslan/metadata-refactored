@@ -1,5 +1,10 @@
 package com.turbointernational.metadata.web.dto;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
+import org.apache.commons.collections.comparators.ComparatorChain;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.util.View;
@@ -31,8 +36,22 @@ public class Ancestor {
     @JsonView({ View.Summary.class })
     private int relationDistance;
 
+    /**
+     * Relation type:
+     *  true  - interchange
+     *  false - direct
+     */
+    @JsonView({ View.Summary.class })
+    private boolean relationType;
+    
+    private static Comparator<Ancestor> cmpDistance = (a0, a1) -> {return a0.getRelationDistance() - a1.getRelationDistance();};
+    private static Comparator<Ancestor> cmpRelationType = (a0, a1) -> {return a0.getRelationDistance() - a1.getRelationDistance();};
+    private static Comparator<Ancestor> cmpPartNumber = (a0, a1) -> a0.getPartNumber().compareTo(a1.getPartNumber());
+    @SuppressWarnings("unchecked")
+    public final static Comparator<Ancestor> cmpComplex = new ComparatorChain(Arrays.asList(cmpDistance, cmpRelationType, cmpPartNumber));
+
     public Ancestor(Long partId, String name, String descritption, String partNumber, PartType partType,
-            Manufacturer manufacturer, int relationDistance) {
+            Manufacturer manufacturer, int relationDistance, boolean isInterchage) {
         this.partId = partId;
         this.name = name;
         this.descritption = descritption;
@@ -40,13 +59,14 @@ public class Ancestor {
         this.partType = partType;
         this.manufacturer = manufacturer;
         this.relationDistance = relationDistance;
+        this.relationType = isInterchage;
     }
 
-    public static Ancestor from(com.turbointernational.metadata.entity.part.Part p, int distance) {
+    public static Ancestor from(com.turbointernational.metadata.entity.part.Part p, int distance, boolean isInterchange) {
         PartType partType = PartType.from(p.getPartType());
         Manufacturer manufacturer = Manufacturer.from(p.getManufacturer());
         return new Ancestor(p.getId(), p.getName(), p.getDescription(), p.getManufacturerPartNumber(),
-                partType, manufacturer, distance);
+                partType, manufacturer, distance, isInterchange);
     }
 
     public Long getPartId() {
@@ -95,6 +115,14 @@ public class Ancestor {
 
     public void setRelationDistance(int relationDistance) {
         this.relationDistance = relationDistance;
+    }
+
+    public boolean getRelationType() {
+        return relationType;
+    }
+
+    public void setRelationType(boolean isInterchange) {
+        this.relationType = isInterchange;
     }
 
 }
