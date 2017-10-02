@@ -3,18 +3,15 @@
 angular.module('ngMetaCrudApp')
 .controller('PartDetailCtrl', ['$scope', '$log', '$q', '$location', '$cookies', '$routeParams', 'Kits',
     'NgTableParams', 'restService', 'Restangular', 'User', '$uibModal', 'dialogs', 'toastr',
-    'part', 'criticalDimensions', 'partTypes', 'manufacturers', 'turbos', 'oversizeParts', 'standardParts', 'prices',
+    'part', 'criticalDimensions', 'partTypes', 'manufacturers', 'turbos',
     function ($scope, $log, $q, $location, $cookies, $routeParams, Kits, NgTableParams,
     restService, Restangular, User, $uibModal, dialogs, toastr, part, criticalDimensions, partTypes, manufacturers,
-    turbos, oversizeParts, standardParts, prices) {
+    turbos) {
   $scope.partId = part.id;
   $scope.part = part;
   $scope.partTypeOpts = _.map(partTypes, function (pt) {
     return {'id': pt.value, 'title': pt.name};
   });
-  $scope.oversizeParts = oversizeParts;
-  $scope.standardParts = standardParts;
-  $scope.prices = prices;
   $scope.formMode = 'view';
   $scope.criticalDimensions = criticalDimensions;
   $scope.restService = restService;
@@ -58,24 +55,86 @@ angular.module('ngMetaCrudApp')
   };
 
   $scope.onChangeTab = function(tabId) {
-// TODO: remove
-$log.log('onChangeTab: ' + tabId);
     if (tabId === 'part_details') {
       $scope.refreshTabPartDetails();
+    } else if (tabId === 'non_standard') {
+      if ($scope.oversizeParts === null && $scope.standardParts === null) {
+        $scope.refreshTabNonStandard();
+      }
     } else if (tabId === 'audit_log') {
       if ($scope.changelogTableParams === null) {
         $scope.refreshTabAuditLog();
+      }
+    } else if (tabId === 'prices') {
+      if ($scope.prices === null) {
+        $scope.refreshTabPrices();
+      }
+    } else if (tabId === 'also_bought') {
+      if ($scope.alsoBoughtTableParams === null) {
+        $scope.refreshTabAlsoBought();
       }
     }
   };
 
   $scope.refreshTabPartDetails = function() {
-  }
+  };
+
+  $scope.oversizeParts = null;
+  $scope.oversizePartsTableParams = new NgTableParams({
+    'page': 1,
+    'count': 10,
+    'sorting': {
+      'manufacturerPartNumber': 'asc'
+    }
+  }, {
+    'dataset': $scope.oversizeParts
+  });
+  $scope.oversizePartsTableParamsLoading = true; // to shop icon for a progress of a loading
+
+  $scope.standardParts = null;
+  $scope.standardPartsTableParams = new NgTableParams({
+    'page': 1,
+    'count': 10,
+    'sorting': {
+      'manufacturerPartNumber': 'asc'
+    }
+  }, {
+    'dataset': $scope.standardParts
+  });
+  $scope.standardPartsTableParamsLoading = true; // to shop icon for a progress of a loading
+
+  $scope.refreshTabNonStandard = function() {
+    $scope.oversizePartsTableParamsLoading = true;
+    restService.findOversizeParts($scope.partId).then(
+      function success(oversizeParts) {
+        $scope.oversizeParts = oversizeParts;
+        $scope.oversizePartsTableParams.settings({dataset: $scope.oversizeParts});
+        $scope.oversizePartsTableParamsLoading = false;
+      },
+      function failure(errorResponse) {
+        $scope.oversizePartsTableParamsLoading = false;
+        restService.error('Loading of oversize parts failed.', errorResponse);
+      }
+    );
+    $scope.standardPartsTableParamsLoading = true;
+    restService.findStandardParts($scope.partId).then(
+      function success(standardParts) {
+        $scope.standardParts = standardParts;
+        $scope.standardPartsTableParams.settings({dataset: $scope.standardParts});
+        $scope.standardPartsTableParamsLoading = false;
+      },
+      function failure(errorResponse) {
+        $scope.standardPartsTableParamsLoading = false;
+        restService.error('Loading of standard parts failed.', errorResponse);
+      }
+    );
+  };
 
   $scope.changelogTableParams = null;
-  $scope.changelogTableParamsLoading = true; // to shop icon for progress
+  $scope.changelogTableParamsLoading = true; // to shop icon for a progress of a loading
 
-  $scope.refreshTabAuditLog = function($event) {
+  $scope.refreshTabAuditLog = function() {
+    $scope.changelogTableParamsLoading = true;
     $scope.changelogTableParams = new NgTableParams({
       page: 1,
       count: 10,
@@ -100,18 +159,12 @@ $log.log('onChangeTab: ' + tabId);
           function(result) {
             // Update the total and slice the result
             params.total(result.total);
+            $scope.changelogTableParamsLoading = false;
             return result.recs;
           },
           function(errorResponse) {
+            $scope.changelogTableParamsLoading = false;
             restService.error('Search in the changelog failed.', errorResponse);
-          }
-        );
-        retVal.then(
-          function success() {
-            $scope.changelogTableParamsLoading = false;
-          },
-          function failure() {
-            $scope.changelogTableParamsLoading = false;
           }
         );
         return retVal;
@@ -119,7 +172,28 @@ $log.log('onChangeTab: ' + tabId);
     });
   };
 
-  if ($scope.part.manufacturer.name === 'Turbo International') {
+  $scope.prices = null;
+  $scope.pricesLoading = true; // to shop icon for a progress of a loading
+
+  $scope.refreshTabPrices = function() {
+    $scope.pricesLoading = true;
+    restService.getPartPrices($scope.partId).then(
+      function success(prices) {
+        $scope.prices = prices;
+        $scope.pricesLoading = false;
+      },
+      function failure(error) {
+        $scope.pricesLoading = false;
+        restService.error('Loading pri the part failed.', error);
+      }
+    );
+  };
+
+  $scope.alsoBoughtTableParams = null;
+  $scope.alsoBoughtTableParamsLoading = true; // to shop icon for a progress of a loading
+
+  $scope.refreshTabAlsoBought = function() {
+    $scope.alsoBoughtTableParamsLoading = true;
     $scope.alsoBoughtTableParams = new NgTableParams({
       page: 1,
       count: 25,
@@ -143,6 +217,7 @@ $log.log('onChangeTab: ' + tabId);
                 filter.manufacturerPartNumber, filter.partTypeValue, sortProperty, sortOrder, offset, limit).then(
           function(result) {
             // Update the total and slice the result
+            $scope.alsoBoughtTableParamsLoading = false;
             if (result) {
               params.total(result.total);
               return result.recs;
@@ -152,12 +227,13 @@ $log.log('onChangeTab: ' + tabId);
             }
           },
           function(errorResponse) {
+            $scope.alsoBoughtTableParamsLoading = false;
             restService.error('Search in the changelog failed.', errorResponse);
           }
         );
       }
     });
-  }
+  };
 
   $scope.turbosTableParams = null;
 
@@ -657,26 +733,6 @@ $log.log('onChangeTab: ' + tabId);
       }
     });
   };
-
-  $scope.oversizePartsTableParams = new NgTableParams({
-    'page': 1,
-    'count': 10,
-    'sorting': {
-      'manufacturerPartNumber': 'asc'
-    }
-  }, {
-    'dataset': $scope.oversizeParts
-  });
-
-  $scope.standardPartsTableParams = new NgTableParams({
-    'page': 1,
-    'count': 10,
-    'sorting': {
-      'manufacturerPartNumber': 'asc'
-    }
-  }, {
-    'dataset': $scope.standardParts
-  });
 
   $scope.onDeleteOversizePart = function(oversizePart) {
     dialogs.confirm(

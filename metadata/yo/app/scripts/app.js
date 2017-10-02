@@ -287,15 +287,6 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         }],
         turbos: ['$route', 'restService', function($route, restService) {
           return restService.listTurbosLinkedToGasketKit($route.current.pathParams.id);
-        }],
-        oversizeParts: ['$route', 'restService', function($route, restService) {
-          return restService.findOversizeParts($route.current.pathParams.id);
-        }],
-        standardParts: ['$route', 'restService', function($route, restService) {
-          return restService.findStandardParts($route.current.pathParams.id);
-        }],
-        prices: ['$route', 'restService', function($route, restService) {
-          return restService.getPartPrices($route.current.pathParams.id);
         }]
       }
     });
