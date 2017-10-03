@@ -57,9 +57,6 @@
           <i class="fa fa-bars" aria-hidden="true"></i>
           Part Details
         </div>
-        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabPartDetails($event)" data-ng-show="activeTabIndex === 0">
-          <i class="fa fa-refresh" aria-hidden="true"></i>
-        </button>
       </div>
     </uib-tab-heading>
     <div role="tabpanel" class="tab-pane tab-part-detail">
@@ -99,10 +96,17 @@
   </uib-tab>
   <uib-tab index="4" select="onChangeTab('turbos')" classes="'tab-content'" data-ng-show="part.partType.value == 'gasket_kit'">
     <uib-tab-heading>
-      <i class="fa fa-book" aria-hidden="true"></i>
-      Turbos
+      <div class="tab-head">
+        <div class="tab-title">
+          <i class="fa fa-book" aria-hidden="true"></i>
+          Turbos
+        </div>
+        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabTurbos()" data-ng-show="activeTabIndex === 4">
+          <i class="fa fa-refresh" aria-hidden="true"></i>
+        </button>
+      </div>
     </uib-tab-heading>
-    <div role="tabpanel" class="tab-pane  tab-part-detail">
+    <div role="tabpanel" class="tab-pane tab-part-detail">
       <data-ng-include src="'/views/part/view/TabTurbos.html'"></data-ng-include>
     </div>
   </uib-tab>

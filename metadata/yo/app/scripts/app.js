@@ -284,9 +284,6 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         }],
         manufacturers: ['cachedDictionaries', function(cachedDictionaries) {
           return cachedDictionaries.getManufacturers();
-        }],
-        turbos: ['$route', 'restService', function($route, restService) {
-          return restService.listTurbosLinkedToGasketKit($route.current.pathParams.id);
         }]
       }
     });

@@ -3,10 +3,10 @@
 angular.module('ngMetaCrudApp')
 .controller('PartDetailCtrl', ['$scope', '$log', '$q', '$location', '$cookies', '$routeParams', 'Kits',
     'NgTableParams', 'restService', 'Restangular', 'User', '$uibModal', 'dialogs', 'toastr',
-    'part', 'criticalDimensions', 'partTypes', 'manufacturers', 'turbos',
+    'part', 'criticalDimensions', 'partTypes', 'manufacturers',
     function ($scope, $log, $q, $location, $cookies, $routeParams, Kits, NgTableParams,
-    restService, Restangular, User, $uibModal, dialogs, toastr, part, criticalDimensions, partTypes, manufacturers,
-    turbos) {
+      restService, Restangular, User, $uibModal, dialogs, toastr, part,
+      criticalDimensions, partTypes, manufacturers) {
   $scope.partId = part.id;
   $scope.part = part;
   $scope.partTypeOpts = _.map(partTypes, function (pt) {
@@ -55,6 +55,7 @@ angular.module('ngMetaCrudApp')
   };
 
   $scope.onChangeTab = function(tabId) {
+console.log('tabId: ' + angular.toJson(tabId, 2));
     if (tabId === 'part_details') {
       $scope.refreshTabPartDetails();
     } else if (tabId === 'non_standard') {
@@ -68,6 +69,10 @@ angular.module('ngMetaCrudApp')
     } else if (tabId === 'prices') {
       if ($scope.prices === null) {
         $scope.refreshTabPrices();
+      }
+    } else if (tabId === 'turbos') {
+      if ($scope.turbos === null) {
+        $scope.refreshTabTurbos();
       }
     } else if (tabId === 'also_bought') {
       if ($scope.alsoBoughtTableParams === null) {
@@ -228,26 +233,37 @@ angular.module('ngMetaCrudApp')
           },
           function(errorResponse) {
             $scope.alsoBoughtTableParamsLoading = false;
-            restService.error('Search in the changelog failed.', errorResponse);
+            restService.error('Loading of \'also bought\' failed.', errorResponse);
           }
         );
       }
     });
   };
 
-  $scope.turbosTableParams = null;
+  $scope.turbos = null;
+  $scope.turbosTableParams = new NgTableParams({
+    'page': 1,
+    'count': 10,
+    'sorting': { 'id': 'asc' }
+  }, {
+    'dataset': $scope.turbos
+  });
+  $scope.turbosTableParamsLoading = true; // to shop icon for a progress of a loading
 
-  function _initTurbosTableParams(turbos) {
-    $scope.turbosTableParams = new NgTableParams({
-      'page': 1,
-      'count': 10,
-      'sorting': { 'id': 'asc' }
-      }, {
-        'dataset': turbos
-      });
-  }
-
-  _initTurbosTableParams(turbos);
+  $scope.refreshTabTurbos = function() {
+    $scope.turbosTableParamsLoading = true;
+    restService.listTurbosLinkedToGasketKit($scope.partId).then(
+      function success(turbos) {
+        $scope.turbos = turbos;
+        $scope.turbosTableParamsLoading = false;
+        $scope.turbosTableParams.settings({dataset: $scope.turbos});
+      },
+      function failure() {
+        $scope.turbosTableParamsLoading = false;
+        restService.error('Loading of \'also bought\' failed.', errorResponse);
+      }
+    );
+  };
 
   // TODO: Find a better way. Directive?
   if (part.partType.magentoAttributeSet === 'Kit') {
@@ -558,7 +574,8 @@ angular.module('ngMetaCrudApp')
         restService.unlinkTurboInGasketKit(turboId).then(
           function success(turbos) {
             toastr.success('The Gasket Kit and Turbo unlinked.');
-            _initTurbosTableParams(turbos);
+            $scope.turbos = turbos;
+            $scope.refreshTabTurbos();
           },
           function failure(result) {
             restService.error('Can\'t unlink the Gasket Kit and Turbo.', result);
