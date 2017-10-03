@@ -205,6 +205,13 @@ public class GraphDbService {
             @JsonView({ View.Summary.class })
             private Long partId;
 
+            /**
+             * true  - direct
+             * false - interchange
+             */
+            @JsonView({ View.Summary.class })
+            private boolean relationType;
+
             @JsonView({ View.Summary.class })
             private int relationDistance;
 
@@ -214,6 +221,14 @@ public class GraphDbService {
 
             public void setPartId(Long partId) {
                 this.partId = partId;
+            }
+
+            public boolean isRelationType() {
+                return relationType;
+            }
+
+            public void setRelationType(boolean relationType) {
+                this.relationType = relationType;
             }
 
             public int getRelationDistance() {

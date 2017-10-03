@@ -125,10 +125,12 @@ module.exports = function (grunt) {
               connect().use('/part/29878', indexHtml), // Tabs: 'Applications'
               connect().use('/part/45456', indexHtml), // Tabs: 'Prices', 'Also Bought' + tab 'Turbo Types' has record
               connect().use('/part/45328', indexHtml), // Tabs: 'Prices', 'Also Bought' + tab 'Turbo Types' has many records
-              connect().use('/part/45328/ancestors', indexHtml),
+              connect().use('/part/45328/ancestors', indexHtml), // 'Where used (ancestors)'
+              connect().use('/part/45456/ancestors', indexHtml), // 'Where used (ancestors)'
               connect().use('/part/45495', indexHtml), // Tabs: 'Non Standard'
               connect().use('/part/45524', indexHtml), // Tabs: 'Non Standard', many records 'non standard parts'
               connect().use('/part/46722', indexHtml), // Tabs: 'Non Standard', many records 'standard parts'
+              connect().use('/part/47842/ancestors', indexHtml), // 'Where used (ancestors)'
               connect().use('/part/33284', indexHtml),
               connect().use('/part/6246', indexHtml),
               connect().use('/part/63398', indexHtml),

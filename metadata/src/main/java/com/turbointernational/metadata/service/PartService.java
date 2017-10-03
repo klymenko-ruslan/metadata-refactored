@@ -330,8 +330,8 @@ public class PartService {
         for (int i = 0; i < n; i++) {
             Row r = rows[i];
             Part p = partDao.findOne(r.getPartId());
-            boolean isInterchange = r.getRelationDistance() > 1;   // TODO: ticket #193
-            retVal[i] = Ancestor.from(p, r.getRelationDistance(), isInterchange);
+            boolean isDirect = r.isRelationType();
+            retVal[i] = Ancestor.from(p, r.getRelationDistance(), !isDirect);
         }
         return retVal;
     }
