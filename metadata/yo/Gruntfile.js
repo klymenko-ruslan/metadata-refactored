@@ -118,6 +118,7 @@ module.exports = function (grunt) {
               connect().use('/part/1/bom/search', indexHtml),
               connect().use('/part/2', indexHtml),
               connect().use('/part/3', indexHtml),
+              connect().use('/part/289/ancestors', indexHtml), // 'Where used (ancestors)'
               connect().use('/part/2318', indexHtml),
               connect().use('/part/6233', indexHtml),  // Tabs: 'Prices', 'Also Bought'
               connect().use('/part/17415', indexHtml), // Tabs: 'Applications'

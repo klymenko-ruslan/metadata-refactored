@@ -331,7 +331,7 @@ public class PartService {
             Row r = rows[i];
             Part p = partDao.findOne(r.getPartId());
             boolean isDirect = r.isRelationType();
-            retVal[i] = Ancestor.from(p, r.getRelationDistance(), !isDirect);
+            retVal[i] = Ancestor.from(p, r.getRelationDistance(), isDirect);
         }
         return retVal;
     }
