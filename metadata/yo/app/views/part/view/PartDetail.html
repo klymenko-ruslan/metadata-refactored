@@ -83,15 +83,18 @@
   </uib-tab>
   <uib-tab index="3" select="onChangeTab('applications')" classes="'tab-content'" data-ng-show="part.partType.value == 'turbo'">
     <uib-tab-heading>
-      <i class="fa fa-paperclip" aria-hidden="true"></i>
-      Applications
+      <div class="tab-head">
+        <div class="tab-title">
+          <i class="fa fa-paperclip" aria-hidden="true"></i>
+          Applications
+        </div>
+        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabApplications()" data-ng-show="activeTabIndex === 3">
+          <i class="fa fa-refresh" aria-hidden="true"></i>
+        </button>
+      </div>
     </uib-tab-heading>
     <div role="tabpanel" class="tab-pane tab-part-detail">
-      <a authorize="ROLE_APPLICATION_CRUD" class="btn btn-primary pull-right" style="margin-bottom:10px;" data-ng-href="/part/{{partId}}/application/search">
-        <i class="fa fa-plus"></i>
-        Add Application
-      </a>
-      <part-application-table />
+      <data-ng-include src="'/views/part/view/TabApplications.html'"></data-ng-include>
     </div>
   </uib-tab>
   <uib-tab index="4" select="onChangeTab('turbos')" classes="'tab-content'" data-ng-show="part.partType.value == 'gasket_kit'">

@@ -78,6 +78,10 @@ console.log('tabId: ' + angular.toJson(tabId, 2));
       if ($scope.alsoBoughtTableParams === null) {
         $scope.refreshTabAlsoBought();
       }
+    } else if (tabId === 'applications') {
+      if ($scope.applications === null) {
+        $scope.refreshTabApplications();
+      }
     }
   };
 
@@ -192,6 +196,53 @@ console.log('tabId: ' + angular.toJson(tabId, 2));
         restService.error('Loading pri the part failed.', error);
       }
     );
+  };
+
+  $scope.applications = null;
+  $scope.applicationsTableParams = new NgTableParams({
+    'page': 1,
+    'count': 10,
+    'sorting': {
+    }
+  }, {
+    'dataset': $scope.applications
+  });
+  $scope.applicationsLoading = true; // to shop icon for a progress of a loading
+
+  $scope.refreshTabApplications = function() {
+    $scope.applicationsLoading = true;
+    restService.findPartApplications($scope.partId).then(
+      function (applications) {
+        $scope.applications = applications;
+        $scope.applicationsTableParams.settings({dataset: $scope.applications});
+        $scope.applicationsLoading = false;
+      },
+      function (errorResponse) {
+        $scope.applicationsLoading = false;
+        restService.error('Could not get part\'s applications', errorResponse);
+      }
+    );
+  };
+
+  $scope.removeApplication = function(app) {
+    var applicationId = app.carModelEngineYear.id;
+    dialogs.confirm(
+      'Delete this application?',
+      'Do you really want to delete this application?').result.then(
+        function yes() {
+          restService.removePartApplication($scope.partId, applicationId).then(
+            function success(applications) {
+              $scope.applications = applications;
+              $scope.applicationsTableParams.settings({dataset: $scope.applications});
+              toastr.success('The applications has been successfully removed.');
+            },
+            function failure(errorResponse) {
+              restService.error('Deletion of an application failed.', errorResponse);
+            }
+          );
+        },
+        function no() {
+        });
   };
 
   $scope.alsoBoughtTableParams = null;
