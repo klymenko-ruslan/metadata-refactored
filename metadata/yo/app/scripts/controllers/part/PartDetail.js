@@ -227,14 +227,14 @@ console.log('tabId: ' + angular.toJson(tabId, 2));
   $scope.removeApplication = function(app) {
     var applicationId = app.carModelEngineYear.id;
     dialogs.confirm(
-      'Delete this application?',
-      'Do you really want to delete this application?').result.then(
+      'Unlink Application Item',
+      'Are you sure?').result.then(
         function yes() {
           restService.removePartApplication($scope.partId, applicationId).then(
             function success(applications) {
               $scope.applications = applications;
               $scope.applicationsTableParams.settings({dataset: $scope.applications});
-              toastr.success('The applications has been successfully removed.');
+              toastr.success('The applications has been successfully unlinked.');
             },
             function failure(errorResponse) {
               restService.error('Deletion of an application failed.', errorResponse);
