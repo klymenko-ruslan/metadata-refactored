@@ -162,6 +162,7 @@ module.exports = function (grunt) {
               connect().use('/changelog/source/create', indexHtml),
               connect().use('/changelog/source', indexHtml),
               connect().use('/criticaldimension/enums', indexHtml),
+              connect().use('/search/indexing/status', indexHtml),
             ];
             if (!Array.isArray(options.base)) {
               options.base = [options.base];
