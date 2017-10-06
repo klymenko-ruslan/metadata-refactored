@@ -121,10 +121,13 @@ module.exports = function (grunt) {
               connect().use('/part/289/ancestors', indexHtml), // 'Where used (ancestors)'
               connect().use('/part/2318', indexHtml),
               connect().use('/part/6233', indexHtml),  // Many BOMs; Tabs: 'Prices', 'Also Bought'
+              connect().use('/part/6246', indexHtml),
+              connect().use('/part/6681', indexHtml),  // Turbo
               connect().use('/part/17415', indexHtml), // Tabs: 'Applications'
               connect().use('/part/25493', indexHtml), // Tabs: 'Applications'
               connect().use('/part/25493/application/search', indexHtml),
               connect().use('/part/29878', indexHtml), // Tabs: 'Applications'
+              connect().use('/part/33284', indexHtml),
               connect().use('/part/45456', indexHtml), // Tabs: 'Prices', 'Also Bought' + tab 'Turbo Types' has record
               connect().use('/part/45328', indexHtml), // Tabs: 'Prices', 'Also Bought' + tab 'Turbo Types' has many records
               connect().use('/part/45328/ancestors', indexHtml), // 'Where used (ancestors)'
@@ -133,13 +136,10 @@ module.exports = function (grunt) {
               connect().use('/part/45524', indexHtml), // Tabs: 'Non Standard', many records 'non standard parts'
               connect().use('/part/46722', indexHtml), // Tabs: 'Non Standard', many records 'standard parts'
               connect().use('/part/47842/ancestors', indexHtml), // 'Where used (ancestors)'
-              connect().use('/part/33284', indexHtml),
-              connect().use('/part/6246', indexHtml),
-              connect().use('/part/6681', indexHtml),  // Turbo
-              connect().use('/part/63398', indexHtml),
-              connect().use('/part/63398/oversize/add', indexHtml),
               connect().use('/part/46598', indexHtml), // Tabs: 'Turbo Types'
               connect().use('/part/46730', indexHtml), // Tabs: 'Turbo Types'
+              connect().use('/part/63398', indexHtml),
+              connect().use('/part/63398/oversize/add', indexHtml),
               connect().use('/part/69690', indexHtml), // Tabs: 'Turbos'
               connect().use('/part/70090', indexHtml), // Tabs: 'Turbos'
               connect().use('/part/70079', indexHtml), // Tabs: 'Turbos'

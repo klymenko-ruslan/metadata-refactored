@@ -8,7 +8,7 @@ angular.module('ngMetaCrudApp')
         restrict: 'E',
         replace: false,
         templateUrl: '/views/component/partApplicationTable.html',
-        controller: function($scope, dialogs, partApplicationService) {
+        controller: ['$scope', 'dialogs', function($scope, dialogs) {
 
           $scope.applications = null;
           $scope.applicationsTableParams = new NgTableParams({
@@ -41,13 +41,17 @@ angular.module('ngMetaCrudApp')
                     $scope.applicationsTableParams.settings({dataset: $scope.applications});
                     toastr.success('The applications has been successfully unlinked.');
                   },
+                  function failure(errorResponse) {
+                    restService.error('Unlinking of the application failed.', errorResponse);
+                  }
                 );
               },
               function no() {
+                // Ignore.
               });
           };
 
-        }
+        }]
       };
     }
   ]

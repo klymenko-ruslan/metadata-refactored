@@ -55,7 +55,6 @@ angular.module('ngMetaCrudApp')
   };
 
   $scope.onChangeTab = function(tabId) {
-console.log('tabId: ' + angular.toJson(tabId, 2));
     if (tabId === 'part_details') {
       $scope.refreshTabPartDetails();
     } else if (tabId === 'non_standard') {
@@ -309,7 +308,7 @@ console.log('tabId: ' + angular.toJson(tabId, 2));
         $scope.turbosTableParamsLoading = false;
         $scope.turbosTableParams.settings({dataset: $scope.turbos});
       },
-      function failure() {
+      function failure(errorResponse) {
         $scope.turbosTableParamsLoading = false;
         restService.error('Loading of \'also bought\' failed.', errorResponse);
       }
