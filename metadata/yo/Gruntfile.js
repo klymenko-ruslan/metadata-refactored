@@ -120,7 +120,7 @@ module.exports = function (grunt) {
               connect().use('/part/3', indexHtml),
               connect().use('/part/289/ancestors', indexHtml), // 'Where used (ancestors)'
               connect().use('/part/2318', indexHtml),
-              connect().use('/part/6233', indexHtml),  // Tabs: 'Prices', 'Also Bought'
+              connect().use('/part/6233', indexHtml),  // Many BOMs; Tabs: 'Prices', 'Also Bought'
               connect().use('/part/17415', indexHtml), // Tabs: 'Applications'
               connect().use('/part/25493', indexHtml), // Tabs: 'Applications'
               connect().use('/part/25493/application/search', indexHtml),
@@ -135,6 +135,7 @@ module.exports = function (grunt) {
               connect().use('/part/47842/ancestors', indexHtml), // 'Where used (ancestors)'
               connect().use('/part/33284', indexHtml),
               connect().use('/part/6246', indexHtml),
+              connect().use('/part/6681', indexHtml),  // Turbo
               connect().use('/part/63398', indexHtml),
               connect().use('/part/63398/oversize/add', indexHtml),
               connect().use('/part/46598', indexHtml), // Tabs: 'Turbo Types'
