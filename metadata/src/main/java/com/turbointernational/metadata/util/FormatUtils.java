@@ -7,6 +7,7 @@ import com.turbointernational.metadata.entity.CarModelEngineYear;
 import com.turbointernational.metadata.entity.CarYear;
 import com.turbointernational.metadata.entity.SalesNote;
 import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.web.dto.Interchange;
 
 /**
@@ -43,6 +44,10 @@ public class FormatUtils {
 
     public static String formatPart(Long partId) {
         return "[" + partId + "]";
+    }
+
+    public static String formatProductImage(ProductImage pi) {
+        return "[" + pi.getId() + "] - " + pi.getFilename();
     }
 
     public static String formatSalesNote(SalesNote salesNote) {

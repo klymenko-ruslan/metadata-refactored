@@ -11,11 +11,13 @@ import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_WIDTH;
 import static com.turbointernational.metadata.service.ImageService.SIZES;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
+import static com.turbointernational.metadata.util.FormatUtils.formatProductImage;
 import static java.util.stream.Collectors.toSet;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -43,6 +45,7 @@ import org.springframework.validation.Errors;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Part;
@@ -53,6 +56,7 @@ import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse;
 import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse.Row;
 import com.turbointernational.metadata.service.GraphDbService.Response;
+import com.turbointernational.metadata.util.FormatUtils;
 import com.turbointernational.metadata.web.controller.PartController;
 import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Ancestor;
@@ -279,6 +283,10 @@ public class PartService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw e;
         }
+        Collection<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(part.getId(), ChangelogPart.Role.PART0));
+        changelogService.log(PART, "A product image " + formatProductImage(productImage) +
+            " has been added to the part " + formatPart(part) + ".", relatedParts);
         return productImage;
     }
 

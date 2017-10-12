@@ -1,16 +1,19 @@
-/**
- *
- */
 package com.turbointernational.metadata.service;
 
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.PART;
+import static com.turbointernational.metadata.util.FormatUtils.formatPart;
+import static com.turbointernational.metadata.util.FormatUtils.formatProductImage;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.ConvertCmd;
@@ -28,7 +31,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
+import com.turbointernational.metadata.entity.ChangelogPart;
+import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
+import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 
 /**
  * @author dmytro.trunykov@zorallabs.com
@@ -44,6 +50,9 @@ public class ImageServiceImpl implements ImageService {
 
     @Autowired
     private ProductImageDao productImageDao;
+
+    @Autowired
+    private ChangelogService changelogService;
 
     @Value("${images.originals}")
     private File originalsDir;
@@ -87,6 +96,27 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    public void delProductImage(Long id) {
+        // Look up the image
+        ProductImage image = productImageDao.findOne(id);
+        Part part = image.getPart();
+        // Remove the image from the part
+        part.getProductImages().remove(image);
+        partDao.merge(part);
+        // Remove the image
+        productImageDao.remove(image);
+        // Delete the files
+        delOriginalImage(image.getFilename());
+        for (int size : SIZES) {
+            delResizedImage(image.getFilename(size));
+        }
+        Collection<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(part.getId(), ChangelogPart.Role.PART0));
+        changelogService.log(PART, "A product image " + formatProductImage(image) + " of the part " + formatPart(part)
+                + " has been removed.", relatedParts);
+    }
+
+    @Override
     public void delOriginalImage(String filename) {
         delImage(originalsDir, filename);
     }
@@ -105,6 +135,12 @@ public class ImageServiceImpl implements ImageService {
     public void publish(Long imageId, Boolean publish) {
         ProductImage pi = productImageDao.findOne(imageId);
         pi.setPublish(publish);
+        Part part = pi.getPart();
+        Collection<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(part.getId(), ChangelogPart.Role.PART0));
+        String newState = publish ? "published" : "unpublished";
+        changelogService.log(PART, "A product image " + formatProductImage(pi) + " of the part " + formatPart(part)
+                + " has been " + newState + ".", relatedParts);
     }
 
     @Override
@@ -114,6 +150,11 @@ public class ImageServiceImpl implements ImageService {
         Long partId = pi.getPart().getId();
         List<ProductImage> images = partDao.findProductImages(Arrays.asList(partId));
         images.forEach(img -> img.setMain(img.getId().equals(imageId)));
+        Part part = pi.getPart();
+        Collection<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(part.getId(), ChangelogPart.Role.PART0));
+        changelogService.log(PART, "A product image " + formatProductImage(pi) + " of the part " + formatPart(part)
+                + " has been set as primary.", relatedParts);
     }
 
     private ResponseEntity<byte[]> getImage(File dir, String filename) throws IOException {

@@ -1,6 +1,5 @@
 package com.turbointernational.metadata.web.controller;
 
-import static com.turbointernational.metadata.service.ImageService.SIZES;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -75,19 +74,7 @@ public class ImageController {
     @RequestMapping(value = "/{id}", method = DELETE)
     @Secured("ROLE_PART_IMAGES")
     public ResponseEntity<Void> removePartImage(@PathVariable Long id) throws Exception {
-        // Look up the image
-        ProductImage image = productImageDao.findOne(id);
-        Part part = image.getPart();
-        // Remove the image from the part
-        part.getProductImages().remove(image);
-        partDao.merge(part);
-        // Remove the image
-        productImageDao.remove(image);
-        // Delete the files
-        imageService.delOriginalImage(image.getFilename());
-        for (int size : SIZES) {
-            imageService.delResizedImage(image.getFilename(size));
-        }
+        imageService.delProductImage(id);
         return new ResponseEntity<>((Void) null, OK);
     }
 

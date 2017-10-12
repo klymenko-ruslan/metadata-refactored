@@ -16,8 +16,10 @@ angular.module('ngMetaCrudApp').controller('AddPartImageCtrl', [
     };
 
     $scope.changed = function(files) {
-      file = files[0];
-      formData.append('file', files[0]);
+      $scope.$apply(function() {
+        file = files[0];
+        formData.append('file', files[0]);
+      });
     };
 
     $scope.upload = function() {
@@ -33,6 +35,7 @@ angular.module('ngMetaCrudApp').controller('AddPartImageCtrl', [
     };
 
     $scope.isUploadBttnDisabled = function() {
+      $log.log('File: ' + file);
       return !file;
     };
 
