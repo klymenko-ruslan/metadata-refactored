@@ -89,19 +89,6 @@ public class BOMController {
         bomService.update(parentPartId, childPartId, quantity);
     }
 
-    /*
-     * @Transactional
-     *
-     * @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}",
-     * method = DELETE, produces = APPLICATION_JSON_VALUE)
-     *
-     * @ResponseBody
-     *
-     * @Secured("ROLE_BOM") public Bom[] delete(@PathVariable("parentPartId")
-     * Long parentPartId, @PathVariable("childPartId") Long childPartId) throws
-     * Exception { return bomService.delete(parentPartId, childPartId); }
-     */
-
     @Transactional
     @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}", method = DELETE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -109,6 +96,15 @@ public class BOMController {
     public Bom[] deleteBomItems(@PathVariable("parentPartId") Long parentPartId,
             @PathVariable("childPartId") Long[] childrenIds) throws IOException {
         return bomService.delete(parentPartId, childrenIds);
+    }
+
+    @Transactional
+    @RequestMapping(value = "/{childPartId}/parents/{parentPartId}", method = DELETE, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_BOM")
+    public Bom[] removeFromParentBom(@PathVariable("parentPartId") Long parentPartId,
+            @PathVariable("childPartId") Long childId) throws Exception {
+        return bomService.removeFromParent(parentPartId, childId);
     }
 
     @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives", method = GET, produces = APPLICATION_JSON_VALUE)

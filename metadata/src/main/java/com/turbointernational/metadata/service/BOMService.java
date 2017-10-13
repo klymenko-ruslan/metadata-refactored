@@ -568,6 +568,12 @@ public class BOMService {
         return Bom.from(partDao, bomsResponse.getRows());
     }
 
+    public Bom[] removeFromParent(Long parentPartId, Long childId) throws Exception {
+        deleteBomItem(childId, parentPartId);
+        // Return list of BOMs after this delete operation.
+        return getParentsForBom(parentPartId);
+    }
+
     public PartGroup[] getAlternatives(Long parentPartId, Long childPartId) {
         GetAltBomsResponse.Group[] response = graphDbService.getAltBoms(parentPartId, childPartId);
         return PartGroup.from(partDao, response);

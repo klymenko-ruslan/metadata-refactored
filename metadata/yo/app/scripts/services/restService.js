@@ -34,6 +34,11 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('bom', parentPartId).one('descendant').customDELETE(childrenIds);
       };
 
+      this.removeFromParentBom = function(parentPartId, childId) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom', childId).one('parents', parentPartId).remove();
+      };
+
       this.getBomAlternatives = function(parentPartId, childPartId) {
         Restangular.setParentless(false);
         return Restangular.one('bom', parentPartId).one('descendant', childPartId).getList('alternatives');

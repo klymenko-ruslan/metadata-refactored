@@ -163,18 +163,24 @@ angular.module('ngMetaCrudApp')
         dialogs.confirm(
           'Remove BOM Item?',
           'Remove this child part from the bill of materials of the parent part?').result.then(
-          function() {
+          function yes() {
             // Yes
-            BOM.removeBom(partId, $scope.part.id).then(
-              function(updatedBoms) {
+            restService.removeFromParentBom($scope.part.id, partId).then(
+              function success(updatedBoms) {
                 parents.splice(0, parents.length);
                 parents.push.apply(parents, updatedBoms);
                 $scope.bomTableParams.settings({dataset: parents});
                 updateParentPartsIds();
                 toastr.success('The BOM has been successfully removed.');
               },
-              restService.error
+              function failure() {
+                restService.error('Removing of the part from the parent ' +
+                      'BOM failed.', error);
+              }
             );
+          },
+          function no() {
+            // ignore
           }
         );
       };
