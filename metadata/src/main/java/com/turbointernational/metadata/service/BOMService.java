@@ -424,18 +424,13 @@ public class BOMService {
         Integer[] ratings = request.getChlogSrcRatings();
         String description = request.getChlogSrcLnkDescription();
         Long[] attachIds = request.getAttachIds();
-        // TODO: GetPartResponse parent =
-        // arangoDbConnector.findPartById(parentPartId);
         Part parent = partDao.findOne(parentPartId);
         List<CreateBOMsResponse.Failure> failures = new ArrayList<>();
         Collection<Long> relatedPartIds = new ArrayList<Long>(request.getRows().size() + 1);
         for (CreateBOMsRequest.Row row : request.getRows()) {
             // Create a new BOM item
             Long childId = row.getChildPartId();
-            // TODO: GetPartResponse child =
-            // arangoDbConnector.findPartById(childId);
             Part child = partDao.findOne(childId);
-            // TODO: String childPartNum = child.getPartNumber();
             boolean created = _create(httpRequest, parent, child, row.getQuantity(), failures, sourcesIds, ratings,
                     description, attachIds);
             if (created) {
@@ -513,8 +508,9 @@ public class BOMService {
                     }
                 }
             }
-            boolean created = _create(httpRequest, pickedPart, primaryPart, r.getQuantity(), failures, null, null, null,
-                    null);
+            boolean created = _create(httpRequest, pickedPart, primaryPart, r.getQuantity(), failures,
+                    request.getSourcesIds(), request.getChlogSrcRatings(), request.getChlogSrcLnkDescription(),
+                    request.getAttachIds());
             if (created) {
                 relatedPartIds.add(pickedPartId);
             }

@@ -140,6 +140,8 @@ module.exports = function (grunt) {
               connect().use('/part/46730', indexHtml), // Tabs: 'Turbo Types'
               connect().use('/part/63398', indexHtml),
               connect().use('/part/63398/oversize/add', indexHtml),
+              connect().use('/part/64449', indexHtml),
+              connect().use('/part/64449/parentbom/search', indexHtml),
               connect().use('/part/69690', indexHtml), // Tabs: 'Turbos'
               connect().use('/part/70090', indexHtml), // Tabs: 'Turbos'
               connect().use('/part/70079', indexHtml), // Tabs: 'Turbos'
