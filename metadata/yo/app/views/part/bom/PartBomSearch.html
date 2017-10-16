@@ -66,7 +66,7 @@
       <table data-ng-table="pickedPartsTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="rec in $data">
           <td title="'Part Type'" class="text-nowrap">{{rec.partType.name}}</td>
-          <td title="'Part#'" class="text-nowrap">{{rec.partNumber}}</td>
+          <td title="'Part#'" class="text-nowrap">{{rec.manufacturerPartNumber}}</td>
           <td title="'Qty'">
             <input type="number" data-ng-model="rec.extra.qty" data-ng-min="0" style="width:5em;" required />
           </td>
