@@ -251,7 +251,9 @@ angular.module('ngMetaCrudApp')
       {
         page: 1,
         count: 5,
-        sorting: {}
+        sorting: {
+          lastLinked: 'desc'
+        }
       },
       {
         counts: [5, 10, 15],
