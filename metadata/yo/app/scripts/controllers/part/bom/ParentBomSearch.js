@@ -173,7 +173,7 @@ angular.module('ngMetaCrudApp')
                 updateParentPartsIds();
                 toastr.success('The BOM has been successfully removed.');
               },
-              function failure() {
+              function failure(error) {
                 restService.error('Removing of the part from the parent ' +
                       'BOM failed.', error);
               }
