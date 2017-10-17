@@ -7,19 +7,19 @@
       <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="bomItem in $data">
           <td title="'Type'" data-sortable="'child.partType.name'">
-            {{bomItem.child.partType.name}}
+            {{bomItem.partType.name}}
           </td>
           <td title="'Manufacturer'" data-sortable="'child.manufacturer.name'">
-            {{bomItem.child.manufacturer.name}}
+            {{bomItem.manufacturer.name}}
           </td>
           <td title="'Part #'" class="text-center text-nowrap" data-sortable="'child.manufacturerPartNumber'">
-            {{bomItem.child.manufacturerPartNumber}}
+            {{bomItem.partNumber}}
           </td>
           <td title="'Qty'" class="text-right" data-sortable="'quantity'">
-            {{bomItem.quantity}}
+            {{bomItem.qty}}
           </td>
           <td title="'Actions'" class="actions text-center">
-            <button data-ng-click="showPart(bomItem.child.id)"
+            <button data-ng-click="showPart(bomItem.partId)"
                     authorize="ROLE_READ" class="btn btn-primary btn-xs">
               <i class="fa fa-eye"></i> View
             </button>

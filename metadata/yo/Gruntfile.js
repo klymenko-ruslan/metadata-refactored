@@ -119,6 +119,9 @@ module.exports = function (grunt) {
               connect().use('/part/2', indexHtml),
               connect().use('/part/3', indexHtml),
               connect().use('/part/289/ancestors', indexHtml), // 'Where used (ancestors)'
+              connect().use('/part/1449', indexHtml),
+              connect().use('/part/1449/parentbom/search', indexHtml),
+              connect().use('/part/1449/bom/search', indexHtml),
               connect().use('/part/2318', indexHtml),
               connect().use('/part/6233', indexHtml),  // Many BOMs; Tabs: 'Prices', 'Also Bought'
               connect().use('/part/6246', indexHtml),
