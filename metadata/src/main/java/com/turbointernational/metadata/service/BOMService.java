@@ -9,6 +9,7 @@ import static com.turbointernational.metadata.util.FormatUtils.formatBom;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -454,18 +455,9 @@ public class BOMService {
     }
 
     public Bom[] getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {
-        Bom[] parents = getParentsForBom(partId);
-        int n = parents.length;
-        List<Bom> filtered = new ArrayList<>(n);
-        // TODO: batch?
-        for (int i = 0; i < n; i++) {
-            Bom b = parents[i];
-            if (b.getPartType().getId().equals(partTypeId)) {
-                filtered.add(b);
-            }
-        }
-        Bom[] retVal = new Bom[filtered.size()];
-        filtered.toArray(retVal);
+        Bom[] parents = getParentsForBom(partId);  // TODO: batch?
+        Bom[] retVal = Arrays.stream(parents).filter(b -> b.getPartType().getId().equals(partTypeId))
+                .toArray(size -> new Bom[size]);
         return retVal;
     }
 
