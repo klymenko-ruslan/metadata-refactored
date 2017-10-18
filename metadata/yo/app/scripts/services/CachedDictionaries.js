@@ -5,7 +5,7 @@
  */
 
 angular.module('ngMetaCrudApp')
-  .service('cachedDictionaries', ['restService', function (restService) {
+  .service('cachedDictionaries', ['$q', 'restService', function ($q, restService) {
 
     this._partTypes = null;
     this._manufacturers = null;
@@ -60,11 +60,22 @@ angular.module('ngMetaCrudApp')
     };
 
     this.getCriticalDimensionsForPartId = function(id) {
-      if (typeof(id) === 'string') {
-        id = parseInt(id);
+      if (typeof(id) === 'number') {
+        id = id.toString();
       }
-      var cdms = this.getCriticalDimensions();
-      return cdms[id];
+      var deferred = $q.defer();
+      this.getCriticalDimensions().then(function(cdms) {
+        var cd = cdms[id];
+        deferred.resolve();
+      });
+      return deferred.promise;
+      /*
+      return $q(function(resolve, reject) {
+        this.getCriticalDimensions().then(function(cdms) {
+          resolve(cdms[id]);
+        });
+      });
+      */
     };
 
     this.getCriticalDimensionsEnumsVals = function() {

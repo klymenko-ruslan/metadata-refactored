@@ -276,9 +276,6 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         part: ['$route', 'restService', function($route, restService) {
           return restService.findPart($route.current.pathParams.id);
         }],
-        criticalDimensions: ['$route', 'cachedDictionaries', function($route, cachedDictionaries) {
-          return cachedDictionaries.getCriticalDimensionsForPartId($route.current.pathParams.id);
-        }],
         partTypes: ['cachedDictionaries', function(cachedDictionaries) {
           return cachedDictionaries.getPartTypes();
         }],

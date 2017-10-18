@@ -3,17 +3,19 @@
 angular.module('ngMetaCrudApp')
 .controller('PartDetailCtrl', ['$scope', '$log', '$q', '$location', '$cookies', '$routeParams', 'Kits',
     'NgTableParams', 'restService', 'Restangular', 'User', '$uibModal', 'dialogs', 'toastr',
-    'part', 'criticalDimensions', 'partTypes', 'manufacturers',
+    'part', 'cachedDictionaries', 'partTypes', 'manufacturers',
     function ($scope, $log, $q, $location, $cookies, $routeParams, Kits, NgTableParams,
       restService, Restangular, User, $uibModal, dialogs, toastr, part,
-      criticalDimensions, partTypes, manufacturers) {
+      cachedDictionaries, partTypes, manufacturers) {
   $scope.partId = part.id;
   $scope.part = part;
   $scope.partTypeOpts = _.map(partTypes, function (pt) {
     return {'id': pt.value, 'title': pt.name};
   });
   $scope.formMode = 'view';
-  $scope.criticalDimensions = criticalDimensions;
+  cachedDictionaries.getCriticalDimensionsForPartId(part.partType.id).then(function(cdms) {
+    $scope.criticalDimensions = cdms;
+  });
   $scope.restService = restService;
   // Make sure we're using the correct part type
   $scope.partType = part.partType.name;
