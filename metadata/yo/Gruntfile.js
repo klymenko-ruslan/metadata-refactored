@@ -114,43 +114,7 @@ module.exports = function (grunt) {
                 connect.static('./bower_components/fontawesome/fonts')
               ),
               connect().use('/', indexHtml),
-              connect().use('/part/1', indexHtml),
-              connect().use('/part/1/bom/search', indexHtml),
-              connect().use('/part/2', indexHtml),
-              connect().use('/part/3', indexHtml),
-              connect().use('/part/289/ancestors', indexHtml), // 'Where used (ancestors)'
-              connect().use('/part/1449', indexHtml),
-              connect().use('/part/1449/parentbom/search', indexHtml),
-              connect().use('/part/1449/bom/search', indexHtml),
-              connect().use('/part/2318', indexHtml),
-              connect().use('/part/6233', indexHtml),  // Many BOMs; Tabs: 'Prices', 'Also Bought'
-              connect().use('/part/6246', indexHtml),
-              connect().use('/part/6681', indexHtml),  // Turbo
-              connect().use('/part/17415', indexHtml), // Tabs: 'Applications'
-              connect().use('/part/25493', indexHtml), // Tabs: 'Applications'
-              connect().use('/part/25493/application/search', indexHtml),
-              connect().use('/part/29878', indexHtml), // Tabs: 'Applications'
-              connect().use('/part/33284', indexHtml),
-              connect().use('/part/45456', indexHtml), // Tabs: 'Prices', 'Also Bought' + tab 'Turbo Types' has record
-              connect().use('/part/45328', indexHtml), // Tabs: 'Prices', 'Also Bought' + tab 'Turbo Types' has many records
-              connect().use('/part/45328/ancestors', indexHtml), // 'Where used (ancestors)'
-              connect().use('/part/45456/ancestors', indexHtml), // 'Where used (ancestors)'
-              connect().use('/part/45495', indexHtml), // Tabs: 'Non Standard'
-              connect().use('/part/45524', indexHtml), // Tabs: 'Non Standard', many records 'non standard parts'
-              connect().use('/part/46722', indexHtml), // Tabs: 'Non Standard', many records 'standard parts'
-              connect().use('/part/47842/ancestors', indexHtml), // 'Where used (ancestors)'
-              connect().use('/part/46598', indexHtml), // Tabs: 'Turbo Types'
-              connect().use('/part/46730', indexHtml), // Tabs: 'Turbo Types'
-              connect().use('/part/63398', indexHtml),
-              connect().use('/part/63398/oversize/add', indexHtml),
-              connect().use('/part/64449', indexHtml),
-              connect().use('/part/64449/parentbom/search', indexHtml),
-              connect().use('/part/69690', indexHtml), // Tabs: 'Turbos'
-              connect().use('/part/70090', indexHtml), // Tabs: 'Turbos'
-              connect().use('/part/70079', indexHtml), // Tabs: 'Turbos'
               connect().use('/part/list', indexHtml),
-              connect().use('/part/1/bom/4/alt/31726739', indexHtml),
-              connect().use('/part/1/bom/4/alt/31722278', indexHtml),
               connect().use('/service/list', indexHtml),
               connect().use('/changelog/list', indexHtml),
               connect().use('/parttype', indexHtml),
@@ -171,6 +135,39 @@ module.exports = function (grunt) {
               connect().use('/criticaldimension/enums', indexHtml),
               connect().use('/search/indexing/status', indexHtml),
             ];
+
+            var partIdsUnderDebug = [
+              1, 2, 3,
+              289,    // 'Where used (ancestors)'
+              1449, 2318,
+              6233,   // Many BOMs; Tabs: 'Prices', 'Also Bought'
+              6246,
+              6681,   // Turbo
+              17415, 25493,  // Tabs: 'Applications'
+              29878,  // Tabs: 'Applications'
+              33284,
+              42768,  // Tabs: 'Critical Dimensions'
+              45456, 45328 /* 'Where used (ancestors)'*/, // Tabs: 'Prices', 'Also Bought' + tab 'Turbo Types' has record
+              45495,  // Tabs: 'Non Standard'
+              45524,  // Tabs: 'Non Standard', many records 'non standard parts'
+              46722,  // Tabs: 'Non Standard', many records 'standard parts'
+              46598,  // Tabs: 'Turbo Types'
+              46730,  // Tabs: 'Turbo Types'
+              47842,  // 'Where used (ancestors)'
+              63398, 64449,
+              69690, 70079, 70090   // Tabs: 'Turbos'
+            ];
+            var urlSuffixes = ['', '/bom/search', '/ancestors', '/parentbom/search', '/oversize/add', '/application/search'];
+            for(let partId of partIdsUnderDebug) {
+              for(let s of urlSuffixes) {
+                var url = '/part/' + partId + s;
+                var entry = connect().use(url, indexHtml);
+                middlewares.push(entry);
+              }
+            }
+            middlewares.push(connect().use('/part/1/bom/4/alt/31726739', indexHtml));
+            middlewares.push(connect().use('/part/1/bom/4/alt/31722278', indexHtml));
+
             if (!Array.isArray(options.base)) {
               options.base = [options.base];
             }

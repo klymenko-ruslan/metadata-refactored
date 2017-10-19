@@ -66,16 +66,9 @@ angular.module('ngMetaCrudApp')
       var deferred = $q.defer();
       this.getCriticalDimensions().then(function(cdms) {
         var cd = cdms[id];
-        deferred.resolve();
+        deferred.resolve(cd);
       });
       return deferred.promise;
-      /*
-      return $q(function(resolve, reject) {
-        this.getCriticalDimensions().then(function(cdms) {
-          resolve(cdms[id]);
-        });
-      });
-      */
     };
 
     this.getCriticalDimensionsEnumsVals = function() {

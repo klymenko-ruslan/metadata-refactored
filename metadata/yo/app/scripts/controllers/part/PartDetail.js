@@ -13,6 +13,7 @@ angular.module('ngMetaCrudApp')
     return {'id': pt.value, 'title': pt.name};
   });
   $scope.formMode = 'view';
+  $scope.criticalDimensions = null;
   cachedDictionaries.getCriticalDimensionsForPartId(part.partType.id).then(function(cdms) {
     $scope.criticalDimensions = cdms;
   });
