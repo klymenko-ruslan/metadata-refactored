@@ -231,9 +231,9 @@ public class CriticalDimensionService {
         this.criticalDimensionsCacheById = Collections.unmodifiableMap(cacheById);
         ObjectMapper mapper = (new ObjectMapper()).disable(DEFAULT_VIEW_INCLUSION);
         try {
-            this.criticalDimensionsCacheByIdAsJson = mapper.writerWithView(View.Summary.class)
+            this.criticalDimensionsCacheByIdAsJson = mapper.writerWithView(View.Detail.class)
                     .writeValueAsString(cacheById);
-            this.criticalDimensionsCacheByNameAsJson = mapper.writerWithView(View.Summary.class)
+            this.criticalDimensionsCacheByNameAsJson = mapper.writerWithView(View.Detail.class)
                     .writeValueAsString(cacheByName);
         } catch (JsonProcessingException e) {
             // Ignore.
