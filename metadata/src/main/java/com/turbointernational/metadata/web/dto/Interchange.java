@@ -11,6 +11,10 @@ public class Interchange extends PartGroup {
 
     // <editor-fold defaultstate="collapsed" desc="Properties">
 
+    public Interchange() {
+        // Don't remove. It can be used during deserealization of DTOs.
+    }
+
     public Interchange(Long id, Part[] parts) {
         this.id = id;
         this.parts = parts;
