@@ -69,9 +69,6 @@ public class PartController {
     private StandardOversizePartService standardOversizePartService;
 
     @Autowired
-    private TurboTypeDao turboTypeDao;
-
-    @Autowired
     private InterchangeService interchangeService;
 
     static class PartCreateRequest {
@@ -519,7 +516,8 @@ public class PartController {
     @RequestMapping(value = "/part/{id}/cdlegend/image", method = POST, produces = APPLICATION_JSON_VALUE)
     @JsonView(View.Summary.class)
     @Secured("ROLE_PART_IMAGES")
-    public @ResponseBody Part addCriticalDimensionLegendImage(@PathVariable Long id,
+    @ResponseBody 
+    public Part addCriticalDimensionLegendImage(@PathVariable Long id,
             @RequestPart("file") @Valid @NotNull @NotBlank MultipartFile mpf) throws Exception {
         byte[] imageData = mpf.getBytes();
         Part part = partService.addCriticalDimensionLegendImage(id, imageData, false);
@@ -528,19 +526,20 @@ public class PartController {
 
     @Transactional
     @RequestMapping(value = "/part/{partId}/turboType/{turboTypeId}", method = POST)
+    @JsonView(View.Summary.class)
     @Secured("ROLE_ALTER_PART")
-    public void addTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
-        Part part = partService.getPart(partId, false);
-        TurboType turboType = turboTypeDao.findOne(turboTypeId);
-        part.getTurboTypes().add(turboType);
-        partService.merge(part);
+    @ResponseBody 
+    public Part addTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
+        return partService.addTurboType(partId, turboTypeId, false);
     }
 
     @Transactional
     @RequestMapping(value = "/part/{partId}/turboType/{turboTypeId}", method = DELETE)
+    @JsonView(View.Summary.class)
     @Secured("ROLE_ALTER_PART")
-    public void deleteTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
-        partService.deleteTurboType(partId, turboTypeId, false);
+    @ResponseBody 
+    public Part deleteTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
+        return partService.deleteTurboType(partId, turboTypeId, false);
     }
 
     enum GasketKitResultStatus {
