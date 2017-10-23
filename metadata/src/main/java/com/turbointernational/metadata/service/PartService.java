@@ -56,7 +56,6 @@ import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse;
 import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse.Row;
 import com.turbointernational.metadata.service.GraphDbService.Response;
-import com.turbointernational.metadata.util.FormatUtils;
 import com.turbointernational.metadata.web.controller.PartController;
 import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Ancestor;
@@ -144,7 +143,7 @@ public class PartService {
         return results;
     }
 
-    public Part createXRefPart(Long originalPartId, Part toCreate) throws IOException {
+    public Part createXRefPart(Long originalPartId, Part toCreate, boolean details) throws IOException {
         partDao.persist(toCreate);
         // The table 'part' has a trigger on insert that associate an
         // interchangeable with the part.
@@ -159,10 +158,41 @@ public class PartService {
         relatedParts.add(new RelatedPart(originalPartId, PART1));
         changelogService.log(PART, "Created part (cross reference) " + formatPart(toCreate) + ".", json, relatedParts);
         interchangeService.create(partId, originalPartId);
+        if (details) {
+            interchangeService.initInterchange(toCreate);
+        }
         return toCreate;
     }
 
-    public Part updatePart(HttpServletRequest request, Long id, Part part) throws AssertionError, SecurityException {
+    public Part getPart(Long id, boolean details) {
+        Part part = partDao.findOne(id);
+        if (details) {
+            interchangeService.initInterchange(part);
+        }
+        return part;
+    }
+
+    public Part findByPartNumberAndManufacturer(Long manufacturerId, String partNumber, boolean details) {
+        Part part = partDao.findByPartNumberAndManufacturer(manufacturerId, partNumber);
+        if (details) {
+            interchangeService.initInterchange(part);
+        }
+        return part;
+    }
+
+    public Part merge(Part part) {
+        return partDao.merge(part);
+    }
+
+    public List<Turbo>listTurbosLinkedToGasketKit(Long gasketKitId, boolean details) {
+        List<Turbo> turbos = partDao.listTurbosLinkedToGasketKit(gasketKitId);
+        if (details) {
+            turbos.forEach(t -> interchangeService.initInterchange(t));
+        }
+        return turbos;
+    }
+
+    public Part updatePart(HttpServletRequest request, Long id, Part part, boolean details) throws AssertionError, SecurityException {
         Part originPart = partDao.findOne(id);
         if (originPart.getManufacturer().getId() != part.getManufacturer().getId()
                 && !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
@@ -180,6 +210,9 @@ public class PartService {
         String originalPartJson = originPart
                 .toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId()));
         Part retVal = partDao.merge(part);
+        if (details) {
+            interchangeService.initInterchange(retVal);
+        }
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(part.getId(), PART0));
@@ -209,9 +242,10 @@ public class PartService {
      * @return
      */
     public Part updatePartDetails(HttpServletRequest request, Long id, String manfrPartNum, Long manfrId, String name,
-            String description, Boolean inactive, Double dimLength, Double dimWidth, Double dimHeight, Double weight) {
+            String description, Boolean inactive, Double dimLength, Double dimWidth, Double dimHeight, Double weight,
+            boolean details) {
         Part originPart = partDao.findOne(id);
-        if (!originPart.getManufacturer().equals(manfrId) && !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
+        if (!originPart.getManufacturer().getId().equals(manfrId) && !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
             throw new SecurityException("You have no permission to modify a manufacturer.");
         }
         if (!originPart.getManufacturerPartNumber().equals(manfrPartNum)
@@ -232,6 +266,9 @@ public class PartService {
         originPart.setDimHeight(dimHeight);
         originPart.setWeight(weight);
         Part retVal = partDao.merge(originPart);
+        if (details) {
+            interchangeService.initInterchange(retVal);
+        }
         String updatedPartJson = originPart
                 .toJson(criticalDimensionService.getCriticalDimensionForPartType(originPart.getPartType().getId()));
         // Update the changelog
@@ -291,7 +328,7 @@ public class PartService {
     }
 
     @Transactional
-    public Part addCriticalDimensionLegendImage(Long id, byte[] imageData) throws Exception {
+    public Part addCriticalDimensionLegendImage(Long id, byte[] imageData, boolean details) throws Exception {
         Part part = partDao.findOne(id);
         String currImgFilename = part.getLegendImgFilename();
         if (currImgFilename != null) {
@@ -306,11 +343,14 @@ public class PartService {
         imageService.generateResizedImage(filenameOriginal, filenameScaled, PART_CRIT_DIM_LEGEND_WIDTH,
                 PART_CRIT_DIM_LEGEND_HEIGHT, true);
         part.setLegendImgFilename(filenameScaled);
+        if (details) {
+            interchangeService.initInterchange(part);
+        }
         return part;
     }
 
     @Transactional
-    public Part deleteTurboType(Long partId, Long turboTypeId) {
+    public Part deleteTurboType(Long partId, Long turboTypeId, boolean details) {
         Part part = partDao.findOne(partId);
         // Remove any matching turbo types
         Iterator<TurboType> it = part.getTurboTypes().iterator();
@@ -321,6 +361,9 @@ public class PartService {
             }
         }
         partDao.merge(part);
+        if (details) {
+            interchangeService.initInterchange(part);
+        }
         return part;
     }
 
@@ -396,7 +439,7 @@ public class PartService {
     }
 
     @Transactional
-    public Turbo clearGasketKitInPart(Long partId) {
+    public Turbo clearGasketKitInPart(Long partId, boolean details) {
         Turbo turbo = (Turbo) partDao.findOne(partId);
         GasketKit gasketKit = turbo.getGasketKit();
         if (gasketKit != null) {
@@ -407,16 +450,22 @@ public class PartService {
             }
         }
         turbo.setGasketKit(null);
+        if (details) {
+            interchangeService.initInterchange(turbo);
+        }
         return turbo;
     }
 
     @Transactional
-    public List<Turbo> unlinkTurboInGasketKit(Long partId) {
+    public List<Turbo> unlinkTurboInGasketKit(Long partId, boolean details) {
         Turbo turbo = (Turbo) partDao.findOne(partId);
         GasketKit gasketKit = turbo.getGasketKit();
         gasketKit.getTurbos().remove(turbo);
         turbo.setGasketKit(null);
         List<Turbo> retVal = partDao.listTurbosLinkedToGasketKit(gasketKit.getId());
+        if (details) {
+            retVal.forEach(t -> interchangeService.initInterchange(t));
+        }
         return retVal;
     }
 
@@ -449,8 +498,7 @@ public class PartService {
             List<String> mnfrNmbrs = recs.stream().map(ab -> ab.getManufacturerPartNumber())
                     .collect(Collectors.toList());
             // Map 'manufacturer number' -> 'part'
-            List<Part> parts = em.createNamedQuery("findPartsByMnfrsAndNumbers", Part.class)
-                    .setParameter("mnfrId", TI_ID).setParameter("mnfrPrtNmbrs", mnfrNmbrs).getResultList();
+            List<Part> parts = partDao.findPartsByMnfrsAndNumbers(TI_ID, mnfrNmbrs);
             Map<String, Part> mnfrNmb2rec = parts.stream()
                     .collect(Collectors.toMap(part -> part.getManufacturerPartNumber(), part -> part));
             recs.forEach(ab -> {

@@ -419,7 +419,6 @@ angular.module('ngMetaCrudApp')
       $scope.part.turboModel = $scope.turbo.tm;
       $scope.part.turboModel.turboType = $scope.turbo.tt;
     }
-
     restService.updatePartDetails($scope.part).then(
       function(part) {
         $scope.part = part;

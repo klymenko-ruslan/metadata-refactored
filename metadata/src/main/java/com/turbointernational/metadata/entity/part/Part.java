@@ -158,10 +158,6 @@ import flexjson.transformer.Transformer;
 })
 @NamedQueries({
         @NamedQuery(
-                name = "findOnePart",
-                query = "SELECT DISTINCT o FROM Part o WHERE o.id = :id"
-        ),
-        @NamedQuery(
                 name = "findByPartNumber",
                 query = "SELECT o FROM Part o WHERE o.manufacturerPartNumber = :partNumber"
         ),
@@ -177,7 +173,7 @@ import flexjson.transformer.Transformer;
                 name = "findPartsByIds",
                 query = "SELECT DISTINCT o FROM Part o WHERE o.id IN :ids ORDER BY o.manufacturerPartNumber"
         ),
-        @NamedQuery(
+        @NamedQuery(  // TODO: move usage to PartDao
                 name = "findPartsByMnfrsAndNumbers",
                 query = "SELECT DISTINCT o " +
                         "FROM Part o WHERE o.manufacturer.id=:mnfrId AND o.manufacturerPartNumber IN(:mnfrPrtNmbrs)"

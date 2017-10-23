@@ -365,6 +365,7 @@ angular.module('ngMetaCrudApp')
       };
 
       this.updatePartDetails = function(part) {
+        Restangular.setParentless(false);
         return Restangular.one('part', part.id).one('details').customPUT(part);
       };
 
