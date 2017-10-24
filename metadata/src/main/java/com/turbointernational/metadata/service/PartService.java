@@ -204,7 +204,7 @@ public class PartService {
     public Part updatePartDetails(HttpServletRequest request, Long id, String manfrPartNum, Long manfrId, String name,
             String description, Boolean inactive, Double dimLength, Double dimWidth, Double dimHeight, Double weight) {
         Part originPart = partDao.findOne(id);
-        if (!originPart.getManufacturer().equals(manfrId)
+        if (!originPart.getManufacturer().getId().equals(manfrId)
                 && !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
             throw new SecurityException("You have no permission to modify a manufacturer.");
         }
