@@ -140,6 +140,7 @@ module.exports = function (grunt) {
               1, 2, 3,
               289,    // 'Where used (ancestors)'
               1449, 2318,
+              6751,
               6233,   // Many BOMs; Tabs: 'Prices', 'Also Bought'
               6246,
               6681,   // Turbo

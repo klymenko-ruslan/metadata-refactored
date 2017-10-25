@@ -355,7 +355,7 @@ public class PartService {
         return part;
     }
 
-    public Part addTurboType(Long partId, Long turboTypeId, boolean details) {
+    public Collection<TurboType> addTurboType(Long partId, Long turboTypeId, boolean details) {
         Part part = getPart(partId, false);
         TurboType turboType = turboTypeDao.findOne(turboTypeId);
         part.getTurboTypes().add(turboType);
@@ -370,11 +370,11 @@ public class PartService {
         relatedParts.add(new RelatedPart(turboTypeId, PART1));
         changelogService.log(PART, "Added turbo type " + formatPart(turboTypeId) +
                 " to the part " + formatPart(part) + ".", json, relatedParts);
-        return part;
+        return part.getTurboTypes();
     }
 
     @Transactional
-    public Part deleteTurboType(Long partId, Long turboTypeId, boolean details) {
+    public Collection<TurboType> deleteTurboType(Long partId, Long turboTypeId, boolean details) {
         Part part = partDao.findOne(partId);
         // Remove any matching turbo types
         Iterator<TurboType> it = part.getTurboTypes().iterator();
@@ -395,7 +395,7 @@ public class PartService {
         relatedParts.add(new RelatedPart(turboTypeId, PART1));
         changelogService.log(PART, "Deleted turbo type " + formatPart(turboTypeId) +
                 " in the part " + formatPart(part) + ".", json, relatedParts);
-        return part;
+        return part.getTurboTypes();
     }
 
     @Secured("ROLE_READ")

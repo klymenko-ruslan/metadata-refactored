@@ -24,9 +24,9 @@ angular.module('ngMetaCrudApp')
               '/views/part/dialog/AddTurboType.html',
               'AddTurboTypeDialogCtrl',
               {partId: $scope.part.id}
-            ).result.then(function(turboType) {
-              // TODO: reload new listfrom server
-              $scope.part.turboTypes.push(turboType);
+            ).result.then(function(turboTypes) {
+$log.log('After add turbo type: ' + angular.toJson(turboTypes, 2));
+              $scope.part.turboTypes = turboTypes;
               $scope.turboTypesTableParams.settings({dataset: $scope.part.turboTypes})
             });
           };
@@ -37,12 +37,9 @@ angular.module('ngMetaCrudApp')
                 function() {
                   // Yes
                   restService.removeTurboType($scope.part.id, turboTypeToRemove.id).then(
-                    function() {
-                      // Success
-                      // TODO: reload new listfrom server
-                      toastr.success('Turbo type removed.');
-                      var idx = _.indexOf($scope.part.turboTypes, turboTypeToRemove);
-                      $scope.part.turboTypes.splice(idx, 1);
+                    function(turboTypes) {
+$log.log('After remove turbo type: ' + angular.toJson(turboTypes, 2));
+                      $scope.part.turboTypes = turboTypes;
                       $scope.turboTypesTableParams.settings({dataset: $scope.part.turboTypes})
                     },
                     function(response) {

@@ -14,6 +14,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -526,19 +527,19 @@ public class PartController {
 
     @Transactional
     @RequestMapping(value = "/part/{partId}/turboType/{turboTypeId}", method = POST)
-    @JsonView(View.Summary.class)
+    @JsonView(View.Detail.class)
     @Secured("ROLE_ALTER_PART")
     @ResponseBody 
-    public Part addTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
+    public Collection<TurboType> addTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
         return partService.addTurboType(partId, turboTypeId, false);
     }
 
     @Transactional
     @RequestMapping(value = "/part/{partId}/turboType/{turboTypeId}", method = DELETE)
-    @JsonView(View.Summary.class)
+    @JsonView(View.Detail.class)
     @Secured("ROLE_ALTER_PART")
     @ResponseBody 
-    public Part deleteTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
+    public Collection<TurboType> deleteTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
         return partService.deleteTurboType(partId, turboTypeId, false);
     }
 
