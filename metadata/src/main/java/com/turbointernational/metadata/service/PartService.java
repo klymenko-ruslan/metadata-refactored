@@ -306,7 +306,7 @@ public class PartService {
         // Remove any matching turbo types
         Iterator<TurboType> it = part.getTurboTypes().iterator();
         while (it.hasNext()) {
-            if (it.next().getId() == turboTypeId) {
+            if (it.next().getId().equals(turboTypeId)) {
                 it.remove();
                 break;
             }
