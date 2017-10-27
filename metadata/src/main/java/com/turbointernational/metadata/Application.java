@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +36,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import com.turbointernational.metadata.web.dto.Ancestor;
+import com.turbointernational.metadata.web.dto.Manufacturer;
+import com.turbointernational.metadata.web.dto.PartType;
 import com.turbointernational.metadata.web.filter.CORSFilter;
 
 @SpringBootApplication
@@ -121,6 +125,28 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         Application.springContext = applicationContext;
+    }
+
+    @Bean
+    public ModelMapper dtoMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        // DTO: PartType
+        modelMapper.createTypeMap(com.turbointernational.metadata.entity.PartType.class, PartType.class)
+            .addMapping(com.turbointernational.metadata.entity.PartType::getId, PartType::setId)
+            .addMapping(com.turbointernational.metadata.entity.PartType::getName, PartType::setName);
+        // DTO: Manufacturer
+        modelMapper.createTypeMap(com.turbointernational.metadata.entity.Manufacturer.class, Manufacturer.class)
+            .addMapping(com.turbointernational.metadata.entity.Manufacturer::getId, Manufacturer::setId)
+            .addMapping(com.turbointernational.metadata.entity.Manufacturer::getName, Manufacturer::setName);
+        // DTO: Ancestor
+        modelMapper.createTypeMap(com.turbointernational.metadata.entity.part.Part.class, Ancestor.class)
+            .addMapping(com.turbointernational.metadata.entity.part.Part::getId, Ancestor::setPartId)
+            .addMapping(com.turbointernational.metadata.entity.part.Part::getName, Ancestor::setName)
+            .addMapping(com.turbointernational.metadata.entity.part.Part::getDescription, Ancestor::setDescription)
+            .addMapping(com.turbointernational.metadata.entity.part.Part::getManufacturerPartNumber, Ancestor::setPartNumber)
+            .addMapping(com.turbointernational.metadata.entity.part.Part::getManufacturer, Ancestor::setManufacturer)
+            .addMapping(com.turbointernational.metadata.entity.part.Part::getPartType, Ancestor::setPartType);
+        return modelMapper;
     }
 
 }

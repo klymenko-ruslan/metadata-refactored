@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.im4java.core.CommandException;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,6 +109,9 @@ public class PartService {
 
     @Autowired
     private GraphDbService graphDbService;
+    
+    @Autowired
+    private ModelMapper dtoMapper;
 
     private JSONSerializer partJsonSerializer = new JSONSerializer().include("id").include("name")
             .include("manufacturerPartNumber").include("description").include("inactive").include("partType.id")
@@ -413,7 +417,10 @@ public class PartService {
             Row r = rows[i];
             Part p = partDao.findOne(r.getPartId());
             boolean isDirect = r.isRelationType();
-            retVal[i] = Ancestor.from(p, r.getRelationDistance(), isDirect);
+            Ancestor a = dtoMapper.map(p, Ancestor.class);
+            a.setRelationType(isDirect);
+            a.setRelationDistance(r.getRelationDistance());
+            retVal[i] = a;
         }
         return retVal;
     }

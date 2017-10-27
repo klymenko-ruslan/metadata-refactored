@@ -22,7 +22,7 @@ public class Ancestor {
     private String name;
 
     @JsonView({ View.Summary.class })
-    private String descritption;
+    private String description;
 
     @JsonView({ View.Summary.class })
     private String partNumber;
@@ -43,30 +43,26 @@ public class Ancestor {
      */
     @JsonView({ View.Summary.class })
     private Boolean relationType;
-    
+
     private static Comparator<Ancestor> cmpDistance = (a0, a1) -> {return a0.getRelationDistance() - a1.getRelationDistance();};
     private static Comparator<Ancestor> cmpRelationType = (a0, a1) -> /* reverse */ a1.getRelationType().compareTo(a0.getRelationType());
     private static Comparator<Ancestor> cmpPartNumber = (a0, a1) -> a0.getPartNumber().compareTo(a1.getPartNumber());
     @SuppressWarnings("unchecked")
     public final static Comparator<Ancestor> cmpComplex = new ComparatorChain(Arrays.asList(cmpDistance, cmpRelationType, cmpPartNumber));
 
-    public Ancestor(Long partId, String name, String descritption, String partNumber, PartType partType,
+    public Ancestor() {
+    }
+
+    public Ancestor(Long partId, String name, String description, String partNumber, PartType partType,
             Manufacturer manufacturer, int relationDistance, Boolean isDirect) {
         this.partId = partId;
         this.name = name;
-        this.descritption = descritption;
+        this.description = description;
         this.partNumber = partNumber;
         this.partType = partType;
         this.manufacturer = manufacturer;
         this.relationDistance = relationDistance;
         this.relationType = isDirect;
-    }
-
-    public static Ancestor from(com.turbointernational.metadata.entity.part.Part p, int distance, boolean isDirect) {
-        PartType partType = PartType.from(p.getPartType());
-        Manufacturer manufacturer = Manufacturer.from(p.getManufacturer());
-        return new Ancestor(p.getId(), p.getName(), p.getDescription(), p.getManufacturerPartNumber(),
-                partType, manufacturer, distance, isDirect);
     }
 
     public Long getPartId() {
@@ -85,12 +81,12 @@ public class Ancestor {
         this.name = name;
     }
 
-    public String getDescritption() {
-        return descritption;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescritption(String descritption) {
-        this.descritption = descritption;
+    public void setDescription(String descritption) {
+        this.description = descritption;
     }
 
     public String getPartNumber() {
@@ -99,6 +95,14 @@ public class Ancestor {
 
     public void setPartNumber(String partNumber) {
         this.partNumber = partNumber;
+    }
+
+    public PartType getPartType() {
+        return partType;
+    }
+
+    public void setPartType(PartType partType) {
+        this.partType = partType;
     }
 
     public Manufacturer getManufacturer() {
