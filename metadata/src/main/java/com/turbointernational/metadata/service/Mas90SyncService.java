@@ -5,17 +5,20 @@ import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.MAS90
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_CHILD;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.BOM_PARENT;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
+import static com.turbointernational.metadata.service.GraphDbService.checkSuccess;
 import static com.turbointernational.metadata.service.Mas90Service.TURBO_INTERNATIONAL_MANUFACTURER_ID;
 import static java.lang.Boolean.TRUE;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -26,6 +29,7 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +45,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.Mas90SyncDao;
 import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.Mas90Sync;
 import com.turbointernational.metadata.entity.Mas90SyncFailure;
@@ -50,6 +53,8 @@ import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
+import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
+import com.turbointernational.metadata.service.GraphDbService.Response;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.Page;
 
@@ -88,6 +93,9 @@ public class Mas90SyncService {
 
     @Autowired
     private Mas90Service mas90Service;
+    
+    @Autowired
+    private GraphDbService graphDbService;
 
     private JdbcTemplate mas90db;
 
@@ -630,63 +638,70 @@ public class Mas90SyncService {
                     throw new AssertionError(String.format("Part (id=%d) from unexpected manufacturer (id=%d).", partId,
                             manufacturerId));
                 }
-                Set<BOMItem> boms = part.getBom();
+                // Build an index of manufacturer numbers of the part's BOMs: part number -> (BOM) part.
+                GetBomsResponse bomsResponse = graphDbService.getBoms(partId);
+                Map<String, ImmutablePair<Part, Integer>> idxBoms = Arrays.stream(bomsResponse.getRows())
+                        .map(r -> new ImmutablePair<Part, Integer>(partDao.findOne(r.getPartId()), r.getQty()))
+                        .filter(ip -> ip.getLeft().getManufacturer().getId() == TURBO_INTERNATIONAL_MANUFACTURER_ID)
+                        .collect(Collectors.toMap(ip -> ip.getLeft().getManufacturerPartNumber(), ip -> ip));
 
                 // Merge BOMs.
-                boolean dirty = false;
+                AtomicBoolean dirty = new AtomicBoolean(false);
 
                 // Preparation.
                 // Build index: itemcode -> Mas90Bom.
-                Map<String, Mas90Bom> idxMas90Boms = new HashMap<>();
-                mas90boms.forEach(mb -> idxMas90Boms.put(mb.childManufacturerCode, mb));
-                // Build index: child.manufacturerPartNumber -> BomItem.
-                Map<String, BOMItem> idxBoms = new HashMap<>();
-                boms.forEach(b -> idxBoms.put(b.getChild().getManufacturerPartNumber(), b));
+                Map<String, Mas90Bom> idxMas90Boms = mas90boms.stream()
+                        .collect(Collectors.toMap(mb -> mb.childManufacturerCode, mb -> mb));
                 // Removal and update.
-                Iterator<BOMItem> rmIter = boms.iterator();
-                while (rmIter.hasNext()) {
-                    BOMItem bom = rmIter.next();
-                    Part child = bom.getChild();
-                    if (child.getManufacturer().getId() == TURBO_INTERNATIONAL_MANUFACTURER_ID) {
-                        String chMnPrtNum = child.getManufacturerPartNumber();
-                        Mas90Bom mas90Bom = idxMas90Boms.get(chMnPrtNum);
-                        String modification = null;
-                        if (mas90Bom == null) {
-                            modification = String.format(
-                                    "Part [%d] %s modified. BOM [%d] (child: [%d] %s) " + "is removed.", partId,
-                                    manufacturerPartNumber, bom.getId(), child.getId(), chMnPrtNum);
-                            entityManager.remove(bom);
-                            rmIter.remove();
-                            dirty = true;
-                        } else {
-                            if (bom.getQuantity() != mas90Bom.quantity) {
-                                modification = String.format(
-                                        "Part [%d] %s modified. BOM [%d] (child: [%d] %s) "
-                                                + "updated. Quantity: %d => %d",
-                                        partId, manufacturerPartNumber, bom.getId(), child.getId(), chMnPrtNum,
-                                        bom.getQuantity(), mas90Bom.quantity);
-                                bom.setQuantity(mas90Bom.quantity);
-                                entityManager.merge(bom);
-                                dirty = true;
-                            }
+                idxBoms.forEach((chMnPrtNum, bomPartQty) -> {
+                    Part child = bomPartQty.getLeft();
+                    Long childPartId = child.getId();
+                    Integer qty = bomPartQty.getRight();
+                    Mas90Bom mas90Bom = idxMas90Boms.get(chMnPrtNum);
+                    String modification = null;
+                    if (mas90Bom == null) {
+                        modification = String.format(
+                                "Part [%d] %s modified. BOM (child: [%d] %s) " + "is removed.", partId,
+                                manufacturerPartNumber, childPartId, chMnPrtNum);
+                        try {
+                            Response removePartFromBomResult = graphDbService.removePartFromBom(partId, childPartId);
+                            checkSuccess(removePartFromBomResult);
+                        } catch (Exception e) {
+                            throw new AssertionError(
+                                    String.format("Remove of the BOM (part: [%d] %s; child: [%d] %s) failed.", partId,
+                                            manufacturerPartNumber, childPartId, chMnPrtNum),
+                                    e);
                         }
-                        if (modification != null) {
-                            log.info(modification);
-                            List<RelatedPart> relatedParts = new ArrayList<>(2);
-                            relatedParts.add(new RelatedPart(bom.getParent().getId(), BOM_PARENT));
-                            relatedParts.add(new RelatedPart(bom.getChild().getId(), BOM_CHILD));
-                            changelogService.log(MAS90SYNC, user, modification, relatedParts);
-                            synchronized (syncProcessStatus) {
-                                registerModification(modification);
-                            }
-                        }
+                        dirty.set(true);
                     } else {
-                        log.debug(
-                                "Modification of the BOM (ID: {}) skipped as child part belongs "
-                                        + "to foreign manufacturer (ID: {}).",
-                                bom.getId(), child.getManufacturer().getId());
+                        if (qty != mas90Bom.quantity) {
+                            modification = String.format(
+                                    "Part [%d] %s modified. BOM (child: [%d] %s) " + "updated. Quantity: %d => %d",
+                                    partId, manufacturerPartNumber, childPartId, chMnPrtNum,
+                                    qty, mas90Bom.quantity);
+                            try {
+                                Response modifyBomResult = graphDbService.modifyPartInBom(partId, childPartId, mas90Bom.quantity);
+                                checkSuccess(modifyBomResult);
+                            } catch (Exception e) {
+                                throw new AssertionError(
+                                        String.format("Update of the BOM (part: [%d] %s; child: [%d] %s) failed.", partId,
+                                                manufacturerPartNumber, childPartId, chMnPrtNum),
+                                        e);
+                            }
+                            dirty.set(true);
+                        }
                     }
-                }
+                    if (modification != null) {
+                        log.info(modification);
+                        List<RelatedPart> relatedParts = new ArrayList<>(2);
+                        relatedParts.add(new RelatedPart(partId, BOM_PARENT));
+                        relatedParts.add(new RelatedPart(childPartId, BOM_CHILD));
+                        changelogService.log(MAS90SYNC, user, modification, relatedParts);
+                        synchronized (syncProcessStatus) {
+                            registerModification(modification);
+                        }
+                    }
+                });
                 // Insertion.
                 Iterator<Mas90Bom> addIter = mas90boms.iterator();
                 while (addIter.hasNext()) {
@@ -697,8 +712,6 @@ public class Mas90SyncService {
                                     + "manufacturer number: {}", mb.childManufacturerCode);
                             continue;
                         }
-                        BOMItem newBom = new BOMItem();
-                        newBom.setParent(part);
                         Part child = mas90Service.findTurboInternationalPart(mb.childManufacturerCode);
                         // In theory it is possible that child is not imported
                         // yet (because it will be processed
@@ -707,19 +720,23 @@ public class Mas90SyncService {
                         // Parts in that list will be processed again when the
                         // main loop finished.
                         if (child != null) {
-                            newBom.setChild(child);
-                            newBom.setQuantity(mb.quantity);
-                            boms.add(newBom);
-                            entityManager.persist(newBom);
-                            dirty = true;
+                            try {
+                                Response createBomResult = graphDbService.addPartToBom(partId, child.getId(), mb.quantity);
+                                checkSuccess(createBomResult);
+                            } catch (Exception e) {
+                                throw new AssertionError(String.format(
+                                        "Create of a BOM (part: [%d] %s; child: [%d] %s) failed.", partId,
+                                        manufacturerPartNumber, child.getId(), child.getManufacturerPartNumber()), e);
+                            }
+                            dirty.set(true);
                             String modification = String.format(
-                                    "Part [%d] %s modified. Added BOM [%d] " + "(child: [%d] %s), quantity=%d.", partId,
-                                    manufacturerPartNumber, newBom.getId(), child.getId(),
-                                    child.getManufacturerPartNumber(), newBom.getQuantity());
+                                    "Part [%d] %s modified. Added BOM " + "(child: [%d] %s), quantity=%d.", partId,
+                                    manufacturerPartNumber, child.getId(),
+                                    child.getManufacturerPartNumber(), mb.quantity);
                             log.info(modification);
                             List<RelatedPart> relatedParts = new ArrayList<>(2);
-                            relatedParts.add(new RelatedPart(newBom.getParent().getId(), BOM_PARENT));
-                            relatedParts.add(new RelatedPart(newBom.getChild().getId(), BOM_CHILD));
+                            relatedParts.add(new RelatedPart(partId, BOM_PARENT));
+                            relatedParts.add(new RelatedPart(child.getId(), BOM_CHILD));
                             changelogService.log(MAS90SYNC, user, modification, relatedParts);
                             synchronized (syncProcessStatus) {
                                 registerModification(modification);
@@ -738,13 +755,11 @@ public class Mas90SyncService {
                         }
                     }
                 }
-                if (dirty) {
+                if (dirty.get()) {
                     partDao.merge(part);
                 }
-                return dirty;
+                return dirty.get();
             });
-            // bomService.rebuildBomDescendancyForPart(partId, true); // Ticket
-            // #807.
             return updated;
         }
 
