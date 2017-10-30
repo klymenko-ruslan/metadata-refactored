@@ -17,6 +17,7 @@ import static java.util.stream.Collectors.toSet;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -57,6 +58,7 @@ import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse;
 import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse.Row;
+import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
 import com.turbointernational.metadata.service.GraphDbService.Response;
 import com.turbointernational.metadata.web.controller.PartController;
 import com.turbointernational.metadata.web.dto.AlsoBought;
@@ -461,8 +463,11 @@ public class PartService {
         }
         // Validation: that all parts in bom of Gasket Kit exist in the BOM of
         // the associated turbo
-        Set<Long> turboBomIds = turbo.getBom().stream().map(bi -> bi.getChild().getId()).collect(toSet());
-        Set<Long> newGasketKitBomIds = newGasketKit.getBom().stream().map(bi -> bi.getChild().getId()).collect(toSet());
+        GetBomsResponse turboBomsResponse = graphDbService.getBoms(turboId);
+        Set<Long> turboBomIds = Arrays.stream(turboBomsResponse.getRows()).map(r -> r.getPartId()).collect(toSet());
+        GetBomsResponse gasketKitBomsResponse = graphDbService.getBoms(gasketKitId);
+        Set<Long> newGasketKitBomIds = Arrays.stream(gasketKitBomsResponse.getRows()).map(r -> r.getPartId())
+                .collect(toSet());
         if (!turboBomIds.containsAll(newGasketKitBomIds)) {
             throw new AssertionError("Not all parts in BOM of the Gasket Kit exist in the BOM of associated Turbo.");
         }
