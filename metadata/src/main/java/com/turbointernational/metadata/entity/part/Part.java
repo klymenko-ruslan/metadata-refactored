@@ -45,7 +45,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.PartType;
@@ -245,10 +244,6 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
     @JsonView({View.Detail.class})
     private Set<TurboType> turboTypes = new TreeSet<>();
 
-    @OneToMany(mappedBy = "parent", fetch = LAZY, orphanRemoval = true)
-    @OrderBy("id")
-    private Set<BOMItem> bom = new TreeSet<>();
-
     @OneToMany(cascade = REFRESH, mappedBy = "part", fetch = LAZY)
     @JsonView({View.Detail.class})
     @OrderBy("id")
@@ -376,15 +371,6 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
 
     public void setInterchange(Interchange interchange) {
         this.interchange = interchange;
-    }
-
-    public Set<BOMItem> getBom() {
-        return bom;
-    }
-
-    public void setBom(Set<BOMItem> bom) {
-        this.bom.clear();
-        this.bom.addAll(bom);
     }
 
     public Set<TurboType> getTurboTypes() {
