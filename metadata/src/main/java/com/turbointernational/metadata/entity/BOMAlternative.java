@@ -36,10 +36,6 @@ public class BOMAlternative implements Comparable<BOMAlternative>, Serializable 
     @JsonView({View.Summary.class})
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
-    @JoinColumn(name = "bom_id")
-    private BOMItem bomItem;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "bom_alt_header_id")
     @JsonView({View.Summary.class})
@@ -56,14 +52,6 @@ public class BOMAlternative implements Comparable<BOMAlternative>, Serializable 
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public BOMItem getBomItem() {
-        return bomItem;
-    }
-
-    public void setBomItem(BOMItem bomItem) {
-        this.bomItem = bomItem;
     }
 
     public BOMAlternativeHeader getHeader() {

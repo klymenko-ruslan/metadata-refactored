@@ -2,7 +2,6 @@ package com.turbointernational.metadata.util;
 
 import static org.apache.commons.lang.StringUtils.abbreviate;
 
-import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.CarModelEngineYear;
 import com.turbointernational.metadata.entity.CarYear;
 import com.turbointernational.metadata.entity.SalesNote;

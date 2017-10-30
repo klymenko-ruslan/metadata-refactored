@@ -11,7 +11,6 @@ import javax.persistence.Query;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -24,7 +23,7 @@ import com.turbointernational.metadata.service.GraphDbService.GetAncestorsRespon
 import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse.Row;
 
 /**
- * Created by trunikov on 12/4/15.
+ * Created by dmytro.trunykov@zorallabs.com on 2015-12-04.
  */
 @Repository
 public class TurboCarModelEngineYearDao extends AbstractDao<TurboCarModelEngineYear> {
