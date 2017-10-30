@@ -160,6 +160,9 @@ public class PartService {
         partDao.flush(); // make sure that an insert done
         partDao.refresh(toCreate);
         Long partId = toCreate.getId();
+        Response response = graphDbService.registerPart(partId, toCreate.getPartType().getId(),
+                toCreate.getManufacturer().getId());
+        GraphDbService.checkSuccess(response);
         String json = partJsonSerializer.serialize(toCreate);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
