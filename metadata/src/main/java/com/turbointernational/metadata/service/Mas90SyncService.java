@@ -9,9 +9,14 @@ import static com.turbointernational.metadata.service.GraphDbService.checkSucces
 import static com.turbointernational.metadata.service.Mas90Service.TURBO_INTERNATIONAL_MANUFACTURER_ID;
 import static java.lang.Boolean.TRUE;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -54,6 +59,7 @@ import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
+import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse.Row;
 import com.turbointernational.metadata.service.GraphDbService.Response;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.Page;
@@ -77,6 +83,9 @@ public class Mas90SyncService {
 
     @PersistenceContext(unitName = "metadata")
     private EntityManager entityManager;
+
+    @Autowired
+    private DataSource dataSource;
 
     @Autowired
     private PartDao partDao;
@@ -603,6 +612,46 @@ public class Mas90SyncService {
             return dirty;
         }
 
+        /**
+         * Build an index of manufacturer numbers of the part's BOMs: part number -> ((BOM) part ID, qty).
+         * 
+         * @param partId
+         * @return
+         * @throws SQLException
+         */
+        private Map<String, ImmutablePair<Long, Integer>> buildIdxBoms(Long partId) throws SQLException {
+            Map<String, ImmutablePair<Long, Integer>> retVal = new HashMap<>(10);
+            GetBomsResponse bomsResponse = graphDbService.getBoms(partId);
+            Connection conn = dataSource.getConnection();
+            try {
+                PreparedStatement ps = conn.prepareStatement("select manfr_part_num "
+                        + "from part where manfr_id = " + TURBO_INTERNATIONAL_MANUFACTURER_ID + " and id=?");
+                try {
+                    Row[] rows = bomsResponse.getRows();
+                    for (int i = 0; i < rows.length; i++) {
+                        Row r = rows[i];
+                        Long pid = r.getPartId();
+                        Integer qty = r.getQty();
+                        ps.setLong(1, pid);
+                        ResultSet rs = ps.executeQuery();
+                        boolean found = rs.next();
+                        if (!found) {
+                            throw new AssertionError("BOM entry (part [" + pid + "]) not found in the database for "
+                                    + "the part [" + partId + "]. Processing of BOM entries for this part is stopped.");
+                        }
+                        String manfrPartNum = rs.getString(1);
+                        ImmutablePair<Long, Integer> mpn2prtQty = new ImmutablePair<>(pid, qty);
+                        retVal.put(manfrPartNum, mpn2prtQty);
+                    }
+                } finally {
+                    ps.close();
+                }
+            } finally {
+                conn.close();
+            }
+            return retVal;
+        }
+
         private Boolean processBOM(Part thePart, Set<Part> toBeReprocessed, boolean adjustCounter) {
             long partId = thePart.getId();
             String manufacturerPartNumber = thePart.getManufacturerPartNumber();
@@ -638,25 +687,25 @@ public class Mas90SyncService {
                     throw new AssertionError(String.format("Part (id=%d) from unexpected manufacturer (id=%d).", partId,
                             manufacturerId));
                 }
-                // Build an index of manufacturer numbers of the part's BOMs: part number -> (BOM) part.
-                GetBomsResponse bomsResponse = graphDbService.getBoms(partId);
-                Map<String, ImmutablePair<Part, Integer>> idxBoms = Arrays.stream(bomsResponse.getRows())
-                        .map(r -> new ImmutablePair<Part, Integer>(partDao.findOne(r.getPartId()), r.getQty()))
-                        .filter(ip -> ip.getLeft().getManufacturer().getId() == TURBO_INTERNATIONAL_MANUFACTURER_ID)
-                        .collect(Collectors.toMap(ip -> ip.getLeft().getManufacturerPartNumber(), ip -> ip));
 
                 // Merge BOMs.
                 AtomicBoolean dirty = new AtomicBoolean(false);
 
                 // Preparation.
+                Map<String, ImmutablePair<Long, Integer>> idxBoms;
+                try {
+                    idxBoms = buildIdxBoms(partId);
+                } catch(SQLException e) {
+                    throw new AssertionError("Building of index of BOM parts for the part [" + partId + "] failed.", e);
+                }
+
                 // Build index: itemcode -> Mas90Bom.
                 Map<String, Mas90Bom> idxMas90Boms = mas90boms.stream()
                         .collect(Collectors.toMap(mb -> mb.childManufacturerCode, mb -> mb));
                 // Removal and update.
-                idxBoms.forEach((chMnPrtNum, bomPartQty) -> {
-                    Part child = bomPartQty.getLeft();
-                    Long childPartId = child.getId();
-                    Integer qty = bomPartQty.getRight();
+                idxBoms.forEach((chMnPrtNum, chPartIdQty) -> {
+                    Long childPartId = chPartIdQty.getLeft();
+                    Integer qty = chPartIdQty.getRight();
                     Mas90Bom mas90Bom = idxMas90Boms.get(chMnPrtNum);
                     String modification = null;
                     if (mas90Bom == null) {

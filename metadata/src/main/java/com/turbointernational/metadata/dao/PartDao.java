@@ -35,7 +35,6 @@ import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Page;
 
 /**
- *
  * @author jrodriguez
  */
 @Repository
