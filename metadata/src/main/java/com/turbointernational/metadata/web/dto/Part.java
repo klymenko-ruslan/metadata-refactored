@@ -9,7 +9,7 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.util.View;
 
 /**
- * @author dmytro.trunykov@gmail.com
+ * @author dmytro.trunykov@zorallabs.com
  */
 public class Part {
 

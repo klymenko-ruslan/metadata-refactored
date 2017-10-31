@@ -158,7 +158,8 @@ module.exports = function (grunt) {
               47842,  // 'Where used (ancestors)'
               10756, 10757,
               63398, 64449,
-              69690, 70079, 70090   // Tabs: 'Turbos'
+              69690, 70079, 70090,   // Tabs: 'Turbos'
+              78252
             ];
             var urlSuffixes = ['', '/bom/search', '/ancestors', '/parentbom/search', '/oversize/add', '/application/search'];
             for(let partId of partIdsUnderDebug) {

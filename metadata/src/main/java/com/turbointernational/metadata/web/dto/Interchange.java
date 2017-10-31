@@ -25,7 +25,8 @@ public class Interchange extends PartGroup {
         int n = partIds.length;
         Part[] parts = new Part[n];
         for (int i = 0; i < n; i++) {
-            parts[i] = Part.from(partDao, partIds[i]);
+            Long pid = partIds[i];
+            parts[i] = Part.from(partDao, pid);
         }
         return new Interchange(o.getHeaderId(), parts);
     }
