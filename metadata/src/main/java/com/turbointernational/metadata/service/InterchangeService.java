@@ -55,7 +55,7 @@ public class InterchangeService {
     private GraphDbService graphDbService;
 
     @Autowired
-    private ModelMapper dtoMapper;
+    private DtoMapperService dtoMapperService;
 
     /**
      * Find an interchangeable by its ID.
@@ -66,6 +66,7 @@ public class InterchangeService {
     @Transactional
     public Interchange findById(Long id) {
         GetInterchangeResponse response = graphDbService.findInterchangeById(id);
+        // return dtoMapperService.map(response, Interchange.class);
         return Interchange.from(partDao, response);
     }
 
@@ -83,6 +84,7 @@ public class InterchangeService {
      */
     public Interchange findForPart(Long partId) {
         GetInterchangeResponse response = graphDbService.findInterchangeForPart(partId);
+        // return dtoMapperService.map(response, Interchange.class);
         return Interchange.from(partDao, response);
     }
 
