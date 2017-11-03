@@ -29,22 +29,24 @@ public class DtoMapperService {
     @Autowired
     private PartDao partDao;
 
-    private ModelMapper modelMapper;
-/*
-    private Converter<Long, com.turbointernational.metadata.entity.part.Part> partId2Part = new AbstractConverter<Long, com.turbointernational.metadata.entity.part.Part>() {
+    protected ModelMapper modelMapper;
+
+    protected Converter<Long, Part> partId2Part = new AbstractConverter<Long, Part>() {
 
         @Override
-        protected com.turbointernational.metadata.entity.part.Part convert(Long partId) {
-            com.turbointernational.metadata.entity.part.Part retVal = partDao.findOne(partId);
-            if (retVal == null) {
+        protected Part convert(Long partId) {
+            Part retVal = null;
+            com.turbointernational.metadata.entity.part.Part p = partDao.findOne(partId);
+            if (p == null) {
                 log.error("Conversion of a part ID [{}] to an entity Part failed.", partId);
             }
+            retVal = modelMapper.map(p, Part.class);;
             return retVal;
         }
 
     };
-*/
-    private Converter<Long[], Part[]> partIds2Parts = new AbstractConverter<Long[], Part[]>() {
+
+    protected Converter<Long[], Part[]> partIds2Parts = new AbstractConverter<Long[], Part[]>() {
 
         @Override
         protected Part[] convert(Long[] partIds) {
