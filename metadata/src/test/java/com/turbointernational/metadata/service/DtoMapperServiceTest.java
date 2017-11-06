@@ -5,9 +5,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -45,7 +50,7 @@ public class DtoMapperServiceTest {
     private com.turbointernational.metadata.entity.part.Part entityPart;
 
     @Before
-    public void beforeAll() {
+    public void before() {
         dtoMapperService.init();
         entityPartType = new com.turbointernational.metadata.entity.PartType();
         entityPartType.setId(34L);
@@ -339,4 +344,87 @@ public class DtoMapperServiceTest {
         assertEquals("Turbo International", dtoPart.getManufacturer().getName());
     }
 
+    @RunWith(Parameterized.class)
+    public static class PartMappingTests {
+
+        private DtoMapperService dtoMapperService;
+
+        private Long fPartTypeId;
+
+        private String fPartTypeName;
+
+        private Long fManufacturerId;
+
+        private String fManufacturerName;
+
+        private Class<? extends com.turbointernational.metadata.entity.part.Part> fPartClass;
+
+        private Long fPartId;
+
+        private String fPartName;
+
+        private String fPartDescription;
+
+        private String fPartManufacturerPartNumber;
+
+        //@formatter:off
+        @Parameters
+        public static List<Object[]> parameters() {
+            return Arrays.asList(new Object[][] { 
+                { 30L, "Actuator", 11L, "Turbo International",
+                  Actuator.class, 63497L, null, "*ND* ACTUATOR, K03", "9-D-6079" }
+            });
+        }
+        //@formatter:on
+
+        public PartMappingTests(Long partTypeId, String partTypeName, Long manufacturerId, String manufacturerName,
+                Class<? extends com.turbointernational.metadata.entity.part.Part> partClass, Long partId,
+                String partName, String partDescription, String partManufacturerPartNumber) {
+            fPartTypeId = partTypeId;
+            fPartTypeName = partTypeName;
+            fManufacturerId = manufacturerId;
+            fManufacturerName = manufacturerName;
+            fPartClass = partClass;
+            fPartId = partId;
+            fPartName = partName;
+            fPartDescription = partDescription;
+            fPartManufacturerPartNumber = partManufacturerPartNumber;
+        }
+
+        @Before
+        public void before() {
+            dtoMapperService = new DtoMapperService();
+            dtoMapperService.init();
+        }
+
+        @Test
+        public void testMap() throws InstantiationException, IllegalAccessException {
+            com.turbointernational.metadata.entity.PartType entityPartType = new com.turbointernational.metadata.entity.PartType();
+            entityPartType.setId(fPartTypeId);
+            entityPartType.setName(fPartTypeName);
+            com.turbointernational.metadata.entity.Manufacturer entityManufacturer = new com.turbointernational.metadata.entity.Manufacturer();
+            entityManufacturer.setId(fManufacturerId);
+            entityManufacturer.setName(fManufacturerName);
+            com.turbointernational.metadata.entity.part.Part entityPartDescendant = fPartClass.newInstance();
+            entityPartDescendant.setId(fPartId);
+            entityPartDescendant.setName(fPartName);
+            entityPartDescendant.setDescription(fPartDescription);
+            entityPartDescendant.setManufacturerPartNumber(fPartManufacturerPartNumber);
+            entityPartDescendant.setManufacturer(entityManufacturer);
+            entityPartDescendant.setPartType(entityPartType);
+            Part dtoPart = dtoMapperService.map(entityPartDescendant, Part.class);
+            assertNotNull(dtoPart);
+            assertEquals(fPartId, dtoPart.getPartId());
+            assertEquals(fPartManufacturerPartNumber, dtoPart.getPartNumber());
+            assertEquals(fPartName, dtoPart.getName());
+            assertEquals(fPartDescription, dtoPart.getDescription());
+            assertNotNull(dtoPart.getPartType());
+            assertEquals(fPartTypeId, dtoPart.getPartType().getId());
+            assertEquals(fPartTypeName, dtoPart.getPartType().getName());
+            assertNotNull(dtoPart.getManufacturer());
+            assertEquals(fManufacturerId, dtoPart.getManufacturer().getId());
+            assertEquals(fManufacturerName, dtoPart.getManufacturer().getName());
+        }
+
+    }
 }
