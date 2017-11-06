@@ -2,6 +2,7 @@ package com.turbointernational.metadata.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -10,13 +11,20 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.modelmapper.AbstractConverter;
-import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
 
 import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.entity.part.types.Actuator;
 import com.turbointernational.metadata.entity.part.types.Backplate;
+import com.turbointernational.metadata.entity.part.types.BackplateSealplate;
+import com.turbointernational.metadata.entity.part.types.BearingHousing;
+import com.turbointernational.metadata.entity.part.types.BoltScrew;
+import com.turbointernational.metadata.entity.part.types.CarbonSeal;
+import com.turbointernational.metadata.entity.part.types.Cartridge;
+import com.turbointernational.metadata.entity.part.types.Clamp;
+import com.turbointernational.metadata.web.dto.Manufacturer;
 import com.turbointernational.metadata.web.dto.Part;
+import com.turbointernational.metadata.web.dto.PartType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DtoMapperServiceTest {
@@ -30,332 +38,305 @@ public class DtoMapperServiceTest {
     @InjectMocks
     private DtoMapperService dtoMapperService;
 
-    public static class Address {
+    private com.turbointernational.metadata.entity.PartType entityPartType;
 
-        private String zip;
+    private com.turbointernational.metadata.entity.Manufacturer entityManufacturer;
 
-        private String other;
-
-        public Address(String zip, String other) {
-            this.zip = zip;
-            this.other = other;
-        }
-
-        public String getZip() {
-            return zip;
-        }
-
-        public void setZip(String zip) {
-            this.zip = zip;
-        }
-
-        public String getOther() {
-            return other;
-        }
-
-        public void setOther(String other) {
-            this.other = other;
-        }
-
-    }
-
-    public static class Person {
-
-        private String firstName;
-        private String lastName;
-        private Address address;
-
-        public Person(String firstName, String lastName, Address address) {
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.address = address;
-        }
-
-        public String getFirstName() {
-            return firstName;
-        }
-
-        public void setFirstName(String firstName) {
-            this.firstName = firstName;
-        }
-
-        public String getLastName() {
-            return lastName;
-        }
-
-        public void setLastName(String lastName) {
-            this.lastName = lastName;
-        }
-
-        public Address getAddress() {
-            return address;
-        }
-
-        public void setAddress(Address address) {
-            this.address = address;
-        }
-
-    }
-
-    public static class Commodity {
-
-        private String name;
-
-        private String sku;
-
-        private int no;
-
-        public Commodity(String name, String sku, int no) {
-            super();
-            this.setName(name);
-            this.setSku(sku);
-            this.setNo(no);
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getSku() {
-            return sku;
-        }
-
-        public void setSku(String sku) {
-            this.sku = sku;
-        }
-
-        public int getNo() {
-            return no;
-        }
-
-        public void setNo(int no) {
-            this.no = no;
-        }
-
-    }
-
-    public static class Order {
-
-        private Integer orderNo;
-
-        private Person person;
-
-        private Commodity[] commodities;
-
-        public Order(Integer orderNo, Person person, Commodity[] commodities) {
-            super();
-            this.orderNo = orderNo;
-            this.person = person;
-            this.commodities = commodities;
-        }
-
-        public Integer getOrderNo() {
-            return orderNo;
-        }
-
-        public void setOrderNo(Integer orderNo) {
-            this.orderNo = orderNo;
-        }
-
-        public Person getPerson() {
-            return person;
-        }
-
-        public void setPerson(Person person) {
-            this.person = person;
-        }
-
-        public Commodity[] getCommodities() {
-            return commodities;
-        }
-
-        public void setCommodities(Commodity[] commodities) {
-            this.commodities = commodities;
-        }
-
-    }
-
-    public static class CommodityDto {
-
-        private String name;
-
-        private String sku;
-
-        public CommodityDto() {
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getSku() {
-            return sku;
-        }
-
-        public void setSku(String sku) {
-            this.sku = sku;
-        }
-
-    }
-
-    public static class PackageDto {
-
-        private Integer orderNo;
-
-        private String customerFirstName;
-
-        private String customerLastName;
-
-        private String address;
-
-        private String comments;
-
-        private CommodityDto[] commodities;
-
-        public PackageDto() {
-        }
-
-        public Integer getOrderNo() {
-            return orderNo;
-        }
-
-        public void setOrderNo(Integer orderNo) {
-            this.orderNo = orderNo;
-        }
-
-        public String getCustomerFirstName() {
-            return customerFirstName;
-        }
-
-        public void setCustomerFirstName(String customerFirstName) {
-            this.customerFirstName = customerFirstName;
-        }
-
-        public String getCustomerLastName() {
-            return customerLastName;
-        }
-
-        public void setCustomerLastName(String customerLastName) {
-            this.customerLastName = customerLastName;
-        }
-
-        public String getAddress() {
-            return address;
-        }
-
-        public void setAddress(String address) {
-            this.address = address;
-        }
-
-        public String getComments() {
-            return comments;
-        }
-
-        public void setComments(String comments) {
-            this.comments = comments;
-        }
-
-        public CommodityDto[] getCommodities() {
-            return commodities;
-        }
-
-        public void setCommodities(CommodityDto[] commodities) {
-            this.commodities = commodities;
-        }
-
-    }
+    private com.turbointernational.metadata.entity.part.Part entityPart;
 
     @Before
     public void beforeAll() {
         dtoMapperService.init();
-    }
-
-    /**
-     * A simple test to research various features of the ObjectMapper library.
-     */
-    @Test
-    public void testModelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.addConverter(new AbstractConverter<Address, String>() {
-
-            @Override
-            protected String convert(Address addr) {
-                return addr.getZip() + ", " + addr.getOther();
-            }
-
-        });
-        modelMapper.createTypeMap(Commodity.class, CommodityDto.class)
-                .addMapping(Commodity::getSku, CommodityDto::setSku)
-                .addMapping(Commodity::getName, CommodityDto::setName);
-        modelMapper.createTypeMap(Order.class, PackageDto.class).addMapping(Order::getOrderNo, PackageDto::setOrderNo)
-                .addMapping(Order::getCommodities, PackageDto::setCommodities)
-                .addMappings(mapper -> mapper.map(order -> order.getPerson().getFirstName(),
-                        PackageDto::setCustomerFirstName))
-                .addMappings(
-                        mapper -> mapper.map(order -> order.getPerson().getLastName(), PackageDto::setCustomerLastName))
-                .addMappings(mapper -> mapper.map(order -> order.getPerson().getAddress(), PackageDto::setAddress));
-        Person johnSmith = new Person("John", "Smith", new Address("1279", "54, Baker street, London"));
-        Order order = new Order(202, johnSmith, new Commodity[] {
-                new Commodity("Dickies Men's 874 Traditional Work Pants", "35945920", 1),
-                new Commodity("Fruit of the Loom Womens Be-Low No Show Socks, 2 Pairs", "24726588", 2),
-                new Commodity("Azzuro Men's Classic Notch Lapel Suiting Blazer (Size S / 36)", "45915478", 5) });
-        PackageDto packageDto = new PackageDto();
-        modelMapper.map(order, packageDto);
-        assertEquals("John", packageDto.getCustomerFirstName());
-        assertEquals("Smith", packageDto.getCustomerLastName());
-        assertEquals("1279, 54, Baker street, London", packageDto.getAddress());
-        assertEquals((Integer) 202, packageDto.getOrderNo());
-        assertNotNull(packageDto.getCommodities());
-        assertEquals(3, packageDto.getCommodities().length);
-        assertEquals("Dickies Men's 874 Traditional Work Pants", packageDto.getCommodities()[0].getName());
-        assertEquals("35945920", packageDto.getCommodities()[0].getSku());
-        assertEquals("Fruit of the Loom Womens Be-Low No Show Socks, 2 Pairs",
-                packageDto.getCommodities()[1].getName());
-        assertEquals("24726588", packageDto.getCommodities()[1].getSku());
-        assertEquals("Azzuro Men's Classic Notch Lapel Suiting Blazer (Size S / 36)",
-                packageDto.getCommodities()[2].getName());
-        assertEquals("45915478", packageDto.getCommodities()[2].getSku());
-    }
-
-    @Test
-    public void testPartIds2Parts() {
-        Long partId = 49576L;
-        com.turbointernational.metadata.entity.PartType partTypeEntity = new com.turbointernational.metadata.entity.PartType();
-        partTypeEntity.setId(34L);
-        partTypeEntity.setName("Backplate");
-        com.turbointernational.metadata.entity.Manufacturer manufacturerEntity = new com.turbointernational.metadata.entity.Manufacturer();
-        manufacturerEntity.setId(11L);
-        manufacturerEntity.setName("Turbo International");
-        com.turbointernational.metadata.entity.part.Part entityPart = new Backplate();
-        entityPart.setId(partId);
+        entityPartType = new com.turbointernational.metadata.entity.PartType();
+        entityPartType.setId(34L);
+        entityPartType.setName("Backplate");
+        entityManufacturer = new com.turbointernational.metadata.entity.Manufacturer();
+        entityManufacturer.setId(11L);
+        entityManufacturer.setName("Turbo International");
+        entityPart = new Backplate();
+        entityPart.setId(49576L);
         entityPart.setName("test name");
         entityPart.setDescription("test description");
         entityPart.setManufacturerPartNumber("5-A-4915");
-        entityPart.setManufacturer(manufacturerEntity);
-        entityPart.setPartType(partTypeEntity);
-        when(mappingContextLong2Part.getSource()).thenReturn(partId);
-        when(partDao.findOne(partId)).thenReturn(entityPart);
-        Part p = dtoMapperService.partId2Part.convert(mappingContextLong2Part);
-        assertNotNull(p);
-        assertEquals(partId, p.getPartId());
-        assertEquals("5-A-4915", p.getPartNumber());
-        assertEquals("test name", p.getName());
-        assertEquals("test description", p.getDescription());
-        assertNotNull(p.getPartType());
-        assertEquals((Long) 34L, p.getPartType().getId());
-        assertEquals("Backplate", p.getPartType().getName());
-        assertNotNull(p.getManufacturer());
-        assertEquals((Long) 11L, p.getManufacturer().getId());
-        assertEquals("Turbo International", p.getManufacturer().getName());
+        entityPart.setManufacturer(entityManufacturer);
+        entityPart.setPartType(entityPartType);
+    }
 
+    /**
+     * Test mapping of a JPA entity Part to a DTO part.
+     */
+    @Test
+    public void testMapOfPartType() {
+        PartType dtoPartType = dtoMapperService.map(entityPartType, PartType.class);
+        assertNotNull(dtoPartType);
+        assertEquals((Long) 34L, dtoPartType.getId());
+        assertEquals("Backplate", dtoPartType.getName());
+    }
+
+    /**
+     * Test mapping of a JPA entity Maufacturer to a DTO Manufacturer.
+     */
+    @Test
+    public void testMapOfManufacturer() {
+        Manufacturer dtoManufacturer = dtoMapperService.map(entityManufacturer, Manufacturer.class);
+        assertNotNull(dtoManufacturer);
+        assertEquals((Long) 11L, dtoManufacturer.getId());
+        assertEquals("Turbo International", dtoManufacturer.getName());
+    }
+
+    @Test
+    public void testMapOfActuator() {
+        com.turbointernational.metadata.entity.PartType entityPartTypeActuator = new com.turbointernational.metadata.entity.PartType();
+        entityPartTypeActuator.setId(30L);
+        entityPartTypeActuator.setName("Actuator");
+        com.turbointernational.metadata.entity.Manufacturer manufacturerTurboInternational = new com.turbointernational.metadata.entity.Manufacturer();
+        manufacturerTurboInternational.setId(11L);
+        manufacturerTurboInternational.setName("Turbo International");
+        Actuator actuator = new Actuator();
+        actuator.setId(63497L);
+        actuator.setName(null);
+        actuator.setDescription("*ND* ACTUATOR, K03");
+        actuator.setManufacturerPartNumber("9-D-6079");
+        actuator.setManufacturer(manufacturerTurboInternational);
+        actuator.setPartType(entityPartTypeActuator);
+        Part dtoPart = dtoMapperService.map(actuator, Part.class);
+        assertNotNull(dtoPart);
+        assertEquals((Long) 63497L, dtoPart.getPartId());
+        assertEquals("9-D-6079", dtoPart.getPartNumber());
+        assertNull(dtoPart.getName());
+        assertEquals("*ND* ACTUATOR, K03", dtoPart.getDescription());
+        assertNotNull(dtoPart.getPartType());
+        assertEquals((Long) 30L, dtoPart.getPartType().getId());
+        assertEquals("Actuator", dtoPart.getPartType().getName());
+        assertNotNull(dtoPart.getManufacturer());
+        assertEquals((Long) 11L, dtoPart.getManufacturer().getId());
+        assertEquals("Turbo International", dtoPart.getManufacturer().getName());
+    }
+
+    @Test
+    public void testMapOfBackplate() {
+        com.turbointernational.metadata.entity.PartType entityPartTypeBackplate = new com.turbointernational.metadata.entity.PartType();
+        entityPartTypeBackplate.setId(34L);
+        entityPartTypeBackplate.setName("Backplate");
+        com.turbointernational.metadata.entity.Manufacturer manufacturerTurboInternational = new com.turbointernational.metadata.entity.Manufacturer();
+        manufacturerTurboInternational.setId(11L);
+        manufacturerTurboInternational.setName("Turbo International");
+        Backplate backplate = new Backplate();
+        backplate.setId(49576L);
+        backplate.setName(null);
+        backplate.setDescription("*DL2* BP, GT2259");
+        backplate.setManufacturerPartNumber("5-A-4915");
+        backplate.setManufacturer(manufacturerTurboInternational);
+        backplate.setPartType(entityPartTypeBackplate);
+        Part dtoPart = dtoMapperService.map(backplate, Part.class);
+        assertNotNull(dtoPart);
+        assertEquals((Long) 49576L, dtoPart.getPartId());
+        assertEquals("5-A-4915", dtoPart.getPartNumber());
+        assertNull(dtoPart.getName());
+        assertEquals("*DL2* BP, GT2259", dtoPart.getDescription());
+        assertNotNull(dtoPart.getPartType());
+        assertEquals((Long) 34L, dtoPart.getPartType().getId());
+        assertEquals("Backplate", dtoPart.getPartType().getName());
+        assertNotNull(dtoPart.getManufacturer());
+        assertEquals((Long) 11L, dtoPart.getManufacturer().getId());
+        assertEquals("Turbo International", dtoPart.getManufacturer().getName());
+    }
+
+    @Test
+    public void testMapOfBackplateSealplate() {
+        com.turbointernational.metadata.entity.PartType entityPartTypeBackplateSealplate = new com.turbointernational.metadata.entity.PartType();
+        entityPartTypeBackplateSealplate.setId(14L);
+        entityPartTypeBackplateSealplate.setName("Backplate / Sealplate");
+        com.turbointernational.metadata.entity.Manufacturer manufacturerGarrett = new com.turbointernational.metadata.entity.Manufacturer();
+        manufacturerGarrett.setId(1L);
+        manufacturerGarrett.setName("Garrett");
+        BackplateSealplate backplateSealplate = new BackplateSealplate();
+        backplateSealplate.setId(44767L);
+        backplateSealplate.setName("Backplate");
+        backplateSealplate.setDescription("removed interchangeability from KKK part 5304-151-5703");
+        backplateSealplate.setManufacturerPartNumber("5304-151-5703");
+        backplateSealplate.setManufacturer(manufacturerGarrett);
+        backplateSealplate.setPartType(entityPartTypeBackplateSealplate);
+        Part dtoPart = dtoMapperService.map(backplateSealplate, Part.class);
+        assertNotNull(dtoPart);
+        assertEquals((Long) 44767L, dtoPart.getPartId());
+        assertEquals("5304-151-5703", dtoPart.getPartNumber());
+        assertEquals("Backplate", dtoPart.getName());
+        assertEquals("removed interchangeability from KKK part 5304-151-5703", dtoPart.getDescription());
+        assertNotNull(dtoPart.getPartType());
+        assertEquals((Long) 14L, dtoPart.getPartType().getId());
+        assertEquals("Backplate / Sealplate", dtoPart.getPartType().getName());
+        assertNotNull(dtoPart.getManufacturer());
+        assertEquals((Long) 1L, dtoPart.getManufacturer().getId());
+        assertEquals("Garrett", dtoPart.getManufacturer().getName());
+    }
+
+    @Test
+    public void testMapOfBearingHousing() {
+        com.turbointernational.metadata.entity.PartType entityPartTypeBearingHousing = new com.turbointernational.metadata.entity.PartType();
+        entityPartTypeBearingHousing.setId(13L);
+        entityPartTypeBearingHousing.setName("Bearing Housing");
+        com.turbointernational.metadata.entity.Manufacturer manufacturerGarrett = new com.turbointernational.metadata.entity.Manufacturer();
+        manufacturerGarrett.setId(1L);
+        manufacturerGarrett.setName("Garrett");
+        BearingHousing bearingHousing = new BearingHousing();
+        bearingHousing.setId(43891L);
+        bearingHousing.setName("Bearing Housing");
+        bearingHousing.setDescription(null);
+        bearingHousing.setManufacturerPartNumber("430027-0021");
+        bearingHousing.setManufacturer(manufacturerGarrett);
+        bearingHousing.setPartType(entityPartTypeBearingHousing);
+        Part dtoPart = dtoMapperService.map(bearingHousing, Part.class);
+        assertNotNull(dtoPart);
+        assertEquals((Long) 43891L, dtoPart.getPartId());
+        assertEquals("430027-0021", dtoPart.getPartNumber());
+        assertEquals("Bearing Housing", dtoPart.getName());
+        assertNull(dtoPart.getDescription());
+        assertNotNull(dtoPart.getPartType());
+        assertEquals((Long) 13L, dtoPart.getPartType().getId());
+        assertEquals("Bearing Housing", dtoPart.getPartType().getName());
+        assertNotNull(dtoPart.getManufacturer());
+        assertEquals((Long) 1L, dtoPart.getManufacturer().getId());
+        assertEquals("Garrett", dtoPart.getManufacturer().getName());
+    }
+
+    @Test
+    public void testMapOfBoltScrew() {
+        com.turbointernational.metadata.entity.PartType entityPartTypeBoltScrew = new com.turbointernational.metadata.entity.PartType();
+        entityPartTypeBoltScrew.setId(35L);
+        entityPartTypeBoltScrew.setName("Bolt - Screw");
+        com.turbointernational.metadata.entity.Manufacturer manufacturerTurboInternational = new com.turbointernational.metadata.entity.Manufacturer();
+        manufacturerTurboInternational.setId(11L);
+        manufacturerTurboInternational.setName("Turbo International");
+        BoltScrew boltScrew = new BoltScrew();
+        boltScrew.setId(47751L);
+        boltScrew.setName("BOLT, T18, 5/16-18, C/END");
+        boltScrew.setDescription("BOLT, T18, 5/16-18, C/END");
+        boltScrew.setManufacturerPartNumber("8-A-0152");
+        boltScrew.setManufacturer(manufacturerTurboInternational);
+        boltScrew.setPartType(entityPartTypeBoltScrew);
+        Part dtoPart = dtoMapperService.map(boltScrew, Part.class);
+        assertNotNull(dtoPart);
+        assertEquals((Long) 47751L, dtoPart.getPartId());
+        assertEquals("8-A-0152", dtoPart.getPartNumber());
+        assertEquals("BOLT, T18, 5/16-18, C/END", dtoPart.getName());
+        assertEquals("BOLT, T18, 5/16-18, C/END", dtoPart.getDescription());
+        assertNotNull(dtoPart.getPartType());
+        assertEquals((Long) 35L, dtoPart.getPartType().getId());
+        assertEquals("Bolt - Screw", dtoPart.getPartType().getName());
+        assertNotNull(dtoPart.getManufacturer());
+        assertEquals((Long) 11L, dtoPart.getManufacturer().getId());
+        assertEquals("Turbo International", dtoPart.getManufacturer().getName());
+    }
+
+    @Test
+    public void testMapOfCarbonSeal() {
+        com.turbointernational.metadata.entity.PartType entityPartTypeCarbonSeal = new com.turbointernational.metadata.entity.PartType();
+        entityPartTypeCarbonSeal.setId(48L);
+        entityPartTypeCarbonSeal.setName("Carbon Seal");
+        com.turbointernational.metadata.entity.Manufacturer manufacturerGarrett = new com.turbointernational.metadata.entity.Manufacturer();
+        manufacturerGarrett.setId(1L);
+        manufacturerGarrett.setName("Garrett");
+        CarbonSeal carbonSeal = new CarbonSeal();
+        carbonSeal.setId(44765L);
+        carbonSeal.setName("ENCAPSULATED C/SEAL");
+        carbonSeal.setDescription(null);
+        carbonSeal.setManufacturerPartNumber("409695-0000");
+        carbonSeal.setManufacturer(manufacturerGarrett);
+        carbonSeal.setPartType(entityPartTypeCarbonSeal);
+        Part dtoPart = dtoMapperService.map(carbonSeal, Part.class);
+        assertNotNull(dtoPart);
+        assertEquals((Long) 44765L, dtoPart.getPartId());
+        assertEquals("409695-0000", dtoPart.getPartNumber());
+        assertEquals("ENCAPSULATED C/SEAL", dtoPart.getName());
+        assertNull(dtoPart.getDescription());
+        assertNotNull(dtoPart.getPartType());
+        assertEquals((Long) 48L, dtoPart.getPartType().getId());
+        assertEquals("Carbon Seal", dtoPart.getPartType().getName());
+        assertNotNull(dtoPart.getManufacturer());
+        assertEquals((Long) 1L, dtoPart.getManufacturer().getId());
+        assertEquals("Garrett", dtoPart.getManufacturer().getName());
+    }
+
+    @Test
+    public void testMapOfCartridge() {
+        com.turbointernational.metadata.entity.PartType entityPartTypeCartridge = new com.turbointernational.metadata.entity.PartType();
+        entityPartTypeCartridge.setId(2L);
+        entityPartTypeCartridge.setName("Cartridge");
+        com.turbointernational.metadata.entity.Manufacturer manufacturerGarrett = new com.turbointernational.metadata.entity.Manufacturer();
+        manufacturerGarrett.setId(1L);
+        manufacturerGarrett.setName("Garrett");
+        Cartridge cartridge = new Cartridge();
+        cartridge.setId(501L);
+        cartridge.setName(null);
+        cartridge.setDescription(null);
+        cartridge.setManufacturerPartNumber("712371-0051");
+        cartridge.setManufacturer(manufacturerGarrett);
+        cartridge.setPartType(entityPartTypeCartridge);
+        Part dtoPart = dtoMapperService.map(cartridge, Part.class);
+        assertNotNull(dtoPart);
+        assertEquals((Long) 501L, dtoPart.getPartId());
+        assertEquals("712371-0051", dtoPart.getPartNumber());
+        assertNull(dtoPart.getName());
+        assertNull(dtoPart.getDescription());
+        assertNotNull(dtoPart.getPartType());
+        assertEquals((Long) 2L, dtoPart.getPartType().getId());
+        assertEquals("Cartridge", dtoPart.getPartType().getName());
+        assertNotNull(dtoPart.getManufacturer());
+        assertEquals((Long) 1L, dtoPart.getManufacturer().getId());
+        assertEquals("Garrett", dtoPart.getManufacturer().getName());
+    }
+
+    @Test
+    public void testMapOfClamp() {
+        com.turbointernational.metadata.entity.PartType entityPartTypeClamp = new com.turbointernational.metadata.entity.PartType();
+        entityPartTypeClamp.setId(19L);
+        entityPartTypeClamp.setName("Clamp");
+        com.turbointernational.metadata.entity.Manufacturer manufacturerTurboInternational = new com.turbointernational.metadata.entity.Manufacturer();
+        manufacturerTurboInternational.setId(11L);
+        manufacturerTurboInternational.setName("Turbo International");
+        Clamp clamp = new Clamp();
+        clamp.setId(47775L);
+        clamp.setName("LOCKPLATE, T18A, T/END");
+        clamp.setDescription("LOCKPLATE, T18A, T/END");
+        clamp.setManufacturerPartNumber("8-A-0190");
+        clamp.setManufacturer(manufacturerTurboInternational);
+        clamp.setPartType(entityPartTypeClamp);
+        Part dtoPart = dtoMapperService.map(clamp, Part.class);
+        assertNotNull(dtoPart);
+        assertEquals((Long) 47775L, dtoPart.getPartId());
+        assertEquals("8-A-0190", dtoPart.getPartNumber());
+        assertEquals("LOCKPLATE, T18A, T/END", dtoPart.getName());
+        assertEquals("LOCKPLATE, T18A, T/END", dtoPart.getDescription());
+        assertNotNull(dtoPart.getPartType());
+        assertEquals((Long) 19L, dtoPart.getPartType().getId());
+        assertEquals("Clamp", dtoPart.getPartType().getName());
+        assertNotNull(dtoPart.getManufacturer());
+        assertEquals((Long) 11L, dtoPart.getManufacturer().getId());
+        assertEquals("Turbo International", dtoPart.getManufacturer().getName());
+    }
+
+    /**
+     * Test conversion of a part ID to a Part (DTO).
+     */
+    @Test
+    public void testPartId2PartConvertor() {
+        // Stubbing.
+        when(mappingContextLong2Part.getSource()).thenReturn( /* part ID */ 49576L);
+        when(partDao.findOne(49576L)).thenReturn(entityPart);
+        // Run.
+        Part dtoPart = dtoMapperService.partId2Part.convert(mappingContextLong2Part);
+        assertNotNull(dtoPart);
+        assertEquals((Long) 49576L, dtoPart.getPartId());
+        assertEquals("5-A-4915", dtoPart.getPartNumber());
+        assertEquals("test name", dtoPart.getName());
+        assertEquals("test description", dtoPart.getDescription());
+        assertNotNull(dtoPart.getPartType());
+        assertEquals((Long) 34L, dtoPart.getPartType().getId());
+        assertEquals("Backplate", dtoPart.getPartType().getName());
+        assertNotNull(dtoPart.getManufacturer());
+        assertEquals((Long) 11L, dtoPart.getManufacturer().getId());
+        assertEquals("Turbo International", dtoPart.getManufacturer().getName());
     }
 
 }
