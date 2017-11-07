@@ -125,6 +125,12 @@ public class DtoMapperService {
                  .include(com.turbointernational.metadata.entity.part.types.Shroud.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.Spring.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.ThrustBearing.class, Part.class)
+                 .include(com.turbointernational.metadata.entity.part.types.ThrustCollar.class, Part.class)
+                 .include(com.turbointernational.metadata.entity.part.types.ThrustPart.class, Part.class)
+                 .include(com.turbointernational.metadata.entity.part.types.ThrustSpacer.class, Part.class)
+                 .include(com.turbointernational.metadata.entity.part.types.ThrustWasher.class, Part.class)
+                 .include(com.turbointernational.metadata.entity.part.types.TurbineHousing.class, Part.class)
+                 .include(com.turbointernational.metadata.entity.part.types.TurbineWheel.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.Turbo.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.Washer.class, Part.class);
         // DTO: Ancestor

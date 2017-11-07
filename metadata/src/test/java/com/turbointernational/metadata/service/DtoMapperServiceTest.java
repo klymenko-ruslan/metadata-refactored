@@ -2,7 +2,6 @@ package com.turbointernational.metadata.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -27,6 +26,36 @@ import com.turbointernational.metadata.entity.part.types.BoltScrew;
 import com.turbointernational.metadata.entity.part.types.CarbonSeal;
 import com.turbointernational.metadata.entity.part.types.Cartridge;
 import com.turbointernational.metadata.entity.part.types.Clamp;
+import com.turbointernational.metadata.entity.part.types.CompressorCover;
+import com.turbointernational.metadata.entity.part.types.CompressorWheel;
+import com.turbointernational.metadata.entity.part.types.Fitting;
+import com.turbointernational.metadata.entity.part.types.Gasket;
+import com.turbointernational.metadata.entity.part.types.GasketKit;
+import com.turbointernational.metadata.entity.part.types.HeatshieldShroud;
+import com.turbointernational.metadata.entity.part.types.JournalBearing;
+import com.turbointernational.metadata.entity.part.types.JournalBearingSpacer;
+import com.turbointernational.metadata.entity.part.types.Kit;
+import com.turbointernational.metadata.entity.part.types.Misc;
+import com.turbointernational.metadata.entity.part.types.MiscMinorComponent;
+import com.turbointernational.metadata.entity.part.types.NozzleRing;
+import com.turbointernational.metadata.entity.part.types.Nut;
+import com.turbointernational.metadata.entity.part.types.ORing;
+import com.turbointernational.metadata.entity.part.types.OilDeflector;
+import com.turbointernational.metadata.entity.part.types.Pin;
+import com.turbointernational.metadata.entity.part.types.PistonRing;
+import com.turbointernational.metadata.entity.part.types.Plug;
+import com.turbointernational.metadata.entity.part.types.RetainingRing;
+import com.turbointernational.metadata.entity.part.types.SealPlate;
+import com.turbointernational.metadata.entity.part.types.Spring;
+import com.turbointernational.metadata.entity.part.types.ThrustBearing;
+import com.turbointernational.metadata.entity.part.types.ThrustCollar;
+import com.turbointernational.metadata.entity.part.types.ThrustPart;
+import com.turbointernational.metadata.entity.part.types.ThrustSpacer;
+import com.turbointernational.metadata.entity.part.types.ThrustWasher;
+import com.turbointernational.metadata.entity.part.types.TurbineHousing;
+import com.turbointernational.metadata.entity.part.types.TurbineWheel;
+import com.turbointernational.metadata.entity.part.types.Turbo;
+import com.turbointernational.metadata.entity.part.types.Washer;
 import com.turbointernational.metadata.web.dto.Manufacturer;
 import com.turbointernational.metadata.web.dto.Part;
 import com.turbointernational.metadata.web.dto.PartType;
@@ -89,238 +118,6 @@ public class DtoMapperServiceTest {
         assertEquals("Turbo International", dtoManufacturer.getName());
     }
 
-    @Test
-    public void testMapOfActuator() {
-        com.turbointernational.metadata.entity.PartType entityPartTypeActuator = new com.turbointernational.metadata.entity.PartType();
-        entityPartTypeActuator.setId(30L);
-        entityPartTypeActuator.setName("Actuator");
-        com.turbointernational.metadata.entity.Manufacturer manufacturerTurboInternational = new com.turbointernational.metadata.entity.Manufacturer();
-        manufacturerTurboInternational.setId(11L);
-        manufacturerTurboInternational.setName("Turbo International");
-        Actuator actuator = new Actuator();
-        actuator.setId(63497L);
-        actuator.setName(null);
-        actuator.setDescription("*ND* ACTUATOR, K03");
-        actuator.setManufacturerPartNumber("9-D-6079");
-        actuator.setManufacturer(manufacturerTurboInternational);
-        actuator.setPartType(entityPartTypeActuator);
-        Part dtoPart = dtoMapperService.map(actuator, Part.class);
-        assertNotNull(dtoPart);
-        assertEquals((Long) 63497L, dtoPart.getPartId());
-        assertEquals("9-D-6079", dtoPart.getPartNumber());
-        assertNull(dtoPart.getName());
-        assertEquals("*ND* ACTUATOR, K03", dtoPart.getDescription());
-        assertNotNull(dtoPart.getPartType());
-        assertEquals((Long) 30L, dtoPart.getPartType().getId());
-        assertEquals("Actuator", dtoPart.getPartType().getName());
-        assertNotNull(dtoPart.getManufacturer());
-        assertEquals((Long) 11L, dtoPart.getManufacturer().getId());
-        assertEquals("Turbo International", dtoPart.getManufacturer().getName());
-    }
-
-    @Test
-    public void testMapOfBackplate() {
-        com.turbointernational.metadata.entity.PartType entityPartTypeBackplate = new com.turbointernational.metadata.entity.PartType();
-        entityPartTypeBackplate.setId(34L);
-        entityPartTypeBackplate.setName("Backplate");
-        com.turbointernational.metadata.entity.Manufacturer manufacturerTurboInternational = new com.turbointernational.metadata.entity.Manufacturer();
-        manufacturerTurboInternational.setId(11L);
-        manufacturerTurboInternational.setName("Turbo International");
-        Backplate backplate = new Backplate();
-        backplate.setId(49576L);
-        backplate.setName(null);
-        backplate.setDescription("*DL2* BP, GT2259");
-        backplate.setManufacturerPartNumber("5-A-4915");
-        backplate.setManufacturer(manufacturerTurboInternational);
-        backplate.setPartType(entityPartTypeBackplate);
-        Part dtoPart = dtoMapperService.map(backplate, Part.class);
-        assertNotNull(dtoPart);
-        assertEquals((Long) 49576L, dtoPart.getPartId());
-        assertEquals("5-A-4915", dtoPart.getPartNumber());
-        assertNull(dtoPart.getName());
-        assertEquals("*DL2* BP, GT2259", dtoPart.getDescription());
-        assertNotNull(dtoPart.getPartType());
-        assertEquals((Long) 34L, dtoPart.getPartType().getId());
-        assertEquals("Backplate", dtoPart.getPartType().getName());
-        assertNotNull(dtoPart.getManufacturer());
-        assertEquals((Long) 11L, dtoPart.getManufacturer().getId());
-        assertEquals("Turbo International", dtoPart.getManufacturer().getName());
-    }
-
-    @Test
-    public void testMapOfBackplateSealplate() {
-        com.turbointernational.metadata.entity.PartType entityPartTypeBackplateSealplate = new com.turbointernational.metadata.entity.PartType();
-        entityPartTypeBackplateSealplate.setId(14L);
-        entityPartTypeBackplateSealplate.setName("Backplate / Sealplate");
-        com.turbointernational.metadata.entity.Manufacturer manufacturerGarrett = new com.turbointernational.metadata.entity.Manufacturer();
-        manufacturerGarrett.setId(1L);
-        manufacturerGarrett.setName("Garrett");
-        BackplateSealplate backplateSealplate = new BackplateSealplate();
-        backplateSealplate.setId(44767L);
-        backplateSealplate.setName("Backplate");
-        backplateSealplate.setDescription("removed interchangeability from KKK part 5304-151-5703");
-        backplateSealplate.setManufacturerPartNumber("5304-151-5703");
-        backplateSealplate.setManufacturer(manufacturerGarrett);
-        backplateSealplate.setPartType(entityPartTypeBackplateSealplate);
-        Part dtoPart = dtoMapperService.map(backplateSealplate, Part.class);
-        assertNotNull(dtoPart);
-        assertEquals((Long) 44767L, dtoPart.getPartId());
-        assertEquals("5304-151-5703", dtoPart.getPartNumber());
-        assertEquals("Backplate", dtoPart.getName());
-        assertEquals("removed interchangeability from KKK part 5304-151-5703", dtoPart.getDescription());
-        assertNotNull(dtoPart.getPartType());
-        assertEquals((Long) 14L, dtoPart.getPartType().getId());
-        assertEquals("Backplate / Sealplate", dtoPart.getPartType().getName());
-        assertNotNull(dtoPart.getManufacturer());
-        assertEquals((Long) 1L, dtoPart.getManufacturer().getId());
-        assertEquals("Garrett", dtoPart.getManufacturer().getName());
-    }
-
-    @Test
-    public void testMapOfBearingHousing() {
-        com.turbointernational.metadata.entity.PartType entityPartTypeBearingHousing = new com.turbointernational.metadata.entity.PartType();
-        entityPartTypeBearingHousing.setId(13L);
-        entityPartTypeBearingHousing.setName("Bearing Housing");
-        com.turbointernational.metadata.entity.Manufacturer manufacturerGarrett = new com.turbointernational.metadata.entity.Manufacturer();
-        manufacturerGarrett.setId(1L);
-        manufacturerGarrett.setName("Garrett");
-        BearingHousing bearingHousing = new BearingHousing();
-        bearingHousing.setId(43891L);
-        bearingHousing.setName("Bearing Housing");
-        bearingHousing.setDescription(null);
-        bearingHousing.setManufacturerPartNumber("430027-0021");
-        bearingHousing.setManufacturer(manufacturerGarrett);
-        bearingHousing.setPartType(entityPartTypeBearingHousing);
-        Part dtoPart = dtoMapperService.map(bearingHousing, Part.class);
-        assertNotNull(dtoPart);
-        assertEquals((Long) 43891L, dtoPart.getPartId());
-        assertEquals("430027-0021", dtoPart.getPartNumber());
-        assertEquals("Bearing Housing", dtoPart.getName());
-        assertNull(dtoPart.getDescription());
-        assertNotNull(dtoPart.getPartType());
-        assertEquals((Long) 13L, dtoPart.getPartType().getId());
-        assertEquals("Bearing Housing", dtoPart.getPartType().getName());
-        assertNotNull(dtoPart.getManufacturer());
-        assertEquals((Long) 1L, dtoPart.getManufacturer().getId());
-        assertEquals("Garrett", dtoPart.getManufacturer().getName());
-    }
-
-    @Test
-    public void testMapOfBoltScrew() {
-        com.turbointernational.metadata.entity.PartType entityPartTypeBoltScrew = new com.turbointernational.metadata.entity.PartType();
-        entityPartTypeBoltScrew.setId(35L);
-        entityPartTypeBoltScrew.setName("Bolt - Screw");
-        com.turbointernational.metadata.entity.Manufacturer manufacturerTurboInternational = new com.turbointernational.metadata.entity.Manufacturer();
-        manufacturerTurboInternational.setId(11L);
-        manufacturerTurboInternational.setName("Turbo International");
-        BoltScrew boltScrew = new BoltScrew();
-        boltScrew.setId(47751L);
-        boltScrew.setName("BOLT, T18, 5/16-18, C/END");
-        boltScrew.setDescription("BOLT, T18, 5/16-18, C/END");
-        boltScrew.setManufacturerPartNumber("8-A-0152");
-        boltScrew.setManufacturer(manufacturerTurboInternational);
-        boltScrew.setPartType(entityPartTypeBoltScrew);
-        Part dtoPart = dtoMapperService.map(boltScrew, Part.class);
-        assertNotNull(dtoPart);
-        assertEquals((Long) 47751L, dtoPart.getPartId());
-        assertEquals("8-A-0152", dtoPart.getPartNumber());
-        assertEquals("BOLT, T18, 5/16-18, C/END", dtoPart.getName());
-        assertEquals("BOLT, T18, 5/16-18, C/END", dtoPart.getDescription());
-        assertNotNull(dtoPart.getPartType());
-        assertEquals((Long) 35L, dtoPart.getPartType().getId());
-        assertEquals("Bolt - Screw", dtoPart.getPartType().getName());
-        assertNotNull(dtoPart.getManufacturer());
-        assertEquals((Long) 11L, dtoPart.getManufacturer().getId());
-        assertEquals("Turbo International", dtoPart.getManufacturer().getName());
-    }
-
-    @Test
-    public void testMapOfCarbonSeal() {
-        com.turbointernational.metadata.entity.PartType entityPartTypeCarbonSeal = new com.turbointernational.metadata.entity.PartType();
-        entityPartTypeCarbonSeal.setId(48L);
-        entityPartTypeCarbonSeal.setName("Carbon Seal");
-        com.turbointernational.metadata.entity.Manufacturer manufacturerGarrett = new com.turbointernational.metadata.entity.Manufacturer();
-        manufacturerGarrett.setId(1L);
-        manufacturerGarrett.setName("Garrett");
-        CarbonSeal carbonSeal = new CarbonSeal();
-        carbonSeal.setId(44765L);
-        carbonSeal.setName("ENCAPSULATED C/SEAL");
-        carbonSeal.setDescription(null);
-        carbonSeal.setManufacturerPartNumber("409695-0000");
-        carbonSeal.setManufacturer(manufacturerGarrett);
-        carbonSeal.setPartType(entityPartTypeCarbonSeal);
-        Part dtoPart = dtoMapperService.map(carbonSeal, Part.class);
-        assertNotNull(dtoPart);
-        assertEquals((Long) 44765L, dtoPart.getPartId());
-        assertEquals("409695-0000", dtoPart.getPartNumber());
-        assertEquals("ENCAPSULATED C/SEAL", dtoPart.getName());
-        assertNull(dtoPart.getDescription());
-        assertNotNull(dtoPart.getPartType());
-        assertEquals((Long) 48L, dtoPart.getPartType().getId());
-        assertEquals("Carbon Seal", dtoPart.getPartType().getName());
-        assertNotNull(dtoPart.getManufacturer());
-        assertEquals((Long) 1L, dtoPart.getManufacturer().getId());
-        assertEquals("Garrett", dtoPart.getManufacturer().getName());
-    }
-
-    @Test
-    public void testMapOfCartridge() {
-        com.turbointernational.metadata.entity.PartType entityPartTypeCartridge = new com.turbointernational.metadata.entity.PartType();
-        entityPartTypeCartridge.setId(2L);
-        entityPartTypeCartridge.setName("Cartridge");
-        com.turbointernational.metadata.entity.Manufacturer manufacturerGarrett = new com.turbointernational.metadata.entity.Manufacturer();
-        manufacturerGarrett.setId(1L);
-        manufacturerGarrett.setName("Garrett");
-        Cartridge cartridge = new Cartridge();
-        cartridge.setId(501L);
-        cartridge.setName(null);
-        cartridge.setDescription(null);
-        cartridge.setManufacturerPartNumber("712371-0051");
-        cartridge.setManufacturer(manufacturerGarrett);
-        cartridge.setPartType(entityPartTypeCartridge);
-        Part dtoPart = dtoMapperService.map(cartridge, Part.class);
-        assertNotNull(dtoPart);
-        assertEquals((Long) 501L, dtoPart.getPartId());
-        assertEquals("712371-0051", dtoPart.getPartNumber());
-        assertNull(dtoPart.getName());
-        assertNull(dtoPart.getDescription());
-        assertNotNull(dtoPart.getPartType());
-        assertEquals((Long) 2L, dtoPart.getPartType().getId());
-        assertEquals("Cartridge", dtoPart.getPartType().getName());
-        assertNotNull(dtoPart.getManufacturer());
-        assertEquals((Long) 1L, dtoPart.getManufacturer().getId());
-        assertEquals("Garrett", dtoPart.getManufacturer().getName());
-    }
-
-    @Test
-    public void testMapOfClamp() {
-        com.turbointernational.metadata.entity.PartType entityPartTypeClamp = new com.turbointernational.metadata.entity.PartType();
-        entityPartTypeClamp.setId(19L);
-        entityPartTypeClamp.setName("Clamp");
-        com.turbointernational.metadata.entity.Manufacturer manufacturerTurboInternational = new com.turbointernational.metadata.entity.Manufacturer();
-        manufacturerTurboInternational.setId(11L);
-        manufacturerTurboInternational.setName("Turbo International");
-        Clamp clamp = new Clamp();
-        clamp.setId(47775L);
-        clamp.setName("LOCKPLATE, T18A, T/END");
-        clamp.setDescription("LOCKPLATE, T18A, T/END");
-        clamp.setManufacturerPartNumber("8-A-0190");
-        clamp.setManufacturer(manufacturerTurboInternational);
-        clamp.setPartType(entityPartTypeClamp);
-        Part dtoPart = dtoMapperService.map(clamp, Part.class);
-        assertNotNull(dtoPart);
-        assertEquals((Long) 47775L, dtoPart.getPartId());
-        assertEquals("8-A-0190", dtoPart.getPartNumber());
-        assertEquals("LOCKPLATE, T18A, T/END", dtoPart.getName());
-        assertEquals("LOCKPLATE, T18A, T/END", dtoPart.getDescription());
-        assertNotNull(dtoPart.getPartType());
-        assertEquals((Long) 19L, dtoPart.getPartType().getId());
-        assertEquals("Clamp", dtoPart.getPartType().getName());
-        assertNotNull(dtoPart.getManufacturer());
-        assertEquals((Long) 11L, dtoPart.getManufacturer().getId());
-        assertEquals("Turbo International", dtoPart.getManufacturer().getName());
-    }
-
     /**
      * Test conversion of a part ID to a Part (DTO).
      */
@@ -344,9 +141,11 @@ public class DtoMapperServiceTest {
         assertEquals("Turbo International", dtoPart.getManufacturer().getName());
     }
 
+    /**
+     * Test mapping of various Part descendants.
+     */
     @RunWith(Parameterized.class)
-    public static class PartMappingTests {
-
+    public static class PartMappingTests { 
         private DtoMapperService dtoMapperService;
 
         private Long fPartTypeId;
@@ -372,7 +171,88 @@ public class DtoMapperServiceTest {
         public static List<Object[]> parameters() {
             return Arrays.asList(new Object[][] { 
                 { 30L, "Actuator", 11L, "Turbo International",
-                  Actuator.class, 63497L, null, "*ND* ACTUATOR, K03", "9-D-6079" }
+                  Actuator.class, 63497L, null, "*ND* ACTUATOR, K03", "9-D-6079" },
+                { 34L, "Backplate", 11L, "Turbo International",
+                  Backplate.class, 49576L, null, "*DL2* BP, GT2259", "5-A-4915" },
+                { 14L, "Backplate / Sealplate", 1L, "Garrett",
+                  BackplateSealplate.class, 44767L, "Backplate",
+                  "removed interchangeability from KKK part 5304-151-5703", "5304-151-5703" },
+                { 13L, "Bearing Housing",  1L, "Garrett",
+                  BearingHousing.class, 43891L, "Bearing Housing", null, "430027-0021" },
+                { 35L, "Bolt - Screw", 11L, "Turbo International",
+                  BoltScrew.class, 47751L, "BOLT, T18, 5/16-18, C/END",
+                  "BOLT, T18, 5/16-18, C/END", "8-A-0152" },
+                { 48L, "Carbon Seal", 1L, "Garrett", 
+                  CarbonSeal.class, 44765L, "ENCAPSULATED C/SEAL", null, "409695-0000" },
+                { 2L, "Cartridge", 1L, "Garrett",
+                  Cartridge.class, 501L, null, null, "712371-0051" },
+                { 19L, "Clamp", 11L, "Turbo International",
+                  Clamp.class, 47775L, "LOCKPLATE, T18A, T/END", "LOCKPLATE, T18A, T/END", "8-A-0190" },
+                { 31L, "Compressor Cover", 11L, "Turbo International",
+                  CompressorCover.class, 67924L, null, "*ND* COMP HSG, HX55", "13-B-5333" },
+                { 11L, "Compressor Wheel", 2L, "Holset",
+                  CompressorWheel.class, 43501L, "Compressor Wheel", null, "3521918" },
+                // { 8L, "Fast Wearing Component"  },
+                { 36L, "Fitting", 1L, "Garrett",
+                  Fitting.class, 75306L, "Fitting oil inlet", null, "722531-0001" },
+                { 6L, "Gasket", 1L, "Garrett",
+                  Gasket.class, 45391L, "Gasket, oil inlet", null, "409036-0000" },
+                { 49L, "Gasket Kit", 11L, "Turbo International",
+                  GasketKit.class, 68896L, "GASKET KIT, GT1749V", "GASKET KIT, GT1749V", "7-A-6440" },
+                { 15L, "Heatshield / Shroud", 8L, "Mitsubishi",
+                  HeatshieldShroud.class, 45251L, "Heatshield / Shroud", null, "49166-11100" },
+                { 5L, "Journal Bearing", 11L, "Turbo International",
+                  JournalBearing.class, 45751L, "JNL BRG, TV75, 15/20", "JNL BRG, TV75, 15/20", "8-A-3406" },
+                { 37L, "Journal Bearing Spacer", 11L, "Turbo International",
+                  JournalBearingSpacer.class, 45487L, "BEARING SPACER, GT40, STD", "BEARING SPACER, GT40, STD", "8-A-2055" },
+                { 3L, "Kit", 11L, "Turbo International",
+                  Kit.class, 50052L, null, null, "7-A-2470" },
+                // { 9L, "Major Component" },
+                // { 10L, "Minor Component" },
+                { 50L, "Misc", 1L, "Garrett", 
+                  Misc.class, 75294L, "Hose", null, "400729-0053" },
+                { 21L, "Miscellaneous Minor Components", 11L, "Turbo International",
+                  MiscMinorComponent.class, 47814L, "RETAINER, SPRING", "RETAINER, SPRING", "8-A-0339" },
+                { 16L, "Nozzle Ring", 1L, "Garrett",
+                  NozzleRing.class, 45367L, "Nozzle Ring", null, "717505-0001" },
+                { 38L, "Nut", 11L, "Turbo International",
+                  Nut.class, 47760L, "LOCKNUT, T3/4, 1/4-28, RH", "SHAFT NUT, T3/4, 1/4-28, RH", "8-A-0163" },
+                { 17L, "O Ring", 11L, "Turbo International",
+                  ORing.class, 47757L, "O-RING, 41x1.8mm, S/PLT", "O-RING, 41x1.8mm, S/PLT", "8-A-0160" },
+                { 18L, "Oil Deflector", 11L, "Turbo International",
+                  OilDeflector.class, 47977L, "OIL DEFLECTOR", "OIL DEFLECTOR", "8-B-0115" },
+                // { 51L, "Part" },
+                { 39L, "Pin", 11L, "Turbo International",
+                  Pin.class, 47863L, "ANTI-ROT PIN, JNL BRG, GT15/25", "ANTI-ROT PIN, JNL BRG, GT15/25", "8-A-1937" },
+                { 4L, "Piston Ring", 3L, "I.H.I.",
+                  PistonRing.class, 46495L, "Compressor End/Large", null, "070T-010" },
+                { 32L, "Plug", 11L, "Turbo International",
+                  Plug.class, 49833L, null, "test1", "8-F-2066" },
+                { 40L, "Retaining Ring", 11L, "Turbo International",
+                  RetainingRing.class, 47792L, "RET RING, JNL BRG", "RET RING, JNL BRG", "8-A-0251" },
+                { 41L, "Seal Plate", 8L, "Mitsubishi",
+                  SealPlate.class, 44984L, "Backplate / Sealplate", null, "49135-00044" },
+                // { 52L, "Shroud" },
+                { 42L, "Spring", 11L, "Turbo International",
+                  Spring.class, 47785L, "THRUST SPRING, BACKPLATE", "THRUST SPRING, BACKPLATE", "8-A-0237" },
+                { 43L, "Thrust Bearing", 11L, "Turbo International",
+                  ThrustBearing.class, 47779L, "THRUST BRG, TE06", "THRUST BRG, TE06", "8-A-0198" },
+                { 44L, "Thrust Collar", 11L, "Turbo International",
+                  ThrustCollar.class, 47802L, "THRUST COLLAR, T3/4, C/SEAL", "THRUST COLLAR, T3/4, C/SEAL", "8-A-0290" },
+                { 20L, "Thrust Parts", 11L, "Turbo International",
+                  ThrustPart.class, 47888L, "*NLA* T/PLATE ASSY, T12", null, "8-A-2240" },
+                { 45L, "Thrust Spacer", 11L, "Turbo International",
+                  ThrustSpacer.class, 47781L, "THRUST COLLAR, TW94", "OIL FLINGER, TW94", "8-A-0209" },
+                { 46L, "Thrust Washer", 11L, "Turbo International",
+                  ThrustWasher.class, 47851L, "THRUST WSHR, T2, 360°", "THRUST WASHER, T2, 360°", "8-A-1825" }, 
+                { 33L, "Turbine Housing", 11L, "Turbo International",
+                  TurbineHousing.class, 67911L, null, "*ND* Turbine Housing, HX55", "12-B-5332" },
+                { 12L, "Turbine Wheel", 9L, "Schwitzer",
+                  TurbineWheel.class, 42751L, "Turbine Wheel", null, "315273" },
+                { 1L, "Turbo", 1L, "Garrett",
+                  Turbo.class, 6676L, null, null, "465354-0002" },
+                { 47L, "Washer", 11L, "Turbo International",
+                  Washer.class, 47752L, "WASHER, 8mm", "WASHER, 8mm", "8-A-0154" }
             });
         }
         //@formatter:on
