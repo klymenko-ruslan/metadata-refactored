@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
 import com.turbointernational.metadata.service.GraphDbService.GetInterchangeResponse;
 import com.turbointernational.metadata.web.dto.Ancestor;
+import com.turbointernational.metadata.web.dto.Bom;
 import com.turbointernational.metadata.web.dto.Interchange;
 import com.turbointernational.metadata.web.dto.Manufacturer;
 import com.turbointernational.metadata.web.dto.Part;
@@ -47,6 +49,7 @@ public class DtoMapperService {
 
     };
 
+    /*
     protected Converter<Long[], Part[]> partIds2Parts = new AbstractConverter<Long[], Part[]>() {
 
         @Override
@@ -68,11 +71,13 @@ public class DtoMapperService {
         }
 
     };
+    */
 
     @PostConstruct
     public void init() {
         modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setImplicitMappingEnabled(false);
+        modelMapper.addConverter(partId2Part);
         // DTO: PartType
         modelMapper.createTypeMap(com.turbointernational.metadata.entity.PartType.class, PartType.class)
                 .addMapping(com.turbointernational.metadata.entity.PartType::getId, PartType::setId)
@@ -146,8 +151,12 @@ public class DtoMapperService {
         // DTO: Interchange
         modelMapper.createTypeMap(GetInterchangeResponse.class, Interchange.class)
                 .addMapping(GetInterchangeResponse::getHeaderId, Interchange::setId)
-                .addMapping(GetInterchangeResponse::getParts, Interchange::setParts)
-                .setPropertyConverter(partIds2Parts);
+                .addMapping(GetInterchangeResponse::getParts, Interchange::setParts);
+        // DTO: BOM
+        modelMapper.createTypeMap(GetBomsResponse.Row.class, Bom.class)
+                .addMapping(GetBomsResponse.Row::getPartId, Bom::setPartId)
+                .addMapping(GetBomsResponse.Row::getQty, Bom::setQty)
+                .addMapping(GetBomsResponse.Row::getInterchanges, Bom::setInterchanges);
     }
 
     public <D> D map(Object source, Class<D> destinationType) {

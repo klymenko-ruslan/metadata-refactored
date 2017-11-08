@@ -66,8 +66,8 @@ public class InterchangeService {
     @Transactional
     public Interchange findById(Long id) {
         GetInterchangeResponse response = graphDbService.findInterchangeById(id);
-        // return dtoMapperService.map(response, Interchange.class);
-        return Interchange.from(partDao, response);
+        return dtoMapperService.map(response, Interchange.class);
+        // return Interchange.from(partDao, response);
     }
 
     public Interchange findForPart(Part part) {
@@ -84,8 +84,7 @@ public class InterchangeService {
      */
     public Interchange findForPart(Long partId) {
         GetInterchangeResponse response = graphDbService.findInterchangeForPart(partId);
-        // return dtoMapperService.map(response, Interchange.class);
-        return Interchange.from(partDao, response);
+        return dtoMapperService.map(response, Interchange.class);
     }
 
     public void initInterchange(Part part) {

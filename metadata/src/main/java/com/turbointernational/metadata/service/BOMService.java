@@ -75,6 +75,9 @@ public class BOMService {
     @Autowired
     private GraphDbService graphDbService;
 
+    @Autowired
+    private DtoMapperService dtoMapperService;
+
     public static class CreateBOMsRequest {
 
         public static class Row {
@@ -440,18 +443,21 @@ public class BOMService {
         }
         GetBomsResponse bomsResponse = graphDbService.getBoms(parentPartId);
         partChangeService.addedBoms(parentPartId, relatedPartIds);
-        Bom[] boms = Bom.from(partDao, bomsResponse.getRows());
+        // Bom[] boms = Bom.from(partDao, bomsResponse.getRows());
+        Bom[] boms = dtoMapperService.map(bomsResponse.getRows(), Bom[].class);
         return new CreateBOMsResponse(failures, boms);
     }
 
     public Bom[] getByParentId(Long partId) throws Exception {
         GetBomsResponse response = graphDbService.getBoms(partId);
-        return Bom.from(partDao, response.getRows());
+        return dtoMapperService.map(response.getRows(), Bom[].class);
+        // return Bom.from(partDao, response.getRows());
     }
 
     public Bom[] getParentsForBom(Long partId) throws Exception {
         GetBomsResponse response = graphDbService.getParentsBoms(partId);
-        return Bom.from(partDao, response.getRows());
+        return dtoMapperService.map(response.getRows(), Bom[].class);
+        // return Bom.from(partDao, response.getRows());
     }
 
     public Bom[] getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {
@@ -548,7 +554,8 @@ public class BOMService {
         deleteBomItem(parentPartId, childPartId);
         // Return list of BOMs after this delete operation.
         GetBomsResponse bomsResponse = graphDbService.getBoms(parentPartId);
-        return Bom.from(partDao, bomsResponse.getRows());
+        return dtoMapperService.map(bomsResponse.getRows(), Bom[].class);
+        // return Bom.from(partDao, bomsResponse.getRows());
     }
 
     public Bom[] delete(Long parentPartId, Long[] childrenIds) throws IOException {
@@ -557,7 +564,8 @@ public class BOMService {
         }
         // Return list of BOMs after this delete operation.
         GetBomsResponse bomsResponse = graphDbService.getBoms(parentPartId);
-        return Bom.from(partDao, bomsResponse.getRows());
+        return dtoMapperService.map(bomsResponse.getRows(), Bom[].class);
+        // return Bom.from(partDao, bomsResponse.getRows());
     }
 
     public Bom[] removeFromParent(Long parentPartId, Long childId) throws Exception {

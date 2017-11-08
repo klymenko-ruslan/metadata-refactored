@@ -56,6 +56,10 @@ import com.turbointernational.metadata.entity.part.types.TurbineHousing;
 import com.turbointernational.metadata.entity.part.types.TurbineWheel;
 import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.entity.part.types.Washer;
+import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
+import com.turbointernational.metadata.service.GraphDbService.GetInterchangeResponse;
+import com.turbointernational.metadata.web.dto.Bom;
+import com.turbointernational.metadata.web.dto.Interchange;
 import com.turbointernational.metadata.web.dto.Manufacturer;
 import com.turbointernational.metadata.web.dto.Part;
 import com.turbointernational.metadata.web.dto.PartType;
@@ -141,11 +145,81 @@ public class DtoMapperServiceTest {
         assertEquals("Turbo International", dtoPart.getManufacturer().getName());
     }
 
+    @Test
+    public void testMapInterchange() {
+        Long headerId = 1233L;
+        Long[] parts = new Long[] { 49576L };
+        GetInterchangeResponse response = new GetInterchangeResponse(headerId, parts);
+        // when(mappingContextLong2Part.getSource()).thenReturn( /* part ID */ 49576L);
+        when(partDao.findOne(49576L)).thenReturn(entityPart);
+        Interchange interchange = dtoMapperService.map(response, Interchange.class);
+        assertNotNull(interchange);
+        assertEquals(headerId, interchange.getId());
+        assertNotNull(interchange.getParts());
+        assertEquals(1, interchange.getParts().length);
+        Part dtoPart = interchange.getParts()[0];
+        assertNotNull(dtoPart);
+        assertEquals((Long) 49576L, dtoPart.getPartId());
+        assertEquals("5-A-4915", dtoPart.getPartNumber());
+        assertEquals("test name", dtoPart.getName());
+        assertEquals("test description", dtoPart.getDescription());
+        assertNotNull(dtoPart.getPartType());
+        assertEquals((Long) 34L, dtoPart.getPartType().getId());
+        assertEquals("Backplate", dtoPart.getPartType().getName());
+        assertNotNull(dtoPart.getManufacturer());
+        assertEquals((Long) 11L, dtoPart.getManufacturer().getId());
+        assertEquals("Turbo International", dtoPart.getManufacturer().getName());
+    }
+
+    @Test
+    public void testMapBom() {
+        GetBomsResponse.Row row = new GetBomsResponse.Row();
+        com.turbointernational.metadata.entity.Manufacturer interchangePartManufacturer = new com.turbointernational.metadata.entity.Manufacturer();
+        interchangePartManufacturer.setId(11L);
+        interchangePartManufacturer.setName("Turbo International");
+        com.turbointernational.metadata.entity.PartType interchangePartType = new com.turbointernational.metadata.entity.PartType();
+        interchangePartType.setId(12L);
+        interchangePartType.setName("Turbine Wheel");
+        com.turbointernational.metadata.entity.part.Part interchagnePart = new Backplate();
+        interchagnePart.setId(42768L);
+        interchagnePart.setName("Turbo Wheel");
+        interchagnePart.setDescription("S/W, T3, LH");
+        interchagnePart.setManufacturerPartNumber("2-A-1894");
+        interchagnePart.setManufacturer(interchangePartManufacturer);
+        interchagnePart.setPartType(interchangePartType);
+        row.setPartId(49576L);
+        row.setQty(4);
+        row.setInterchanges(new Long[] {42768L});
+        when(partDao.findOne(42768L)).thenReturn(interchagnePart);
+        Bom dtoBom = dtoMapperService.map(row, Bom.class);
+        assertNotNull(dtoBom);
+        assertEquals((Long) 49576L, dtoBom.getPartId());
+        assertEquals("5-A-4915", dtoBom.getPartNumber());
+        assertNotNull(dtoBom.getPartType());
+        assertEquals((Long) 34L, dtoBom.getPartType().getId());
+        assertEquals("Backplate", dtoBom.getPartType().getName());
+        assertEquals((Integer) 4, dtoBom.getQty());
+        assertNotNull(row.getInterchanges());
+        assertEquals(1, row.getInterchanges().length);
+        Part dtoInterchangePart = dtoBom.getInterchanges()[0];
+        assertNotNull(dtoInterchangePart);
+        assertEquals((Long) 42768L, dtoInterchangePart.getPartId());
+        assertEquals("2-A-1894", dtoInterchangePart.getPartNumber());
+        assertEquals("Turbo Wheel", dtoInterchangePart.getName());
+        assertEquals("S/W, T3, LH", dtoInterchangePart.getDescription());
+        assertNotNull(dtoInterchangePart.getPartType());
+        assertEquals((Long) 12L, dtoInterchangePart.getPartType().getId());
+        assertEquals("Turbine Wheel", dtoInterchangePart.getPartType().getName());
+        assertNotNull(dtoInterchangePart.getManufacturer());
+        assertEquals((Long) 11L, dtoInterchangePart.getManufacturer().getId());
+        assertEquals("Turbo International", dtoInterchangePart.getManufacturer().getName());
+    }
+
     /**
      * Test mapping of various Part descendants.
      */
     @RunWith(Parameterized.class)
-    public static class PartMappingTests { 
+    public static class PartMappingTests {
         private DtoMapperService dtoMapperService;
 
         private Long fPartTypeId;

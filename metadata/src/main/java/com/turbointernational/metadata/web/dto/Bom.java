@@ -41,6 +41,7 @@ public class Bom {
         this.interchanges = interchanges;
     }
 
+    /*
     public static Bom from(PartDao dao, GetBomsResponse.Row r) {
         Long id = r.getPartId();
         com.turbointernational.metadata.entity.part.Part p = dao.findOne(id);
@@ -64,6 +65,7 @@ public class Bom {
         }
         return retVal;
     }
+    */
 
     public Long getPartId() {
         return partId;
