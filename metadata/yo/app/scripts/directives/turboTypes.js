@@ -27,7 +27,7 @@ angular.module('ngMetaCrudApp')
                 {partId: $scope.part.id}
               ).result.then(function(turboTypes) {
                 $scope.part.turboTypes = turboTypes;
-                $scope.turboTypesTableParams.settings({dataset: $scope.part.turboTypes})
+                $scope.turboTypesTableParams.settings({dataset: $scope.part.turboTypes});
               });
             };
 
@@ -39,7 +39,7 @@ angular.module('ngMetaCrudApp')
                     restService.removeTurboType($scope.part.id, turboTypeToRemove.id).then(
                       function(turboTypes) {
                         $scope.part.turboTypes = turboTypes;
-                        $scope.turboTypesTableParams.settings({dataset: $scope.part.turboTypes})
+                        $scope.turboTypesTableParams.settings({dataset: $scope.part.turboTypes});
                         toastr.success('The turbo type [' +
                           turboTypeToRemove.id + '] - ' +
                           turboTypeToRemove.manufacturer.name + ' - ' +

@@ -14,13 +14,13 @@
   <div class="col-xs-12">
     <table data-ng-table="ancestorsTableParams" class="table table-bordered table-striped table-hover table-expand">
       <tr data-ng-repeat="item in $data">
-        <td title="'Part #'" class="text-left text-nowrap" data-sortable="'partNumber'">
-          <a authorize="ROLE_READ" data-ng-href="/part/{{item.partId}}">
-            {{item.partNumber}}
+        <td title="'Part #'" class="text-left text-nowrap" data-sortable="'part.partNumber'">
+          <a authorize="ROLE_READ" data-ng-href="/part/{{item.part.partId}}">
+            {{item.part.partNumber}}
           </a>
         </td>
-        <td title="'Part Type'" class="text-left" data-sortable="'partType.name'">{{item.partType.name}}</td>
-        <td title="'Manufacturer'" class="text-left" data-sortable="'manufacturer.name'">{{item.manufacturer.name}}</td>
+        <td title="'Part Type'" class="text-left" data-sortable="'part.partType.name'">{{item.part.partType.name}}</td>
+        <td title="'Manufacturer'" class="text-left" data-sortable="'part.manufacturer.name'">{{item.part.manufacturer.name}}</td>
         <td title="'Relation Type'" class="text-left">
             <span data-ng-show="item.relationType">direct</span>
             <span data-ng-hide="item.relationType">interchange</span>

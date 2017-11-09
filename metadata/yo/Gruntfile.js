@@ -144,6 +144,7 @@ module.exports = function (grunt) {
               6233,   // Many BOMs; Tabs: 'Prices', 'Also Bought'
               6246,
               6681,   // Turbo
+              6692,   // Alternative BOM(s)
               17415, 25493,  // Tabs: 'Applications'
               29878,  // Tabs: 'Applications'
               33284,

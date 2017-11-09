@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse;
 import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
 import com.turbointernational.metadata.service.GraphDbService.GetInterchangeResponse;
 import com.turbointernational.metadata.web.dto.Ancestor;
@@ -139,22 +140,17 @@ public class DtoMapperService {
                  .include(com.turbointernational.metadata.entity.part.types.Turbo.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.Washer.class, Part.class);
         // DTO: Ancestor
-        modelMapper.createTypeMap(com.turbointernational.metadata.entity.part.Part.class, Ancestor.class)
-                .addMapping(com.turbointernational.metadata.entity.part.Part::getId, Ancestor::setPartId)
-                .addMapping(com.turbointernational.metadata.entity.part.Part::getName, Ancestor::setName)
-                .addMapping(com.turbointernational.metadata.entity.part.Part::getDescription, Ancestor::setDescription)
-                .addMapping(com.turbointernational.metadata.entity.part.Part::getManufacturerPartNumber,
-                        Ancestor::setPartNumber)
-                .addMapping(com.turbointernational.metadata.entity.part.Part::getManufacturer,
-                        Ancestor::setManufacturer)
-                .addMapping(com.turbointernational.metadata.entity.part.Part::getPartType, Ancestor::setPartType);
+        modelMapper.createTypeMap(GetAncestorsResponse.Row.class, Ancestor.class)
+                .addMapping(GetAncestorsResponse.Row::getPartId, Ancestor::setPart)
+                .addMapping(GetAncestorsResponse.Row::isRelationType, Ancestor::setRelationType)
+                .addMapping(GetAncestorsResponse.Row::getRelationDistance, Ancestor::setRelationDistance);
         // DTO: Interchange
         modelMapper.createTypeMap(GetInterchangeResponse.class, Interchange.class)
                 .addMapping(GetInterchangeResponse::getHeaderId, Interchange::setId)
                 .addMapping(GetInterchangeResponse::getParts, Interchange::setParts);
         // DTO: BOM
         modelMapper.createTypeMap(GetBomsResponse.Row.class, Bom.class)
-                .addMapping(GetBomsResponse.Row::getPartId, Bom::setPartId)
+                .addMapping(GetBomsResponse.Row::getPartId, Bom::setPart)
                 .addMapping(GetBomsResponse.Row::getQty, Bom::setQty)
                 .addMapping(GetBomsResponse.Row::getInterchanges, Bom::setInterchanges);
     }

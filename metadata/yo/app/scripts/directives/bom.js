@@ -113,23 +113,23 @@ angular.module('ngMetaCrudApp')
           });
 
           $scope.isModifying = function(b) {
-            return angular.isDefined($scope.modifyValues[b.partId]);
+            return angular.isDefined($scope.modifyValues[b.part.partId]);
           };
 
           $scope.modifyStart = function(b) {
-            $scope.modifyValues[b.partId] = b.qty;
+            $scope.modifyValues[b.part.partId] = b.qty;
           };
 
           $scope.modifyCancel = function(b) {
-            delete $scope.modifyValues[b.partId];
+            delete $scope.modifyValues[b.part.partId];
           };
 
           $scope.modifySave = function(b) {
-            var quantity = $scope.modifyValues[b.partId];
-            restService.updateBom($scope.parentPartId, b.partId, quantity).then(
+            var quantity = $scope.modifyValues[b.part.partId];
+            restService.updateBom($scope.parentPartId, b.part.partId, quantity).then(
               function() {
                 b.qty = quantity;
-                delete $scope.modifyValues[b.partId];
+                delete $scope.modifyValues[b.part.partId];
               },
               function() {}
             );
@@ -155,7 +155,7 @@ angular.module('ngMetaCrudApp')
               .then(
                 function yes() {
                   var children = _findSelectedBomItems();
-                  var ids = _.map(children, function(b) { return b.partId; });
+                  var ids = _.map(children, function(b) { return b.part.partId; });
                   restService.removeBomItems($scope.parentPartId, ids).then(
                     function success(updatedBom) {
                       _initBoms(updatedBom);
@@ -194,7 +194,7 @@ angular.module('ngMetaCrudApp')
           };
 
           $scope.newAltGroup = function() {
-            restService.createAltBomGroup($scope.parentPartId, $scope.highlightedBom.partId).then(
+            restService.createAltBomGroup($scope.parentPartId, $scope.highlightedBom.part.partId).then(
               function success(partGroups) {
                 _updateAltBoms(partGroups);
                  toastr.success('The alternative BOM group has been successfully created.');
@@ -222,7 +222,7 @@ angular.module('ngMetaCrudApp')
               'Do you really want to remove selected part(s) from the alternate BOM? ').result.then(
                 function yes() {
                   var ids = _findSelectedAltBomItems(altHeaderId);
-                  restService.removeAltBomItems($scope.parentPartId, $scope.highlightedBom.partId, altHeaderId, ids).then(
+                  restService.removeAltBomItems($scope.parentPartId, $scope.highlightedBom.part.partId, altHeaderId, ids).then(
                     function success(partGroups) {
                       _updateAltBoms(partGroups);
                       toastr.success('Child part(s) removed from the alternative BOM.');
@@ -239,7 +239,7 @@ angular.module('ngMetaCrudApp')
             dialogs.confirm('Confirmation', 'Are you sure? Do you really want to remove this group ' +
               'of alternative BOM [' + altHeaderId + ']?').result.then(
               function yes() {
-                restService.deleteAltBomGroup($scope.parentPartId, $scope.highlightedBom.partId, altHeaderId).then(
+                restService.deleteAltBomGroup($scope.parentPartId, $scope.highlightedBom.part.partId, altHeaderId).then(
                   function success(partGroups) {
                     _updateAltBoms(partGroups);
                     toastr.success('The alternative BOM group [" + altHeaderId + "] has been successfully removed.');
@@ -256,7 +256,7 @@ angular.module('ngMetaCrudApp')
           };
 
           $scope.openAddAlternativeView = function(altHeaderId) {
-            $location.path('/part/' + $scope.parentPartId + '/bom/' + $scope.highlightedBom.partId + '/alt/' + altHeaderId);
+            $location.path('/part/' + $scope.parentPartId + '/bom/' + $scope.highlightedBom.part.partId + '/alt/' + altHeaderId);
           };
 
           function _updateAltBoms(partGroups) {
@@ -304,7 +304,7 @@ angular.module('ngMetaCrudApp')
               // debounce
               return;
             }
-            restService.getBomAlternatives($scope.parentPartId, b.partId).then(
+            restService.getBomAlternatives($scope.parentPartId, b.part.partId).then(
               function success(partGroups) {
                 _updateAltBoms(partGroups);
                 $scope.highlightedBom = b;

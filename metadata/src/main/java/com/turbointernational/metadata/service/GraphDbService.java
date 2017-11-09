@@ -215,6 +215,15 @@ public class GraphDbService {
             @JsonView({ View.Summary.class })
             private int relationDistance;
 
+            public Row() {
+            }
+
+            public Row(Long partId, boolean relationType, int relationDistance) {
+                this.partId = partId;
+                this.relationType = relationType;
+                this.relationDistance = relationDistance;
+            }
+
             public Long getPartId() {
                 return partId;
             }

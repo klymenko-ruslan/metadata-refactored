@@ -462,7 +462,7 @@ public class BOMService {
 
     public Bom[] getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {
         Bom[] parents = getParentsForBom(partId);  // TODO: batch?
-        Bom[] retVal = Arrays.stream(parents).filter(b -> b.getPartType().getId().equals(partTypeId))
+        Bom[] retVal = Arrays.stream(parents).filter(b -> b.getPart().getPartType().getId().equals(partTypeId))
                 .toArray(size -> new Bom[size]);
         return retVal;
     }

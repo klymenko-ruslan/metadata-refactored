@@ -56,8 +56,10 @@ import com.turbointernational.metadata.entity.part.types.TurbineHousing;
 import com.turbointernational.metadata.entity.part.types.TurbineWheel;
 import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.entity.part.types.Washer;
+import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse;
 import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
 import com.turbointernational.metadata.service.GraphDbService.GetInterchangeResponse;
+import com.turbointernational.metadata.web.dto.Ancestor;
 import com.turbointernational.metadata.web.dto.Bom;
 import com.turbointernational.metadata.web.dto.Interchange;
 import com.turbointernational.metadata.web.dto.Manufacturer;
@@ -190,14 +192,20 @@ public class DtoMapperServiceTest {
         row.setPartId(49576L);
         row.setQty(4);
         row.setInterchanges(new Long[] {42768L});
+        when(partDao.findOne(49576L)).thenReturn(entityPart); // BOM part
         when(partDao.findOne(42768L)).thenReturn(interchagnePart);
         Bom dtoBom = dtoMapperService.map(row, Bom.class);
         assertNotNull(dtoBom);
-        assertEquals((Long) 49576L, dtoBom.getPartId());
-        assertEquals("5-A-4915", dtoBom.getPartNumber());
-        assertNotNull(dtoBom.getPartType());
-        assertEquals((Long) 34L, dtoBom.getPartType().getId());
-        assertEquals("Backplate", dtoBom.getPartType().getName());
+        Part dtoPart = dtoBom.getPart();
+        assertNotNull(dtoPart);
+        assertEquals((Long) 49576L, dtoPart.getPartId());
+        assertEquals("5-A-4915", dtoPart.getPartNumber());
+        assertNotNull(dtoPart.getPartType());
+        assertEquals((Long) 34L, dtoPart.getPartType().getId());
+        assertEquals("Backplate", dtoPart.getPartType().getName());
+        assertNotNull(dtoPart.getManufacturer());
+        assertEquals((Long) 11L, dtoPart.getManufacturer().getId());
+        assertEquals("Turbo International", dtoPart.getManufacturer().getName());
         assertEquals((Integer) 4, dtoBom.getQty());
         assertNotNull(row.getInterchanges());
         assertEquals(1, row.getInterchanges().length);
@@ -213,6 +221,27 @@ public class DtoMapperServiceTest {
         assertNotNull(dtoInterchangePart.getManufacturer());
         assertEquals((Long) 11L, dtoInterchangePart.getManufacturer().getId());
         assertEquals("Turbo International", dtoInterchangePart.getManufacturer().getName());
+    }
+
+    @Test
+    public void testMapAncestors() {
+        GetAncestorsResponse.Row row = new GetAncestorsResponse.Row(49576L, true, 1);
+        when(partDao.findOne(49576L)).thenReturn(entityPart); 
+        Ancestor dtoAncestor = dtoMapperService.map(row, Ancestor.class);
+        assertNotNull(dtoAncestor);
+        Part dtoPart = dtoAncestor.getPart();
+        assertNotNull(dtoPart);
+        assertEquals((Long) 49576L, dtoPart.getPartId());
+        assertEquals("5-A-4915", dtoPart.getPartNumber());
+        assertNotNull(dtoPart.getPartType());
+        assertEquals((Long) 34L, dtoPart.getPartType().getId());
+        assertEquals("Backplate", dtoPart.getPartType().getName());
+        assertNotNull(dtoPart.getManufacturer());
+        assertEquals((Long) 11L, dtoPart.getManufacturer().getId());
+        assertEquals("Turbo International", dtoPart.getManufacturer().getName());
+        assertNotNull(dtoAncestor.getRelationType());
+        assertEquals(true, dtoAncestor.getRelationType());
+        assertEquals(1, dtoAncestor.getRelationDistance());
     }
 
     /**

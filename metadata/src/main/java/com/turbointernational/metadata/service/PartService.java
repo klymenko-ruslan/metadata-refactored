@@ -415,6 +415,8 @@ public class PartService {
     public Ancestor[] ancestors(Long partId) throws Exception {
         GetAncestorsResponse response = ancestorsIds(partId);
         Row[] rows = response.getRows();
+        Ancestor[] retVal = dtoMapperService.map(rows, Ancestor[].class);
+        /*
         int n = rows.length;
         Ancestor[] retVal = new Ancestor[n];
         for (int i = 0; i < n; i++) {
@@ -426,6 +428,7 @@ public class PartService {
             a.setRelationDistance(r.getRelationDistance());
             retVal[i] = a;
         }
+        */
         return retVal;
     }
 

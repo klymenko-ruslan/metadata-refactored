@@ -26,10 +26,10 @@
     <h3>Part BOM</h3>
     <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
       <tr data-ng-repeat="b in $data">
-        <td title="'Part Type'" data-sortable="'partType.name'">{{b.partType.name}}</td>
-        <td title="'Manufacturer'" data-sortable="'manufacturer.name'">{{b.manufacturer.name}}</td>
-        <td title="'Part#'" class="text-nowrap" data-sortable="'partNumber'">
-          <a data-ng-href="/part/{{b.partId}}">{{b.partNumber}}</a>
+        <td title="'Part Type'" data-sortable="'part.partType.name'">{{b.part.partType.name}}</td>
+        <td title="'Manufacturer'" data-sortable="'part.manufacturer.name'">{{b.part.manufacturer.name}}</td>
+        <td title="'Part#'" class="text-nowrap" data-sortable="'part.partNumber'">
+          <a data-ng-href="/part/{{b.part.partId}}">{{b.part.partNumber}}</a>
         </td>
       </tr>
       <tr data-ng-hide="$data.length > 0">

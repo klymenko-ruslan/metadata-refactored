@@ -20,18 +20,18 @@
     <td width="30" style="text-align: left" header="'ng-table/headers/checkbox_bom.html'">
       <input type="checkbox" data-ng-model="selectedItems.bom.parts[b._rowid]" data-ng-click="$event.stopPropagation();"/>
     </td>
-    <td title="'Part#'" class="text-center text-nowrap" data-sortable="'partNumber'">
-      <a data-ng-href="/part/{{b.partId}}">{{b.partNumber}}</a>
+    <td title="'Part#'" class="text-center text-nowrap" data-sortable="'part.partNumber'">
+      <a data-ng-href="/part/{{b.part.partId}}">{{b.part.partNumber}}</a>
     </td>
     <td title="'Qty'" class="text-right" data-sortable="'qty'">
       <span data-ng-hide="isModifying(b)">{{b.qty}}</span>
-      <input data-ng-model="modifyValues[b.partId]" type="text" data-ng-show="isModifying(b)"/>
+      <input data-ng-model="modifyValues[b.part.partId]" type="text" data-ng-show="isModifying(b)"/>
     </td>
-    <td title="'Type'" data-sortable="'partType.name'">
-      {{b.partType.name}}
+    <td title="'Type'" data-sortable="'part.partType.name'">
+      {{b.part.partType.name}}
     </td>
-    <td title="'Name'" data-sortable="'name'">
-      {{b.name}}
+    <td title="'Name'" data-sortable="'part.name'">
+      {{b.part.name}}
     </td>
     <td title="'Interchange'">
       <ul class="list-unstyled list-inline" style="margin-bottom:0">
@@ -83,7 +83,10 @@
           </button>
         </div>
         <div class="pull-left">
-          <h4 part-name="highlightedBom" part-name-suffix="Alternates" class="selected" style="display:inline-block;padding:4px 5px;"></h4>
+          <h4 class="selected" style="display:inline-block;padding:4px 5px;">
+            [{{highlightedBom.part.partId}}] {{highlightedBom.part.manufacturer.name}} {{highlightedBom.part.partType.name}}
+            <span style="white-space: nowrap;">{{highlightedBom.part.manufacturerPartNumber}}</span> Alternates
+          </h4>
         </div>
       </div>
     </div>
