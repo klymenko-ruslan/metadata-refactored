@@ -416,19 +416,6 @@ public class PartService {
         GetAncestorsResponse response = ancestorsIds(partId);
         Row[] rows = response.getRows();
         Ancestor[] retVal = dtoMapperService.map(rows, Ancestor[].class);
-        /*
-        int n = rows.length;
-        Ancestor[] retVal = new Ancestor[n];
-        for (int i = 0; i < n; i++) {
-            Row r = rows[i];
-            Part p = partDao.findOne(r.getPartId());
-            boolean isDirect = r.isRelationType();
-            Ancestor a = dtoMapperService.map(p, Ancestor.class);
-            a.setRelationType(isDirect);
-            a.setRelationDistance(r.getRelationDistance());
-            retVal[i] = a;
-        }
-        */
         return retVal;
     }
 
