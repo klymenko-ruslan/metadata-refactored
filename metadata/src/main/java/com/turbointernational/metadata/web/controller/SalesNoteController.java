@@ -34,7 +34,6 @@ import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.exception.RemovePrimaryPartException;
 import com.turbointernational.metadata.service.SalesNoteService;
 import com.turbointernational.metadata.util.View;
-import com.turbointernational.metadata.web.dto.UpdateSalesNoteRequest;
 
 @Controller
 @RequestMapping(value = { "/other/salesNote", "/metadata/other/salesNote" })
@@ -125,6 +124,23 @@ public class SalesNoteController {
 
         public void setAttachIds(Long[] attachIds) {
             this.attachIds = attachIds;
+        }
+
+    }
+
+    public static class UpdateSalesNoteRequest implements Serializable {
+
+        private static final long serialVersionUID = -7660933380532503595L;
+
+        @NotNull
+        private String comment;
+
+        public String getComment() {
+            return comment;
+        }
+
+        public void setComment(String comment) {
+            this.comment = comment;
         }
 
     }

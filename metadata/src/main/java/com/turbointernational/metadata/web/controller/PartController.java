@@ -53,7 +53,7 @@ import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Ancestor;
 import com.turbointernational.metadata.web.dto.Page;
-import com.turbointernational.metadata.web.dto.ProductPricesDto;
+import com.turbointernational.metadata.web.dto.ProductPrices;
 
 @RequestMapping(value = "/metadata")
 @RestController
@@ -340,7 +340,7 @@ public class PartController {
 
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/part/{id}/prices", method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody ProductPricesDto getPrices(HttpServletRequest httpRequest, @PathVariable("id") Long id) {
+    public @ResponseBody ProductPrices getPrices(HttpServletRequest httpRequest, @PathVariable("id") Long id) {
         // Prices for a part is loading during initialization of the Angular's
         // controller for a part view.
         // But at that initialization we have no reliable way in a JavaScript

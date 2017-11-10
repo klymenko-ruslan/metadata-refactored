@@ -27,7 +27,7 @@ import com.turbointernational.metadata.exception.PartNotFound;
 import com.turbointernational.metadata.service.MagmiService;
 import com.turbointernational.metadata.service.PriceService;
 import com.turbointernational.metadata.util.View;
-import com.turbointernational.metadata.web.dto.ProductPricesDto;
+import com.turbointernational.metadata.web.dto.ProductPrices;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryDetailDto;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryHeaderDto;
 import com.turbointernational.metadata.web.dto.mas90.InvoicesChunk;
@@ -54,9 +54,9 @@ public class MagmiController {
     @ResponseBody
     @Transactional(noRollbackFor = PartNotFound.class)
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    public List<ProductPricesDto> getProductPricesByIdsAsGet(@RequestParam(name = "id") List<Long> partIds)
+    public List<ProductPrices> getProductPricesByIdsAsGet(@RequestParam(name = "id") List<Long> partIds)
             throws IOException {
-        List<ProductPricesDto> retVal = priceService.getProductsPricesByIds(partIds);
+        List<ProductPrices> retVal = priceService.getProductsPricesByIds(partIds);
         return retVal;
     }
 
@@ -64,9 +64,9 @@ public class MagmiController {
     @ResponseBody
     @Transactional(noRollbackFor = PartNotFound.class)
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    public List<ProductPricesDto> getProductPricesByNumsAsGet(@RequestParam(name = "id") List<String> partNums)
+    public List<ProductPrices> getProductPricesByNumsAsGet(@RequestParam(name = "id") List<String> partNums)
             throws IOException {
-        List<ProductPricesDto> retVal = priceService.getProductsPricesByNums(partNums);
+        List<ProductPrices> retVal = priceService.getProductsPricesByNums(partNums);
         return retVal;
     }
 
@@ -74,10 +74,10 @@ public class MagmiController {
     @ResponseBody
     @Transactional(noRollbackFor = PartNotFound.class)
     @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
-    public List<ProductPricesDto> getProductPricesByIdsAsPost(
+    public List<ProductPrices> getProductPricesByIdsAsPost(
             @RequestParam(name = "inputtype", defaultValue = "id") InputTypeEnum inputType, @RequestBody String strJson)
             throws IOException {
-        List<ProductPricesDto> retVal;
+        List<ProductPrices> retVal;
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = mapper.getFactory();
         JsonParser jp = factory.createParser(strJson);
@@ -124,25 +124,25 @@ public class MagmiController {
         return retVal;
     }
 
-    private List<ProductPricesDto> getPricesForPartIds(JsonNode json) {
+    private List<ProductPrices> getPricesForPartIds(JsonNode json) {
         List<Long> partIds = new ArrayList<>(json.size());
         for (Iterator<JsonNode> iter = json.iterator(); iter.hasNext();) {
             JsonNode jn = iter.next();
             Long partId = jn.asLong();
             partIds.add(partId);
         }
-        List<ProductPricesDto> retVal = priceService.getProductsPricesByIds(partIds);
+        List<ProductPrices> retVal = priceService.getProductsPricesByIds(partIds);
         return retVal;
     }
 
-    private List<ProductPricesDto> getPricesForPartNums(JsonNode json) {
+    private List<ProductPrices> getPricesForPartNums(JsonNode json) {
         List<String> partNums = new ArrayList<>(json.size());
         for (Iterator<JsonNode> iter = json.iterator(); iter.hasNext();) {
             JsonNode jn = iter.next();
             String pn = jn.asText();
             partNums.add(pn);
         }
-        List<ProductPricesDto> retVal = priceService.getProductsPricesByNums(partNums);
+        List<ProductPrices> retVal = priceService.getProductsPricesByNums(partNums);
         return retVal;
     }
 
