@@ -136,7 +136,17 @@ module.exports = function (grunt) {
               connect().use('/search/indexing/status', indexHtml),
             ];
 
-            var partIdsUnderDebug = [
+            let partTypeIds = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15,
+              16, 17, 18, 19, 20, 21, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+              40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52];
+
+            for(let ptid of partTypeIds) {
+              let url = '/part/createByPartTypeId/' + ptid.toString();
+              let entry = connect().use(url, indexHtml);
+              middlewares.push(entry);
+            }
+
+            let partIdsUnderDebug = [
               1, 2, 3,
               289,    // 'Where used (ancestors)'
               1449, 2318,
@@ -162,11 +172,11 @@ module.exports = function (grunt) {
               69690, 70079, 70090,   // Tabs: 'Turbos'
               78252
             ];
-            var urlSuffixes = ['', '/bom/search', '/ancestors', '/parentbom/search', '/oversize/add', '/application/search'];
+            let urlSuffixes = ['', '/bom/search', '/ancestors', '/parentbom/search', '/oversize/add', '/application/search'];
             for(let partId of partIdsUnderDebug) {
               for(let s of urlSuffixes) {
-                var url = '/part/' + partId + s;
-                var entry = connect().use(url, indexHtml);
+                let url = '/part/' + partId.toString() + s;
+                let entry = connect().use(url, indexHtml);
                 middlewares.push(entry);
               }
             }

@@ -9,6 +9,7 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
   .constant('METADATA_BASE', '/metadata/')
   .constant('VALID_IP_ADDRESS_REGEX', /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)
   .constant('VALID_HOSTNAME_REGEX', /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/)
+  .constant('ASCII_ONLY_REGEX', /^[\x20-\x7F]+$/)
   .constant('DATE_FORMAT', 'yyyy-MM-dd')
   .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
     // cfpLoadingBarProvider.spinnerTemplate = '<div><span class='fa fa-spinner'>Loading...</div>';
