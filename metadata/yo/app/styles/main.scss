@@ -515,3 +515,18 @@ div.tab-title {
   display: inline-block;
   padding-right: 10px;
 }
+
+div.table-summary {
+  margin-top: -25px;
+  font-size: 12pt;
+  color: #777;
+}
+
+div.table-summary span.row-count {
+  font-weight: bold;
+  font-family:monospace;
+}
+
+div.table-summary span.row-count-txt {
+  font-family: Arial Helvetica sans-serif;
+}

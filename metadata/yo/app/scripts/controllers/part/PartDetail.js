@@ -143,6 +143,7 @@ angular.module('ngMetaCrudApp')
 
   $scope.changelogTableParams = null;
   $scope.changelogTableParamsLoading = true; // to shop icon for a progress of a loading
+  $scope.changelogRowsCount = null;
 
   $scope.refreshTabAuditLog = function() {
     $scope.changelogTableParamsLoading = true;
@@ -170,6 +171,7 @@ angular.module('ngMetaCrudApp')
           function(result) {
             // Update the total and slice the result
             params.total(result.total);
+            $scope.changelogRowsCount = result.total;
             $scope.changelogTableParamsLoading = false;
             return result.recs;
           },

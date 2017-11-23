@@ -155,7 +155,8 @@ module.exports = function (grunt) {
               6246,
               6681,   // Turbo
               6692,   // Alternative BOM(s)
-              17415, 25493,  // Tabs: 'Applications'
+              17415,  // Interchanges, Tabs: 'Applications'
+              25493,  // Tabs: 'Applications'
               29878,  // Tabs: 'Applications'
               33284,
               42768,  // Tabs: 'Critical Dimensions'
