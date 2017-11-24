@@ -1,5 +1,8 @@
 package com.turbointernational.metadata.service;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import org.modelmapper.AbstractConverter;
@@ -50,35 +53,26 @@ public class DtoMapperService {
 
     };
 
-    /*
     protected Converter<Long[], Part[]> partIds2Parts = new AbstractConverter<Long[], Part[]>() {
 
         @Override
         protected Part[] convert(Long[] partIds) {
             Part[] retVal = null;
             if (partIds != null) {
-                retVal = new Part[partIds.length];
-                for (int i = 0; i < partIds.length; i++) {
-                    Long id = partIds[i];
-                    com.turbointernational.metadata.entity.part.Part p = partDao.findOne(id);
-                    if (retVal == null) {
-                        log.error("Conversion of a part ID [{}] to an entity Part failed.", id);
-                    }
-                    retVal[i] = modelMapper.map(p, Part.class);
-                    ;
-                }
+                List<com.turbointernational.metadata.entity.part.Part> partsEntities = partDao.findPartsByIds(Arrays.asList(partIds));
+                retVal = (Part[]) partsEntities.stream().map(entity -> modelMapper.map(entity, Part.class)).toArray();
             }
             return retVal;
         }
 
     };
-    */
 
     @PostConstruct
     public void init() {
         modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setImplicitMappingEnabled(false);
         modelMapper.addConverter(partId2Part);
+        // TODO: modelMapper.addConverter(partIds2Parts);
         // DTO: PartType
         modelMapper.createTypeMap(com.turbointernational.metadata.entity.PartType.class, PartType.class)
                 .addMapping(com.turbointernational.metadata.entity.PartType::getId, PartType::setId)

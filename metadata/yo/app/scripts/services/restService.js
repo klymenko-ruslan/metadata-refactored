@@ -162,9 +162,13 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('part', id).one('prices').get();
       };
 
-      this.loadAncestors = function(partId) {
+      this.loadAncestors = function(partId, offset, limit) {
         Restangular.setParentless(false);
-        return Restangular.one('part/' + partId + '/ancestors').get();
+        var params = {
+          offset: offset,
+          limit: limit
+        };
+        return Restangular.one('part/' + partId + '/ancestors').get(params);
       };
 
       this.findOversizeParts = function(partId) {

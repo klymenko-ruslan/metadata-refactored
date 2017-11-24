@@ -1,10 +1,5 @@
 package com.turbointernational.metadata.web.dto;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
-import org.apache.commons.collections.comparators.ComparatorChain;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.util.View;
@@ -28,13 +23,6 @@ public class Ancestor {
      */
     @JsonView({ View.Summary.class })
     private Boolean relationType;
-
-    private static Comparator<Ancestor> cmpDistance = (a0, a1) -> {return a0.getRelationDistance() - a1.getRelationDistance();};
-    private static Comparator<Ancestor> cmpRelationType = (a0, a1) -> /* reverse */ a1.getRelationType().compareTo(a0.getRelationType());
-    private static Comparator<Ancestor> cmpPartNumber = (a0, a1) -> a0.getPart().getPartNumber().compareTo(a1.getPart().getPartNumber());
-
-    @SuppressWarnings("unchecked")
-    public final static Comparator<Ancestor> cmpComplex = new ComparatorChain(Arrays.asList(cmpDistance, cmpRelationType, cmpPartNumber));
 
     public Ancestor() {
     }

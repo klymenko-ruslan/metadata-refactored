@@ -3,7 +3,6 @@ package com.turbointernational.metadata.web.controller;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
 import static com.turbointernational.metadata.web.controller.PartController.GasketKitResultStatus.ASSERTION_ERROR;
 import static com.turbointernational.metadata.web.controller.PartController.GasketKitResultStatus.OK;
-import static com.turbointernational.metadata.web.dto.Ancestor.cmpComplex;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -13,7 +12,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -423,10 +421,9 @@ public class PartController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
-    public Ancestor[] ancestors(@PathVariable("id") Long partId) throws Exception {
-        Ancestor[] retVal = partService.ancestors(partId);
-        Arrays.sort(retVal, cmpComplex); // Ticket (Redmine) #179
-        return retVal;
+    public Page<Ancestor> ancestors(@PathVariable("id") Long partId, @RequestParam("offset") int offset,
+            @RequestParam("limit") int limit) throws Exception {
+        return partService.ancestors(partId, offset, limit);
     }
 
     @Transactional

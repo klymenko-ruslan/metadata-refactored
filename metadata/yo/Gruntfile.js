@@ -160,6 +160,7 @@ module.exports = function (grunt) {
               29878,  // Tabs: 'Applications'
               33284,
               42768,  // Tabs: 'Critical Dimensions'
+              43748,  // 'Where used (ancestors)'
               43754, 43889,
               45456, 45328 /* 'Where used (ancestors)'*/, // Tabs: 'Prices', 'Also Bought' + tab 'Turbo Types' has record
               45495,  // Tabs: 'Non Standard'

@@ -1,16 +1,19 @@
 package com.turbointernational.metadata.service;
 
+import static java.util.Arrays.asList;
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import java.net.URI;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.collections.comparators.ComparatorChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -201,6 +204,13 @@ public class GraphDbService {
 
         @JsonInclude(JsonInclude.Include.ALWAYS)
         public static class Row {
+
+            private static Comparator<Row> cmpDistance = (a0, a1) -> {return a0.getRelationDistance() - a1.getRelationDistance();};
+            private static Comparator<Row> cmpRelationType = (a0, a1) -> /* reverse */ Boolean.valueOf(a1.isRelationType()).compareTo(a0.isRelationType());
+            private static Comparator<Row> cmpPartNumber = (a0, a1) -> a0.getPartId().compareTo(a1.getPartId());
+
+            @SuppressWarnings("unchecked")
+            public final static Comparator<Row> cmpComplex = new ComparatorChain(asList(cmpDistance, cmpRelationType, cmpPartNumber));
 
             @JsonView({ View.Summary.class })
             private Long partId;

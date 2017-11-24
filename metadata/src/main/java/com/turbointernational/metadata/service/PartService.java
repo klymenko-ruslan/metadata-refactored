@@ -7,11 +7,15 @@ import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
 import static com.turbointernational.metadata.entity.Manufacturer.TI_ID;
 import static com.turbointernational.metadata.entity.PartType.PTID_GASKET_KIT;
 import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
+import static com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse.Row.cmpComplex;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_WIDTH;
 import static com.turbointernational.metadata.service.ImageService.SIZES;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 import static com.turbointernational.metadata.util.FormatUtils.formatProductImage;
+import static java.lang.System.arraycopy;
+import static java.util.Arrays.asList;
+import static java.util.Arrays.sort;
 import static java.util.stream.Collectors.toSet;
 
 import java.io.File;
@@ -412,11 +416,22 @@ public class PartService {
     }
 
     @Secured("ROLE_READ")
-    public Ancestor[] ancestors(Long partId) throws Exception {
+    public Page<Ancestor> ancestors(Long partId, int offset, int limit) throws Exception {
         GetAncestorsResponse response = ancestorsIds(partId);
         Row[] rows = response.getRows();
-        Ancestor[] retVal = dtoMapperService.map(rows, Ancestor[].class);
-        return retVal;
+        int n = rows.length;
+        if (offset < 0 || offset >= n) {
+            return new Page<>(n, new ArrayList<>());
+        }
+        sort(rows, cmpComplex);
+        int m = limit;
+        if (offset + limit >= n) {
+            m = n - offset + 1;
+        }
+        Row[] slice = new Row[m];
+        arraycopy(rows, offset, slice, 0, m);
+        Ancestor[] pgAncestors = dtoMapperService.map(slice, Ancestor[].class);
+        return new Page<Ancestor>(m, asList(pgAncestors));
     }
 
     @Transactional(noRollbackFor = AssertionError.class)

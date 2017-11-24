@@ -264,9 +264,6 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
       resolve: {
         part: ['$route', 'restService', function ($route, restService) {
           return restService.findPart($route.current.pathParams.id);
-        }],
-        ancestors: ['$route', 'restService', function ($route, restService) {
-          return restService.loadAncestors($route.current.pathParams.id);
         }]
       }
     });
