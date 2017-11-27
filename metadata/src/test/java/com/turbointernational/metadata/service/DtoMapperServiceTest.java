@@ -191,7 +191,7 @@ public class DtoMapperServiceTest {
         interchagnePart.setPartType(interchangePartType);
         row.setPartId(49576L);
         row.setQty(4);
-        row.setInterchanges(new Long[] {42768L});
+        row.setInterchanges(new Long[] { 42768L });
         when(partDao.findOne(49576L)).thenReturn(entityPart); // BOM part
         when(partDao.findOne(42768L)).thenReturn(interchagnePart);
         Bom dtoBom = dtoMapperService.map(row, Bom.class);
@@ -226,7 +226,7 @@ public class DtoMapperServiceTest {
     @Test
     public void testMapAncestors() {
         GetAncestorsResponse.Row row = new GetAncestorsResponse.Row(49576L, true, 1);
-        when(partDao.findOne(49576L)).thenReturn(entityPart); 
+        when(partDao.findOne(49576L)).thenReturn(entityPart);
         Ancestor dtoAncestor = dtoMapperService.map(row, Ancestor.class);
         assertNotNull(dtoAncestor);
         Part dtoPart = dtoAncestor.getPart();
@@ -249,6 +249,7 @@ public class DtoMapperServiceTest {
      */
     @RunWith(Parameterized.class)
     public static class PartMappingTests {
+
         private DtoMapperService dtoMapperService;
 
         private Long fPartTypeId;

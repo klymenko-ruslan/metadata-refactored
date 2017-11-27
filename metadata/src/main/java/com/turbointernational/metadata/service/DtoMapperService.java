@@ -47,7 +47,6 @@ public class DtoMapperService {
                 log.error("Conversion of a part ID [{}] to an entity Part failed.", partId);
             }
             retVal = modelMapper.map(p, Part.class);
-            ;
             return retVal;
         }
 
