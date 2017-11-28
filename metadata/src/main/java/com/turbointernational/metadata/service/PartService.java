@@ -420,24 +420,8 @@ public class PartService {
     public Page<Ancestor> ancestors(Long partId, int offset, int limit) throws Exception {
         GetAncestorsResponse response = ancestorsIds(partId);
         Row[] rows = response.getRows();
-        /*
-        int n = rows.length;
-        if (offset < 0) {
-            offset = 0;
-        } else if (offset >= n) {
-            return new Page<>(0, new ArrayList<>());
-        }
-        */
         sort(rows, cmpComplex);
         Row[] slice = ArrayUtils.subarray(rows, offset, offset + limit);
-        /*
-        int m = limit;
-        if (offset + limit >= n) {
-            m = n - offset + 1;
-        }
-        Row[] slice = new Row[m];
-        arraycopy(rows, offset, slice, 0, m);
-        */
         Ancestor[] pgAncestors = dtoMapperService.map(slice, Ancestor[].class);
         return new Page<Ancestor>(rows.length, asList(pgAncestors));
     }
