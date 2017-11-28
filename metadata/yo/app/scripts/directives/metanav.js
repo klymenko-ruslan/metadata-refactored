@@ -1,44 +1,13 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .directive('metanav', function(dialogs, $interval, toastr, User, restService) {
+  .directive('metanav', function(dialogs, $interval, toastr, User, restService, cachedDictionaries) {
     return {
       transclude: true,
       templateUrl: '/views/component/Metanav.html',
       restrict: 'E',
       controller: function($scope) {
         $scope.User = User;
-//$('.dropdown-toggle').dropdown();
-        // Probably not the greatest place for this startup/teardown code,
-        // but metanav is available everywhere when logged in
-        var timer = $interval(function() {
-          restService.refreshStatus();
-        }, 1000);
-        $scope.$on('$destroy', function() {
-          $interval.cancel(timer);
-        });
-
-        $scope.rebuildBom = function() {
-          dialogs.confirm(
-            'Rebuild BOM for all parts?',
-            'You need to run this if changes have been made directly to the database. Proceed?').result.then(
-            function() {
-              // Yes
-              restService.rebuildBom({'indexBoms': true}).then(
-                function() {
-                  // Success
-                  toastr.success('Rebuilding BOM.');
-                },
-                function(response) {
-                  // Error
-                  restService.error('Could not rebuild BOM', response);
-                });
-            },
-            function() {
-              // No
-            }
-          );
-        };
 
         $scope.reindexPartSearch = function() {
           dialogs.confirm(
@@ -114,14 +83,16 @@ angular.module('ngMetaCrudApp')
 
         $scope.clearHibernate = function() {
           dialogs.confirm(
-            'Clear Hibernate cache?',
-            'You need to run this if changes have been made directly to the database. Proceed?').result.then(
+            'Clear Hibernate cache on the server side and local JavaScript caches?',
+            'You need to run this if changes have been made directly to the database. ' +
+            'Or modified dictionaries like Part Types, Manufacturers etc. Proceed?').result.then(
             function() {
               // Yes
+              cachedDictionaries.reset();
               restService.clearHibernate().then(
                 function() {
                   // Success
-                  toastr.success('Hibernate cache cleared.');
+                  toastr.success('Hibernate local caches have been cleared.');
                 },
                 function(response) {
                   // Error

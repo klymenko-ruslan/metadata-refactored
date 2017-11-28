@@ -48,7 +48,7 @@ import flexjson.JSONSerializer;
 @Entity
 @Table(name = "source")
 @NamedQueries({
-        @NamedQuery(name = "findChangelogSourceByName", query = "from Source s where s.name=:name"),
+        @NamedQuery(name = "findChangelogSourceByName", query = "SELECT s FROM Source s WHERE s.name=:name"),
         @NamedQuery(
                 name = "findLastPickedChangelogSources",
                 query = "select distinct s from Source s where s.id in(" +
@@ -58,7 +58,7 @@ import flexjson.JSONSerializer;
                         "   order by lnk.created desc)"),
         @NamedQuery(
                 name = "getNumChangelogSourcesForSourceName",
-                query = "select count(*) from Source s where s.sourceName.id=:sourceNameId")
+                query = "select count(s) from Source s where s.sourceName.id=:sourceNameId")
 })
 @JsonInclude(ALWAYS)
 public class Source implements SearchableEntity, Serializable {

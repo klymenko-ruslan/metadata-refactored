@@ -27,9 +27,7 @@ import com.turbointernational.metadata.dao.SalesNotePartDao;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.SalesNote;
 import com.turbointernational.metadata.entity.SalesNoteAttachment;
-import com.turbointernational.metadata.entity.SalesNoteAttachmentRepository;
 import com.turbointernational.metadata.entity.SalesNotePart;
-import com.turbointernational.metadata.entity.SalesNoteRepository;
 import com.turbointernational.metadata.entity.SalesNoteState;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.part.Part;
@@ -60,12 +58,6 @@ public class SalesNoteService {
     @Autowired
     private SalesNoteAttachmentDao salesNoteAttachmentDao;
 
-    @Autowired
-    private SalesNoteRepository salesNotes;
-
-    @Autowired
-    private SalesNoteAttachmentRepository attachments;
-
     @Value("${attachments.salesNote.dir}")
     private File attachmentDir;
 
@@ -81,7 +73,7 @@ public class SalesNoteService {
     @Transactional
     public void addRelatedPart(HttpServletRequest request, User user, Long salesNoteId, Long partId) {
         // Find the entities
-        SalesNote salesNote = salesNotes.findOne(salesNoteId);
+        SalesNote salesNote = salesNoteDao.findOne(salesNoteId);
         hasEditAccess(request, salesNote);
         Part part = partDao.findOne(partId);
         // Create the primary part association
@@ -109,7 +101,7 @@ public class SalesNoteService {
         Part primaryPart = partDao.findOne(primaryPartId);
         salesNote.getParts().add(new SalesNotePart(salesNote, primaryPart, true, user));
         // Save
-        salesNotes.save(salesNote);
+        salesNoteDao.persist(salesNote);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(primaryPartId, PART0));
         Changelog changelog = changelogService.log(SALESNOTES, "Created sales note " + formatSalesNote(salesNote) + ".",
@@ -122,17 +114,17 @@ public class SalesNoteService {
     }
 
     public SalesNote getSalesNote(Long noteId) {
-        SalesNote salesNote = salesNotes.findOne(noteId);
+        SalesNote salesNote = salesNoteDao.findOne(noteId);
         return salesNote;
     }
 
     @Transactional
     public void updateSalesNote(HttpServletRequest request, Long noteId, String comment) {
-        SalesNote salesNote = salesNotes.findOne(noteId);
+        SalesNote salesNote = salesNoteDao.findOne(noteId);
         hasEditAccess(request, salesNote);
         salesNote.setComment(comment);
         // Save
-        salesNotes.save(salesNote);
+        salesNoteDao.persist(salesNote);
         changelogService.log(SALESNOTES, "Changed sales note (" + formatSalesNote(salesNote) + ") comment: \""
                 + salesNote.getComment() + "\" -> \"" + comment + "\".", null);
     }
@@ -187,7 +179,7 @@ public class SalesNoteService {
 
     public AttachmentDto getAttachment(Long salesNoteId, Long attachmentId) throws IOException {
         // Get the attachment
-        SalesNoteAttachment attachment = attachments.findOne(attachmentId);
+        SalesNoteAttachment attachment = salesNoteAttachmentDao.findOne(attachmentId);
         String name = attachment.getFilename();
         File salesNoteDir = new File(attachmentDir, Long.toString(salesNoteId));
         File file = new File(salesNoteDir, name);
@@ -198,7 +190,7 @@ public class SalesNoteService {
     public SalesNote addAttachment(HttpServletRequest request, User user, Long salesNoteId, String name,
             byte[] bin) throws IOException {
         // Find the entities
-        SalesNote salesNote = salesNotes.findOne(salesNoteId);
+        SalesNote salesNote = salesNoteDao.findOne(salesNoteId);
         hasEditAccess(request, salesNote);
         // Create the attachment directory for this sales note
         File salesNoteDir = new File(attachmentDir, Long.toString(salesNote.getId()));
@@ -218,7 +210,7 @@ public class SalesNoteService {
         attachment.setFilename(name);
         // Save
         salesNote.getAttachments().add(attachment);
-        salesNotes.save(salesNote);
+        salesNoteDao.persist(salesNote);
         changelogService.log(SALESNOTES, "Added attachment to sales note: " + formatSalesNote(salesNote) + ".",
                 attachment, null);
         return salesNote;
@@ -237,31 +229,31 @@ public class SalesNoteService {
 
     @Transactional
     public void submit(User user, Long noteId) {
-        SalesNote salesNote = salesNotes.findOne(noteId);
+        SalesNote salesNote = salesNoteDao.findOne(noteId);
         updateState(user, salesNote, SalesNoteState.submitted, SalesNoteState.draft, SalesNoteState.rejected);
     }
 
     @Transactional
     public void approve(User user, Long noteId) {
-        SalesNote salesNote = salesNotes.findOne(noteId);
+        SalesNote salesNote = salesNoteDao.findOne(noteId);
         updateState(user, salesNote, SalesNoteState.approved, SalesNoteState.draft, SalesNoteState.submitted);
     }
 
     @Transactional
     public void reject(User user, Long noteId) {
-        SalesNote salesNote = salesNotes.findOne(noteId);
+        SalesNote salesNote = salesNoteDao.findOne(noteId);
         updateState(user, salesNote, SalesNoteState.rejected, SalesNoteState.submitted, SalesNoteState.approved);
     }
 
     @Transactional
     public void publish(User user, Long noteId) {
-        SalesNote salesNote = salesNotes.findOne(noteId);
+        SalesNote salesNote = salesNoteDao.findOne(noteId);
         updateState(user, salesNote, SalesNoteState.published, SalesNoteState.approved);
     }
 
     @Transactional
     public void retract(User user, Long noteId) {
-        SalesNote salesNote = salesNotes.findOne(noteId);
+        SalesNote salesNote = salesNoteDao.findOne(noteId);
         updateState(user, salesNote, SalesNoteState.approved, SalesNoteState.published);
     }
 
@@ -302,7 +294,7 @@ public class SalesNoteService {
         // changed state.
         // @see SalesNotePart#updateSearchIndex().
         salesNote.getParts().forEach(snp -> snp.setUpdateDate(now));
-        salesNotes.save(salesNote);
+        salesNoteDao.persist(salesNote);
         changelogService.log(SALESNOTES, "Changed state in the sales note " + formatSalesNote(salesNote) + ": "
                 + currentState + " -> " + salesNote.getState(), null);
     }

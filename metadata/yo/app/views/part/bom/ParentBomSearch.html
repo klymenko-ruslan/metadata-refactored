@@ -1,7 +1,7 @@
 <metanav>
   <li>
     <button data-ng-click="showPart(part.id)"
-       class="btn btn-primary">
+       class="btn btn-primary btn-lg">
       <i class="fa fa-eye"></i>
       View Part
     </button>
@@ -9,7 +9,7 @@
   <li>
     <button data-ng-click="save()"
        data-ng-disabled="isBttnSaveDisabled() || ppForm.$invalid"
-       class="btn btn-success">
+       class="btn btn-success btn-lg">
       <i class="fa fa-save"></i>
       Add to Parent BOMs
     </button>
@@ -21,29 +21,28 @@
 <div class="row">
 
   <!-- Bill of Materials -->
-  <div class="col-xs-12 col-md-5">
+  <div class="col-xs-6">
     <h3>Existing Parent BOMs</h3>
     <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
-      <tr data-ng-repeat="bomItem in $data">
-        <td title="'Part Type'" data-sortable="'parent.partType.name'">
-          {{bomItem.parent.partType.name}}
+      <tr data-ng-repeat="b in $data">
+        <td title="'Part Type'" data-sortable="'part.partType.name'">
+          {{b.part.partType.name}}
         </td>
-        <td title="'Manufacturer'" data-sortable="'parent.manufacturer.name'">
-          {{bomItem.parent.manufacturer.name}}
+        <td title="'Manufacturer'" data-sortable="'part.manufacturer.name'">
+          {{b.part.manufacturer.name}}
         </td>
-        <td title="'Part #'" class="text-center text-nowrap" data-sortable="'parent.manufacturerPartNumber'">
-          {{bomItem.parent.manufacturerPartNumber}}
+        <td title="'Part#'" class="text-center text-nowrap" data-sortable="'part.partNumber'">
+          {{b.part.partNumber}}
         </td>
-        <td title="'Qty'" class="text-right" data-sortable="'quantity'">
-          {{bomItem.quantity}}
+        <td title="'Qty'" class="text-right" data-sortable="'qty'">
+          {{b.qty}}
         </td>
         <td title="'Actions'" class="actions text-center">
-          <a data-ng-href="/part/{{bomItem.parent.id}}"
+          <a data-ng-href="/part/{{b.partId}}"
              authorize="ROLE_READ" class="btn btn-primary btn-xs">
             <i class="fa fa-eye"></i> View
           </a>
-          <button data-ng-click="removeBOM(bomItem.id)"
-                  data-ng-disabled="restService.status.bomRebuilding"
+          <button data-ng-click="removeBom(b.part.partId)"
                   authorize="ROLE_BOM" class="btn btn-danger btn-xs">
             <i class="fa fa-trash-o"></i> Remove
           </button>
@@ -59,7 +58,7 @@
   </div>
 
   <!-- Picked BOM Item -->
-  <div class="col-xs-12 col-md-7">
+  <div class="col-xs-6">
     <h3>
       Picked Parts
       <button type="button" title="Unpick All" data-ng-click="unpickAll()" data-ng-disabled="isBttnUnpickAllDisabled()" class="btn btn-link btn-sm" style="padding:0;">
@@ -70,12 +69,12 @@
       <table data-ng-table="pickedPartsTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="rec in $data">
           <td title="'Part Type'" class="text-nowrap">{{rec.partType.name}}</td>
-          <td title="'Part #'" class="text-nowrap">{{rec.manufacturerPartNumber}}</td>
+          <td title="'Part#'" class="text-nowrap">{{rec.manufacturerPartNumber}}</td>
           <td title="'Qty'">
             <input type="number" data-ng-model="rec.extra.qty" data-ng-min="0" style="width:5em;" required />
           </td>
           <td title="'Existing BOM'">
-            <span class="text-nowrap">{{rec.extra.existingBoms[0].child.manufacturerPartNumber}}<span data-ng-show="rec.extra.existingBoms.length > 1">,</span></span>
+            <span class="text-nowrap">{{rec.extra.existingBoms[0].partNumber}}<span data-ng-show="rec.extra.existingBoms.length > 1">,</span></span>
             &nbsp;<a href="#" title="See more..." data-ng-show="rec.extra.existingBoms.length > 1" data-ng-click="displayExistingBOMs(rec)">...</a>
           </td>
           <td title="'Resolution'">

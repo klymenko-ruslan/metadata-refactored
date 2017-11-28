@@ -8,9 +8,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +34,6 @@ import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.exception.RemovePrimaryPartException;
 import com.turbointernational.metadata.service.SalesNoteService;
 import com.turbointernational.metadata.util.View;
-import com.turbointernational.metadata.web.dto.CreateSalesNoteRequest;
-import com.turbointernational.metadata.web.dto.UpdateSalesNoteRequest;
 
 @Controller
 @RequestMapping(value = { "/other/salesNote", "/metadata/other/salesNote" })
@@ -47,6 +47,103 @@ public class SalesNoteController {
 
     @Value("attachments.salesNote")
     private File attachmentDir;
+
+    public static class CreateSalesNoteRequest implements Serializable {
+
+        private static final long serialVersionUID = -4604795204191095582L;
+
+        @NotNull
+        @JsonView(View.Summary.class)
+        private Long primaryPartId;
+
+        @NotNull
+        @JsonView(View.Summary.class)
+        private String comment;
+
+        /**
+         * Changelog source IDs which should be linked to the changelog. See ticket #891 for details.
+         */
+        @JsonView(View.Summary.class)
+        private Long[] sourcesIds;
+
+        /**
+         * IDs of uploaded files which should be attached to this changelog. See ticket #933 for details.
+         */
+        @JsonView(View.Summary.class)
+        private Long[] attachIds;
+
+        @JsonView(View.Summary.class)
+        private Integer[] chlogSrcRatings;
+
+        @JsonView(View.Summary.class)
+        private String chlogSrcLnkDescription;
+
+        public Long getPrimaryPartId() {
+            return primaryPartId;
+        }
+
+        public void setPrimaryPartId(Long primaryPartId) {
+            this.primaryPartId = primaryPartId;
+        }
+
+        public String getComment() {
+            return comment;
+        }
+
+        public void setComment(String comment) {
+            this.comment = comment;
+        }
+
+        public Long[] getSourcesIds() {
+            return sourcesIds;
+        }
+
+        public void setSourcesIds(Long[] sourcesIds) {
+            this.sourcesIds = sourcesIds;
+        }
+
+        public Integer[] getChlogSrcRatings() {
+            return chlogSrcRatings;
+        }
+
+        public void setChlogSrcRatings(Integer[] chlogSrcRatings) {
+            this.chlogSrcRatings = chlogSrcRatings;
+        }
+
+        public String getChlogSrcLnkDescription() {
+            return chlogSrcLnkDescription;
+        }
+
+        public void setChlogSrcLnkDescription(String chlogSrcLnkDescription) {
+            this.chlogSrcLnkDescription = chlogSrcLnkDescription;
+        }
+
+        public Long[] getAttachIds() {
+            return attachIds;
+        }
+
+        public void setAttachIds(Long[] attachIds) {
+            this.attachIds = attachIds;
+        }
+
+    }
+
+    public static class UpdateSalesNoteRequest implements Serializable {
+
+        private static final long serialVersionUID = -7660933380532503595L;
+
+        @NotNull
+        private String comment;
+
+        public String getComment() {
+            return comment;
+        }
+
+        public void setComment(String comment) {
+            this.comment = comment;
+        }
+
+    }
 
     @ResponseBody
     @Transactional
@@ -121,8 +218,7 @@ public class SalesNoteController {
     @RequestMapping(value = "{salesNoteId}/attachment/{attachmentId}", method = GET)
     @ResponseBody
     @Secured("ROLE_SALES_NOTE_READ")
-    public void getAttachment(HttpServletResponse response,
-            @PathVariable("salesNoteId") Long salesNoteId,
+    public void getAttachment(HttpServletResponse response, @PathVariable("salesNoteId") Long salesNoteId,
             @PathVariable("attachmentId") Long attachmentId) throws Exception {
         try {
             SalesNoteService.AttachmentDto attachment = salesNoteService.getAttachment(salesNoteId, attachmentId);
@@ -139,8 +235,7 @@ public class SalesNoteController {
     @Secured("ROLE_SALES_NOTE_SUBMIT")
     public SalesNote addAttachment(HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
-            @PathVariable("salesNoteId") long salesNoteId,
-            @RequestParam(value = "name", required = false) String name,
+            @PathVariable("salesNoteId") long salesNoteId, @RequestParam(value = "name", required = false) String name,
             @RequestBody byte[] file) throws IOException {
         return salesNoteService.addAttachment(request, user, salesNoteId, name, file);
     }

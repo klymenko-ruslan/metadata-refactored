@@ -11,7 +11,7 @@ angular.module('ngMetaCrudApp')
         replace: false,
         restrict: 'A',
         template: '{{partNamePrefix}}' +
-                  ' [{{partName.id}}]' +
+                  ' [{{partName.id || partName.partId}}]' +
                   ' {{partName.manufacturer.name}}' +
                   ' {{partName.partType.name}}' +
                   '<span style="white-space: nowrap;">' +

@@ -1,40 +1,29 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('PartAncestorsCtrl', ['$log', '$routeParams', '$scope', 'restService', 'NgTableParams',
-  function($log, $routeParams, $scope, restService, NgTableParams) {
+.controller('PartAncestorsCtrl', ['$log', '$routeParams', '$scope',
+    'restService', 'NgTableParams', 'part',
+  function($log, $routeParams, $scope, restService, NgTableParams, part) {
 
     $scope.partId = $routeParams.id;
-    $scope.part = null;
-
-    restService.findPart($scope.partId).then(
-      function (part) {
-        $scope.part = part;
-
-        // Make sure we're using the correct part type
-        $scope.partType = part.partType.name;
-      },
-      function (errorResponse) {
-        $log.log('Could not get part details', errorResponse);
-        restService.error('Could not get part details', errorResponse);
-      }
-    );
+    $scope.part = part;
 
     $scope.ancestorsTableParams = new NgTableParams({
         page: 1,
         count: 25
       }, {
-        getData: function(params) {
+        getData: function (params) {
           var offset = params.count() * (params.page() - 1);
           var limit = params.count();
           return restService.loadAncestors($scope.partId, offset, limit).then(
-            function(result) {
-              params.total(result.total);
-              return result.recs;
+            function success(page) {
+              params.total(page.total);
+              return page.recs;
             },
-            function(errorResponse) {
-              restService.error('Loading of ancestors failed.', errorResponse);
-            });
+            function failure() {
+              restService.error('Couldn\'t load ancestors.', response);
+            }
+          );
         }
       }
     );

@@ -120,6 +120,7 @@ angular.module('ngMetaCrudApp')
                 angular.toJson(descriptor.enumeration) + '".');
             }
           } else {
+$log.log('descriptor: ' + angular.toJson(descriptor, 2));
             throw new Error('definition of the enum "' +
               mEnum.name + '" not found.');
           }
@@ -238,16 +239,6 @@ angular.module('ngMetaCrudApp')
 
             $scope.METADATA_BASE = METADATA_BASE;
 
-            // Make a dictionary: nominal's
-            // {'descriptor_id': {
-            //    'BOTH': plus_minus_tolerance |
-            //    'UPPER': upper_tolerance,
-            //    'OTHER': any value to display after value for a parent desc}
-            // }
-            $scope.idxDim2Tol = _indexTolerances($scope.descriptors);
-
-            //$log.log('idxDim2Tol: ' + angular.toJson($scope.idxDim2Tol, 2));
-
             // Options bar's values.
             $scope.opts = {
               hideBlank: true,
@@ -255,16 +246,43 @@ angular.module('ngMetaCrudApp')
               filter: ''
             };
 
-            // Track changes on the options bar.
-            $scope.$watchCollection('opts', function() {
-              $scope._copyDescriptorsToDisplay();
-            });
-
             // A list which will be actually displayed on the web.
             // See function _copyDescriptorsToDisplay() below to
             // know how this list is filled in.
             $scope.toDisplay = null;
             $scope.errors = null; // jsonName => errorMessage
+
+            $scope.$watch('descriptors', function init() {
+              if ($scope.descriptors) {
+                // Make a dictionary: nominal's
+                // {'descriptor_id': {
+                //    'BOTH': plus_minus_tolerance |
+                //    'UPPER': upper_tolerance,
+                //    'OTHER': any value to display after value for a parent desc}
+                // }
+                $scope.idxDim2Tol = _indexTolerances($scope.descriptors);
+
+                // Watch properties valid/invalid for controls on the form
+                // and update state of properties 'error message' in
+                // the backend 'display objects'.
+                _.each($scope.descriptors, function(d) {
+                  $scope.$watch('cdForm.' + d.jsonName + '.$valid',
+                    function(valid) {
+                      if (valid === true) {
+                        delete $scope.errors[d.jsonName];
+                      } else if (valid === false) {
+                        $scope.errors[d.jsonName] = $scope.getErrorFor(
+                          d.jsonName);
+                      }
+                    });
+                });
+
+                // Track changes on the options bar.
+                $scope.$watchCollection('opts', function() {
+                  $scope._copyDescriptorsToDisplay();
+                });
+              }
+            });
 
             // This is a heart function of this directive.
             // It filters critical dimensions desctiptors according to
@@ -305,22 +323,6 @@ angular.module('ngMetaCrudApp')
                 .value();
               $scope.errors = {};
             }; // _copyDescriptorsToDisplay
-
-
-            // Watch properties valid/invalid for controls on the form
-            // and update state of properties 'error message' in
-            // the backend 'display objects'.
-            _.each($scope.descriptors, function(d) {
-              $scope.$watch('cdForm.' + d.jsonName + '.$valid',
-                function(valid) {
-                  if (valid === true) {
-                    delete $scope.errors[d.jsonName];
-                  } else if (valid === false) {
-                    $scope.errors[d.jsonName] = $scope.getErrorFor(
-                      d.jsonName);
-                  }
-                });
-            });
 
             // This method build a JS object that represents a row in
             // the UI table.

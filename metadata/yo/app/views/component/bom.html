@@ -1,99 +1,147 @@
-<div class="pull-right" style="margin-bottom: 5px;">
-  <a authorize="ROLE_BOM"
-     class="btn btn-primary"
-     data-ng-href="/part/{{parentPartId}}/parentbom/search">
-    <i class="fa fa-plus"></i> Add to Parent
-  </a>
-  <a authorize="ROLE_BOM"
-     class="btn btn-primary"
-     data-ng-href="/part/{{parentPartId}}/bom/search">
-    <i class="fa fa-plus"></i> Add Child
-  </a>
+<div class="row">
+  <div class="col-xs-6">
+    <button class="btn btn-default btn-sm" style="margin-top:6px" title="Remove selected part(s) from the BOM." data-ng-disabled="!isThereAnySelectedBomItem()" data-ng-click="onRemoveSelectedBoms()">
+      <i class="fa fa-trash-o"></i>
+    </button>
+  </div>
+  <div class="col-xs-6">
+    <div class="pull-right" style="margin-bottom: 5px;">
+      <a authorize="ROLE_BOM" class="btn btn-primary" data-ng-href="/part/{{parentPartId}}/parentbom/search">
+        <i class="fa fa-plus"></i> Add to Parent
+      </a>
+      <a authorize="ROLE_BOM" class="btn btn-primary" data-ng-href="/part/{{parentPartId}}/bom/search">
+        <i class="fa fa-plus"></i> Add Child
+      </a>
+    </div>
+  </div>
 </div>
-
 <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
-  <tr data-ng-repeat="bomItem in $data">
-    <td title="'Part #'" class="text-center text-nowrap" data-sortable="'child.manufacturerPartNumber'">
-      <a data-ng-href="/part/{{bomItem.child.id}}">{{bomItem.child.manufacturerPartNumber}}</a>
+  <tr data-ng-repeat="b in $data" data-ng-class="{selected: b === highlightedBom}" data-ng-click="showAlternates(b)" style="cursor:pointer">
+    <td width="30" style="text-align: left" header="'ng-table/headers/checkbox_bom.html'">
+      <input type="checkbox" data-ng-model="selectedItems.bom.parts[b._rowid]" data-ng-click="$event.stopPropagation();"/>
     </td>
-    <td title="'Qty'" class="text-right" data-sortable="'quantity'">
-      <span data-ng-hide="isModifying(bomItem)">{{bomItem.quantity}}</span>
-      <input data-ng-model="modifyValues[bomItem.id]" type="text" data-ng-show="isModifying(bomItem)"/>
+    <td title="'Part#'" class="text-center text-nowrap" data-sortable="'part.partNumber'">
+      <a data-ng-href="/part/{{b.part.partId}}">{{b.part.partNumber}}</a>
     </td>
-    <td title="'Type'" data-sortable="'child.partType.name'">
-      {{bomItem.child.partType.name}}
+    <td title="'Qty'" class="text-right" data-sortable="'qty'">
+      <span data-ng-hide="isModifying(b)">{{b.qty}}</span>
+      <input data-ng-model="modifyValues[b.part.partId]" type="text" data-ng-show="isModifying(b)"/>
     </td>
-    <td title="'Name'" data-sortable="'child.name'">
-      {{bomItem.child.name}}
+    <td title="'Type'" data-sortable="'part.partType.name'">
+      {{b.part.partType.name}}
+    </td>
+    <td title="'Name'" data-sortable="'part.name'">
+      {{b.part.name}}
     </td>
     <td title="'Interchange'">
       <ul class="list-unstyled list-inline" style="margin-bottom:0">
-      <li data-ng-repeat="p in interchangesOfThePartBoms[bomItem.id]">
-        <a data-ng-href="/part/{{p.id}}">{{p.manufacturerPartNumber}}</a><span data-ng-if="!$last">,</span>
+      <li data-ng-repeat="row in b.interchanges">
+        <a data-ng-href="/part/{{row.partId}}">{{row.partNumber}}</a><span data-ng-if="!$last">,</span>
       </li>
       </ul>
     </td>
     <td title="'Actions'" class="actions">
 
-      <button data-ng-click="modifyStart(bomItem)"
+      <button data-ng-click="modifyStart(b)"
               authorize="ROLE_BOM" class="btn btn-warning btn-xs"
-              data-ng-hide="isModifying(bomItem)">
+              data-ng-hide="isModifying(b)">
         <i class="fa fa-cog"></i> Modify
       </button>
 
-      <button data-ng-click="modifySave(bomItem)"
-              data-ng-disabled="restService.status.bomRebuilding"
+      <button data-ng-click="modifySave(b)"
               authorize="ROLE_BOM" class="btn btn-success btn-xs"
-              data-ng-show="isModifying(bomItem)">
+              data-ng-show="isModifying(b)">
         <i class="fa fa-save"></i> Save
       </button>
 
-      <button data-ng-click="modifyCancel(bomItem)"
+      <button data-ng-click="modifyCancel(b)"
               authorize="ROLE_BOM" class="btn btn-warning btn-xs"
-              data-ng-show="isModifying(bomItem)">
+              data-ng-show="isModifying(b)">
         <i class="fa fa-minus-circle"></i> Cancel
-      </button>
-
-      <a data-ng-click="showAlternates(bomItem)"
-         authorize="ROLE_READ" class="btn btn-info btn-xs"
-         data-ng-hide="isModifying(bomItem)">
-        <i class="fa fa-random"></i> Alternates
-      </a>
-
-      <button data-ng-click="remove(bomItem)"
-              data-ng-disabled="restService.status.bomRebuilding"
-              authorize="ROLE_BOM" class="btn btn-danger btn-xs"
-              data-ng-hide="isModifying(bomItem)">
-        <i class="fa fa-trash-o"></i> Remove
       </button>
 
     </td>
   </tr>
 
   <tr data-ng-hide="$data.length > 0">
-    <td colspan="6">No parts to display.</td>
+    <td colspan="7">No parts to display.</td>
   </tr>
 </table>
+<table-summary rowscount="bom.length" />
 
-<div data-ng-show="altBomItem">
-  <h4 part-name="altBomItem.child" part-name-suffix="Alternates"></h4>
+<script type="text/ng-template" id="ng-table/headers/checkbox_bom.html">
+  <input type="checkbox" data-ng-model="selectedItems.bom.allBomChecked" />
+</script>
 
-  <div class="pull-right" style="margin-bottom: 5px;">
-    <a authorize="ROLE_BOM" class="btn btn-info pull-right"
-       data-ng-href="/part/{{parentPartId}}/bom/{{altBomItem.id}}/search">
-      <i class="fa fa-cogs"></i> Add Alternate
-    </a>
+<div class="row" data-ng-show="highlightedBom">
+  <div class="col-xs-12">
+
+    <div class="row" style="margin-top:35px">
+      <div class="col-xs-12">
+        <div class="pull-right">
+          <button class="btn btn-warning" data-ng-click="newAltGroup()" data-ng-hide="hasAnyAltBomGroup()" title="Add a new group of alternative BOM">
+            <i class="fa fa-plus"></i>
+            New Group
+          </button>
+        </div>
+        <div class="pull-left">
+          <h4 class="selected" style="display:inline-block;padding:4px 5px;">
+            [{{highlightedBom.part.partId}}] {{highlightedBom.part.manufacturer.name}} {{highlightedBom.part.partType.name}}
+            <span style="white-space: nowrap;">{{highlightedBom.part.manufacturerPartNumber}}</span> Alternates
+          </h4>
+        </div>
+      </div>
+    </div>
+
+    <p data-ng-hide="hasAnyAltBomGroup()">
+      There are no any Alternative BOM group(s). Click button "New Group" to add a new one.
+    </p>
+
+    <ul class="list-unstyled" data-ng-show="hasAnyAltBomGroup()">
+    <li data-ng-repeat="g in altBoms">
+      <!-- h5 style="display:inline-block">[{{g.altHeaderId}}] Group</h5 -->
+      <div class="row" style="margin-bottom: 5px;">
+        <div class="col-xs-6">
+          <button class="btn btn-default btn-sm" title="Remove selected parts from this alternative BOM." data-ng-disabled="!isThereAnySelectedAltBomItem(g.altHeaderId)" data-ng-click="onRemoveSelectedAltBoms(g.altHeaderId)">
+            <i class="fa fa-trash-o"></i>
+          </button>
+        </div>
+        <div class="col-xs-6">
+          <div class="pull-right">
+            <button class="btn btn-danger btn-sm" authorize="ROLE_BOM_ALT" data-ng-click="removeAltGroup(g.altHeaderId)">
+              <i class="fa fa-trash-o"></i>
+              Delete Group
+            </button>
+            <button class="btn btn-info btn-sm" authorize="ROLE_BOM_ALT" data-ng-click="openAddAlternativeView(g.altHeaderId)">
+              <i class="fa fa-plus"></i>
+              Add Alternate
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <table data-ng-table="g.ngTableParams" class="table table-bordered table-striped table-hover table-responsive">
+      <tr data-ng-repeat="ab in $data">
+        <td width="30" style="text-align: left" header="'ng-table/headers/checkbox_altbom.html'">
+          <input type="checkbox" data-ng-model="selectedItems.altbom[g.altHeaderId]['parts'][ab.partId]" data-ng-click="$event.stopPropagation();"/>
+        </td>
+        <td title="'Part#'" class="text-nowrap" data-sortable="'partNumber'">
+          <a data-ng-href="/part/{{ab.partId}}">{{ab.partNumber}}</a>
+        </td>
+        <td title="'Type'" data-sortable="'partType.name'">{{ab.partType.name}}</td>
+        <td title="'Manufacturer'" data-sortable="'manufacturer.name'">{{ab.manufacturer.name}}</td>
+      </tr>
+      <tr data-ng-hide="$data.length > 0">
+        <td colspan="4">No parts to display.</td>
+      </tr>
+      </table>
+
+    </li>
+    </ul>
+
+    <script type="text/ng-template" id="ng-table/headers/checkbox_altbom.html">
+      <input type="checkbox" data-ng-model="selectedItems.altbom[g.altHeaderId].allAltBomChecked" data-ng-change="onCheckAllAltBomItems(g.altHeaderId)" />
+    </script>
+
   </div>
-
-  <part-table parts="altBomItem.alternatives" key="part"
-              extra-columns="{&quot;Alt Group #&quot;: &quot;item.header.id&quot;}">
-
-    <button data-ng-click="removeAlternate(index, item)"
-            data-ng-disabled="restService.status.bomRebuilding"
-       authorize="ROLE_BOM_ALT" class="btn btn-danger btn-xs">
-      <i class="fa fa-trash-o"></i> Remove
-    </button>
-
-  </part-table>
-
 </div>

@@ -120,7 +120,8 @@ public class TurboCarModelEngineYearController {
     public ResponseEntity<String> delete(@PathVariable("partId") Long partId,
             @PathVariable("applicationId") Long applicationId) throws Exception {
         paService.delete(partId, applicationId);
-        return new ResponseEntity<>("", OK);
+        String json = paService.getApplications(partId);
+        return new ResponseEntity<>(json, OK);
     }
 
 }

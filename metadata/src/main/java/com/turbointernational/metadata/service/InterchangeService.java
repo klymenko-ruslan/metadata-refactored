@@ -3,19 +3,13 @@ package com.turbointernational.metadata.service;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.INTERCHANGE;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
+import static com.turbointernational.metadata.service.GraphDbService.checkSuccess;
 import static com.turbointernational.metadata.util.FormatUtils.formatInterchange;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-import static java.util.Arrays.asList;
-import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,14 +18,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import com.turbointernational.metadata.dao.InterchangeDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.Changelog;
-import com.turbointernational.metadata.entity.part.Interchange;
+import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
+import com.turbointernational.metadata.service.GraphDbService.GetInterchangeResponse;
+import com.turbointernational.metadata.service.GraphDbService.MigrateInterchangeResponse;
+import com.turbointernational.metadata.web.dto.Interchange;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2016-11-02.
@@ -40,13 +35,7 @@ import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 public class InterchangeService {
 
     @Autowired
-    private BOMService bomService;
-
-    @Autowired
     private PartDao partDao;
-
-    @Autowired
-    private InterchangeDao interchangeDao;
 
     @Autowired
     private ChangelogService changelogService;
@@ -61,6 +50,12 @@ public class InterchangeService {
     @Autowired
     private PartChangeService partChangeService;
 
+    @Autowired
+    private GraphDbService graphDbService;
+
+    @Autowired
+    private DtoMapperService dtoMapperService;
+
     /**
      * Find an interchangeable by its ID.
      *
@@ -68,43 +63,34 @@ public class InterchangeService {
      * @return the found entity instance or null if the entity does not exist
      */
     @Transactional
-    public Interchange findById(long id) {
-        return interchangeDao.findOne(id);
+    public Interchange findById(Long id) {
+        GetInterchangeResponse response = graphDbService.findInterchangeById(id);
+        return dtoMapperService.map(response, Interchange.class);
+        // return Interchange.from(partDao, response);
+    }
+
+    public Interchange findForPart(Part part) {
+        return findForPart(part.getId());
     }
 
     /**
-     * Persists interchangeable in a storage.
+     * Get interchange for a part.
+     *
+     * Returned interchange contains all parts except this one.
+     *
+     * @param partId
+     * @return return interchange for a part.
      */
-    @Transactional
-    public void create(HttpServletRequest httpRequest, List<Long> partIds, Long[] sourcesIds, Integer[] ratings,
-            String description, Long[] attachIds) throws IOException {
-        // Link it with the Hibernate parts
-        Set<Part> canonicalParts = new HashSet<>();
-        // Map the incoming part IDs to their canonical part
-        for (Long partId : partIds) {
-            Part canonicalPart = partDao.findOne(partId);
-            if (canonicalPart.getInterchange() != null) {
-                throw new IllegalArgumentException(
-                        "Part " + formatPart(canonicalPart) + " already has interchangeable parts.");
-            }
-            canonicalParts.add(canonicalPart);
+    public Interchange findForPart(Long partId) {
+        GetInterchangeResponse response = graphDbService.findInterchangeForPart(partId);
+        return dtoMapperService.map(response, Interchange.class);
+    }
+
+    public void initInterchange(Part part) {
+        if (part != null) {
+            Interchange interchange = findForPart(part);
+            part.setInterchange(interchange);
         }
-        Interchange interchange = new Interchange();
-        interchange.getParts().addAll(canonicalParts);
-        interchangeDao.persist(interchange);
-        List<RelatedPart> relatedParts = new ArrayList<>(canonicalParts.size());
-        for (Part canonicalPart : canonicalParts) {
-            canonicalPart.setInterchange(interchange);
-            partDao.merge(canonicalPart);
-            relatedParts.add(new RelatedPart(canonicalPart.getId(), null));
-        }
-        interchangeDao.flush();
-        // Update the changelog.
-        Changelog changelog = changelogService.log(INTERCHANGE,
-                "Created interchange: " + formatInterchange(interchange) + ".", interchange.toJson(), relatedParts);
-        changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
-        bomService.rebuildBomDescendancyForParts(partIds, true);
-        partChangeService.changedInterchange(interchange.getId(), null);
     }
 
     /**
@@ -117,18 +103,18 @@ public class InterchangeService {
      * @param part
      * @param asInterchange
      */
-    public void create(Part part, Part asInterchange) throws IOException {
-        normalizePartInterchange(part);
-        normalizePartInterchange(asInterchange);
-        Long srcInterchangeId = part.getInterchange().getId();
-        Interchange interchange = moveInterchangeableGroupToOtherGroup(part, asInterchange);
-        List<RelatedPart> relatedParts = new ArrayList<>(1);
-        relatedParts.add(new RelatedPart(part.getId(), PART0));
-        relatedParts.add(new RelatedPart(asInterchange.getId(), PART1));
+    public void create(Long partId, Long asInterchangePartId) throws IOException {
+        MigrateInterchangeResponse response = graphDbService.moveGroupToOtherInterchangeableGroup(partId,
+                asInterchangePartId);
+        checkSuccess(response);
+        Long headerId = response.getNewHeaderId();
+        Interchange interchange = findById(headerId);
+        List<RelatedPart> relatedParts = new ArrayList<>(2);
+        relatedParts.add(new RelatedPart(partId, PART0));
+        relatedParts.add(new RelatedPart(asInterchangePartId, ChangelogPart.Role.PART1));
         changelogService.log(INTERCHANGE, "Created interchange: " + formatInterchange(interchange) + ".",
                 interchange.toJson(), relatedParts);
-        bomService.rebuildBomDescendancyForParts(asList(part.getId(), asInterchange.getId()), true);
-        partChangeService.changedInterchange(srcInterchangeId, interchange.getId());
+        partChangeService.changedInterchange(asInterchangePartId, headerId);
     }
 
     /**
@@ -144,28 +130,16 @@ public class InterchangeService {
     @Transactional
     public void leaveInterchangeableGroup(Long partId) throws IOException {
         Part part = partDao.findOne(partId);
-        normalizePartInterchange(part);
-        Interchange interchange = part.getInterchange();
-        if (interchange.isAlone()) {
-            return;
-        }
-        interchange.getParts().remove(part);
-        interchangeDao.merge(interchange);
-        // Create a new interchange group.
-        // Any part must belong to an interchange group (see #589, #482).
-        Interchange newInterchange = new Interchange();
-        interchangeDao.persist(newInterchange);
-        part.setInterchange(newInterchange);
-        newInterchange.getParts().add(part);
-        interchangeDao.merge(newInterchange);
-        // Update the changelog
+        Interchange interchange = findForPart(partId);
+        MigrateInterchangeResponse response = graphDbService.leaveInterchangeableGroup(partId);
+        checkSuccess(response);
+        // Update the changelog.
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
-        changelogService.log(INTERCHANGE, "The part " + formatPart(part) + " migrated from interchange group ["
-                + interchange.getId() + "] to [" + newInterchange.getId() + "].", relatedParts);
-        bomService.rebuildBomDescendancyForPart(partId, true);
-        bomService.rebuildBomDescendancyForParts(interchange.getParts().iterator(), true);
-        partChangeService.changedInterchange(interchange.getId(), newInterchange.getId());
+        Long newInterchangeId = response.getNewHeaderId();
+        changelogService.log(INTERCHANGE, "The part [" + formatPart(part) + "] migrated from interchange group ["
+                + interchange.getId() + "] to [" + newInterchangeId + "].", relatedParts);
+        partChangeService.changedInterchange(interchange.getId(), newInterchangeId);
     }
 
     /**
@@ -178,23 +152,20 @@ public class InterchangeService {
     @Transactional
     public void mergePickedAloneToPart(HttpServletRequest httpRequest, long partId, long pickedPartId,
             Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) throws IOException {
-        Part part = partDao.findOne(partId);
-        normalizePartInterchange(part);
-        Long interchangeId0 = part.getInterchange().getId();
-        Part pickedPart = partDao.findOne(pickedPartId);
-        normalizePartInterchange(pickedPart);
-        Long interchangeId1 = pickedPart.getInterchange().getId();
-        movePartToOtherInterchangeGroup(pickedPart, part);
+        MigrateInterchangeResponse response = graphDbService.movePartToOtherInterchangeGroup(pickedPartId, partId);
+        checkSuccess(response);
+        Long oldInterchangeHeaderId = response.getOldHeaderId();
+        Long newInterchangeHeaderId = response.getNewHeaderId();
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(pickedPartId, PART1));
+        Part pickedPart = partDao.findOne(pickedPartId);
+        Part part = partDao.findOne(partId);
         Changelog changelog = changelogService.log(INTERCHANGE,
                 "Part " + formatPart(pickedPart) + " added to the part " + formatPart(part) + " as interchange.",
                 relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
-        bomService.rebuildBomDescendancyForPart(partId, true);
-        bomService.rebuildBomDescendancyForPart(pickedPartId, true);
-        partChangeService.changedInterchange(interchangeId0, interchangeId1);
+        partChangeService.changedInterchange(oldInterchangeHeaderId, newInterchangeHeaderId);
     }
 
     /**
@@ -207,21 +178,20 @@ public class InterchangeService {
     @Transactional
     public void mergePartAloneToPicked(HttpServletRequest httpRequest, long partId, long pickedPartId,
             Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) throws IOException {
-        Part part = partDao.findOne(partId);
-        normalizePartInterchange(part);
-        Part pickedPart = partDao.findOne(pickedPartId);
-        normalizePartInterchange(pickedPart);
-        movePartToOtherInterchangeGroup(part, pickedPart);
+        MigrateInterchangeResponse response = graphDbService.movePartToOtherInterchangeGroup(partId, pickedPartId);
+        checkSuccess(response);
+        Long oldInterchangeHeaderId = response.getOldHeaderId();
+        Long newInterchangeHeaderId = response.getNewHeaderId();
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(pickedPartId, PART1));
+        Part pickedPart = partDao.findOne(pickedPartId);
+        Part part = partDao.findOne(partId);
         Changelog changelog = changelogService.log(INTERCHANGE,
                 "Part " + formatPart(part) + " added to the part " + formatPart(pickedPart) + " as interchange.",
                 relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
-        bomService.rebuildBomDescendancyForPart(partId, true);
-        bomService.rebuildBomDescendancyForPart(pickedPartId, true);
-        partChangeService.changedInterchange(part.getInterchange().getId(), pickedPart.getInterchange().getId());
+        partChangeService.changedInterchange(oldInterchangeHeaderId, newInterchangeHeaderId);
     }
 
     /**
@@ -232,113 +202,23 @@ public class InterchangeService {
      * @param pickedPartId
      */
     @Transactional
-    public void mergePickedAllToPart(HttpServletRequest httpRequest, long partId, long pickedPartId, Long[] sourcesIds,
+    public void mergePickedAllToPart(HttpServletRequest httpRequest, Long partId, Long pickedPartId, Long[] sourcesIds,
             Integer[] ratings, String description, Long[] attachIds) throws IOException {
-        Part part = partDao.findOne(partId);
-        normalizePartInterchange(part);
-        Long interchangId0 = part.getInterchange().getId();
-        Part pickedPart = partDao.findOne(pickedPartId);
-        normalizePartInterchange(pickedPart);
-        Long interchangeId1 = pickedPart.getInterchange().getId();
-        moveInterchangeableGroupToOtherGroup(pickedPart, part);
+        MigrateInterchangeResponse response = graphDbService.moveGroupToOtherInterchangeableGroup(pickedPartId,
+                partId);
+        checkSuccess(response);
+        Long oldInterchangeHeaderId = response.getOldHeaderId();
+        Long newInterchangeHeaderId = response.getNewHeaderId();
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(pickedPartId, PART1));
+        Part pickedPart = partDao.findOne(pickedPartId);
+        Part part = partDao.findOne(partId);
         Changelog changelog = changelogService.log(INTERCHANGE, "Part " + formatPart(pickedPart)
                 + " and all its interchanges added to the part " + formatPart(part) + " as interchanges.",
                 relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
-        bomService.rebuildBomDescendancyForPart(partId, true);
-        bomService.rebuildBomDescendancyForPart(pickedPartId, true);
-        partChangeService.changedInterchange(interchangId0, interchangeId1);
-    }
-
-    /**
-     * Move a part from its current interchange group to an interchange group of
-     * other part.
-     *
-     * @param srcPart
-     *            the part which is being migrated
-     * @param dstPart
-     */
-    private void movePartToOtherInterchangeGroup(Part srcPart, Part dstPart) throws IOException {
-        Interchange srcInterchange = srcPart.getInterchange();
-        boolean alone = srcInterchange.isAlone();
-        srcInterchange.getParts().remove(srcPart);
-        if (alone) {
-            // Delete current interchange group because empty groups are not
-            // allowed.
-            interchangeDao.remove(srcInterchange); // Remove a record in the
-                                                   // table
-                                                   // 'interchange_header'.
-        } else {
-            // Remove srcPart part from its current interchangeable group.
-            interchangeDao.merge(srcInterchange);
-        }
-        // Add srcPart to an interchangeable group of the destPart part.
-        Interchange dstInterchange = dstPart.getInterchange();
-        srcPart.setInterchange(dstInterchange);
-        dstInterchange.getParts().add(srcPart);
-        interchangeDao.merge(dstInterchange);
-    }
-
-    /**
-     * Move parts from one interchangeable groups to other one.
-     *
-     * @param scrPart
-     *            a part which interchangeable group be joined to a destination
-     *            group.
-     * @param dstPart
-     */
-    private Interchange moveInterchangeableGroupToOtherGroup(Part scrPart, Part dstPart) throws IOException {
-        Interchange srcInterchange = scrPart.getInterchange();
-        Set<Part> srcGrp = srcInterchange.getParts();
-        Interchange dstInterchange = dstPart.getInterchange();
-        Set<Part> dstGrp = dstInterchange.getParts();
-        for (Iterator<Part> srcPartsIter = srcGrp.iterator(); srcPartsIter.hasNext();) {
-            Part srcPart = srcPartsIter.next();
-            srcPartsIter.remove();
-            srcPart.setInterchange(dstInterchange);
-            dstGrp.add(srcPart);
-        }
-        interchangeDao.remove(srcInterchange); // Delete interchange group.
-        interchangeDao.merge(dstInterchange);
-        return dstInterchange;
-    }
-
-    /**
-     * Assign interchange to the part if it is absent.
-     *
-     * Every part should be assigned to an interchange record even if it is the
-     * only part in the interchange group. In order to be compliant with this
-     * requirement a database has a trigger on the insert event that creates
-     * such record. But for some reason this constraint can be violated. This
-     * method fixes possible violates.
-     *
-     * This method is executed in a separate transaction.
-     *
-     * See also #482, #484.
-     *
-     * @param part
-     *            a part for normalization.
-     * @return true when a new interchange group has been created.
-     */
-    private Boolean normalizePartInterchange(Part part) {
-        TransactionTemplate tt = new TransactionTemplate(txManagerMetadata);
-        tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new
-                                                             // transaction
-        Boolean modified = tt.execute(ts -> {
-            Interchange interchange = part.getInterchange();
-            if (interchange == null) {
-                interchange = new Interchange();
-                interchangeDao.persist(interchange);
-                part.setInterchange(interchange);
-                partDao.merge(part);
-                return TRUE;
-            }
-            return FALSE;
-        });
-        return modified;
+        partChangeService.changedInterchange(oldInterchangeHeaderId, newInterchangeHeaderId);
     }
 
 }

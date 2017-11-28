@@ -12,8 +12,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,15 +37,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.dao.TurboTypeDao;
-import com.turbointernational.metadata.entity.BOMAncestor;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.entity.part.PartRepository;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.Turbo;
-import com.turbointernational.metadata.service.BOMService;
+import com.turbointernational.metadata.service.InterchangeService;
 import com.turbointernational.metadata.service.PartService;
 import com.turbointernational.metadata.service.PriceService;
 import com.turbointernational.metadata.service.StandardOversizePartService;
@@ -53,8 +49,9 @@ import com.turbointernational.metadata.service.StandardOversizePartService.Creat
 import com.turbointernational.metadata.service.StandardOversizePartService.CreateStandardOversizePartResponse;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.AlsoBought;
+import com.turbointernational.metadata.web.dto.Ancestor;
 import com.turbointernational.metadata.web.dto.Page;
-import com.turbointernational.metadata.web.dto.ProductPricesDto;
+import com.turbointernational.metadata.web.dto.ProductPrices;
 
 @RequestMapping(value = "/metadata")
 @RestController
@@ -64,22 +61,13 @@ public class PartController {
     private PartService partService;
 
     @Autowired
-    private BOMService bomService;
-
-    @Autowired
     private PriceService priceService;
 
     @Autowired
     private StandardOversizePartService standardOversizePartService;
 
     @Autowired
-    private TurboTypeDao turboTypeDao;
-
-    @Autowired
-    private PartDao partDao;
-
-    @Autowired
-    private PartRepository partRepository;
+    private InterchangeService interchangeService;
 
     static class PartCreateRequest {
 
@@ -345,13 +333,12 @@ public class PartController {
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody Part getPart(@PathVariable("id") Long id) {
-        Part part = partDao.findOne(id);
-        return part;
+        return partService.getPart(id, true);
     }
 
     @JsonView(View.Summary.class)
     @RequestMapping(value = "/part/{id}/prices", method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody ProductPricesDto getPrices(HttpServletRequest httpRequest, @PathVariable("id") Long id) {
+    public @ResponseBody ProductPrices getPrices(HttpServletRequest httpRequest, @PathVariable("id") Long id) {
         // Prices for a part is loading during initialization of the Angular's
         // controller for a part view.
         // But at that initialization we have no reliable way in a JavaScript
@@ -408,7 +395,9 @@ public class PartController {
     @RequestMapping(value = "/part/numbers", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody Part findByPartNumber(@RequestParam(name = "mid") Long manufacturerId,
             @RequestParam(name = "pn") String partNumber) {
-        return partDao.findByPartNumberAndManufacturer(manufacturerId, partNumber);
+        Part part = partService.findByPartNumberAndManufacturer(manufacturerId, partNumber, true);
+        interchangeService.initInterchange(part);
+        return part;
     }
 
     @JsonView(View.Summary.class)
@@ -432,8 +421,8 @@ public class PartController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
-    public Page<BOMAncestor> ancestors(@PathVariable("id") Long partId, @RequestParam(name = "offset") int offset,
-            @RequestParam(name = "limit") int limit) throws Exception {
+    public Page<Ancestor> ancestors(@PathVariable("id") Long partId, @RequestParam("offset") int offset,
+            @RequestParam("limit") int limit) throws Exception {
         return partService.ancestors(partId, offset, limit);
     }
 
@@ -459,8 +448,7 @@ public class PartController {
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/xrefpart", method = POST)
     public @ResponseBody Part createXRefPart(@RequestBody XRefPartCreateRequest request) throws Exception {
-        Part retVal = partService.createXRefPart(request.getOriginalPartId(), request.getPart());
-        return retVal;
+        return partService.createXRefPart(request.getOriginalPartId(), request.getPart(), true);
     }
 
     @Transactional
@@ -481,7 +469,7 @@ public class PartController {
             Double dimHeight = part.getDimHeight();
             Double weight = part.getWeight();
             return partService.updatePartDetails(request, id, manfrPartNum, manfrId, name, description, inactive,
-                    dimLength, dimWidth, dimHeight, weight);
+                    dimLength, dimWidth, dimHeight, weight, true);
         } catch (SecurityException e) {
             response.sendError(SC_FORBIDDEN, e.toString());
             return null;
@@ -495,7 +483,7 @@ public class PartController {
     public @ResponseBody Part updatePart(HttpServletRequest request, HttpServletResponse response,
             @RequestBody Part part, @PathVariable("id") Long id) throws IOException {
         try {
-            return partService.updatePart(request, id, part);
+            return partService.updatePart(request, id, part, true);
         } catch (AssertionError e) {
             response.sendError(SC_BAD_REQUEST, e.toString());
             return null;
@@ -503,14 +491,6 @@ public class PartController {
             response.sendError(SC_FORBIDDEN, e.toString());
             return null;
         }
-    }
-
-    @Transactional
-    @Secured("ROLE_BOM")
-    @JsonView(View.Detail.class)
-    @RequestMapping(value = "/part/{id}/bom/rebuild", method = POST)
-    public @ResponseBody void rebuildBom(@PathVariable("id") Long partId) throws IOException {
-        bomService.rebuildBomDescendancyForPart(partId, true);
     }
 
     @Transactional
@@ -533,28 +513,30 @@ public class PartController {
     @RequestMapping(value = "/part/{id}/cdlegend/image", method = POST, produces = APPLICATION_JSON_VALUE)
     @JsonView(View.Summary.class)
     @Secured("ROLE_PART_IMAGES")
-    public @ResponseBody Part addCriticalDimensionLegendImage(@PathVariable Long id,
+    @ResponseBody 
+    public Part addCriticalDimensionLegendImage(@PathVariable Long id,
             @RequestPart("file") @Valid @NotNull @NotBlank MultipartFile mpf) throws Exception {
         byte[] imageData = mpf.getBytes();
-        Part part = partService.addCriticalDimensionLegendImage(id, imageData);
+        Part part = partService.addCriticalDimensionLegendImage(id, imageData, false);
         return part;
     }
 
     @Transactional
     @RequestMapping(value = "/part/{partId}/turboType/{turboTypeId}", method = POST)
+    @JsonView(View.Detail.class)
     @Secured("ROLE_ALTER_PART")
-    public void addTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
-        Part part = partDao.findOne(partId);
-        TurboType turboType = turboTypeDao.findOne(turboTypeId);
-        part.getTurboTypes().add(turboType);
-        partDao.merge(part);
+    @ResponseBody 
+    public Collection<TurboType> addTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
+        return partService.addTurboType(partId, turboTypeId, false);
     }
 
     @Transactional
     @RequestMapping(value = "/part/{partId}/turboType/{turboTypeId}", method = DELETE)
+    @JsonView(View.Detail.class)
     @Secured("ROLE_ALTER_PART")
-    public void deleteTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
-        partService.deleteTurboType(partId, turboTypeId);
+    @ResponseBody 
+    public Collection<TurboType> deleteTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
+        return partService.deleteTurboType(partId, turboTypeId, false);
     }
 
     enum GasketKitResultStatus {
@@ -602,7 +584,7 @@ public class PartController {
     @JsonView(View.Detail.class)
     @Secured("ROLE_ALTER_PART")
     public Turbo clearGasketKitInPart(@PathVariable("partId") long partId) {
-        return partService.clearGasketKitInPart(partId);
+        return partService.clearGasketKitInPart(partId, true);
     }
 
     @Transactional
@@ -611,7 +593,7 @@ public class PartController {
     @Secured("ROLE_READ")
     @JsonView(View.Summary.class)
     public List<Turbo> listTurbosLinkedToGasketKit(@PathVariable("gasketKitId") Long gasketKitId) {
-        return partDao.listTurbosLinkedToGasketKit(gasketKitId);
+        return partService.listTurbosLinkedToGasketKit(gasketKitId, false);
     }
 
     @Transactional
@@ -620,28 +602,7 @@ public class PartController {
     @JsonView(View.Detail.class)
     @Secured("ROLE_ALTER_PART")
     public List<Turbo> unlinkTurboInGasketKit(@PathVariable("partId") Long partId) {
-        return partService.unlinkTurboInGasketKit(partId);
-    }
-
-    @Transactional(noRollbackFor = AssertionError.class)
-    @Secured("ROLE_ALTER_PART")
-    @JsonView(View.Detail.class)
-    @ResponseBody
-    @RequestMapping(value = "/part/{partId}/gasketkits", method = PUT, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public LinkTurboResponse linkTurbosToGasketKit(@RequestBody LinkTurboRequest request) {
-        Long gasketKitId = request.getGasketKitId();
-        List<LinkTurboResponse.Row> rows = partService.linkTurbosToGasketKit(gasketKitId, request.getPickedTurbos());
-        List<Turbo> turbos = partDao.listTurbosLinkedToGasketKit(gasketKitId);
-        return new LinkTurboResponse(rows, turbos);
-    }
-
-    @RequestMapping(value = "/part/{partId}/boms/interchanges", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @Secured("ROLE_READ")
-    @JsonView(View.Summary.class)
-    // see ticket #907
-    public Map<Long, List<Part>> getPartBomsInterchanges(@PathVariable("partId") Long partId) throws Exception {
-        return partService.getPartBomsInterchanges(partId);
+        return partService.unlinkTurboInGasketKit(partId, true);
     }
 
 }

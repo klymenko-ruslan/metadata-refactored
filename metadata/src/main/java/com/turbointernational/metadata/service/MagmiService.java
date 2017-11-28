@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import com.turbointernational.metadata.dao.InterchangeDao;
+import com.turbointernational.metadata.service.GraphDbService.GetInterchangeResponse;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryDetailDto;
 import com.turbointernational.metadata.web.dto.mas90.ArInvoiceHistoryHeaderDto;
 import com.turbointernational.metadata.web.dto.mas90.InvoicesChunk;
@@ -89,7 +89,7 @@ public class MagmiService {
     private Mas90Service mas90Service;
 
     @Autowired
-    private InterchangeDao interchangeDao;
+    private GraphDbService graphDbService;
 
     @PostConstruct
     public void init() {
@@ -454,7 +454,7 @@ public class MagmiService {
                 Double armc234entryrate = null;
                 List<InvoicesChunk.Invoice.Details> details = null;
                 Long partId = null;
-                List<Long> interchanges = null;
+                Long[] interchanges = null;
                 while (rs.next()) {
                     invoiceno = rs.getString(1);
                     headerseqno = rs.getString(2);
@@ -513,7 +513,8 @@ public class MagmiService {
                         }
                     }
                     partId = pd.getPartId();
-                    interchanges = interchangeDao.getInterchanges(partId);
+                    GetInterchangeResponse interchangeResponse = graphDbService.findInterchangeForPart(partId);
+                    interchanges = interchangeResponse.getParts();
                     InvoicesChunk.Invoice.Details dd = new InvoicesChunk.Invoice.Details(partId, itemcode, pd.getPartTypeName(),
                             interchanges, itemcodedesc, detailseqno, quantityshipped, unitprice, unitcost,
                             extensionamt, armc234entrycurrency, armc234entryrate);

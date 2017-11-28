@@ -94,8 +94,8 @@ angular.module('ngMetaCrudApp')
     };
 
   }])
-  .controller('ChangelogViewDlgCtrl', ['$scope', '$log', '$location', 'NgTableParams', 'utils', '$uibModalInstance', 'changelogRecord', 'changelogSourceLink',
-    function($scope, $log, $location, NgTableParams, utils, $uibModalInstance,  changelogRecord, changelogSourceLink) {
+  .controller('ChangelogViewDlgCtrl', ['$scope', '$log', '$location', 'NgTableParams', '$uibModalInstance', 'changelogRecord', 'changelogSourceLink',
+    function($scope, $log, $location, NgTableParams, $uibModalInstance,  changelogRecord, changelogSourceLink) {
       $scope.readonly = true;
       $scope.date = changelogRecord.changeDate;
       $scope.user = changelogRecord.user;
@@ -115,7 +115,7 @@ angular.module('ngMetaCrudApp')
           sorting: {}
         },
         {
-          getData: utils.localPagination($scope.changelogSources)
+          dataset: $scope.changelogSources
         }
       );
 

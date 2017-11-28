@@ -39,8 +39,8 @@ import flexjson.JSONSerializer;
 @Entity
 @Table(name = "car_make", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 @NamedQueries({
-        @NamedQuery(name = "findCarMakeByName", query = "FROM CarMake WHERE name=:name"),
-        @NamedQuery(name = "findAllCarMakeOrderedByName", query = "FROM CarMake ORDER BY name")
+        @NamedQuery(name = "findCarMakeByName", query = "SELECT o FROM CarMake o WHERE o.name=:name"),
+        @NamedQuery(name = "findAllCarMakeOrderedByName", query = "SELECT o FROM CarMake o ORDER BY o.name")
 })
 public class CarMake implements Serializable, SearchableEntity {
 

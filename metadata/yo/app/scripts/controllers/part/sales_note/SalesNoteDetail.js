@@ -2,9 +2,9 @@
 
 angular.module('ngMetaCrudApp')
   .controller('SalesNoteDetailCtrl', ['$log', '$routeParams', '$parse', 'dialogs', '$scope',
-    'NgTableParams', '$location', 'toastr', 'SalesNotes', 'utils', 'restService', 'part', 'salesNote',
+    'NgTableParams', '$location', 'toastr', 'SalesNotes', 'restService', 'part', 'salesNote',
     function($log, $routeParams, $parse, dialogs, $scope, NgTableParams, $location, toastr, SalesNotes,
-        utils, restService, part, salesNote) {
+        restService, part, salesNote) {
       $scope.part = part;
       $scope.salesNote = salesNote;
       $scope.salesNoteId = $routeParams.salesNoteId;
@@ -29,7 +29,7 @@ angular.module('ngMetaCrudApp')
         _.each(updatedAttachments, function (e) {
           attachments.push(e);
         });
-        $scope.attachmentsTableParams.reload();
+        $scope.attachmentsTableParams.settings({dataset: attachments});
         formData = new FormData();
       }
 
@@ -74,18 +74,18 @@ angular.module('ngMetaCrudApp')
       $scope.attachmentsTableParams = new NgTableParams({
         page: 1,
         count: 10,
-        sorting: {}
+        sorting: {'createDate': 'asc'}
       }, {
-        getData: utils.localPagination(attachments, 'createDate')
+        dataset: attachments
       });
 
       // Related Part Table
       $scope.relatedPartTableParams = new NgTableParams({
         page: 1,
         count: 10,
-        sorting: {}
+        sorting: {'part.manufacturerPartNumber': 'asc'}
       }, {
-        getData: utils.localPagination(salesNote.parts, 'part.manufacturerPartNumber')
+        dataset: salesNote.parts
       });
 
       // Editing flag

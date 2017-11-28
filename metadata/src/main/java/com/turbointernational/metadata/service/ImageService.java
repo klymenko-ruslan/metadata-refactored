@@ -27,6 +27,8 @@ public interface ImageService {
     public ResponseEntity<byte[]> getOriginalImage(String filename) throws IOException;
 
     public ResponseEntity<byte[]> getResizedImage(String filename) throws IOException;
+    
+    public void delProductImage(Long id);
 
     public void delOriginalImage(String filename);
 

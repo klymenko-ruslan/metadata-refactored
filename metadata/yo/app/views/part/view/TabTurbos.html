@@ -1,20 +1,29 @@
-<a class="btn btn-primary pull-right" style="margin-bottom:10px;" data-ng-href="/part/{{partId}}/turbo/search">
-  <i class="fa fa-plus"></i>
-  Add Turbo
-</a>
-<table data-ng-table="turbosTableParams" class="table table-bordered table-striped table-hover table-responsive">
-<tr data-ng-repeat="t in $data">
-  <td title="'Turbo'" class="text-left">
-    <a data-ng-href="/part/{{t.id}}">[{{t.id}}] - {{t.manufacturerPartNumber}}</a>
-  </td>
-  <td class="actions" title="'Actions'">
-    <button authorize="ROLE_ALTER_PART" data-ng-show="t.id" data-ng-click="onClearTurbo(t.id, t.manufacturerPartNumber)" class="btn btn-xs btn-danger">
-      <i class="fa fa-chain-broken" aria-hidden="true"></i>
-      Unlink
-    </button>
-  </td>
-</tr>
-<tr data-ng-hide="$data.length > 0">
-  <td colspan="2">No turbos to display.</td>
-</tr>
-</table>
+<div class="row">
+  <div class="col-xs-12">
+    <a class="btn btn-primary pull-right" style="margin-bottom:10px;" data-ng-href="/part/{{partId}}/turbo/search">
+      <i class="fa fa-plus"></i>
+      Add Turbo
+    </a>
+    <div data-ng-show="turbosTableParamsLoading">
+      Loading...
+    </div>
+    <div data-ng-hide="turbosTableParamsLoading">
+      <table data-ng-table="turbosTableParams" class="table table-bordered table-striped table-hover table-responsive">
+        <tr data-ng-repeat="t in $data">
+          <td title="'Turbo'" class="text-left">
+            <a data-ng-href="/part/{{t.id}}">[{{t.id}}] - {{t.manufacturerPartNumber}}</a>
+          </td>
+          <td class="actions" title="'Actions'">
+            <button authorize="ROLE_ALTER_PART" data-ng-show="t.id" data-ng-click="onClearTurbo(t.id, t.manufacturerPartNumber)" class="btn btn-xs btn-danger">
+              <i class="fa fa-chain-broken" aria-hidden="true"></i>
+              Unlink
+            </button>
+          </td>
+        </tr>
+        <tr data-ng-hide="$data.length > 0">
+          <td colspan="2">No turbos to display.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

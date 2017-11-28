@@ -3,9 +3,9 @@
 angular.module('ngMetaCrudApp')
 
 .controller('AddStandardOversizeCtrl', ['$log', '$scope', '$location', 'NgTableParams',
-  'restService', 'dialogs', 'toastr', 'utils', 'partTypes', 'part', 'type', 'existing',
+  'restService', 'dialogs', 'toastr', 'partTypes', 'part', 'type', 'existing',
   function($log, $scope, $location, NgTableParams, restService,
-    dialogs, toastr, utils, partTypes, part, type, existing) {
+    dialogs, toastr, partTypes, part, type, existing) {
 
     $scope.partTypes = partTypes;
     $scope.restService = restService;
@@ -28,10 +28,11 @@ angular.module('ngMetaCrudApp')
 
     $scope.existingTableParams = new NgTableParams({
       page: 1,
-      count: 5
+      count: 5,
+      sorting: {'manufacturerPartNumber': 'asc'}
     }, {
-        counts: [5, 10, 15],
-      getData: utils.localPagination(existing, 'manufacturerPartNumber')
+      counts: [5, 10, 15],
+      dataset: existing
     });
 
     $scope.pickedPartsTableParams = new NgTableParams(
@@ -42,7 +43,7 @@ angular.module('ngMetaCrudApp')
       },
       {
         counts: [5, 10, 15],
-        getData: utils.localPagination(pickedParts)
+        dataset: pickedParts
       }
     );
 
@@ -52,7 +53,7 @@ angular.module('ngMetaCrudApp')
         qty: 1
       };
       pickedPartIds[pickedPart.id] = true;
-      $scope.pickedPartsTableParams.reload();
+      $scope.pickedPartsTableParams.settings({dataset: pickedParts});
     };
 
     $scope.unpick = function(partId) {
@@ -63,7 +64,7 @@ angular.module('ngMetaCrudApp')
       delete p.extra;
       pickedParts.splice(idx, 1);
       delete pickedPartIds[partId];
-      $scope.pickedPartsTableParams.reload();
+      $scope.pickedPartsTableParams.settings({dataset: pickedParts});
     };
 
     $scope.unpickAll = function() {
@@ -71,11 +72,11 @@ angular.module('ngMetaCrudApp')
         delete pickedPartIds[pp.id];
       });
       pickedParts.splice(0, pickedParts.length);
-      $scope.pickedPartsTableParams.reload();
+      $scope.pickedPartsTableParams.settings({dataset: pickedParts});
     };
 
     $scope.isBttnSaveDisabled = function() {
-      return pickedParts.length === 0 || restService.status.bomRebuilding;
+      return pickedParts.length === 0;
     };
 
     $scope.isBttnUnpickAllDisabled = function() {
@@ -85,8 +86,7 @@ angular.module('ngMetaCrudApp')
     $scope.isBttnPickDisabled = function(p) {
       return p === undefined || $scope.part.manufacturer.id !== p.manufacturer.id ||
         $scope.part.partType.id !== p.partType.id ||
-        $scope.part.id === p.id || pickedPartIds[p.id] || existingPartIds[p.id] ||
-        restService.status.bomRebuilding;
+        $scope.part.id === p.id || pickedPartIds[p.id] || existingPartIds[p.id];
     };
 
     $scope.save = function() {
@@ -101,12 +101,12 @@ angular.module('ngMetaCrudApp')
             existing.push(p);
           });
           updateExistingPartIds();
-          $scope.existingTableParams.reload();
+          $scope.existingTableParams.settings({dataset: existing});
           _.each(pickedParts, function(p) {
             delete pickedPartIds[p.id];
           });
           pickedParts.splice(0, pickedParts.length);
-          $scope.pickedPartsTableParams.reload();
+          $scope.pickedPartsTableParams.settings({dataset: pickedParts});
           toastr.success('The part(s) has been successfully added.');
         },
         function failure(error) {
@@ -142,7 +142,7 @@ angular.module('ngMetaCrudApp')
           restService.deleteStandardOversizePart(standardPartId, oversizePartId).then(
             function() {
               existing.splice(idx, 1);
-              $scope.existingTableParams.reload();
+              $scope.existingTableParams.settings({dataset: existing});
               updateExistingPartIds();
               toastr.success(toast);
             },

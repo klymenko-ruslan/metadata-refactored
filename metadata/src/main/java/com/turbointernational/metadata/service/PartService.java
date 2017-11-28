@@ -7,21 +7,26 @@ import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
 import static com.turbointernational.metadata.entity.Manufacturer.TI_ID;
 import static com.turbointernational.metadata.entity.PartType.PTID_GASKET_KIT;
 import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
+import static com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse.Row.cmpComplex;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_WIDTH;
 import static com.turbointernational.metadata.service.ImageService.SIZES;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
+import static com.turbointernational.metadata.util.FormatUtils.formatProductImage;
+import static java.lang.System.arraycopy;
+import static java.util.Arrays.asList;
+import static java.util.Arrays.sort;
 import static java.util.stream.Collectors.toSet;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,6 +35,7 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.im4java.core.CommandException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,21 +50,25 @@ import org.springframework.validation.Errors;
 
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
-import com.turbointernational.metadata.entity.BOMAncestor;
-import com.turbointernational.metadata.entity.BOMItem;
+import com.turbointernational.metadata.dao.TurboTypeDao;
 import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.TurboType;
-import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.GasketKit;
 import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
+import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse;
+import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse.Row;
+import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
+import com.turbointernational.metadata.service.GraphDbService.Response;
 import com.turbointernational.metadata.web.controller.PartController;
 import com.turbointernational.metadata.web.dto.AlsoBought;
+import com.turbointernational.metadata.web.dto.Ancestor;
+import com.turbointernational.metadata.web.dto.Interchange;
 import com.turbointernational.metadata.web.dto.Page;
-import com.turbointernational.metadata.web.dto.PartDesc;
 
 import flexjson.JSONSerializer;
 
@@ -80,6 +90,9 @@ public class PartService {
     private InterchangeService interchangeService;
 
     @Autowired
+    private TurboTypeDao turboTypeDao;
+
+    @Autowired
     private ChangelogService changelogService;
 
     @Autowired
@@ -87,9 +100,6 @@ public class PartService {
 
     @Autowired
     private CriticalDimensionService criticalDimensionService;
-
-    @Autowired
-    private BOMService bomService;
 
     @Autowired
     private ProductImageDao productImageDao;
@@ -102,6 +112,12 @@ public class PartService {
 
     @PersistenceContext(unitName = "metadata")
     private EntityManager em;
+
+    @Autowired
+    private GraphDbService graphDbService;
+
+    @Autowired
+    private DtoMapperService dtoMapperService;
 
     private JSONSerializer partJsonSerializer = new JSONSerializer().include("id").include("name")
             .include("manufacturerPartNumber").include("description").include("inactive").include("partType.id")
@@ -124,20 +140,24 @@ public class PartService {
             origin.setId(null);
             origin.setManufacturerPartNumber(mpn);
             partDao.persist(origin);
+            Long originId = origin.getId();
+            Response response = graphDbService.registerPart(originId, origin.getPartType().getId(),
+                    origin.getManufacturer().getId());
+            GraphDbService.checkSuccess(response);
             // Update the changelog.
             String json = partJsonSerializer.serialize(origin);
             List<RelatedPart> relatedParts = new ArrayList<>(1);
-            relatedParts.add(new RelatedPart(origin.getId(), PART0));
+            relatedParts.add(new RelatedPart(originId, PART0));
             Changelog chlog = changelogService.log(PART, "Created part " + formatPart(origin) + ".", json,
                     relatedParts);
             changelogSourceService.link(httpRequest, chlog, sourcesIds, ratings, description, attachIds);
-            results.add(new PartController.PartCreateResponse.Row(origin.getId(), mpn, true, null));
+            results.add(new PartController.PartCreateResponse.Row(originId, mpn, true, null));
             added.add(mpn);
         }
         return results;
     }
 
-    public Part createXRefPart(Long originalPartId, Part toCreate) throws IOException {
+    public Part createXRefPart(Long originalPartId, Part toCreate, boolean details) throws IOException {
         partDao.persist(toCreate);
         // The table 'part' has a trigger on insert that associate an
         // interchangeable with the part.
@@ -145,17 +165,52 @@ public class PartService {
         // reflect changes made by the trigger.
         partDao.flush(); // make sure that an insert done
         partDao.refresh(toCreate);
+        Long partId = toCreate.getId();
+        Response response = graphDbService.registerPart(partId, toCreate.getPartType().getId(),
+                toCreate.getManufacturer().getId());
+        GraphDbService.checkSuccess(response);
         String json = partJsonSerializer.serialize(toCreate);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
-        relatedParts.add(new RelatedPart(toCreate.getId(), PART0));
+        relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(originalPartId, PART1));
         changelogService.log(PART, "Created part (cross reference) " + formatPart(toCreate) + ".", json, relatedParts);
-        Part asInterchange = partDao.findOne(originalPartId);
-        interchangeService.create(toCreate, asInterchange);
+        interchangeService.create(partId, originalPartId);
+        if (details) {
+            interchangeService.initInterchange(toCreate);
+        }
         return toCreate;
     }
 
-    public Part updatePart(HttpServletRequest request, Long id, Part part) throws AssertionError, SecurityException {
+    public Part getPart(Long id, boolean details) {
+        Part part = partDao.findOne(id);
+        if (details) {
+            interchangeService.initInterchange(part);
+        }
+        return part;
+    }
+
+    public Part findByPartNumberAndManufacturer(Long manufacturerId, String partNumber, boolean details) {
+        Part part = partDao.findByPartNumberAndManufacturer(manufacturerId, partNumber);
+        if (details) {
+            interchangeService.initInterchange(part);
+        }
+        return part;
+    }
+
+    public Part merge(Part part) {
+        return partDao.merge(part);
+    }
+
+    public List<Turbo> listTurbosLinkedToGasketKit(Long gasketKitId, boolean details) {
+        List<Turbo> turbos = partDao.listTurbosLinkedToGasketKit(gasketKitId);
+        if (details) {
+            turbos.forEach(t -> interchangeService.initInterchange(t));
+        }
+        return turbos;
+    }
+
+    public Part updatePart(HttpServletRequest request, Long id, Part part, boolean details)
+            throws AssertionError, SecurityException {
         Part originPart = partDao.findOne(id);
         if (originPart.getManufacturer().getId() != part.getManufacturer().getId()
                 && !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
@@ -173,6 +228,9 @@ public class PartService {
         String originalPartJson = originPart
                 .toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId()));
         Part retVal = partDao.merge(part);
+        if (details) {
+            interchangeService.initInterchange(retVal);
+        }
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(part.getId(), PART0));
@@ -202,7 +260,8 @@ public class PartService {
      * @return
      */
     public Part updatePartDetails(HttpServletRequest request, Long id, String manfrPartNum, Long manfrId, String name,
-            String description, Boolean inactive, Double dimLength, Double dimWidth, Double dimHeight, Double weight) {
+            String description, Boolean inactive, Double dimLength, Double dimWidth, Double dimHeight, Double weight,
+            boolean details) {
         Part originPart = partDao.findOne(id);
         if (!originPart.getManufacturer().getId().equals(manfrId)
                 && !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
@@ -226,14 +285,16 @@ public class PartService {
         originPart.setDimHeight(dimHeight);
         originPart.setWeight(weight);
         Part retVal = partDao.merge(originPart);
+        if (details) {
+            interchangeService.initInterchange(retVal);
+        }
         String updatedPartJson = originPart
                 .toJson(criticalDimensionService.getCriticalDimensionForPartType(originPart.getPartType().getId()));
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(id, PART0));
-        changelogService.log(PART, "Updated part " + originalPartStr + ".", "{original: " + originalPartJson +
-                ",updated: " + updatedPartJson + "}",
-                relatedParts);
+        changelogService.log(PART, "Updated part " + originalPartStr + ".",
+                "{original: " + originalPartJson + ",updated: " + updatedPartJson + "}", relatedParts);
         return retVal;
     }
 
@@ -278,11 +339,15 @@ public class PartService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw e;
         }
+        Collection<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(part.getId(), ChangelogPart.Role.PART0));
+        changelogService.log(PART, "A product image " + formatProductImage(productImage)
+                + " has been added to the part " + formatPart(part) + ".", relatedParts);
         return productImage;
     }
 
     @Transactional
-    public Part addCriticalDimensionLegendImage(Long id, byte[] imageData) throws Exception {
+    public Part addCriticalDimensionLegendImage(Long id, byte[] imageData, boolean details) throws Exception {
         Part part = partDao.findOne(id);
         String currImgFilename = part.getLegendImgFilename();
         if (currImgFilename != null) {
@@ -297,11 +362,32 @@ public class PartService {
         imageService.generateResizedImage(filenameOriginal, filenameScaled, PART_CRIT_DIM_LEGEND_WIDTH,
                 PART_CRIT_DIM_LEGEND_HEIGHT, true);
         part.setLegendImgFilename(filenameScaled);
+        if (details) {
+            interchangeService.initInterchange(part);
+        }
         return part;
     }
 
+    public Collection<TurboType> addTurboType(Long partId, Long turboTypeId, boolean details) {
+        Part part = getPart(partId, false);
+        TurboType turboType = turboTypeDao.findOne(turboTypeId);
+        part.getTurboTypes().add(turboType);
+        merge(part);
+        if (details) {
+            interchangeService.initInterchange(part);
+        }
+         // Update the changelog.
+        String json = partJsonSerializer.serialize(part);
+        List<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(partId, PART0));
+        relatedParts.add(new RelatedPart(turboTypeId, PART1));
+        changelogService.log(PART, "Added turbo type " + formatPart(turboTypeId) +
+                " to the part " + formatPart(part) + ".", json, relatedParts);
+        return part.getTurboTypes();
+    }
+
     @Transactional
-    public Part deleteTurboType(Long partId, Long turboTypeId) {
+    public Collection<TurboType> deleteTurboType(Long partId, Long turboTypeId, boolean details) {
         Part part = partDao.findOne(partId);
         // Remove any matching turbo types
         Iterator<TurboType> it = part.getTurboTypes().iterator();
@@ -312,12 +398,32 @@ public class PartService {
             }
         }
         partDao.merge(part);
-        return part;
+        if (details) {
+            interchangeService.initInterchange(part);
+        }
+        // Update the changelog.
+        String json = partJsonSerializer.serialize(part);
+        List<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(partId, PART0));
+        relatedParts.add(new RelatedPart(turboTypeId, PART1));
+        changelogService.log(PART, "Deleted turbo type " + formatPart(turboTypeId) +
+                " in the part " + formatPart(part) + ".", json, relatedParts);
+        return part.getTurboTypes();
     }
 
     @Secured("ROLE_READ")
-    public Page<BOMAncestor> ancestors(Long partId, int offset, int limit) throws Exception {
-        return partDao.ancestors(partId, offset, limit);
+    public GetAncestorsResponse ancestorsIds(Long partId) throws Exception {
+        return graphDbService.getAncestors(partId);
+    }
+
+    @Secured("ROLE_READ")
+    public Page<Ancestor> ancestors(Long partId, int offset, int limit) throws Exception {
+        GetAncestorsResponse response = ancestorsIds(partId);
+        Row[] rows = response.getRows();
+        sort(rows, cmpComplex);
+        Row[] slice = ArrayUtils.subarray(rows, offset, offset + limit);
+        Ancestor[] pgAncestors = dtoMapperService.map(slice, Ancestor[].class);
+        return new Page<Ancestor>(rows.length, asList(pgAncestors));
     }
 
     @Transactional(noRollbackFor = AssertionError.class)
@@ -353,8 +459,11 @@ public class PartService {
         }
         // Validation: that all parts in bom of Gasket Kit exist in the BOM of
         // the associated turbo
-        Set<Long> turboBomIds = turbo.getBom().stream().map(bi -> bi.getChild().getId()).collect(toSet());
-        Set<Long> newGasketKitBomIds = newGasketKit.getBom().stream().map(bi -> bi.getChild().getId()).collect(toSet());
+        GetBomsResponse turboBomsResponse = graphDbService.getBoms(turboId);
+        Set<Long> turboBomIds = Arrays.stream(turboBomsResponse.getRows()).map(r -> r.getPartId()).collect(toSet());
+        GetBomsResponse gasketKitBomsResponse = graphDbService.getBoms(gasketKitId);
+        Set<Long> newGasketKitBomIds = Arrays.stream(gasketKitBomsResponse.getRows()).map(r -> r.getPartId())
+                .collect(toSet());
         if (!turboBomIds.containsAll(newGasketKitBomIds)) {
             throw new AssertionError("Not all parts in BOM of the Gasket Kit exist in the BOM of associated Turbo.");
         }
@@ -372,7 +481,7 @@ public class PartService {
     }
 
     @Transactional
-    public Turbo clearGasketKitInPart(Long partId) {
+    public Turbo clearGasketKitInPart(Long partId, boolean details) {
         Turbo turbo = (Turbo) partDao.findOne(partId);
         GasketKit gasketKit = turbo.getGasketKit();
         if (gasketKit != null) {
@@ -383,16 +492,22 @@ public class PartService {
             }
         }
         turbo.setGasketKit(null);
+        if (details) {
+            interchangeService.initInterchange(turbo);
+        }
         return turbo;
     }
 
     @Transactional
-    public List<Turbo> unlinkTurboInGasketKit(Long partId) {
+    public List<Turbo> unlinkTurboInGasketKit(Long partId, boolean details) {
         Turbo turbo = (Turbo) partDao.findOne(partId);
         GasketKit gasketKit = turbo.getGasketKit();
         gasketKit.getTurbos().remove(turbo);
         turbo.setGasketKit(null);
         List<Turbo> retVal = partDao.listTurbosLinkedToGasketKit(gasketKit.getId());
+        if (details) {
+            retVal.forEach(t -> interchangeService.initInterchange(t));
+        }
         return retVal;
     }
 
@@ -425,8 +540,7 @@ public class PartService {
             List<String> mnfrNmbrs = recs.stream().map(ab -> ab.getManufacturerPartNumber())
                     .collect(Collectors.toList());
             // Map 'manufacturer number' -> 'part'
-            List<Part> parts = em.createNamedQuery("findPartsByMnfrsAndNumbers", Part.class)
-                    .setParameter("mnfrId", TI_ID).setParameter("mnfrPrtNmbrs", mnfrNmbrs).getResultList();
+            List<Part> parts = partDao.findPartsByMnfrsAndNumbers(TI_ID, mnfrNmbrs);
             Map<String, Part> mnfrNmb2rec = parts.stream()
                     .collect(Collectors.toMap(part -> part.getManufacturerPartNumber(), part -> part));
             recs.forEach(ab -> {
@@ -439,34 +553,10 @@ public class PartService {
                     ab.setPartId(rPartId);
                     ab.setPartTypeName(rPartTypeName);
                     ab.setName(rPartName);
-                    Optional.ofNullable(p.getInterchange()).ifPresent(interchange -> {
-                        List<PartDesc> interchanges = interchange.getParts().stream()
-                                .filter(ip -> !ip.getManufacturerPartNumber().equals(mnfrPrtNmb))
-                                .map(ip -> new PartDesc(ip.getId(), ip.getManufacturerPartNumber()))
-                                .collect(Collectors.toList());
-                        ab.setInterchanges(interchanges);
-                    });
+                    Interchange interchange = interchangeService.findForPart(p);
+                    ab.setInterchanges(interchange.getParts());
                 }
             });
-        }
-        return retVal;
-    }
-
-    public Map<Long, List<Part>> getPartBomsInterchanges(Long partId) throws Exception {
-        List<BOMItem> boms = bomService.getByParentId(partId);
-        // BOMItem.id => [Part0, Part1, ...]
-        Map<Long, List<Part>> retVal = new HashMap<>(boms.size());
-        for (BOMItem bi : boms) {
-            Long bomId = bi.getId();
-            Interchange interchange = bi.getChild().getInterchange();
-            if (interchange != null && interchange.getParts().size() > 0) {
-                List<Part> parts = new ArrayList<>(interchange.getParts().size());
-                interchange.getParts().stream().filter(p -> p.getId() != bi.getChild().getId())
-                        .forEach(p -> parts.add(p));
-                if (!parts.isEmpty()) {
-                    retVal.put(bomId, parts);
-                }
-            }
         }
         return retVal;
     }

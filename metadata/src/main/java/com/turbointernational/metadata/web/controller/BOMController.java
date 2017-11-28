@@ -5,15 +5,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,12 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.BOMItem;
-import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.service.BOMService;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsRequest;
 import com.turbointernational.metadata.service.BOMService.CreateBOMsResponse;
+import com.turbointernational.metadata.service.GraphDbService.CreateAltBomResponse;
 import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.Bom;
+import com.turbointernational.metadata.web.dto.PartGroup;
 
 @RequestMapping("/metadata/bom")
 @Controller
@@ -36,26 +34,6 @@ public class BOMController {
 
     @Autowired
     private BOMService bomService;
-
-    @RequestMapping(value = "rebuild/start", method = POST)
-    @ResponseBody
-    @JsonView(View.Summary.class)
-    @Secured("ROLE_BOM")
-    public BOMService.IndexingStatus startRebuild(Authentication authentication,
-            @RequestBody Map<String, Boolean> options) throws Exception {
-        User user = (User) authentication.getPrincipal();
-        boolean indexBoms = options.getOrDefault("indexBoms", false);
-        BOMService.IndexingStatus status = bomService.startRebuild(user, null, indexBoms);
-        return status;
-    }
-
-    @RequestMapping(value = "rebuild/status", method = GET)
-    @ResponseBody
-    @JsonView(View.Summary.class)
-    public BOMService.IndexingStatus getRebuildStatus() throws Exception {
-        BOMService.IndexingStatus status = bomService.getRebuildStatus();
-        return status;
-    }
 
     @ResponseBody
     @Transactional
@@ -67,29 +45,29 @@ public class BOMController {
         return bomService.createBOMs(httpRequest, request);
     }
 
-    @RequestMapping(value = "/byParentPart/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @Secured("ROLE_READ")
-    @JsonView(View.SummaryWithBOMDetail.class)
-    public List<BOMItem> getPartBOMs(@PathVariable("id") Long id) throws Exception {
-        return bomService.getByParentId(id);
-    }
-
     @RequestMapping(value = "/byParentPart/{partId}/type", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
     @JsonView(View.SummaryWithBOMDetail.class)
-    public List<BOMItem> getByParentAndTypeIds(@PathVariable("partId") Long partId, @RequestParam("typeId") Long typeId)
+    public Bom[] getByParentAndTypeIds(@PathVariable("partId") Long partId, @RequestParam("typeId") Long typeId)
             throws Exception {
         return bomService.getByParentAndTypeIds(partId, typeId);
+    }
+
+    @RequestMapping(value = "/byParentPart/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_READ")
+    @JsonView(View.SummaryWithBOMDetail.class)
+    public Bom[] getPartBOMs(@PathVariable("id") Long id) throws Exception {
+        return bomService.getByParentId(id);
     }
 
     @RequestMapping(value = "/part/{id}/parents", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_READ")
     @JsonView(View.SummaryWithBOMDetail.class)
-    public List<BOMItem> getParentsForBom(@PathVariable("id") Long id) throws Exception {
-        return bomService.getParentsForBom(id);
+    public Bom[] getParentsForBom(@PathVariable("id") Long partId) throws Exception {
+        return bomService.getParentsForBom(partId);
     }
 
     @Transactional
@@ -97,29 +75,99 @@ public class BOMController {
     @ResponseBody
     @JsonView(View.SummaryWithBOMDetail.class)
     @Secured("ROLE_BOM")
-    public BOMService.AddToParentBOMsResponse addToParentsBOMs(HttpServletRequest httpRequest,
-            @PathVariable("id") Long partId, @RequestBody BOMService.AddToParentBOMsRequest request) throws Exception {
+    public CreateBOMsResponse addToParentsBOMs(HttpServletRequest httpRequest, @PathVariable("id") Long partId,
+            @RequestBody BOMService.AddToParentBOMsRequest request) throws Exception {
         return bomService.addToParentsBOMs(httpRequest, partId, request);
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_BOM")
-    public void update(@PathVariable("id") Long id, @RequestParam(required = true) Integer quantity) throws Exception {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        bomService.update(id, quantity);
+    public void update(@PathVariable("parentPartId") Long parentPartId, @PathVariable("childPartId") Long childPartId,
+            @RequestParam(required = true) Integer quantity) throws Exception {
+        bomService.update(parentPartId, childPartId, quantity);
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = DELETE)
+    @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}", method = DELETE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     @Secured("ROLE_BOM")
-    public void delete(@PathVariable("id") Long id) throws Exception {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        bomService.delete(id);
+    public Bom[] deleteBomItems(@PathVariable("parentPartId") Long parentPartId,
+            @PathVariable("childPartId") Long[] childrenIds) throws IOException {
+        return bomService.delete(parentPartId, childrenIds);
+    }
+
+    @Transactional
+    @RequestMapping(value = "/{childPartId}/parents/{parentPartId}", method = DELETE, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_BOM")
+    public Bom[] removeFromParentBom(@PathVariable("parentPartId") Long parentPartId,
+            @PathVariable("childPartId") Long childId) throws Exception {
+        return bomService.removeFromParent(parentPartId, childId);
+    }
+
+    @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Secured("ROLE_BOM")
+    public PartGroup[] getAlternatives(@PathVariable("parentPartId") Long parentPartId,
+            @PathVariable("childPartId") Long childPartId) {
+        return bomService.getAlternatives(parentPartId, childPartId);
+    }
+
+    public static class CreateAltBomRequest {
+
+        private Long altHeaderId;
+
+        public Long getAltHeaderId() {
+            return altHeaderId;
+        }
+
+        public void setAltHeaderId(Long altHeaderId) {
+            this.altHeaderId = altHeaderId;
+        }
+
+    }
+
+    @Secured("ROLE_BOM_ALT")
+    @ResponseBody
+    @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public PartGroup[] createBomAlternativeGroup(@PathVariable("parentPartId") Long parentPartId,
+            @PathVariable("childPartId") Long childPartId) throws Exception {
+        bomService.createAltBomGroup(parentPartId, childPartId);
+        return bomService.getAlternatives(parentPartId, childPartId);
+    }
+
+    @Secured("ROLE_BOM_ALT")
+    @ResponseBody
+    // TODO: parameters 'parentPartId' and 'childPartId' are excessive and
+    // useless
+    @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives/{altHeaderId}", method = DELETE, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public PartGroup[] deleteBomAlternativeGroup(@PathVariable("parentPartId") Long parentPartId,
+            @PathVariable("childPartId") Long childPartId, @PathVariable("altHeaderId") Long altHeaderId)
+            throws Exception {
+        return bomService.deleteAltBomGroup(parentPartId, childPartId, altHeaderId);
+    }
+
+    @Secured("ROLE_BOM_ALT")
+    @ResponseBody
+    @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives/{altPartId}", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public Long createBomAlternative(@PathVariable("parentPartId") Long parentPartId,
+            @PathVariable("childPartId") Long childPartId, @PathVariable("altPartId") Long altPartId,
+            @RequestBody CreateAltBomRequest request) throws Exception {
+        CreateAltBomResponse response = bomService.createAltBom(parentPartId, childPartId, request.getAltHeaderId(),
+                altPartId);
+        Long altBomId = response.getAltHeaderId();
+        return altBomId;
+    }
+
+    @Secured("ROLE_BOM_ALT")
+    @ResponseBody
+    @RequestMapping(value = "/{parentPartId}/descendant/{childPartId}/alternatives/headers/{altHeaderId}/{altPartIds}", method = DELETE, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public PartGroup[] removePartFromAltBom(@PathVariable("parentPartId") Long parentPartId,
+            @PathVariable("childPartId") Long childPartId, @PathVariable("altHeaderId") Long altHeaderId,
+            @PathVariable("altPartIds") Long[] altPartIds) throws Exception {
+        return bomService.removeFromAltBom(parentPartId, childPartId, altHeaderId, altPartIds);
     }
 
 }

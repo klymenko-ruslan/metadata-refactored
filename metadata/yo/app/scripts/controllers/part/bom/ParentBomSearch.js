@@ -3,9 +3,9 @@
 angular.module('ngMetaCrudApp')
   .controller('ParentBomSearchCtrl', [
     '$log', '$scope', '$location', 'NgTableParams', '$uibModal', 'dialogs', 'toastr', 'restService',
-    'BOM', 'utils', 'part', 'partTypes', 'parents', 'services', 'LinkSource',
+    'BOM', 'part', 'partTypes', 'parents', 'services', 'LinkSource',
     function ($log, $scope, $location, NgTableParams, $uibModal, dialogs, toastr, restService,
-              BOM, utils, part, partTypes, parents, services, LinkSource)
+              BOM, part, partTypes, parents, services, LinkSource)
     {
 
       $scope.part = part; // primary part
@@ -23,7 +23,7 @@ angular.module('ngMetaCrudApp')
       function updateParentPartsIds() {
         parentPartsIds = {};
         _.each(parents, function(bi) {
-          parentPartsIds[bi.parent.id] = true;
+          parentPartsIds[bi.partId] = true;
         });
       }
 
@@ -35,9 +35,10 @@ angular.module('ngMetaCrudApp')
 
       $scope.bomTableParams = new NgTableParams({
         page: 1,
-        count: 10
+        count: 10,
+        sorting: {'manufacturerPartNumber': 'asc'}
       }, {
-        getData: utils.localPagination(parents, 'child.manufacturerPartNumber')
+        dataset: parents
       });
 
       $scope.pickedPartsTableParams = new NgTableParams(
@@ -48,18 +49,17 @@ angular.module('ngMetaCrudApp')
         },
         {
           counts: [5, 10, 15],
-          getData: utils.localPagination(pickedParts)
+          dataset: pickedParts
         }
       );
 
       $scope.isBttnSaveDisabled = function() {
-        return pickedParts.length === 0 || restService.status.bomRebuilding;
+        return pickedParts.length === 0;
       };
 
       $scope.isBttnPickDisabled = function(p) {
         return p === undefined || $scope.part.manufacturer.id !== p.manufacturer.id ||
-          $scope.part.id === p.id || pickedPartIds[p.id] || parentPartsIds[p.id] ||
-          restService.status.bomRebuilding;
+          $scope.part.id === p.id || pickedPartIds[p.id] || parentPartsIds[p.id];
       };
 
       $scope.isBttnUnpickAllDisabled = function() {
@@ -77,16 +77,16 @@ angular.module('ngMetaCrudApp')
         BOM.addToParentsBOMs($scope.part.id, srcIds, ratings, description, rows, attachIds).then(
           function success(response) {
             parents.splice(0, parents.length);
-            _.each(response.parents, function(b) {
+            _.each(response.boms, function(b) {
               parents.push(b);
             });
             updateParentPartsIds();
-            $scope.bomTableParams.reload();
+            $scope.bomTableParams.settings({dataset: parents});
             _.each(pickedParts, function(p) {
               delete pickedPartIds[p.id];
             });
             pickedParts.splice(0, pickedParts.length);
-            $scope.pickedPartsTableParams.reload();
+            $scope.pickedPartsTableParams.settings({dataset: pickedParts});
             if (response.failures.length > 0) {
               $uibModal.open({
                 templateUrl: '/views/part/bom/FailedBOMsDlg.html',
@@ -104,8 +104,8 @@ angular.module('ngMetaCrudApp')
                 }
               });
             } else {
-              toastr.success('The part has been successfully added to ' + response.added +
-                ' parents to their BOM lists.');
+              toastr.success('The part has been successfully added to ' +
+                'parents to their BOM lists.');
             }
           },
           function failure(error) {
@@ -132,7 +132,7 @@ angular.module('ngMetaCrudApp')
             };
             pickedParts.push(pickedPart);
             pickedPartIds[pickedPart.id] = true;
-            $scope.pickedPartsTableParams.reload();
+            $scope.pickedPartsTableParams.settings({dataset: pickedParts});
           },
           function failure(error) {
             restService.error('Can\'t pick the part.', error);
@@ -148,7 +148,7 @@ angular.module('ngMetaCrudApp')
         delete p.extra;
         pickedParts.splice(idx, 1);
         delete pickedPartIds[partId];
-        $scope.pickedPartsTableParams.reload();
+        $scope.pickedPartsTableParams.settings({dataset: pickedParts});
       };
 
       $scope.unpickAll = function() {
@@ -156,28 +156,31 @@ angular.module('ngMetaCrudApp')
           delete pickedPartIds[pp.id];
         });
         pickedParts.splice(0, pickedParts.length);
-        $scope.pickedPartsTableParams.reload();
+        $scope.pickedPartsTableParams.settings({dataset: pickedParts});
       };
 
-      $scope.removeBOM = function(bomId) {
-        var idx = _.findIndex(parents, function(b) {
-          return b.id === bomId;
-        });
-        // var bomItem = parents[idx];
+      $scope.removeBom = function(partId) {
         dialogs.confirm(
           'Remove BOM Item?',
           'Remove this child part from the bill of materials of the parent part?').result.then(
-          function() {
+          function yes() {
             // Yes
-            BOM.removeBOM(bomId).then(
-              function() {
-                parents.splice(idx, 1);
-                $scope.bomTableParams.reload();
+            restService.removeFromParentBom($scope.part.id, partId).then(
+              function success(updatedBoms) {
+                parents.splice(0, parents.length);
+                parents.push.apply(parents, updatedBoms);
+                $scope.bomTableParams.settings({dataset: parents});
                 updateParentPartsIds();
                 toastr.success('The BOM has been successfully removed.');
               },
-              restService.error
+              function failure(error) {
+                restService.error('Removing of the part from the parent ' +
+                      'BOM failed.', error);
+              }
             );
+          },
+          function no() {
+            // ignore
           }
         );
       };
@@ -199,14 +202,15 @@ angular.module('ngMetaCrudApp')
     }
   ])
   .controller('ExistingBOMsDlgCtrl', ['$scope', '$log', '$location', '$uibModalInstance', 'NgTableParams',
-      'utils', 'existingBoms',
-    function($scope, $log, $location, $uibModalInstance, NgTableParams, utils, existingBoms) {
+      'existingBoms',
+    function($scope, $log, $location, $uibModalInstance, NgTableParams, existingBoms) {
 
       $scope.bomTableParams = new NgTableParams({
         page: 1,
-        count: 10
+        count: 10,
+        sorting: {'manufacturerPartNumber': 'asc'}
       }, {
-        getData: utils.localPagination(existingBoms, 'child.manufacturerPartNumber')
+        dataset: existingBoms
       });
 
       $scope.onClose = function() {
@@ -219,16 +223,17 @@ angular.module('ngMetaCrudApp')
       };
 
   }]).controller('FailedBOMsDlgCtrl', ['$scope', '$log', '$location', '$uibModalInstance', 'NgTableParams',
-      'utils', 'message', 'failures',
-    function($scope, $log, $location, $uibModalInstance, NgTableParams, utils, message, failures) {
+      'message', 'failures',
+    function($scope, $log, $location, $uibModalInstance, NgTableParams, message, failures) {
 
       $scope.message = message;
 
       $scope.failuresTableParams = new NgTableParams({
         page: 1,
-        count: 10
+        count: 10,
+        sorting: {'manufacturerPartNumber': 'asc'}
       }, {
-        getData: utils.localPagination(failures, 'manufacturerPartNumber')
+        dataset: failures
       });
 
       $scope.onClose = function() {

@@ -41,7 +41,6 @@ public class CriticalDimensionController {
     private CriticalDimensionService criticalDimensionService;
 
     @Secured("ROLE_READ")
-    @JsonView(View.Summary.class)
     @RequestMapping(value = "/byparttypes", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<String> getCriticalDimensionsByPartTypes(

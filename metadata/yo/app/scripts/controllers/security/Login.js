@@ -1,14 +1,21 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .controller('LoginCtrl', ['$location', '$scope', '$routeParams', 'toastr', 'restService', 'User', '$uibModal',
-    function ($location, $scope, $routeParams, toastr, restService, User, $uibModal) {
+  .controller('LoginCtrl', ['$injector', '$location', '$scope', '$routeParams', 'toastr', 'restService', 'User', '$uibModal',
+    function ($injector, $location, $scope, $routeParams, toastr, restService, User, $uibModal) {
 
     $scope.login = function() {
       return restService.login($scope.username, $scope.password).then(
         function(/*loginResponse*/) {
+          // We obtain the service 'User' manually because it has
+          // code inside itself to initialize (User.init()).
+          // If we inject it in the controller declaration above then
+          // that code will be called before user's successful login
+          // and consequently the User initialization will fail because
+          // user's permissions can be loaded only after login.
+          var User = $injector.get('User');
           User.init().then(
-            function() {
+            function success() {
               $location.path('/part/list');
             }
           );

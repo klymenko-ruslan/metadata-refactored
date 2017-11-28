@@ -9,6 +9,7 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
   .constant('METADATA_BASE', '/metadata/')
   .constant('VALID_IP_ADDRESS_REGEX', /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)
   .constant('VALID_HOSTNAME_REGEX', /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/)
+  .constant('ASCII_ONLY_REGEX', /^[\x20-\x7F]+$/)
   .constant('DATE_FORMAT', 'yyyy-MM-dd')
   .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
     // cfpLoadingBarProvider.spinnerTemplate = '<div><span class='fa fa-spinner'>Loading...</div>';
@@ -84,14 +85,14 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
       templateUrl: 'views/part/PartList.html',
       controller: 'PartListCtrl',
       resolve: {
-        partTypes: ['restService', function(restService) {
-          return restService.listPartTypes();
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
         }],
-        critDimsByPartTypes: ['restService', function(restService) {
-          return restService.getCritDimsByPartTypes('ID');
+        critDimsByPartTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getCriticalDimensions();
         }],
-        critDimEnumVals: ['restService', function(restService) {
-          return restService.getAllCritDimEnumVals();
+        critDimEnumVals: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getCriticalDimensionsEnumsVals();
         }]
       }
     });
@@ -106,11 +107,11 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
           var typeId = $route.current.pathParams.typeId;
           return restService.findPartType(typeId);
         }],
-        manufacturers: ['restService', function(restService) {
-          return restService.listManufacturers();
+        manufacturers: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getManufacturers();
         }],
-        services: ['restService', function(restService) {
-          return restService.getAllServices();
+        services: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getServices();
         }]
       }
     });
@@ -125,11 +126,11 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         partType: function () {
           return null;
         },
-        manufacturers: ['restService', function(restService) {
-          return restService.listManufacturers();
+        manufacturers: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getManufacturers();
         }],
-        services: ['restService', function(restService) {
-          return restService.getAllServices();
+        services: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getServices();
         }]
       }
     });
@@ -137,17 +138,17 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
       templateUrl: 'views/part/interchange/PartInterchangeSearch.html',
       controller: 'PartInterchangeSearchCtrl',
       resolve: {
-        partTypes: ['restService', function(restService) {
-          return restService.listPartTypes();
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
         }],
-        critDimsByPartTypes: ['restService', function(restService) {
-          return restService.getCritDimsByPartTypes('ID');
+        critDimsByPartTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getCriticalDimensions();
         }],
-        critDimEnumVals: ['restService', function(restService) {
-          return restService.getAllCritDimEnumVals();
+        critDimEnumVals: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getCriticalDimensionsEnumsVals();
         }],
-        services: ['restService', function(restService) {
-          return restService.getAllServices();
+        services: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getServices();
         }]
       }
     });
@@ -155,8 +156,8 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
       templateUrl: '../views/part/KitComponentSearch.html',
       controller: 'KitComponentSearchCtrl',
       resolve: {
-        partTypes: ['restService', function(restService) {
-          return restService.listPartTypes();
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
         }]
       }
     });
@@ -167,14 +168,14 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         part: ['$route', 'restService', function($route, restService) {
           return restService.findPart($route.current.pathParams.id);
         }],
-        partTypes: ['restService', function(restService) {
-          return restService.listPartTypes();
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
         }],
         boms: ['$log', '$route', 'BOM', function($log, $route, BOM) {
           return BOM.listByParentPartId($route.current.pathParams.id);
         }],
-        services: ['restService', function(restService) {
-          return restService.getAllServices();
+        services: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getServices();
         }]
       }
     });
@@ -185,15 +186,15 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         part: ['$route', 'restService', function($route, restService) {
           return restService.findPart($route.current.pathParams.id);
         }],
-        partTypes: ['restService', function(restService) {
-          return restService.listPartTypes();
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
         }],
         parents:['$route', 'BOM', function ($route, BOM) {
           var partId = $route.current.pathParams.id;
           return BOM.listParentsOfPartBom(partId);
         }],
-        services: ['restService', function(restService) {
-          return restService.getAllServices();
+        services: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getServices();
         }]
       }
     });
@@ -204,8 +205,8 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         part: ['$route', 'restService', function($route, restService) {
           return restService.findPart($route.current.pathParams.id);
         }],
-        partTypes: ['restService', function(restService) {
-          return restService.listPartTypes();
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
         }],
         turbos: ['$route', 'restService', function($route, restService) {
           return restService.listTurbosLinkedToGasketKit($route.current.pathParams.id);
@@ -216,17 +217,32 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
       templateUrl: 'views/part/application/PartApplicationSearch.html',
       controller: 'PartApplicationSearchCtrl',
       resolve: {
-        services: ['restService', function(restService) {
-          return restService.getAllServices();
+        services: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getServices();
         }]
       }
     });
-    $routeProvider.when('/part/:id/bom/:bomId/search', {
+    $routeProvider.when('/part/:id/bom/:childId/alt/:altHeaderId', {
       templateUrl: 'views/part/bom/BomAlternateSearch.html',
       controller: 'BomAlternateSearchCtrl',
       resolve: {
-        partTypes: ['restService', function(restService) {
-          return restService.listPartTypes();
+        altHeaderId: ['$route', function($route) {
+          return parseInt($route.current.pathParams.altHeaderId);
+        }],
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
+        }],
+        part: ['$route', 'restService', function($route, restService) {
+          return restService.findPart($route.current.pathParams.id);
+        }],
+        selectedBom: ['$route', 'restService', function($route, restService) {
+          return restService.findPart($route.current.pathParams.childId);
+        }],
+        bom: ['$route', 'BOM', function($route, BOM) {
+          return BOM.listByParentPartId($route.current.pathParams.id);
+        }],
+        altBom: ['$route', 'restService', function($route, restService) {
+          return restService.getBomAlternatives($route.current.pathParams.id, $route.current.pathParams.childId);
         }]
       }
     });
@@ -237,14 +253,19 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         part: ['$route', 'restService', function($route, restService) {
           return restService.findPart($route.current.pathParams.id);
         }],
-        partTypes: ['restService', function(restService) {
-          return restService.listPartTypes();
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
         }]
       }
     });
     $routeProvider.when('/part/:id/ancestors', {
       templateUrl: 'views/part/PartAncestors.html',
-      controller: 'PartAncestorsCtrl'
+      controller: 'PartAncestorsCtrl',
+      resolve: {
+        part: ['$route', 'restService', function ($route, restService) {
+          return restService.findPart($route.current.pathParams.id);
+        }]
+      }
     });
     $routeProvider.when('/part/:id', {
       templateUrl: 'views/part/view/PartDetail.html',
@@ -253,26 +274,11 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         part: ['$route', 'restService', function($route, restService) {
           return restService.findPart($route.current.pathParams.id);
         }],
-        criticalDimensions: ['$route', 'restService', function($route, restService) {
-          return restService.findCriticalDimensionsForThePart($route.current.pathParams.id);
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
         }],
-        partTypes: ['restService', function(restService) {
-          return restService.listPartTypes();
-        }],
-        manufacturers: ['restService', function(restService) {
-          return restService.listManufacturers();
-        }],
-        turbos: ['$route', 'restService', function($route, restService) {
-          return restService.listTurbosLinkedToGasketKit($route.current.pathParams.id);
-        }],
-        oversizeParts: ['$route', 'restService', function($route, restService) {
-          return restService.findOversizeParts($route.current.pathParams.id);
-        }],
-        standardParts: ['$route', 'restService', function($route, restService) {
-          return restService.findStandardParts($route.current.pathParams.id);
-        }],
-        prices: ['$route', 'restService', function($route, restService) {
-          return restService.getPartPrices($route.current.pathParams.id);
+        manufacturers: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getManufacturers();
         }]
       }
     });
@@ -291,8 +297,8 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         existing: ['$route', 'restService', function($route, restService) {
           return restService.findOversizeParts($route.current.pathParams.id);
         }],
-        partTypes: ['restService', function(restService) {
-          return restService.listPartTypes();
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
         }]
       }
     });
@@ -309,8 +315,8 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         existing: ['$route', 'restService', function($route, restService) {
           return restService.findStandardParts($route.current.pathParams.id);
         }],
-        partTypes: ['restService', function(restService) {
-          return restService.listPartTypes();
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
         }]
       }
     });
@@ -320,8 +326,8 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
       templateUrl: 'views/parttype/list.html',
       controller: 'PartTypeListCtrl',
       resolve: {
-        partTypes: ['restService', function(restService) {
-          return restService.listPartTypes();
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
         }]
       }
     });
@@ -349,8 +355,8 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
       templateUrl: 'views/part/sales_note/SalesNoteCreate.html',
       controller: 'SalesNoteCreateCtrl',
       resolve: {
-        services: ['restService', function(restService) {
-          return restService.getAllServices();
+        services: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getServices();
         }]
       }
     });
@@ -378,8 +384,8 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         salesNote: ['$route', 'restService', function($route, restService) {
           return restService.findSalesNote($route.current.pathParams.salesNoteId);
         }],
-        partTypes: ['restService', function(restService) {
-          return restService.listPartTypes();
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
         }],
       }
     });
@@ -512,8 +518,8 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
       templateUrl: 'views/other/appsturbos/main.html',
       controller: 'AppsTurbosCtrl',
       resolve: {
-        partTypes: ['restService', function(restService) {
-          return restService.listPartTypes();
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
         }]
       }
     });

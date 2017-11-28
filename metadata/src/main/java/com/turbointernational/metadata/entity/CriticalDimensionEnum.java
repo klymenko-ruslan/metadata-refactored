@@ -32,11 +32,11 @@ import com.turbointernational.metadata.util.View;
 @NamedQueries({
     @NamedQuery(
             name = "getAllCritDimEnums",
-            query = "FROM CriticalDimensionEnum ORDER BY id ASC"
+            query = "SELECT o FROM CriticalDimensionEnum o ORDER BY o.id ASC"
     ),
     @NamedQuery(
             name = "findCritDimEnumByName",
-            query = "FROM CriticalDimensionEnum WHERE name=:name"
+            query = "SELECT o FROM CriticalDimensionEnum o WHERE o.name=:name"
     )
 })
 @JsonInclude(ALWAYS)

@@ -3,10 +3,10 @@
 angular.module('ngMetaCrudApp')
 
 .controller('PartBomSearchCtrl', ['$log', '$scope', '$location', 'NgTableParams', '$routeParams', '$uibModal',
-  'User', 'BOM', 'restService', 'dialogs', 'toastr', 'utils', 'partTypes', 'part', 'boms',
+  'User', 'BOM', 'restService', 'dialogs', 'toastr', 'partTypes', 'part', 'boms',
   'services', 'LinkSource',
   function($log, $scope, $location, NgTableParams, $routeParams, $uibModal, User, BOM, restService,
-    dialogs, toastr, utils, partTypes, part, boms, services, LinkSource) {
+    dialogs, toastr, partTypes, part, boms, services, LinkSource) {
 
     $scope.partTypes = partTypes;
     $scope.restService = restService;
@@ -21,8 +21,8 @@ angular.module('ngMetaCrudApp')
 
     function updateExistingBomPartIds() {
       existingBomPartIds = {};
-      _.each(boms, function(bi) {
-        existingBomPartIds[bi.child.id] = true;
+      _.each(boms, function(b) {
+        existingBomPartIds[b.partId] = true;
       });
     }
 
@@ -30,10 +30,11 @@ angular.module('ngMetaCrudApp')
 
     $scope.bomTableParams = new NgTableParams({
       page: 1,
-      count: 5
+      count: 5,
+      sorting: {'child.manufacturerPartNumber': 'asc'}
     }, {
-        counts: [5, 10, 15],
-      getData: utils.localPagination(boms, 'child.manufacturerPartNumber')
+      counts: [5, 10, 15],
+      dataset: boms
     });
 
     $scope.pickedPartsTableParams = new NgTableParams(
@@ -44,7 +45,7 @@ angular.module('ngMetaCrudApp')
       },
       {
         counts: [5, 10, 15],
-        getData: utils.localPagination(pickedParts)
+        dataset: pickedParts
       }
     );
 
@@ -54,7 +55,7 @@ angular.module('ngMetaCrudApp')
         qty: 1
       };
       pickedPartIds[pickedPart.id] = true;
-      $scope.pickedPartsTableParams.reload();
+      $scope.pickedPartsTableParams.settings({dataset: pickedParts});
     };
 
     $scope.unpick = function(partId) {
@@ -65,7 +66,7 @@ angular.module('ngMetaCrudApp')
       delete p.extra;
       pickedParts.splice(idx, 1);
       delete pickedPartIds[partId];
-      $scope.pickedPartsTableParams.reload();
+      $scope.pickedPartsTableParams.settings({dataset: pickedParts});
     };
 
     $scope.unpickAll = function() {
@@ -73,11 +74,11 @@ angular.module('ngMetaCrudApp')
         delete pickedPartIds[pp.id];
       });
       pickedParts.splice(0, pickedParts.length);
-      $scope.pickedPartsTableParams.reload();
+      $scope.pickedPartsTableParams.settings({dataset: pickedParts});
     };
 
     $scope.isBttnSaveDisabled = function() {
-      return pickedParts.length === 0 || restService.status.bomRebuilding;
+      return pickedParts.length === 0;
     };
 
     $scope.isBttnUnpickAllDisabled = function() {
@@ -86,8 +87,7 @@ angular.module('ngMetaCrudApp')
 
     $scope.isBttnPickDisabled = function(p) {
       return p === undefined || $scope.part.manufacturer.id !== p.manufacturer.id ||
-        $scope.part.id === p.id || pickedPartIds[p.id] || existingBomPartIds[p.id] ||
-        restService.status.bomRebuilding;
+        $scope.partId === p.id || pickedPartIds[p.id] || existingBomPartIds[p.id];
     };
 
     function cbSave(srcIds, ratings, description, attachIds) {
@@ -98,12 +98,12 @@ angular.module('ngMetaCrudApp')
             boms.push(b);
           });
           updateExistingBomPartIds();
-          $scope.bomTableParams.reload();
+          $scope.bomTableParams.settings({dataset: boms});
           _.each(pickedParts, function(p) {
             delete pickedPartIds[p.id];
           });
           pickedParts.splice(0, pickedParts.length);
-          $scope.pickedPartsTableParams.reload();
+          $scope.pickedPartsTableParams.settings({dataset: pickedParts});
           if (response.failures.length > 0) {
             $uibModal.open({
               templateUrl: '/views/part/bom/FailedBOMsDlg.html',
@@ -133,24 +133,23 @@ angular.module('ngMetaCrudApp')
       LinkSource.link(cbSave, $scope.requiredSource, '/part/' + $scope.partId + '/bom/search');
     };
 
-    $scope.removeBOM = function(bomId) {
-      var idx = _.findIndex(boms, function(b) {
-        return b.id === bomId;
-      });
-      // var bomItem = boms[idx];
+    $scope.removeBom = function(childPartId) {
       dialogs.confirm(
         'Remove BOM Item?',
         'Remove this child part from the bill of materials of the parent part?').result.then(
         function() {
           // Yes
-          BOM.removeBOM(bomId).then(
-            function() {
-              boms.splice(idx, 1);
-              $scope.bomTableParams.reload();
+          BOM.removeBom($scope.partId, childPartId).then(
+            function(updatedBoms) {
+              boms.splice(0, boms.length);
+              boms.push.apply(boms, updatedBoms);
+              $scope.bomTableParams.settings({dataset: boms});
               updateExistingBomPartIds();
               toastr.success('The BOM has been successfully removed.');
             },
-            restService.error
+            function(response) {
+              dialogs.error('Could delete BOM', 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
+            }
           );
         }
       );

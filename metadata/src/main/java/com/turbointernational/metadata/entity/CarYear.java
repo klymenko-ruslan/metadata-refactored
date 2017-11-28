@@ -36,9 +36,7 @@ import flexjson.JSONSerializer;
 @Cacheable
 @Entity
 @Table(name = "car_year", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
-@NamedQueries({
-        @NamedQuery(name = "findCarYearByName", query = "FROM CarYear WHERE name=:name")
-})
+@NamedQueries({ @NamedQuery(name = "findCarYearByName", query = "SELECT o FROM CarYear o  WHERE o.name=:name") })
 public class CarYear implements Serializable, SearchableEntity {
 
     private static final long serialVersionUID = -1084830691812468054L;

@@ -25,8 +25,8 @@ import org.springframework.stereotype.Service;
 import com.turbointernational.metadata.exception.PartNotFound;
 import com.turbointernational.metadata.service.mas90.pricing.CalculatedPrice;
 import com.turbointernational.metadata.service.mas90.pricing.Pricing;
-import com.turbointernational.metadata.service.mas90.pricing.ProductPrices;
-import com.turbointernational.metadata.web.dto.ProductPricesDto;
+import com.turbointernational.metadata.service.mas90.pricing.Prices;
+import com.turbointernational.metadata.web.dto.ProductPrices;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 23.06.16.
@@ -87,35 +87,35 @@ public class PriceService {
 
     }
 
-    public List<ProductPricesDto> getProductsPricesByNums(List<String> manfrPartNums) {
+    public List<ProductPrices> getProductsPricesByNums(List<String> manfrPartNums) {
         List<PriceRow> prows = getPricesRows();
-        List<ProductPricesDto> retVal = new ArrayList<>(manfrPartNums.size());
+        List<ProductPrices> retVal = new ArrayList<>(manfrPartNums.size());
         for (Iterator<String> iter = manfrPartNums.iterator(); iter.hasNext();) {
             String partNum = iter.next();
-            ProductPrices pp = getProductPrices(null, partNum, prows);
-            retVal.add(new ProductPricesDto(pp));
+            Prices pp = getProductPrices(null, partNum, prows);
+            retVal.add(new ProductPrices(pp));
         }
         return retVal;
     }
 
-    public List<ProductPricesDto> getProductsPricesByIds(List<Long> partIds) {
+    public List<ProductPrices> getProductsPricesByIds(List<Long> partIds) {
         List<PriceRow> prows = getPricesRows();
-        List<ProductPricesDto> retVal = new ArrayList<>(partIds.size());
+        List<ProductPrices> retVal = new ArrayList<>(partIds.size());
         for (Iterator<Long> iter = partIds.iterator(); iter.hasNext();) {
             Long partId = iter.next();
-            ProductPricesDto dto = getProductPricesById(partId, prows);
+            ProductPrices dto = getProductPricesById(partId, prows);
             retVal.add(dto);
         }
         return retVal;
     }
 
-    public ProductPricesDto getProductPricesById(Long partId) {
+    public ProductPrices getProductPricesById(Long partId) {
         List<PriceRow> prows = getPricesRows();
         return getProductPricesById(partId, prows);
     }
 
-    private ProductPricesDto getProductPricesById(Long partId, List<PriceRow> prows) {
-        ProductPricesDto retVal;
+    private ProductPrices getProductPricesById(Long partId, List<PriceRow> prows) {
+        ProductPrices retVal;
         try {
             // Resolve partId to a manufacturer part number.
             String partNumber = jdbcTemplate.queryForObject("select manfr_part_num from part where id=?", String.class,
@@ -123,10 +123,10 @@ public class PriceService {
             if (partNumber == null) {
                 throw new PartNotFound(partId);
             }
-            ProductPrices pp = getProductPrices(partId, partNumber, prows);
-            retVal = new ProductPricesDto(pp);
+            Prices pp = getProductPrices(partId, partNumber, prows);
+            retVal = new ProductPrices(pp);
         } catch (PartNotFound e) {
-            retVal = new ProductPricesDto(partId, null, e.getMessage());
+            retVal = new ProductPrices(partId, null, e.getMessage());
         }
         return retVal;
     }
@@ -162,18 +162,18 @@ public class PriceService {
         return cachedPricesRows;
     }
 
-    private ProductPrices getProductPrices(Long partId, String partNumber, List<PriceRow> pricesRows) {
+    private Prices getProductPrices(Long partId, String partNumber, List<PriceRow> pricesRows) {
         BigDecimal standardPrice;
         try {
             standardPrice = mssqldb.queryForObject("select standardunitprice from ci_item where itemcode=?",
                     BigDecimal.class, partNumber);
         } catch (EmptyResultDataAccessException e) {
             log.debug("Standard unit price for the part (p/n '{}') not found.", partNumber);
-            return new ProductPrices(partId, partNumber, "Standard unit price not found.");
+            return new Prices(partId, partNumber, "Standard unit price not found.");
         } catch (DataAccessException e) {
             log.warn("Calculation of a standard unit price for the part (p/n '{}') failed: {}", partNumber,
                     e.getMessage());
-            return new ProductPrices(partId, partNumber,
+            return new Prices(partId, partNumber,
                     String.format("Calculation of a standard " + "unit price failed: {%s}", e.getMessage()));
         }
         Map<String, BigDecimal> prices = new HashMap<>(50);
@@ -181,7 +181,7 @@ public class PriceService {
             List<CalculatedPrice> calculatedPrices = pr.getPricing().calculate(standardPrice);
             calculatedPrices.forEach(cp -> prices.put(pr.getPriceLevel(), cp.getPrice()));
         });
-        ProductPrices retVal = new ProductPrices(partId, partNumber, standardPrice, prices);
+        Prices retVal = new Prices(partId, partNumber, standardPrice, prices);
         return retVal;
     }
 

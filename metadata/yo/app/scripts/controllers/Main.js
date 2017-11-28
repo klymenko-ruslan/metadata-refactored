@@ -3,16 +3,9 @@
 angular.module('ngMetaCrudApp')
   .controller('MainCtrl', ['$scope', '$log', '$location', 'User',
     function($scope, $log, $location, User) {
-      //Initialize the user
-      User.init().then(
-        function() {
-          $log.log('User initialized.');
-        },
-        function() {
-          $log.log('User init failed.');
-          $location.path('/');
-        }
-      );
+
+      // The only goal of this controlle is export of a functions
+      // which can be accessible from any view (*.html).
 
       $scope.hasRole = function(role) {
         return User.hasRole(role);

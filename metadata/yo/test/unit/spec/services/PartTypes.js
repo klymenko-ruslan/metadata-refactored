@@ -77,24 +77,24 @@ describe('Service: PartTypes', function () {
       expect(PartTypes.getById(0)).not.toBeDefined();
     });
   });
-  
+
   describe('PartTypes.getPromise', function() {
-    beforeEach(function() {  
+    beforeEach(function() {
       // Prepare for the call
       $httpBackend.whenGET('/metadata/type/part').respond(partTypes);
     });
-    
+
     it('should return the promise if there is one', function() {
 
       // Issue the call to the service
       $rootScope.$apply(function() {
         refreshPromise = PartTypes.refresh();
       });
-      
+
       expect(PartTypes.refreshPromise).not.toBeNull();
       expect(PartTypes.getPromise()).toBe(refreshPromise);
     });
-  
+
     it('should refresh the list if there is no promise', function() {
         expect(PartTypes.refreshPromise).toBeNull();
         expect(PartTypes.getPromise()).not.toBeNull();

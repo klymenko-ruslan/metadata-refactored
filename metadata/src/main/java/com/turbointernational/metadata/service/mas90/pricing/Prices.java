@@ -13,7 +13,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 /**
  * Created by dmytro.trunykov@zorallabs.com on 17.06.16.
  */
-public class ProductPrices {
+public class Prices {
 
     @JsonView(View.Summary.class)
     private final Long partId;
@@ -33,16 +33,16 @@ public class ProductPrices {
     @JsonInclude(NON_NULL)
     private final String warning;
 
-    public ProductPrices(Long partId, String partNum, String warning) {
+    public Prices(Long partId, String partNum, String warning) {
         this(partId, partNum,null, null, warning);
     }
 
-    public ProductPrices(Long partId, String partNum, BigDecimal standardPrice,
+    public Prices(Long partId, String partNum, BigDecimal standardPrice,
                          Map<String, BigDecimal> prices) {
         this(partId, partNum, standardPrice, prices, null);
     }
 
-    public ProductPrices(Long partId, String partNum, BigDecimal standardPrice,
+    public Prices(Long partId, String partNum, BigDecimal standardPrice,
                          Map<String, BigDecimal> prices, String warning) {
         this.partId = partId;
         this.partNum = partNum;

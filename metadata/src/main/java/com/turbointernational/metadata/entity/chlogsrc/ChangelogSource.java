@@ -23,7 +23,7 @@ import com.turbointernational.metadata.util.View;
 @NamedQueries({
         @NamedQuery(
                 name = "getChangelogSourceCountForSource",
-                query = "select count(*) from ChangelogSource chs where chs.pk.source.id=:srcId")
+                query = "select count(chs) from ChangelogSource chs where chs.pk.source.id=:srcId")
 })
 @JsonInclude(ALWAYS)
 public class ChangelogSource implements Serializable {

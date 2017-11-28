@@ -19,6 +19,9 @@ module.exports = function (grunt) {
 //    cdnify: 'grunt-google-cdn'
   });
 
+
+  grunt.loadNpmTasks('grunt-connect-proxy');
+
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
@@ -75,20 +78,29 @@ module.exports = function (grunt) {
         hostname: 'localhost',
         livereload: 35729
       },
+      proxies: [
+        {
+          context: [
+            '/metadata'
+          ],
+          host: '127.0.0.1',
+          port: 8080
+        }
+      ],
       livereload: {
         options: {
           open: true,
-          middleware: function (connect) {
-            return [
-              connect.static('.tmp'),
-              connect().use(
-                '/bower_components',
-                connect.static('./bower_components')
-              ),
-              connect().use(
-                '/app/styles',
-                connect.static('./app/styles')
-              ),
+          base: [
+            '.tmp',
+            appConfig.app
+          ],
+          middleware: function (connect, options) {
+            var indexHtml = connect.static('./app/index.html');
+            var middlewares = [
+              //connect().use(indexHtml),
+              require('grunt-connect-proxy/lib/utils').proxyRequest,
+              connect().use('/bower_components', connect.static('./bower_components')),
+              connect().use('/app/styles', connect.static('./app/styles')),
               connect().use(
                 '/styles/ng-table.min.css',
                 connect.static('./node_modules/ng-table/bundles/ng-table.min.css')
@@ -101,8 +113,88 @@ module.exports = function (grunt) {
                 '/styles/fonts/',
                 connect.static('./bower_components/fontawesome/fonts')
               ),
-              connect.static(appConfig.app)
+              connect().use('/', indexHtml),
+              connect().use('/part/list', indexHtml),
+              connect().use('/service/list', indexHtml),
+              connect().use('/changelog/list', indexHtml),
+              connect().use('/parttype', indexHtml),
+              connect().use('/other', indexHtml),
+              connect().use('/security', indexHtml),
+              connect().use('/password', indexHtml),
+              connect().use('/application', indexHtml),
+              connect().use('/bom', indexHtml),
+              connect().use('/changelog', indexHtml),
+              connect().use('/changelog/source', indexHtml),
+              connect().use('/changelog/source/58', indexHtml),
+              connect().use('/mas90/sync/status', indexHtml),
+              connect().use('/manufacturer/list', indexHtml),
+              connect().use('/changelog/source/name/list', indexHtml),
+              connect().use('/changelog/source/list', indexHtml),
+              connect().use('/changelog/source/create', indexHtml),
+              connect().use('/changelog/source', indexHtml),
+              connect().use('/criticaldimension/enums', indexHtml),
+              connect().use('/search/indexing/status', indexHtml),
             ];
+
+            let partTypeIds = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15,
+              16, 17, 18, 19, 20, 21, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+              40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52];
+
+            for(let ptid of partTypeIds) {
+              let url = '/part/createByPartTypeId/' + ptid.toString();
+              let entry = connect().use(url, indexHtml);
+              middlewares.push(entry);
+            }
+
+            let partIdsUnderDebug = [
+              1, 2, 3,
+              289,    // 'Where used (ancestors)'
+              1449, 2318,
+              6751,
+              6233,   // Many BOMs; Tabs: 'Prices', 'Also Bought'
+              6246,
+              6681,   // Turbo
+              6692,   // Alternative BOM(s)
+              17415,  // Interchanges, Tabs: 'Applications'
+              25493,  // Tabs: 'Applications'
+              29878,  // Tabs: 'Applications'
+              33284,
+              42768,  // Tabs: 'Critical Dimensions'
+              43748,  // 'Where used (ancestors)'
+              43754, 43889,
+              45456, 45328 /* 'Where used (ancestors)'*/, // Tabs: 'Prices', 'Also Bought' + tab 'Turbo Types' has record
+              45495,  // Tabs: 'Non Standard'
+              45524,  // Tabs: 'Non Standard', many records 'non standard parts'
+              46722,  // Tabs: 'Non Standard', many records 'standard parts'
+              46598,  // Tabs: 'Turbo Types'
+              46730,  // Tabs: 'Turbo Types'
+              47842,  // 'Where used (ancestors)'
+              10756, 10757,
+              63398, 64449,
+              69690, 70079, 70090,   // Tabs: 'Turbos'
+              78252
+            ];
+            let urlSuffixes = ['', '/bom/search', '/ancestors', '/parentbom/search', '/oversize/add', '/application/search'];
+            for(let partId of partIdsUnderDebug) {
+              for(let s of urlSuffixes) {
+                let url = '/part/' + partId.toString() + s;
+                let entry = connect().use(url, indexHtml);
+                middlewares.push(entry);
+              }
+            }
+            middlewares.push(connect().use('/part/1/bom/4/alt/31726739', indexHtml));
+            middlewares.push(connect().use('/part/1/bom/4/alt/31722278', indexHtml));
+
+            if (!Array.isArray(options.base)) {
+              options.base = [options.base];
+            }
+            // Setup the proxy
+            // middlewares.push(require('grunt-connect-proxy/lib/utils').proxyRequest);
+            // Serve static files
+            options.base.forEach(function(base) {
+              middlewares.push(connect.static(base));
+            });
+            return middlewares;
           }
         }
       },
@@ -490,6 +582,7 @@ module.exports = function (grunt) {
       'wiredep',
       'concurrent:server',
       'postcss:server',
+      'configureProxies:server',
       'connect:livereload',
       'watch'
     ]);

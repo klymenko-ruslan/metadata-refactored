@@ -21,7 +21,7 @@ import com.turbointernational.metadata.util.View;
 @Table(name = "auth_provider_ldap")
 @PrimaryKeyJoinColumn(name = "id")
 @NamedQueries(
-        @NamedQuery(name = "findAuthProviderLdapByName", query = "from AuthProviderLdap where name=:name")
+        @NamedQuery(name = "findAuthProviderLdapByName", query = "select o from AuthProviderLdap o where o.name=:name")
 )
 public class AuthProviderLdap extends AuthProvider {
 

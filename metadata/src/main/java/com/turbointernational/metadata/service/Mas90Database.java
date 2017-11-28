@@ -24,7 +24,7 @@ public interface Mas90Database {
 
     // @formatter:off
     String BOMS_QUERY =
-            "select bd.componentitemcode, bd.quantityperbill " +
+            "select distinct bd.componentitemcode, bd.quantityperbill " +
             "from " +
             "   bm_billdetail as bd join ( " +
             "       select billno, max(revision) as last_revision from bm_billheader group by billno " +

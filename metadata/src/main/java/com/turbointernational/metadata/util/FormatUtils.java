@@ -1,10 +1,13 @@
 package com.turbointernational.metadata.util;
 
-import com.turbointernational.metadata.entity.*;
-import com.turbointernational.metadata.entity.part.Interchange;
-import com.turbointernational.metadata.entity.part.Part;
-
 import static org.apache.commons.lang.StringUtils.abbreviate;
+
+import com.turbointernational.metadata.entity.CarModelEngineYear;
+import com.turbointernational.metadata.entity.CarYear;
+import com.turbointernational.metadata.entity.SalesNote;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.entity.part.ProductImage;
+import com.turbointernational.metadata.web.dto.Interchange;
 
 /**
  * Static methods to represent various entities in a text form.
@@ -24,12 +27,26 @@ public class FormatUtils {
         }
     }
 
+    public static String formatPart(com.turbointernational.metadata.web.dto.Part part) {
+        if (part == null) {
+            return "null";
+        } else {
+            Long partId = part.getPartId();
+            String manufacturerNumber = part.getPartNumber();
+            return formatPart(partId, manufacturerNumber);
+        }
+    }
+
     public static String formatPart(Long partId, String manufacturerNumber) {
         return "[" + partId + "] - " + manufacturerNumber;
     }
 
     public static String formatPart(Long partId) {
         return "[" + partId + "]";
+    }
+
+    public static String formatProductImage(ProductImage pi) {
+        return "[" + pi.getId() + "] - " + pi.getFilename();
     }
 
     public static String formatSalesNote(SalesNote salesNote) {
@@ -56,16 +73,12 @@ public class FormatUtils {
         return "[" + cmeyId + "]";
     }
 
-    public static String formatBOMItem(BOMItem bomItem) {
-        if (bomItem == null) {
-            return "null";
-        } else {
-            Long id = bomItem.getId();
-            Part parent = bomItem.getParent();
-            Part child = bomItem.getChild();
-            Integer qty = bomItem.getQuantity();
-            return String.format("(ID:%d, PRNT:%s, CHLD:%s, QTY:%d)", id, formatPart(parent), formatPart(child), qty);
-        }
+    public static String formatBom(Part parentPart, Part childPart) {
+        return String.format("(PRNT:%s, CHLD:%s)", formatPart(parentPart), formatPart(childPart));
+    }
+
+    public static String formatBom(Part parentPart, Part childPart, Integer qty) {
+        return String.format("(PRNT:%s, CHLD:%s, QTY:%d)", formatPart(parentPart), formatPart(childPart), qty);
     }
 
     public static String formatInterchange(Interchange interchange) {
@@ -91,14 +104,8 @@ public class FormatUtils {
         }
     }
 
-    public static String formatBOMAlternative(BOMAlternative bomAlternative) {
-        if (bomAlternative == null) {
-            return "null";
-        } else {
-            Long id = bomAlternative.getId();
-            Part part = bomAlternative.getPart();
-            return "[" + id + "] - PRT: " + formatPart(part);
-        }
+    public static String formatBOMAlternative(Long parentPartId, Long childPartId, Long altPartId) {
+        return "[" + parentPartId + ", " + childPartId + ", " + altPartId + "]";
     }
 
 }

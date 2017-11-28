@@ -24,13 +24,10 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.turbointernational.mas90.entity.ArInvoiceHistoryDetail;
 import com.turbointernational.mas90.entity.ArInvoiceHistoryDetail_;
-import com.turbointernational.metadata.entity.BOMAncestor;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.Turbo;
@@ -38,7 +35,6 @@ import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Page;
 
 /**
- *
  * @author jrodriguez
  */
 @Repository
@@ -66,9 +62,6 @@ public class PartDao extends AbstractDao<Part> {
     @PersistenceContext(unitName = "mas90")
     private EntityManager emMas90;
 
-    @Autowired
-    private JdbcTemplate db;
-
     public PartDao() {
         super(Part.class);
     }
@@ -76,9 +69,8 @@ public class PartDao extends AbstractDao<Part> {
     /**
      * Get list of parts ordered by 'id'.
      *
-     * Ordering is important when parts are processed by batches (as in Magmi
-     * CSV export). Unordered (sub)list can contain duplications or skip some
-     * rows.
+     * Ordering is important when parts are processed by batches (as in Magmi CSV export). Unordered (sub)list can
+     * contain duplications or skip some rows.
      *
      * @param firstResult
      * @param maxResults
@@ -87,6 +79,15 @@ public class PartDao extends AbstractDao<Part> {
     public List<Part> findAllOrderedById(int firstResult, int maxResults) {
         return em.createNamedQuery("findAllPartsOrderedById", Part.class).setFirstResult(firstResult)
                 .setMaxResults(maxResults).getResultList();
+    }
+
+    public List<Part> findPartsByIds(Collection<Long> ids) {
+        return em.createNamedQuery("findPartsByIds", Part.class).setParameter("ids", ids).getResultList();
+    }
+
+    public List<Part> findPartsByMnfrsAndNumbers(Long manufacturerId, List<String> manufacturersNumbers) {
+        return em.createNamedQuery("findPartsByMnfrsAndNumbers", Part.class).setParameter("mnfrId", manufacturerId)
+                .setParameter("mnfrPrtNmbrs", manufacturersNumbers).getResultList();
     }
 
     public List<ProductImage> findProductImages(Collection<Long> productIds) {
@@ -232,31 +233,6 @@ public class PartDao extends AbstractDao<Part> {
         } catch (NoResultException e) {
             return new ArrayList<>();
         }
-    }
-
-    public Page<BOMAncestor> ancestors(Long partId, int offest, int limit) throws Exception {
-        List<BOMAncestor> ancestors = db.query("select p.id, p.manfr_part_num, pt.name, m.name, ba.distance, ba.type "
-                + "from part as p " + "join manfr m on m.id = p.manfr_id "
-                + "join part_type pt on pt.id = p.part_type_id " + "join ("
-                + "    select distinct part_id, ancestor_part_id, distance, type " + "    from vbom_ancestor "
-                + "    where part_id=? and distance > 0 " + ") as ba on ba.ancestor_part_id = p.id "
-                + "order by ba.distance, ba.type, p.manfr_part_num " + "limit ?, ?", (rs, rowNum) -> {
-                    long ancestorPartId = rs.getLong(1);
-                    String ancestorManufacturerPartNumber = rs.getString(2);
-                    String manufacturerName = rs.getString(3);
-                    String ancestorPartType = rs.getString(4);
-                    int distance = rs.getInt(5);
-                    String relationType = rs.getString(6);
-                    BOMAncestor ancestor = new BOMAncestor(ancestorPartId, ancestorPartType, manufacturerName,
-                            ancestorManufacturerPartNumber, relationType, distance);
-                    return ancestor;
-                }, partId, offest, limit);
-        Long total = db.queryForObject("select count(*) " + "from part as p " + "join manfr m on m.id = p.manfr_id "
-                + "join part_type pt on pt.id = p.part_type_id " + "join ("
-                + "    select distinct part_id, ancestor_part_id, distance, type " + "    from vbom_ancestor "
-                + "    where part_id=? and distance > 0 " + ") as ba on ba.ancestor_part_id = p.id "
-                + "order by ba.distance, ba.type, p.manfr_part_num", Long.class, partId);
-        return new Page<>(total, ancestors);
     }
 
 }

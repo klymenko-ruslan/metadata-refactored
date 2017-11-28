@@ -6,33 +6,6 @@ angular.module('ngMetaCrudApp')
       function RestService($log, $http, Restangular, dialogs, $q, $rootScope, $filter, METADATA_BASE, DATE_FORMAT) {
 
     function TheService() { // jshint ignore:line
-      var RestService = this;
-      var refreshPromise = null;
-      this.status = null;
-
-      this.refreshStatus = function() {
-        if (refreshPromise !== null) {
-          return refreshPromise;
-        } else {
-
-          var url = METADATA_BASE + 'status/all';
-
-          // We use $http service instead of Restangular because
-          // we should hide indication on UI of this call by 'angular-loading-bar' service.
-          // That service relies on $http only and know nothing about Restangular.
-
-          refreshPromise = $http.get(url, {
-            ignoreLoadingBar: true
-          }).then(function(status) {
-            RestService.status = status.data;
-            return status;
-          }).finally(function() {
-            refreshPromise = null;
-          });
-
-          return refreshPromise;
-        }
-      };
 
       this.createBom = function(parentPartId, items, sourcesIds, ratings, description, attachIds) {
         var req = {
@@ -51,55 +24,53 @@ angular.module('ngMetaCrudApp')
         return Restangular.all('bom').post(req);
       };
 
-      this.updateBom = function(bomItemId, quantity) {
-        return Restangular.one('bom').post(bomItemId, null, { quantity: quantity });
-      };
-
-      this.createBomAlternative = function(bomItemId, pickedPartId, hdr) {
-        return Restangular.one('bom/' + bomItemId + '/alt')
-                  .post(pickedPartId, {header: hdr});
-      };
-
-      this.removeBomAlternative = function(altBomItemId, altItemId) {
+      this.updateBom = function(parentPartId, childPartId, quantity) {
         Restangular.setParentless(false);
-        return Restangular.one('bom', altBomItemId).one('alt', altItemId).remove();
+        return Restangular.one('bom', parentPartId).post('descendant/' + childPartId, null, {quantity: quantity});
       };
 
-      this.startBomRebuilding = function(options) {
-        // return Restangular.one('bom/rebuild').post('start', options);
-        var url = METADATA_BASE + 'bom/rebuild/start';
-        return $http.post(url, options);
+      this.removeBomItems = function(parentPartId, childrenIds) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom', parentPartId).one('descendant').customDELETE(childrenIds);
       };
 
-      this.getBomRebuildingStatus = function() {
-        // return Restangular.one('bom/rebuild/status').get();
-        var url = METADATA_BASE + 'bom/rebuild/status';
-        return $http.get(url, { ignoreLoadingBar: true });
+      this.removeFromParentBom = function(parentPartId, childId) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom', childId).one('parents', parentPartId).remove();
       };
 
-      // Wraps the BOM status logic, resolving when the BOM is not rebuilding.
-      this.getBomRebuildingCompletePromise = function() {
-        var deferred = $q.defer();
+      this.getBomAlternatives = function(parentPartId, childPartId) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom', parentPartId).one('descendant', childPartId).getList('alternatives');
+      };
 
-        RestService.refreshStatus().then(function(status) {
-          if (status.bomRebuilding) {
+      this.createAltBomGroup = function(parentPartId, childPartId) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom', parentPartId).one('descendant', childPartId).post('alternatives');
+      };
 
-            var cancelWatcher = $rootScope.$watch(
-              function() {
-                return RestService.status.bomRebuilding;
-              },
-              function(bomRebuilding) {
-                if (bomRebuilding === false) {
-                  deferred.resolve();
-                  cancelWatcher();
-                }
-              }, true);
-          } else {
-            deferred.resolve();
-          }
-        });
+      this.removeAltBomItems = function(parentPartId, childPartId, altHeaderId, altPartIds) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom', parentPartId).one('descendant', childPartId).one('alternatives')
+          .one('headers', altHeaderId).customDELETE(altPartIds);
+      };
 
-        return deferred.promise;
+      // TODO: parameters 'parentPartId' and 'childPartId' are excessive and useless
+      this.deleteAltBomGroup = function(parentPartId, childPartId, altHeaderId) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom', parentPartId).one('descendant', childPartId)
+          .one('alternatives', altHeaderId).remove();
+      };
+
+      this.createBomAlternative = function(parentPartId, childPartId, altHeaderId, pickedPartId) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom', parentPartId).one('descendant', childPartId).all('alternatives/' + pickedPartId)
+          .post({'altHeaderId': altHeaderId});
+      };
+
+      this.removeBomAlternative = function(altHeaderId, partId) {
+        Restangular.setParentless(false);
+        return Restangular.one('bom/alternatives', partId).one('headers', altHeaderId).remove();
       };
 
       this.httpServiceError = function(title, response) {
@@ -193,7 +164,11 @@ angular.module('ngMetaCrudApp')
 
       this.loadAncestors = function(partId, offset, limit) {
         Restangular.setParentless(false);
-        return Restangular.one('part/' + partId + '/ancestors').get({'limit': limit, 'offset': offset});
+        var params = {
+          offset: offset,
+          limit: limit
+        };
+        return Restangular.one('part/' + partId + '/ancestors').get(params);
       };
 
       this.findOversizeParts = function(partId) {
@@ -227,7 +202,7 @@ angular.module('ngMetaCrudApp')
       // Specify class depending on part type.
       this._partType2class = function(partTypeId) {
         var clazz = 'com.turbointernational.metadata.entity.part.types.';
-        
+
         switch (partTypeId) {
         case 30:
           clazz += 'Actuator';
@@ -363,7 +338,7 @@ angular.module('ngMetaCrudApp')
           break;
         default:
           clazz = 'com.turbointernational.metadata.entity.part.Part';
-        } 
+        }
         return clazz;
       };
 
@@ -394,16 +369,8 @@ angular.module('ngMetaCrudApp')
       };
 
       this.updatePartDetails = function(part) {
-        return Restangular.one('part', part.id).one('details').customPUT(part);
-      };
-
-      this.rebuildPartBom = function(partId) {
         Restangular.setParentless(false);
-        return Restangular.one('part', partId).one('bom/rebuild').post();
-      };
-
-      this.getInterchangesOfThePartBoms = function(partId) {
-        return Restangular.one('part/' + partId + '/boms/interchanges').get();
+        return Restangular.one('part', part.id).one('details').customPUT(part);
       };
 
       this.addProductImage = function(file, partId, publishImage) {
@@ -589,7 +556,7 @@ angular.module('ngMetaCrudApp')
         Restangular.setParentless(false);
         return Restangular.one('other/manufacturer', manufacturerId).remove();
       };
- 
+
      this.listTurbosLinkedToGasketKit = function(gasketkitId) {
         return Restangular.one('part/' + gasketkitId + '/gasketkit').getList('turbos');
       };
@@ -682,22 +649,6 @@ angular.module('ngMetaCrudApp')
       this.deleteTurboModel = function(tmId) {
         Restangular.setParentless(false);
         return Restangular.one('other/turboModel', tmId).remove();
-      };
-
-      this.findInterchange = function(id) {
-        return Restangular.one('interchange', id).get();
-      };
-
-      this.createPartInterchange = function(partId, pickedPartId, sourcesIds, ratings, description, attachIds) {
-        var req = {
-          partId:  partId,
-          pickedPartId: pickedPartId,
-          sourcesIds: sourcesIds,
-          attachIds: attachIds,
-          chlogSrcRatings: ratings,
-          chlogSrcLnkDescription: description
-        };
-        return Restangular.all('interchange').post(req);
       };
 
       this.updatePartInterchange = function(partId, pickedPartId, mergeChoice, sourcesIds, ratings, description, attachIds) {
@@ -889,7 +840,7 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('search/parts').get(params);
       };
 
-      this.filterAlsoBought = function(manufacturerPartNumber, fltrManufacturerPartNumber, fltrPartTypeValue, 
+      this.filterAlsoBought = function(manufacturerPartNumber, fltrManufacturerPartNumber, fltrPartTypeValue,
           sortProperty, sortOrder, offset, limit) {
         var params = {
           manufacturerPartNumber: manufacturerPartNumber,
@@ -1185,15 +1136,9 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('/criticaldimension/part', id).get();
       };
 
-      this.getCritDimsByPartTypes = function(indexBy) {
-        if (!indexBy) {
-          indexBy = 'ID';
-        }
-        if (indexBy !== 'ID' && indexBy !== 'NAME') {
-          throw 'Unexpected value of "indexBy": ' + angular.toJson(indexBy);
-        }
+      this.getCritDimsByPartTypes = function() {
         return Restangular.one('/criticaldimension/byparttypes').get({
-          'indexBy': indexBy
+          'indexBy': 'ID'
         });
       };
 
@@ -1286,7 +1231,7 @@ angular.module('ngMetaCrudApp')
       };
 
       this.updateUser = function(user) {
-       return Restangular.all('security/user').post(user); 
+       return Restangular.all('security/user').post(user);
       };
 
       this.removeUser = function(id) {
@@ -1353,7 +1298,7 @@ angular.module('ngMetaCrudApp')
       };
 
       this.reindexAllApplications = function() {
-        return Restangular.all('search/application/indexAll').post(); 
+        return Restangular.all('search/application/indexAll').post();
       };
 
       this.reindexAllSalesNotes = function() {

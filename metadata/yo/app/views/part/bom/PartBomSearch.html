@@ -1,16 +1,15 @@
 <metanav>
   <li>
-    <a data-ng-href="/part/{{ partId }}" class="btn btn-primary">
+    <a data-ng-href="/part/{{ partId }}" class="btn btn-primary btn-lg">
       <i class="fa fa-eye"></i>
       View Part
     </a>
   </li>
-
   <li>
-    <a data-ng-click="save()" data-ng-disabled="isBttnSaveDisabled() || bpForm.$invalid" class="btn btn-success">
+    <button data-ng-click="save()" data-ng-disabled="isBttnSaveDisabled() || bpForm.$invalid" class="btn btn-success btn-lg">
       <i class="fa fa-save"></i>
       Add BOM Items
-    </a>
+    </button>
   </li>
 </metanav>
 
@@ -22,26 +21,25 @@
   <div class="col-xs-6">
     <h3>Existing BOMs</h3>
     <table data-ng-table="bomTableParams" class="table table-bordered table-striped table-hover table-responsive">
-      <tr data-ng-repeat="bomItem in $data">
-        <td title="'Part Type'" data-sortable="'child.partType.name'">
-          {{bomItem.child.partType.name}}
+      <tr data-ng-repeat="bom in $data">
+        <td title="'Part Type'" data-sortable="'part.partType.name'">
+          {{bom.part.partType.name}}
         </td>
-        <td title="'Manufacturer'" data-sortable="'child.manufacturer.name'">
-          {{bomItem.child.manufacturer.name}}
+        <td title="'Manufacturer'" data-sortable="'part.manufacturer.name'">
+          {{bom.part.manufacturer.name}}
         </td>
-        <td title="'Part #'" class="text-center text-nowrap" data-sortable="'child.manufacturerPartNumber'">
-          {{bomItem.child.manufacturerPartNumber}}
+        <td title="'Part#'" class="text-center text-nowrap" data-sortable="'part.partNumber'">
+          {{bom.part.partNumber}}
         </td>
-        <td title="'Qty'" class="text-right" data-sortable="'quantity'">
-          {{bomItem.quantity}}
+        <td title="'Qty'" class="text-right" data-sortable="'qty'">
+          {{bom.qty}}
         </td>
         <td title="'Actions'" class="actions text-center">
-          <a data-ng-href="/part/{{bomItem.parent.id}}"
+          <a data-ng-href="/part/{{bom.part.partId}}"
              authorize="ROLE_READ" class="btn btn-primary btn-xs">
             <i class="fa fa-eye"></i> View
           </a>
-          <button data-ng-click="removeBOM(bomItem.id)"
-                  data-ng-disabled="restService.status.bomRebuilding"
+          <button data-ng-click="removeBom(bom.part.partId)"
                   authorize="ROLE_BOM" class="btn btn-danger btn-xs">
             <i class="fa fa-trash-o"></i> Remove
           </button>
@@ -68,7 +66,7 @@
       <table data-ng-table="pickedPartsTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="rec in $data">
           <td title="'Part Type'" class="text-nowrap">{{rec.partType.name}}</td>
-          <td title="'Part #'" class="text-nowrap">{{rec.manufacturerPartNumber}}</td>
+          <td title="'Part#'" class="text-nowrap">{{rec.manufacturerPartNumber}}</td>
           <td title="'Qty'">
             <input type="number" data-ng-model="rec.extra.qty" data-ng-min="0" style="width:5em;" required />
           </td>
@@ -91,7 +89,7 @@
 
 <hr/>
 
-<part-search class="well well-lg">
+<part-search fltr-init-manufacturer="{{part.manufacturer.name}}">
   <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs">
     <i class="fa fa-eye"></i> View
   </a>
@@ -102,5 +100,3 @@
     <i class="fa fa-bullseye"></i> Pick
   </button>
 </part-search>
-
-

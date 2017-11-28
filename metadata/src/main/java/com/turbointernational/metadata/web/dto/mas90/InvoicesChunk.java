@@ -31,7 +31,7 @@ public class InvoicesChunk {
             private String partTypeName;
 
             @JsonView(View.Summary.class)
-            private List<Long> interchanges;
+            private Long[] interchanges;
 
             @JsonView(View.Summary.class)
             private String description;
@@ -60,7 +60,7 @@ public class InvoicesChunk {
             public Details() {
             }
 
-            public Details(Long partId, String partNumber, String partTypeName, List<Long> interchanges,
+            public Details(Long partId, String partNumber, String partTypeName, Long[] interchanges,
                     String description, String detailSeqNo, Integer quantityShipped, Double unitPrice, Double unitCost,
                     Double extensionAmt, String armc234EntryCurrency, Double armc234EntryRate) {
                 this.partId = partId;
@@ -101,11 +101,11 @@ public class InvoicesChunk {
                 this.partTypeName = partTypeName;
             }
 
-            public List<Long> getInterchanges() {
+            public Long[] getInterchanges() {
                 return interchanges;
             }
 
-            public void setInterchanges(List<Long> interchanges) {
+            public void setInterchanges(Long[] interchanges) {
                 this.interchanges = interchanges;
             }
 

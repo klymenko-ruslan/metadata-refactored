@@ -8,11 +8,8 @@ angular.module('ngMetaCrudApp')
       templateUrl: '/views/component/PartSearch.html',
       transclude: true,
       link: function(scope, element, attrs) {
-        scope.defManufacturerName = scope.$eval(attrs.searchManufacturerName);
-        var partTypeId = scope.$eval(attrs.searchPartTypeId);
-        var pt = _.find(scope.partTypes, function(pt) { return pt.id === partTypeId; });
-        if (angular.isObject(pt)) {
-          scope.fltrPart.partType = pt;
+        if (attrs.fltrInitManufacturer !== undefined && attrs.fltrInitManufacturer !== null && attrs.fltrInitManufacturer !== '') {
+          scope.fltrPart.manufacturer = attrs.fltrInitManufacturer;
         }
       },
       controller: ['$transclude', '$parse', '$sce', '$log', '$q', '$location',
@@ -79,6 +76,14 @@ angular.module('ngMetaCrudApp')
             title: 'Name',
             getter: $parse('_source.name'),
             sortable: 'name.lower_case_sort'
+          },
+          {
+            title: 'State',
+            getter: function(context, locals) {
+              var inactive = $parse('_source.inactive')(context, locals);
+              return inactive ? 'Inactive' : 'Active';
+            },
+            sortable: 'inactive'
           }
         ];
 

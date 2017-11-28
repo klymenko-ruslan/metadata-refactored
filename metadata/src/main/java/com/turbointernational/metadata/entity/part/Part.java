@@ -23,7 +23,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -33,6 +32,7 @@ import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -45,7 +45,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.BOMItem;
 import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.PartType;
@@ -98,6 +97,7 @@ import com.turbointernational.metadata.service.CriticalDimensionService;
 import com.turbointernational.metadata.service.SearchService;
 import com.turbointernational.metadata.service.SearchableEntity;
 import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.Interchange;
 
 import flexjson.JSONSerializer;
 import flexjson.transformer.HibernateTransformer;
@@ -157,33 +157,29 @@ import flexjson.transformer.Transformer;
 })
 @NamedQueries({
         @NamedQuery(
-                name = "findOnePart",
-                query = "select distinct p from Part p left join p.interchange i where p.id = :id"
-        ),
-        @NamedQuery(
                 name = "findByPartNumber",
-                query = "from Part p where p.manufacturerPartNumber = :partNumber"
+                query = "SELECT o FROM Part o WHERE o.manufacturerPartNumber = :partNumber"
         ),
         @NamedQuery(
                 name = "findByPartNumberAndManufacturer",
-                query = "from Part p where p.manufacturer.id=:manufacturerId and p.manufacturerPartNumber = :partNumber"
+                query = "SELECT o FROM Part o WHERE o.manufacturer.id=:manufacturerId AND o.manufacturerPartNumber = :partNumber"
         ),
         @NamedQuery(
                 name = "findAllPartsOrderedById",
-                query = "from Part p order by p.id"
+                query = "SELECT o FROM Part o ORDER BY o.id"
         ),
         @NamedQuery(
                 name = "findPartsByIds",
-                query = "select distinct p from Part p where p.id in :ids order by p.manufacturerPartNumber"
+                query = "SELECT DISTINCT o FROM Part o WHERE o.id IN :ids ORDER BY o.manufacturerPartNumber"
         ),
-        @NamedQuery(
+        @NamedQuery(  // TODO: move usage to PartDao
                 name = "findPartsByMnfrsAndNumbers",
-                query = "select distinct p " +
-                        "from Part p where p.manufacturer.id=:mnfrId and p.manufacturerPartNumber in(:mnfrPrtNmbrs)"
+                query = "SELECT DISTINCT o " +
+                        "FROM Part o WHERE o.manufacturer.id=:mnfrId AND o.manufacturerPartNumber IN(:mnfrPrtNmbrs)"
         ),
         @NamedQuery(
                 name = "numPartsOfManufacturer",
-                query = "select count(p) from Part p where p.manufacturer.id=:manufacturerId"
+                query = "SELECT COUNT(o) FROM Part o WHERE o.manufacturer.id=:manufacturerId"
         )
 })
 @JsonInclude(ALWAYS)
@@ -248,17 +244,6 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
     @JsonView({View.Detail.class})
     private Set<TurboType> turboTypes = new TreeSet<>();
 
-    @ManyToOne(fetch = LAZY)
-    @JoinTable(name = "interchange_item",
-            joinColumns = @JoinColumn(name = "part_id"),
-            inverseJoinColumns = @JoinColumn(name = "interchange_header_id"))
-    @JsonView({View.Detail.class})
-    private Interchange interchange;
-
-    @OneToMany(mappedBy = "parent", fetch = LAZY, orphanRemoval = true)
-    @OrderBy("id")
-    private Set<BOMItem> bom = new TreeSet<>();
-
     @OneToMany(cascade = REFRESH, mappedBy = "part", fetch = LAZY)
     @JsonView({View.Detail.class})
     @OrderBy("id")
@@ -280,6 +265,15 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
     @Column(name = "legend_img_filename")
     @JsonView(View.Summary.class)
     private String legendImgFilename;
+
+    /**
+     * Interchangeable of a part.
+     *
+     * This field must be initialized manually where it is needed because information about
+     * interchanges is stored in other storage (ArangoDB).
+     */
+    @Transient
+    private Interchange interchange = null;
 
     public Long getId() {
         return id;
@@ -369,21 +363,14 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
         this.inactive = inactive;
     }
 
+    @JsonView({View.Detail.class})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public Interchange getInterchange() {
         return interchange;
     }
 
     public void setInterchange(Interchange interchange) {
         this.interchange = interchange;
-    }
-
-    public Set<BOMItem> getBom() {
-        return bom;
-    }
-
-    public void setBom(Set<BOMItem> bom) {
-        this.bom.clear();
-        this.bom.addAll(bom);
     }
 
     public Set<TurboType> getTurboTypes() {

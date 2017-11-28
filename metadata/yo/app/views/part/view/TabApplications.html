@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="col-xs-12">
+    <a authorize="ROLE_APPLICATION_CRUD" class="btn btn-primary pull-right" style="margin-bottom:10px;" data-ng-href="/part/{{partId}}/application/search">
+      <i class="fa fa-plus"></i>
+      Add Application
+    </a>
+    <table data-ng-table="applicationsTableParams"  class="table table-bordered table-striped table-hover table-responsive">
+      <tr data-ng-repeat="item in $data">
+        <td data-title="'Year'" data-sortable="'carModelEngineYear.year.name'">{{item.carModelEngineYear.year.name}}</td>
+        <td data-title="'Make'" data-sortable="'carModelEngineYear.model.make.name'">{{item.carModelEngineYear.model.make.name}}</td>
+        <td data-title="'Model'" data-sortable="'carModelEngineYear.model.name'">{{item.carModelEngineYear.model.name}}</td>
+        <td data-title="'Engine'" data-sortable="'carModelEngineYear.engine.engineSize'">{{item.carModelEngineYear.engine.engineSize}}</td>
+        <td data-title="'Fuel Type'" data-sortable="'carModelEngineYear.engine.fuelType.name'">{{item.carModelEngineYear.engine.fuelType.name}}</td>
+        <td data-title="'Actions'" class="actions">
+          <a authorize="ROLE_READ"
+             data-ng-href="/application/carmodelengineyear/{{item.carModelEngineYear.id}}"
+             class="btn btn-primary btn-xs">
+            <i class="fa fa-eye"></i>
+            View
+          </a>
+          <button data-ng-click="removeApplication(item)" authorize="ROLE_APPLICATION_CRUD" class="btn btn-danger btn-xs">
+            <i class="fa fa-trash-o"></i> Remove
+          </button>
+        </td>
+      </tr>
+      <tr data-ng-hide="applications.length">
+        <td colspan="6">No applications to display.</td>
+      </tr>
+    </table>
+    <table-summary rowscount="applications.length" />
+  </div>
+</div>

@@ -11,12 +11,10 @@ angular.module('ngMetaCrudApp')
 
   $scope.add = function () {
     // Get the turbo type (and inject the manufacturer)
-    var turboType = $scope.selection.turboType;
-    turboType.manufacturer = $scope.selection.manufacturer;
-    restService.addTurboTypeToPart(partId, turboType.id).then(
-      function() {
+    restService.addTurboTypeToPart(partId, $scope.selection.turboType.id).then(
+      function(turboTypes) {
         toastr.success('Turbo type added.');
-        $uibModalInstance.close(turboType);
+        $uibModalInstance.close(turboTypes);
       },
       function(response) {
         restService.error('Could not add turbo type.', response);

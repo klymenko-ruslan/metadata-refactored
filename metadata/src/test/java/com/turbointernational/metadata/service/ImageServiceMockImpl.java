@@ -42,6 +42,11 @@ public class ImageServiceMockImpl implements ImageService {
     }
 
     @Override
+    public void delProductImage(Long id) {
+        // stub
+    }
+
+    @Override
     public void delOriginalImage(String filename) {
         // stub
     }

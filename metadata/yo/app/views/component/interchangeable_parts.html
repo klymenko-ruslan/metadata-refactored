@@ -3,8 +3,8 @@
     <tr data-ng-repeat="item in $data">
       <td title="'Part Type'" data-sortable="'partType.name'">{{item.partType.name}}</td>
       <td title="'Manufacturer'" data-sortable="'manufacturer.name'">{{item.manufacturer.name}}</td>
-      <td title="'Part #'" class="text-nowrap" data-sortable="'manufacturerPartNumber'">
-        <a data-ng-href="/part/{{item.id}}">{{item.manufacturerPartNumber}}</a>
+      <td title="'Part #'" class="text-nowrap" data-sortable="'partNumber'">
+        <a data-ng-href="/part/{{item.partId}}">{{item.partNumber}}</a>
       </td>
     </tr>
     <tr data-ng-hide="$data.length > 0">
@@ -12,3 +12,4 @@
     </tr>
   </tbody>
 </table>
+<table-summary rowscount="part.interchange.parts.length" />

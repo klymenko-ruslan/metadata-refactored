@@ -30,7 +30,7 @@ import com.turbointernational.metadata.entity.Role;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.service.GroupService;
 import com.turbointernational.metadata.util.View;
-import com.turbointernational.metadata.web.dto.GroupMemberDto;
+import com.turbointernational.metadata.web.dto.GroupMember;
 import com.turbointernational.metadata.web.dto.Page;
 
 import flexjson.JSONSerializer;
@@ -129,7 +129,7 @@ public class GroupController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_ADMIN")
-    public Page<GroupMemberDto> filter(@RequestParam(name = "userId", required = true) Long userId,
+    public Page<GroupMember> filter(@RequestParam(name = "userId", required = true) Long userId,
             @RequestParam(name = "fltrName", required = false) String fltrName,
             @RequestParam(name = "fltrRole", required = false) String fltrRole,
             @RequestParam(name = "fltrIsMember", required = false) Boolean fltrIsMemeber,

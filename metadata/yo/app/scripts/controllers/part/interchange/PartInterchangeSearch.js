@@ -111,6 +111,7 @@ angular.module('ngMetaCrudApp')
       );
     }
 
+    /* Unused
     function cbMergeAloneToPicked(srcIds, ratings, description, attachIds) {
       // Add this part to the picked part's interchange
       restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, MERGE_OPTIONS.PART_ALONE_TO_PICKED,
@@ -124,32 +125,13 @@ angular.module('ngMetaCrudApp')
         }
       );
     }
-
-    function cbCreate(srcIds, ratings, description, attachIds) {
-$log.log('DBG: CREATE INTERCHANGE');
-      // Create
-      restService.createPartInterchange($scope.part.id, $scope.pickedPart.id, srcIds, ratings, description, attachIds).then(
-        function() {
-          toastr.success('Interchangeable part group changed added.');
-          $location.path('/part/' + $scope.partId);
-        },
-        function(response) {
-          dialogs.error('Could not add interchangeable part.', 'Server said: <pre>' + JSON.stringify(response.data) + '</pre>');
-        }
-      );
-    }
+    */
 
     $scope.save = function() {
-      if ($scope.part.interchange) {
-        if (!$scope.pickedPart.interchange || $scope.pickedPart.interchange.alone) {
-          LinkSource.link(cbAddPartToThisInterchangeGroup, $scope.requiredSource, null);
-        } else {
-          LinkSource.link(cbAskMergeOpt, $scope.requiredSource, null);
-        }
-      } else if ($scope.pickedPart.interchange) {
-          LinkSource.link(cbMergeAloneToPicked, $scope.requiredSource, null);
+      if (!$scope.pickedPart.interchange || $scope.pickedPart.interchange.alone) {
+        LinkSource.link(cbAddPartToThisInterchangeGroup, $scope.requiredSource, null);
       } else {
-          LinkSource.link(cbCreate, $scope.requiredSource, null);
+        LinkSource.link(cbAskMergeOpt, $scope.requiredSource, null);
       }
     };
 

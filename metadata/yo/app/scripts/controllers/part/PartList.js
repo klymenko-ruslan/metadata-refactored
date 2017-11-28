@@ -2,8 +2,8 @@
 
 angular.module('ngMetaCrudApp')
 
-.controller('PartListCtrl', ['$scope', '$log', '$uibModal', 'partTypes', 'critDimsByPartTypes', 'critDimEnumVals',
-  function ($scope, $log, $uibModal, partTypes, critDimsByPartTypes, critDimEnumVals) {
+.controller('PartListCtrl', ['$scope', '$log', '$uibModal', 'partTypes', 'cachedDictionaries', 'critDimsByPartTypes', 'critDimEnumVals',
+  function ($scope, $log, $uibModal, partTypes, cachedDictionaries, critDimsByPartTypes, critDimEnumVals) {
     $scope.createPart = function () {
       $uibModal.open({
         'templateUrl': '/views/part/PartCreateModal.html',
@@ -15,11 +15,12 @@ angular.module('ngMetaCrudApp')
     $scope.critDimsByPartTypes = critDimsByPartTypes;
     $scope.critDimEnumVals = critDimEnumVals;
 
+    cachedDictionaries.load(); // pre-load cache
+
   }
 ])
-.controller('PartCreateModalCtrl', ['$scope', '$uibModalInstance', '$log', '$location', 'PartTypes',
-  function ($scope, $uibModalInstance, $log, $location, PartTypes) {
-    $scope.PartTypes = PartTypes;
+.controller('PartCreateModalCtrl', ['$scope', '$uibModalInstance', '$log', '$location',
+  function ($scope, $uibModalInstance, $log, $location) {
     $scope.selection = {};
 
     $scope.create = function () {
@@ -29,11 +30,6 @@ angular.module('ngMetaCrudApp')
 
     $scope.cancel = function () {
       $uibModalInstance.dismiss('cancel');
-    };
-
-    $scope.refresh = function () {
-      $scope.selection = {};
-      PartTypes.refresh();
     };
 
   }

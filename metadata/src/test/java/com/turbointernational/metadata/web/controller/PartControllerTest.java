@@ -26,7 +26,6 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.TurboModel;
-import com.turbointernational.metadata.entity.part.Interchange;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.types.Actuator;
 import com.turbointernational.metadata.entity.part.types.Backplate;
@@ -1355,6 +1354,8 @@ public class PartControllerTest extends AbstractFunctionalWebTest {
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @WithUserDetails("Admin")
+    // The test is not actual after migration to ArangoDb.
+    // Broken after migration code snippets are commented out with label 'ARANGODB'.
     @Ignore("This test is not real because real database uses triggers which are absent in a test database.")
     public void testCreateXRefPart_Turbo() throws Exception {
         String requestBody = "{\"originalPartId\":14510,\"part\":{\"partType\":{\"id\":1,\"name\":\"Turbo\",\"value\":\"turbo\",\"magentoAttributeSet\":\"Turbo\"},\"name\":\"nnn\",\"manufacturer\":{\"id\":2,\"name\":\"Holset\",\"route\":\"other/manufacturer/list\",\"reqParams\":null,\"restangularized\":true,\"fromServer\":true,\"parentResource\":null,\"restangularCollection\":false},\"manufacturerPartNumber\":\"3534378-test\",\"description\":\"ddd\",\"turboModel\":{\"id\":339,\"name\":\"H1E\",\"turboType\":{\"id\":260,\"manufacturer\":{\"id\":2,\"name\":\"Holset\",\"type\":{\"id\":1,\"name\":\"turbo\"},\"importPK\":3},\"name\":\"H1E\"},\"route\":\"turboModel\",\"reqParams\":null,\"restangularized\":true,\"fromServer\":true,\"parentResource\":{\"route\":\"other\",\"parentResource\":null},\"restangularCollection\":false},\"turboType\":{\"id\":260,\"manufacturer\":{\"id\":2,\"name\":\"Holset\",\"type\":{\"id\":1,\"name\":\"turbo\"},\"importPK\":3},\"name\":\"H1E\",\"route\":\"list\",\"reqParams\":null,\"restangularized\":true,\"fromServer\":true,\"parentResource\":{\"route\":\"other/turboType\",\"parentResource\":null},\"restangularCollection\":false},\"class\":\"com.turbointernational.metadata.entity.part.types.Turbo\"}}";
@@ -1367,11 +1368,11 @@ public class PartControllerTest extends AbstractFunctionalWebTest {
         assertEquals(1, resultList.size());
         Part p = resultList.get(0);
         assertNotNull(p);
-        Interchange interchange = p.getInterchange();
-        assertNotNull("The interchange was not saved.", interchange);
+        // ARANGODB: Interchange interchange = p.getInterchange();
+        // ARANGODB: assertNotNull("The interchange was not saved.", interchange);
         Part originalPart = partDao.findOne(14510L);
-        boolean contains = interchange.getParts().contains(originalPart);
-        assertTrue("The part not found in the interchangeables.", contains);
+        // ARANGODB: boolean contains = interchange.getParts().contains(originalPart);
+        // ARANGODB: assertTrue("The part not found in the interchangeables.", contains);
     }
 
 }

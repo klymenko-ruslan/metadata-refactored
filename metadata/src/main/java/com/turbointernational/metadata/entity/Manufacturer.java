@@ -27,7 +27,7 @@ import flexjson.JSONSerializer;
 @NamedQueries({
     @NamedQuery(
             name = "findManufacurerByName",
-            query = "from Manufacturer m where m.name=:name")
+            query = "SELECT m FROM Manufacturer m WHERE m.name=:name")
 })
 public class Manufacturer implements Serializable {
 

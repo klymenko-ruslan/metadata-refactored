@@ -13,7 +13,7 @@ import com.turbointernational.metadata.util.View;
  * @author dmytro.trunykov@zorallabs.com
  */
 @JsonInclude(ALWAYS)
-public class GroupMemberDto implements Serializable {
+public class GroupMember implements Serializable {
 
     private static final long serialVersionUID = 8825483248046659973L;
 
@@ -41,10 +41,10 @@ public class GroupMemberDto implements Serializable {
     @JsonView(View.Summary.class)
     private Boolean isMember;
 
-    public GroupMemberDto() {
+    public GroupMember() {
     }
 
-    public GroupMemberDto(Long id, String name, List<String> roles, Boolean isMember) {
+    public GroupMember(Long id, String name, List<String> roles, Boolean isMember) {
         this.id = id;
         this.name = name;
         this.roles = roles;
