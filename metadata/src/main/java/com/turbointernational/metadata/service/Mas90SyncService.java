@@ -8,6 +8,7 @@ import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.service.GraphDbService.checkSuccess;
 import static com.turbointernational.metadata.service.Mas90Service.TURBO_INTERNATIONAL_MANUFACTURER_ID;
 import static java.lang.Boolean.TRUE;
+import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -47,8 +48,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.turbointernational.metadata.dao.Mas90SyncDao;
 import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.Mas90Sync;
 import com.turbointernational.metadata.entity.Mas90SyncFailure;
@@ -88,6 +91,9 @@ public class Mas90SyncService {
 
     @Autowired
     private PartDao partDao;
+
+    @Autowired
+    private PartService partService;
 
     @Autowired
     private ChangelogService changelogService;
@@ -370,14 +376,12 @@ public class Mas90SyncService {
             try {
                 Set<Part> toBeReprocessed = new HashSet<>();
                 String itemsQuery = mas90Database.getItemsQuery();
-                mas90db.query(itemsQuery, rs -> { // we may skip transaction as
-                                                  // we use MAS90 DB to query
-                                                  // only
-                    String itemcode = rs.getString(1); // e.g. 6-A-0291
-                    String itemcodedesc = rs.getString(2); // e.g. HEAT SHIELD,
-                                                           // T3/4, WHEEL
-                    String productline = rs.getString(3); // e.g. HS
-                    String producttype = rs.getString(4); // e.g. F
+                // We may skip transaction as we use MAS90 DB to query only.
+                mas90db.query(itemsQuery, rs -> { 
+                    String itemcode = rs.getString(1);     // e.g. 6-A-0291
+                    String itemcodedesc = rs.getString(2); // e.g. HEAT SHIELD T3/4, WHEEL
+                    String productline = rs.getString(3);  // e.g. HS
+                    String producttype = rs.getString(4);  // e.g. F
                     Part processedPart = null;
                     try {
                         PartType pt = mas90toLocal.get(productline);
@@ -564,7 +568,8 @@ public class Mas90SyncService {
             return processedPart;
         }
 
-        private Part insertPart(String itemcode, String itemcodedesc, Long partTypeId, Boolean inactive) {
+        private Part insertPart(String itemcode, String itemcodedesc, Long partTypeId, Boolean inactive)
+                throws JsonProcessingException {
             Part p = Part.newInstance(partTypeId);
             PartType partType = entityManager.getReference(PartType.class, partTypeId);
             p.setManufacturerPartNumber(itemcode);
@@ -574,7 +579,7 @@ public class Mas90SyncService {
             p.setDescription(itemcodedesc);
             p.setPartType(partType);
             p.setInactive(inactive);
-            partDao.persist(p);
+            partService.registerPart(ServiceEnum.MAS90SYNC, user, p);
             return p;
         }
 
@@ -665,8 +670,7 @@ public class Mas90SyncService {
             }
 
             TransactionTemplate tt = new TransactionTemplate(txManager);
-            tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW); // new
-                                                                                       // transaction
+            tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW);
             Boolean updated = tt.execute(ts -> {
                 String bomsQuery = mas90Database.getBomsQuery();
                 List<Mas90Bom> mas90boms = mas90db.query(bomsQuery, ps -> ps.setString(1, manufacturerPartNumber),
@@ -764,7 +768,7 @@ public class Mas90SyncService {
                         // In theory it is possible that child is not imported
                         // yet (because it will be processed
                         // in the main loop later). In this case we add
-                        // 'thePart' to a list 'toBeReprocessed'.
+                        // 'thePart' to the list 'toBeReprocessed'.
                         // Parts in that list will be processed again when the
                         // main loop finished.
                         if (child != null) {

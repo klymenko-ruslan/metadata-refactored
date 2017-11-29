@@ -13,7 +13,6 @@ import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM
 import static com.turbointernational.metadata.service.ImageService.SIZES;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 import static com.turbointernational.metadata.util.FormatUtils.formatProductImage;
-import static java.lang.System.arraycopy;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.sort;
 import static java.util.stream.Collectors.toSet;
@@ -48,13 +47,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.validation.Errors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.dao.TurboTypeDao;
 import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.TurboType;
+import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.GasketKit;
@@ -131,6 +133,7 @@ public class PartService {
             throws Exception {
         Set<String> added = new HashSet<>(partNumbers.size());
         List<PartController.PartCreateResponse.Row> results = new ArrayList<>(partNumbers.size());
+        User user = User.getCurrentUser();
         for (Iterator<String> iter = partNumbers.iterator(); iter.hasNext();) {
             String mpn = iter.next();
             if (added.contains(mpn)) {
@@ -139,22 +142,27 @@ public class PartService {
             partDao.getEntityManager().detach(origin);
             origin.setId(null);
             origin.setManufacturerPartNumber(mpn);
-            partDao.persist(origin);
-            Long originId = origin.getId();
-            Response response = graphDbService.registerPart(originId, origin.getPartType().getId(),
-                    origin.getManufacturer().getId());
-            GraphDbService.checkSuccess(response);
-            // Update the changelog.
-            String json = partJsonSerializer.serialize(origin);
-            List<RelatedPart> relatedParts = new ArrayList<>(1);
-            relatedParts.add(new RelatedPart(originId, PART0));
-            Changelog chlog = changelogService.log(PART, "Created part " + formatPart(origin) + ".", json,
-                    relatedParts);
+            Changelog chlog = registerPart(PART, user, origin);
             changelogSourceService.link(httpRequest, chlog, sourcesIds, ratings, description, attachIds);
-            results.add(new PartController.PartCreateResponse.Row(originId, mpn, true, null));
+            results.add(new PartController.PartCreateResponse.Row(origin.getId(), mpn, true, null));
             added.add(mpn);
         }
         return results;
+    }
+
+    @Transactional
+    public Changelog registerPart(ServiceEnum service, User user, Part newPart) throws JsonProcessingException {
+        partDao.persist(newPart);
+        Long id = newPart.getId();
+        Response response = graphDbService.registerPart(id, newPart.getPartType().getId(),
+                newPart.getManufacturer().getId());
+        GraphDbService.checkSuccess(response);
+        // Update the changelog.
+        String json = partJsonSerializer.serialize(newPart);
+        List<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(newPart.getId(), PART0));
+        Changelog chlog = changelogService.log(PART, user, "Created part " + formatPart(newPart) + ".", json, relatedParts);
+        return chlog;
     }
 
     public Part createXRefPart(Long originalPartId, Part toCreate, boolean details) throws IOException {
