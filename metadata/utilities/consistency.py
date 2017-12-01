@@ -52,7 +52,8 @@ def _formatPart(p):
 
 
 def _checkPart(partInGraphDb, partInDb):
-    if partInGraphDb['partId'] != partInDb.id:
+    #  TODO: the attribute must be returned as int
+    if int(partInGraphDb['partId']) != (partInDb.id):
         _error(partInDb, 'Different part ID numbers in '
                'Db [{}] and GraphDb [{}]'
                .format(partInGraphDb['partId'], partInDb.id))
@@ -67,9 +68,11 @@ def _checkPart(partInGraphDb, partInDb):
 
 
 def _checkBoms(p, parts):
+    #  TODO: the attribute must be returned as int
+    pid = int(p.id)
     url = 'http://{}:{}/parts/{}/boms'.format(args.graphdb_host,
                                               args.graphdb_port,
-                                              p.id)
+                                              pid)
     req = urllib.request.Request(url, method='GET')
     res = urllib.request.urlopen(req)
     retcode = res.getcode()
@@ -77,17 +80,89 @@ def _checkBoms(p, parts):
         _fatal('Unexpected return code during processing a part {}: {}'
                .format(_formatPart(p), retcode))
     body = res.read()
-    boms = json.load(body.decode('utf-8'))
+    # print('body: {}'.format(body))
+    boms = json.loads(body.decode('utf-8'))
     for b in boms:
         child_id = b['partId']
-        if child_id not in parts[child_id]:
+        #  TODO: the attribute must be returned as int
+        child_id = int(child_id)
+        if child_id not in parts:
             _error(p, 'Invalid ID of a child in BOM: {}. Part with this ID '
                    'is not exist in the DB.'.format(child_id))
         qty = b['qty']
         if qty < 0:
             _error(p, 'Found a negative value {} of attribute "qty" '
                    'in a BOM for child part ID {}.'
-                   format(qty, child_id))
+                   .format(qty, child_id))
+        # Check interchanges in the BOM entry.
+        for interchange_id in b['interchanges']:
+            #  TODO: the attribute must be returned as int
+            interchange_id = int(interchange_id)
+            if interchange_id not in parts:
+                _error(p, 'Invalid ID of an interchange [{}] in BOM: {}. '
+                       'Part with this ID is not exist in the DB.'
+                       .format(interchange_id, child_id))
+        # Check alternatives.
+        url_alternatives = ('http://{}:{}/boms/{}/children/{}/alternatives'
+                            .format(args.graphdb_host, args.graphdb_port,
+                                    pid, child_id))
+        req_alt = urllib.request.Request(url_alternatives, method='GET')
+        res_alt = urllib.request.urlopen(req_alt)
+        retcode_alt = res_alt.getcode()
+        if retcode_alt != 200:
+            _fatal('Unexpected return code during processing a BOM''s '
+                   'child part [{}] for the part {}: {}'
+                   .format(child_id, _formatPart(p), retcode_alt))
+        body_alt = res_alt.read()
+        alt_boms = json.loads(body_alt.decode('utf-8'))
+        for alt in alt_boms:
+            for alt_part_id in alt['parts']:
+                if alt_part_id not in parts:
+                    _error(p, 'Invalid ID of an Alternative BOM for the '
+                           'BOM''s child part [{}]: {}.'
+                           .format(child_id, alt_part_id))
+
+
+def _checkInterchanges(p, parts):
+    url = 'http://{}:{}/parts/{}/interchanges'.format(args.graphdb_host,
+                                                      args.graphdb_port,
+                                                      p.id)
+    req = urllib.request.Request(url, method='GET')
+    res = urllib.request.urlopen(req)
+    retcode = res.getcode()
+    if retcode != 200:
+        _fatal('Unexpected return code during processing a part {}: {}'
+               .format(_formatPart(p), retcode))
+    body = res.read()
+    # print('body: {}'.format(body))
+    response_obj = json.loads(body.decode('utf-8'))
+    for pid in response_obj['parts']:
+        if pid not in parts:
+            _error(p, 'Invalid interchange. Part with this ID [{}] '
+                   'not found.'.format(pid))
+
+
+def _checkAncestors(p, parts):
+    #  TODO: the attribute must be returned as int
+    pid = int(p.id)
+    url = 'http://{}:{}/parts/{}/ancestors'.format(args.graphdb_host,
+                                                   args.graphdb_port,
+                                                   pid)
+    req = urllib.request.Request(url, method='GET')
+    res = urllib.request.urlopen(req)
+    retcode = res.getcode()
+    if retcode != 200:
+        _fatal('Unexpected return code during processing ancestors '
+               'for the part {}: {}'
+               .format(_formatPart(p), retcode))
+    body = res.read()
+    # print('body: {}'.format(body))
+    ancestors = json.loads(body.decode('utf-8'))
+    for a in ancestors:
+        ancestor_id = a['partId']
+        if ancestor_id not in parts:
+            _error(p, 'Invalid ID of an ancestor: {}. Part with this ID '
+                   'is not exist in the DB.'.format(ancestor_id))
 
 
 cnx = mysql.connector.connect(host=args.db_host, port=args.db_port,
@@ -126,10 +201,11 @@ try:
                     sys.exit(1)
                 obj = json.loads(body.decode('utf-8'))
                 _checkPart(obj, p)
-#                _checkBoms(p, parts)
+                _checkBoms(p, parts)
+                _checkInterchanges(p, parts)
+                _checkAncestors(p, parts)
         except urllib.error.HTTPError as e:
-            print(e)
-            sys.exit(1)
+            _fatal(repr(e))
     finally:
         cur.close()
 finally:
