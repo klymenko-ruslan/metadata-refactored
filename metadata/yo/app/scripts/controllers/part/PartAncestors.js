@@ -20,7 +20,7 @@ angular.module('ngMetaCrudApp')
               params.total(page.total);
               return page.recs;
             },
-            function failure() {
+            function failure(response) {
               restService.error('Couldn\'t load ancestors.', response);
             }
           );

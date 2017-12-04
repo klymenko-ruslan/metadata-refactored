@@ -37,6 +37,7 @@ angular.module('ngMetaCrudApp')
           critDims: null
         };
 
+
         $scope.fltrGroupState = {
           basicAttrsOpened: true,
           turboAttrsOpened: false,
@@ -390,6 +391,9 @@ angular.module('ngMetaCrudApp')
           $scope.partTableParams.reload();
 
         }, true);
+
+        var getSearch = $location.search();
+        $scope.fltrPart.partNumber = getSearch.pn;
 
         $scope.onPressedEnter = function() {
           if ($scope.searchResults.hits.total === 1) {

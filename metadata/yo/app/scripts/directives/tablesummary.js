@@ -8,7 +8,7 @@ angular.module('ngMetaCrudApp').directive('tableSummary', [
       },
       templateUrl: '/views/component/tablesummary.html',
       restrict: 'E'
-    }
+    };
   }
 ]);
 
