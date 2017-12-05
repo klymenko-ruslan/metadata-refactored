@@ -11,8 +11,10 @@ angular.module('ngMetaCrudApp')
       $scope.srchPartNumber = null;
 
       $scope.onSearch = function() {
-        $location.search('pn', $scope.srchPartNumber);
-        $location.path('/part/list');
+        if ($scope.srchPartNumber && !/^\s*$/.test($scope.srchPartNumber)) {
+            $location.search('pn', $scope.srchPartNumber);
+            $location.path('/part/list');
+        }
         $scope.srchPartNumber = null;
       };
 
