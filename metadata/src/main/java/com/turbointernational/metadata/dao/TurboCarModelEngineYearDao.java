@@ -113,9 +113,9 @@ public class TurboCarModelEngineYearDao extends AbstractDao<TurboCarModelEngineY
             "   JOIN car_model_engine_year AS cmey ON tcmey.car_model_engine_year_id = cmey.id " +
             "   LEFT JOIN car_year AS cy ON cmey.car_year_id = cy.id " +
             "   LEFT JOIN car_model AS cmd ON cmd.id = cmey.car_model_id " +
-            "       LEFT JOIN car_make AS cmk ON cmd.car_make_id = cmk.id " +
+            "   LEFT JOIN car_make AS cmk ON cmd.car_make_id = cmk.id " +
             "   LEFT JOIN car_engine AS ce ON ce.id = cmey.car_engine_id " +
-            "       LEFT JOIN car_fuel_type AS cft ON ce.car_fuel_type_id = cft.id " +
+            "   LEFT JOIN car_fuel_type AS cft ON ce.car_fuel_type_id = cft.id " +
             "WHERE tcmey.part_id = :partId OR tcmey.part_id IN(:ancestorsIds)",
             parameters,
             (rs, idx) -> {

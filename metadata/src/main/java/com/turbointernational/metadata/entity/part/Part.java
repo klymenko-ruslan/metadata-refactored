@@ -12,7 +12,6 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -93,7 +92,6 @@ import com.turbointernational.metadata.entity.part.types.TurbineHousing;
 import com.turbointernational.metadata.entity.part.types.TurbineWheel;
 import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.entity.part.types.Washer;
-import com.turbointernational.metadata.service.CriticalDimensionService;
 import com.turbointernational.metadata.service.SearchService;
 import com.turbointernational.metadata.service.SearchableEntity;
 import com.turbointernational.metadata.util.View;
@@ -605,50 +603,11 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
                 .include("partType.name")
                 .include("manufacturer.id")
                 .include("manufacturer.name")
+                .exclude("manufacturer.*")
                 .include("interchange.id")
-                .include("interchange.version")
-                .include("interchange.parts.id")
-                .include("interchange.parts.name")
-                .include("interchange.parts.version")
-                .include("interchange.parts.partType.id")
-                .include("interchange.parts.partType.name")
-                .include("interchange.parts.manufacturerPartNumber")
-                .include("interchange.parts.manufacturer.id")
-                .include("interchange.parts.manufacturer.name")
-                .exclude("interchange.parts.*")
-                .include("bomParentParts.id")
-                .include("bomParentParts.name")
-                .include("bomParentParts.partType.id")
-                .include("bomParentParts.partType.name")
-                .include("bomParentParts.manufacturerPartNumber")
-                .include("bomParentParts.manufacturer.id")
-                .include("bomParentParts.manufacturer.name")
-                .exclude("bomParentParts.*")
-                .include("bom.id")
-                .include("bom.version")
-                .include("bom.child.id")
-                .include("bom.child.version")
-                .include("bom.child.name")
-                .include("bom.child.partType.id")
-                .include("bom.child.partType.name")
-                .include("bom.child.manufacturer.id")
-                .include("bom.child.manufacturer.name")
-                .include("bom.child.manufacturerPartNumber")
-                .exclude("bom.child.*")
-                .include("bom.alternatives")
-                .include("bom.alternatives.header")
-                .include("bom.alternatives.part.id")
-                .include("bom.alternatives.part.name")
-                .include("bom.alternatives.part.version")
-                .include("bom.alternatives.part.partType.id")
-                .include("bom.alternatives.part.partType.name")
-                .include("bom.alternatives.part.manufacturerPartNumber")
-                .include("bom.alternatives.part.manufacturer.id")
-                .include("bom.alternatives.part.manufacturer.name")
-                .exclude("bom.alternatives.part.*")
-                .include("productImages.id")
-                .include("productImages.filename")
-                .exclude("productImages.*");
+                .include("interchange.parts.partId")
+                .include("interchange.parts.partNumber")
+                .include("interchange.parts.*");
         // Add critical dimensions.
         addCriticalDimensionsToSerialization(criticalDimensions, jsonSerializer, false);
         return jsonSerializer;
@@ -677,11 +636,11 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
             .include("manufacturer.id")
             .include("manufacturer.name")
             .exclude("manufacturer.*")
-            .exclude("bomParentParts")
-            .exclude("bom")
-            .exclude("interchange")
+            .include("interchange.id")
+            .include("interchange.parts.partId")
+            .include("interchange.parts.partNumber")
+            .include("interchange.parts.*")
             .exclude("turbos")
-            .exclude("productImages")
             .exclude("*.class");
         // Add critical dimensions.
         addCriticalDimensionsToSerialization(criticalDimensions, jsonSerializer, true);
@@ -724,64 +683,6 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
         return getId().toString();
     }
 
-    public void csvColumns(Map<String, String> columns, List<CriticalDimension> criticalDimensions) {
-        // part_type
-        columns.put("part_type", getPartType().getName());
-
-        // sku
-        columns.put("sku", getId().toString());
-
-        // attribute_set
-        columns.put("attribute_set", getPartType().getMagentoAttributeSet());
-
-        // type
-        columns.put("type", "simple");
-
-        // visibility
-        columns.put("visibility", "Catalog, Search"); // See magmi genericmapper visibility.csv
-
-        // type
-        columns.put("status", "Enabled"); // See magmi genericmapper status.csv
-
-        // name
-        columns.put("name", ObjectUtils.toString(getName()));
-
-        // description
-        columns.put("description", ObjectUtils.toString(getDescription()));
-
-        // manufacturer
-        columns.put("manufacturer", ObjectUtils.toString(getManufacturer().getName()));
-
-        // part_number
-        columns.put("part_number", ObjectUtils.toString(getManufacturerPartNumber()));
-
-        // part_number
-        columns.put("part_number_short", ObjectUtils.toString(getManufacturerPartNumber()).replaceAll("\\W", ""));
-
-        if (criticalDimensions != null) {
-            for(CriticalDimension cd : criticalDimensions) {
-                String fieldName = cd.getJsonName();
-                CriticalDimensionService.extractValue(this, cd, new CriticalDimensionService.ValueExtractorCallback() {
-
-                    @Override
-                    public void processValue(Object value) {
-                        columns.put(fieldName, ObjectUtils.toString(value));
-
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        String message = "Internal error. Extraction of a value of the field '" + fieldName
-                            + "' failed for the part with ID="
-                            + getId() + ". Does JPA entity declares this field? Details: " + e.getMessage();
-                        log.warn(message);
-                    }
-                });
-
-            }
-        }
-
-    }
     //</editor-fold>
 
     @Override
