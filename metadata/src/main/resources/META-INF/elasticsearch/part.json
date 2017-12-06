@@ -224,6 +224,9 @@
         }
       }
     },
+    "interchange": {
+      "type": "nested"
+    },
     "cmeyYear": {
       "type": "text",
       "fielddata": true,

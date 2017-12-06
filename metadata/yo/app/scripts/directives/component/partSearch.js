@@ -79,6 +79,10 @@ angular.module('ngMetaCrudApp')
             sortable: 'name.lower_case_sort'
           },
           {
+            title: 'Interchanges',
+            getter: $parse('_source.interchanges')
+          },
+          {
             title: 'State',
             getter: function(context, locals) {
               var inactive = $parse('_source.inactive')(context, locals);

@@ -7,7 +7,12 @@ angular.module('ngMetaCrudApp')
     $scope.createPart = function () {
       $uibModal.open({
         'templateUrl': '/views/part/PartCreateModal.html',
-        'controller': 'PartCreateModalCtrl'
+        'controller': 'PartCreateModalCtrl',
+        'resolve': {
+          'partTypes': function() {
+            return partTypes;
+          }
+        }
       });
     };
 
@@ -19,13 +24,25 @@ angular.module('ngMetaCrudApp')
 
   }
 ])
-.controller('PartCreateModalCtrl', ['$scope', '$uibModalInstance', '$log', '$location',
-  function ($scope, $uibModalInstance, $log, $location) {
-    $scope.selection = {};
+.controller('PartCreateModalCtrl', ['$scope', '$uibModalInstance', '$log', '$location', 'partTypes',
+  function ($scope, $uibModalInstance, $log, $location, partTypes) {
+
+    $scope.selection = null;
+    $scope.partTypes = partTypes;
+
+    $scope.onPartTypeChanged = function(val) {
+      $scope.selection = null;
+    };
+
+    $scope.onPartTypeSelected = function($item) {
+      if ($item !== undefined) {
+        $scope.selection = $item.originalObject;
+      }
+    };
 
     $scope.create = function () {
       $uibModalInstance.close('cancel');
-      $location.path('/part/createByPartTypeId/' + $scope.selection.partType.id);
+      $location.path('/part/createByPartTypeId/' + $scope.selection.id);
     };
 
     $scope.cancel = function () {
