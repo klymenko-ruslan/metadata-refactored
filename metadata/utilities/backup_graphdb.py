@@ -28,7 +28,7 @@ parser.add_argument("--arangodb-password", help="A password to connect to "
 parser.add_argument("--arangodb-database", help="A name of a database "
                     "to backup.", default="GraphDb")
 parser.add_argument("--store-dir", help="directory to store a backup",
-                    default="/var/metadata/backup/arangodb")
+                    default="/var/metadata/backup/graphdb")
 parser.add_argument("--history-size", help="how many backups to store before "
                     "remove the most old", type=int, default=14)
 
