@@ -22,7 +22,7 @@
                text-no-results="Not found"
                input-changed="onPartTypeChanged"
                selected-object="onPartTypeSelected"
-               local-data="partTypes"></div>
+               local-data="partTypes" focus-me="true"></div>
         </div>
     </form>
 </div>
@@ -30,4 +30,8 @@
     <button class="btn btn-primary" data-ng-click="create()" data-ng-disabled="!selection">Create&hellip;</button>
     <button class="btn btn-warning" data-ng-click="cancel()">Cancel</button>
 </div>
-
+<script>
+  setTimeout(function() {
+    document.getElementById('pickerPartType_value').focus();
+  }, 300);
+</script>
