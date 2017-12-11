@@ -48,6 +48,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.validation.Errors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.turbointernational.metadata.dao.KitTypeDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
 import com.turbointernational.metadata.dao.TurboTypeDao;
@@ -55,12 +56,15 @@ import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.Manufacturer;
+import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.GasketKit;
+import com.turbointernational.metadata.entity.part.types.Kit;
 import com.turbointernational.metadata.entity.part.types.Turbo;
+import com.turbointernational.metadata.entity.part.types.kit.KitType;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse;
 import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse.Row;
@@ -93,6 +97,9 @@ public class PartService {
 
     @Autowired
     private TurboTypeDao turboTypeDao;
+
+    @Autowired
+    private KitTypeDao kitTypeDao;
 
     @Autowired
     private ChangelogService changelogService;
@@ -217,6 +224,17 @@ public class PartService {
         return turbos;
     }
 
+    /**
+     * Update part and critical dimensions.
+     * 
+     * @param request
+     * @param id
+     * @param part
+     * @param details
+     * @return
+     * @throws AssertionError
+     * @throws SecurityException
+     */
     public Part updatePart(HttpServletRequest request, Long id, Part part, boolean details)
             throws AssertionError, SecurityException {
         Part originPart = partDao.findOne(id);
@@ -253,6 +271,10 @@ public class PartService {
 
     /**
      * Update only part details attributes.
+     * 
+     * Unlike {@link #updatePart(HttpServletRequest, Long, Part, boolean) this method doesn't update
+     * critical dimensions. We separate these methods because on the UI critical dimensions of a part
+     * and its details are edited on separate views.
      *
      * @param request
      * @param id
@@ -269,7 +291,7 @@ public class PartService {
      */
     public Part updatePartDetails(HttpServletRequest request, Long id, String manfrPartNum, Long manfrId, String name,
             String description, Boolean inactive, Double dimLength, Double dimWidth, Double dimHeight, Double weight,
-            boolean details) {
+            Long kitTypeId, boolean details) {
         Part originPart = partDao.findOne(id);
         if (!originPart.getManufacturer().getId().equals(manfrId)
                 && !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
@@ -292,6 +314,13 @@ public class PartService {
         originPart.setDimWidth(dimWidth);
         originPart.setDimHeight(dimHeight);
         originPart.setWeight(weight);
+        if (originPart.getPartType().getId() == PartType.PTID_KIT) {
+            Kit originKit = (Kit) originPart;
+            if (originKit.getKitType().getId() != kitTypeId) {
+                KitType kitType = kitTypeDao.getReference(kitTypeId);
+                originKit.setKitType(kitType);
+            }
+        }
         Part retVal = partDao.merge(originPart);
         if (details) {
             interchangeService.initInterchange(retVal);

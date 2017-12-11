@@ -3,6 +3,7 @@
     <select data-ng-model="selection.id"
             data-ng-options="item.id as item.name for item in items | orderBy:'name'"
             data-ng-disabled="items == null"
+            data-ng-required="required"
             placeholder="Choose..." class="form-control input-sm"></select>
   </div>
   <div class="col-xs-1">

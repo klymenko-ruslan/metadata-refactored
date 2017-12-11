@@ -37,9 +37,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
+import com.turbointernational.metadata.entity.part.types.Kit;
 import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.InterchangeService;
 import com.turbointernational.metadata.service.PartService;
@@ -468,8 +470,13 @@ public class PartController {
             Double dimWidth = part.getDimWidth();
             Double dimHeight = part.getDimHeight();
             Double weight = part.getWeight();
+            Long kitTypeId = null;
+            if (part.getPartType().getId() == PartType.PTID_KIT) {
+                Kit kit = (Kit) part;
+                kitTypeId = kit.getKitType().getId();
+            }
             return partService.updatePartDetails(request, id, manfrPartNum, manfrId, name, description, inactive,
-                    dimLength, dimWidth, dimHeight, weight, true);
+                    dimLength, dimWidth, dimHeight, weight, kitTypeId, true);
         } catch (SecurityException e) {
             response.sendError(SC_FORBIDDEN, e.toString());
             return null;
