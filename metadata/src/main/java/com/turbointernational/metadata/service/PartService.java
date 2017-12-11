@@ -174,12 +174,6 @@ public class PartService {
 
     public Part createXRefPart(Long originalPartId, Part toCreate, boolean details) throws IOException {
         partDao.persist(toCreate);
-        // The table 'part' has a trigger on insert that associate an
-        // interchangeable with the part.
-        // So we must refresh the Part entity instance just after insert to
-        // reflect changes made by the trigger.
-        partDao.flush(); // make sure that an insert done
-        partDao.refresh(toCreate);
         Long partId = toCreate.getId();
         Response response = graphDbService.registerPart(partId, toCreate.getPartType().getId(),
                 toCreate.getManufacturer().getId());
