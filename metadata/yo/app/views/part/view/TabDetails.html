@@ -309,6 +309,31 @@
 
   </div>
 </div>
+<hr data-ng-if="::part.partType.value == 'kit'"/>
+<div class="row" data-ng-if="::part.partType.value == 'kit'">
+  <div class="col-xs-12">
+    <h4><u>Common Component Mappings</u></h4>
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="pull-right" style="margin-bottom: 5px;">
+          <a authorize="ROLE_ALTER_PART" class="btn btn-primary pull-right"
+              ng-href="/part/Kit/{{::partId}}/component/search">
+            <i class="fa fa-plus"></i>Add Mapping
+          </a>
+        </div>
+      </div>
+    </div>
+    <part-table parts="kitComponents " key="part"
+                extra-columns="{&quot;Mapping&quot;: &quot;item.exclude ? 'Exclude' : 'Include'&quot;}">
+      <a ng-click="removeComponent(item)"
+         class="btn btn-xs btn-danger">
+        <i class="fa fa-trash-o"></i>
+        Remove
+      </a>
+    </part-table>
+    <table-summary rowscount="kitComponents.length" />
+  </div>
+</div>
 <hr/>
 <div class="row">
   <div class="col-xs-12">

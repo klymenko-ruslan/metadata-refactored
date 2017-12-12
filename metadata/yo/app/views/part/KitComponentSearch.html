@@ -50,14 +50,14 @@
 <part-search class="well well-lg">
 
   <a authorize="ROLE_READ"
-     data-ng-href="/part/{{partId}}"
+     data-ng-href="/part/{{$part._source.id}}"
      class="btn btn-primary btn-xs">
     <i class="fa fa-eye"></i>
     View
   </a>
 
   <a authorize="ROLE_ALTER_PART"
-     data-ng-click="pick(partId)"
+     data-ng-click="pick($part._source.id)"
      class="btn btn-success btn-xs">
       <i class="fa fa-bullseye"></i>
     Pick
