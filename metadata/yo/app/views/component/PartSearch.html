@@ -32,6 +32,10 @@
           <input id="fltrName" name="fltrName" class="form-control input-sm" type="text" data-ng-model="fltrPart.name" placeholder="Name..." data-ng-model-options="{debounce: 500}" />
         </div>
         <div class="form-group">
+          <label for="fltrInterchangeParts">Interchange Parts</label>
+          <input id="fltrInterchangeParts" name="fltrInterchangeParts" class="form-control input-sm" type="text" data-ng-model="fltrPart.interchangeParts" placeholder="Part Number..." data-ng-model-options="{debounce: 500}" />
+        </div>
+        <div class="form-group">
           <label for="fltrPartType">Part Type</label>
           <select id="fltrPartType" name="fltrPartType" class="form-control input-sm" data-ng-options="pt.name for pt in partTypes track by pt.id" data-ng-model="fltrPart.partType">
              <option></option>

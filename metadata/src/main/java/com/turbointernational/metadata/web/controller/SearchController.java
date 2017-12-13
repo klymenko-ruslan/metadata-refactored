@@ -50,6 +50,7 @@ public class SearchController {
                                               @RequestParam(name = "partTypeId", required = false) Long partTypeId,
                                               @RequestParam(name = "manufacturerName", required = false) String manufacturerName,
                                               @RequestParam(name = "name", required = false) String name,
+                                              @RequestParam(name = "interchangeParts", required = false) String interchangeParts,
                                               @RequestParam(name = "description", required = false) String description,
                                               @RequestParam(name = "inactive", required = false) Boolean inactive,
                                               @RequestParam(name = "turboTypeName", required = false) String turboTypeName,
@@ -66,9 +67,9 @@ public class SearchController {
                                               @RequestParam(name = "pgLimit", defaultValue = "10") Integer limit) throws Exception {
 
         Map<String, String[]> queriedCriticalDimensions = webRequest.getParameterMap();
-        String json = searchService.filterParts(partNumber, partTypeId, manufacturerName, name, description, inactive,
-                turboTypeName, turboModelName, year, make, model, engine, fuelType, queriedCriticalDimensions,
-                sortProperty, sortOrder, offset, limit);
+        String json = searchService.filterParts(partNumber, partTypeId, manufacturerName, name, interchangeParts,
+                description, inactive, turboTypeName, turboModelName, year, make, model, engine, fuelType,
+                queriedCriticalDimensions, sortProperty, sortOrder, offset, limit);
         return new ResponseEntity<>(json, OK);
     }
 

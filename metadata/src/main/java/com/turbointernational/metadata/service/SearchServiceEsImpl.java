@@ -768,11 +768,11 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     @Override
-    public String filterParts(String partNumber, Long partTypeId, String manufacturerName, String name,
-            String description, Boolean inactive, String turboTypeName, String turboModelName, String cmeyYear,
-            String cmeyMake, String cmeyModel, String cmeyEngine, String cmeyFuelType,
-            Map<String, String[]> queriedCriticalDimensions, String sortProperty, String sortOrder, Integer offset,
-            Integer limit) {
+    public String filterParts(String partNumber, Long partTypeId, String manufacturerName,
+            String name, String interchangeParts, String description, Boolean inactive, String turboTypeName,
+            String turboModelName, String cmeyYear, String cmeyMake, String cmeyModel, String cmeyEngine,
+            String cmeyFuelType, Map<String, String[]> queriedCriticalDimensions, String sortProperty,
+            String sortOrder, Integer offset, Integer limit) {
         List<AbstractSearchTerm> sterms = new ArrayList<>(64);
         partNumber = StringUtils.defaultIfEmpty(partNumber, null);
         if (isNotBlank(partNumber)) {

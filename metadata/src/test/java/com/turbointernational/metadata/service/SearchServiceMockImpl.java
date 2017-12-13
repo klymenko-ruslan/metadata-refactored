@@ -158,7 +158,7 @@ public class SearchServiceMockImpl implements SearchService {
 
     @Override
     public String filterParts(String partNumber, Long partTypeId, String manufacturerName,
-                              String name, String description, Boolean inactive,
+                              String name, String interchangeParts, String description, Boolean inactive,
                               String turboTypeName, String turboModelName,
                               String year, String make, String model, String engine, String fuelType,
                               Map<String, String[]> queriedCriticalDimensions,

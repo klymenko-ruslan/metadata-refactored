@@ -808,7 +808,8 @@ angular.module('ngMetaCrudApp')
         return $http.get(url, { ignoreLoadingBar: true });
       };
 
-      this.filterParts = function(searchPartTypeId, searchManufacturerName, searchName, searchPartNumber,
+      this.filterParts = function(searchPartTypeId, searchManufacturerName,
+          searchName, searchInterchangeParts, searchPartNumber,
           searchInactive, searchTurboModelName, searchTurboTypeName,
           year, make, model, engine, fuelType, searchCritDims,
           sortProperty, sortOrder, offset, limit) {
@@ -820,6 +821,7 @@ angular.module('ngMetaCrudApp')
           turboModelName: searchTurboModelName,
           turboTypeName: searchTurboTypeName,
           name: searchName,
+          interchangeParts: searchInterchangeParts,
           year: year,
           make: make,
           model: model,

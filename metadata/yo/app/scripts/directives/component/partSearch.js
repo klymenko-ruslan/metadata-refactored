@@ -26,6 +26,7 @@ angular.module('ngMetaCrudApp')
           turboModel: null,
           turboType: null,
           name: null,
+          interchangeParts: null,
           partNumber: null,
 
           year: null,
@@ -282,7 +283,8 @@ angular.module('ngMetaCrudApp')
               turboTypeName = $scope.fltrPart.turboType;
             }
 
-            return restService.filterParts(searchPartTypeId, $scope.fltrPart.manufacturer, $scope.fltrPart.name,
+            return restService.filterParts(searchPartTypeId, $scope.fltrPart.manufacturer,
+              $scope.fltrPart.name, fltrPart.interchangeParts,
               $scope.fltrPart.partNumber, $scope.fltrPart.inactive, turboModelName, turboTypeName,
               $scope.fltrPart.year, $scope.fltrPart.make, $scope.fltrPart.model,
               $scope.fltrPart.engine, $scope.fltrPart.fuelType,
@@ -340,6 +342,7 @@ angular.module('ngMetaCrudApp')
           $scope.fltrPart.turboModel = null;
           $scope.fltrPart.turboType = null;
           $scope.fltrPart.name = null;
+          $scope.fltrPart.interchangeParts = null;
           $scope.fltrPart.partNumber = null;
           $scope.fltrPart.critDims = null;
 
@@ -361,7 +364,7 @@ angular.module('ngMetaCrudApp')
         $scope.clearFilter();
 
         $scope.$watch('[fltrPart.partNumber, fltrPart.inactive, fltrPart.manufacturer, ' +
-          'fltrPart.name, fltrPart.critDims]', function(newVal, oldVal)
+          'fltrPart.name, fltrPart.interchangeParts, fltrPart.critDims]', function(newVal, oldVal)
         {
           // Debounce
           if (angular.equals(newVal, oldVal, true)) {
