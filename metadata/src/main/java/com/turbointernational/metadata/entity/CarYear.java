@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.service.InterchangeService;
 import com.turbointernational.metadata.service.SearchService;
 import com.turbointernational.metadata.service.SearchableEntity;
 import com.turbointernational.metadata.util.View;
@@ -97,7 +98,7 @@ public class CarYear implements Serializable, SearchableEntity {
     }
 
     @Override
-    public void beforeIndexing() {
+    public void beforeIndexing(InterchangeService interchangeService) {
         // Nothing.
     }
 

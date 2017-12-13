@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.turbointernational.metadata.entity.part.TurboCarModelEngineYear;
+import com.turbointernational.metadata.service.InterchangeService;
 import com.turbointernational.metadata.service.SearchService;
 import com.turbointernational.metadata.service.SearchableEntity;
 
@@ -171,7 +172,7 @@ public class CarModelEngineYear implements Serializable, SearchableEntity {
     }
 
     @Override
-    public void beforeIndexing() {
+    public void beforeIndexing(InterchangeService interchangeService) {
         // Nothing.
     }
 

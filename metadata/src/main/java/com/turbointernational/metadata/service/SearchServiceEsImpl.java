@@ -180,6 +180,9 @@ public class SearchServiceEsImpl implements SearchService {
     @Autowired
     private ResourceService resourceService;
 
+    @Autowired
+    private InterchangeService interchangeService;
+
     @Value("${elasticsearch.index.number_of_shards}")
     private int numberOfShards = 1;
 
@@ -1301,7 +1304,7 @@ public class SearchServiceEsImpl implements SearchService {
         tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
         tt.execute((TransactionCallback<Void>) ts -> {
             String searchId = doc.getSearchId();
-            doc.beforeIndexing();
+            doc.beforeIndexing(interchangeService);
             List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
             String asJson = doc.toSearchJson(criticalDimensions);
             log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}", elasticSearchIndex,
@@ -1335,7 +1338,7 @@ public class SearchServiceEsImpl implements SearchService {
                         SearchableEntity doc = (SearchableEntity) entity;
                         searchId = doc.getSearchId();
                         index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
-                        doc.beforeIndexing();
+                        doc.beforeIndexing(interchangeService);
                         List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
                         asJson = doc.toSearchJson(criticalDimensions);
                     }

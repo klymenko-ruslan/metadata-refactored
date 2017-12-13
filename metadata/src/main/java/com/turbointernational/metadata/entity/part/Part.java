@@ -92,6 +92,7 @@ import com.turbointernational.metadata.entity.part.types.TurbineHousing;
 import com.turbointernational.metadata.entity.part.types.TurbineWheel;
 import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.entity.part.types.Washer;
+import com.turbointernational.metadata.service.InterchangeService;
 import com.turbointernational.metadata.service.SearchService;
 import com.turbointernational.metadata.service.SearchableEntity;
 import com.turbointernational.metadata.util.View;
@@ -268,7 +269,7 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
      * Interchangeable of a part.
      *
      * This field must be initialized manually where it is needed because information about
-     * interchanges is stored in other storage (ArangoDB).
+     * interchanges is stored in other storage (GraphDB).
      */
     @Transient
     private Interchange interchange = null;
@@ -580,8 +581,8 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
     }
 
     @Override
-    public void beforeIndexing() {
-        // Nothing.
+    public void beforeIndexing(InterchangeService interchangeService) {
+        interchangeService.initInterchange(this);
     }
     //</editor-fold>
 
@@ -639,7 +640,7 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
             .include("interchange.id")
             .include("interchange.parts.partId")
             .include("interchange.parts.partNumber")
-            .include("interchange.parts.*")
+            .exclude("interchange.parts.*")
             .exclude("turbos")
             .exclude("*.class");
         // Add critical dimensions.

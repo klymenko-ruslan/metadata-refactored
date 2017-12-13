@@ -28,6 +28,7 @@ import com.turbointernational.metadata.entity.CoolType;
 import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.entity.TurboModel;
 import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.service.InterchangeService;
 import com.turbointernational.metadata.util.View;
 
 import flexjson.JSONSerializer;
@@ -166,8 +167,8 @@ public class Turbo extends Part {
      * ElasticSearch index. See more details in a ticket #807.
      */
     @Override
-    public void beforeIndexing() {
-        super.beforeIndexing();
+    public void beforeIndexing(InterchangeService interchangeService) {
+        super.beforeIndexing(interchangeService);
         TurboCarModelEngineYearDao tcmeyDao = Application.getContext().getBean(TurboCarModelEngineYearDao.class);
         long t0 = System.currentTimeMillis();
         Long id = getId();

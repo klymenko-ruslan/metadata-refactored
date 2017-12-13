@@ -9,7 +9,9 @@ import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -55,6 +57,9 @@ public class InterchangeService {
 
     @Autowired
     private DtoMapperService dtoMapperService;
+
+    @Autowired
+    private SearchService searchService;
 
     /**
      * Find an interchangeable by its ID.
@@ -133,6 +138,16 @@ public class InterchangeService {
         Interchange interchange = findForPart(partId);
         MigrateInterchangeResponse response = graphDbService.leaveInterchangeableGroup(partId);
         checkSuccess(response);
+        // Update 'part.interchange' in an ElasticSearch index.
+        Set<Long> interchangeablePartsToReindex = new HashSet<>();
+        interchangeablePartsToReindex.add(partId);
+        com.turbointernational.metadata.web.dto.Part[] otherParts = interchange.getParts();
+        if (otherParts != null) {
+            for (com.turbointernational.metadata.web.dto.Part p : otherParts) {
+                interchangeablePartsToReindex.add(p.getPartId());
+            }
+        }
+        reindexIntechangeableParts(interchangeablePartsToReindex);
         // Update the changelog.
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
@@ -150,10 +165,16 @@ public class InterchangeService {
      * @param pickedPartId
      */
     @Transactional
-    public void mergePickedAloneToPart(HttpServletRequest httpRequest, long partId, long pickedPartId,
+    public void mergePickedAloneToPart(HttpServletRequest httpRequest, Long partId, Long pickedPartId,
             Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) throws IOException {
+        Set<Long> interchangeablePartsToReindex = new HashSet<>();
+        collectInterchangeablePartIdsFor(partId, interchangeablePartsToReindex);
+        collectInterchangeablePartIdsFor(pickedPartId, interchangeablePartsToReindex);
         MigrateInterchangeResponse response = graphDbService.movePartToOtherInterchangeGroup(pickedPartId, partId);
         checkSuccess(response);
+        collectInterchangeablePartIdsFor(partId, interchangeablePartsToReindex);
+        collectInterchangeablePartIdsFor(pickedPartId, interchangeablePartsToReindex);
+        reindexIntechangeableParts(interchangeablePartsToReindex);
         Long oldInterchangeHeaderId = response.getOldHeaderId();
         Long newInterchangeHeaderId = response.getNewHeaderId();
         List<RelatedPart> relatedParts = new ArrayList<>(2);
@@ -178,8 +199,14 @@ public class InterchangeService {
     @Transactional
     public void mergePartAloneToPicked(HttpServletRequest httpRequest, long partId, long pickedPartId,
             Long[] sourcesIds, Integer[] ratings, String description, Long[] attachIds) throws IOException {
+        Set<Long> interchangeablePartsToReindex = new HashSet<>();
+        collectInterchangeablePartIdsFor(partId, interchangeablePartsToReindex);
+        collectInterchangeablePartIdsFor(pickedPartId, interchangeablePartsToReindex);
         MigrateInterchangeResponse response = graphDbService.movePartToOtherInterchangeGroup(partId, pickedPartId);
         checkSuccess(response);
+        collectInterchangeablePartIdsFor(partId, interchangeablePartsToReindex);
+        collectInterchangeablePartIdsFor(pickedPartId, interchangeablePartsToReindex);
+        reindexIntechangeableParts(interchangeablePartsToReindex);
         Long oldInterchangeHeaderId = response.getOldHeaderId();
         Long newInterchangeHeaderId = response.getNewHeaderId();
         List<RelatedPart> relatedParts = new ArrayList<>(2);
@@ -204,9 +231,15 @@ public class InterchangeService {
     @Transactional
     public void mergePickedAllToPart(HttpServletRequest httpRequest, Long partId, Long pickedPartId, Long[] sourcesIds,
             Integer[] ratings, String description, Long[] attachIds) throws IOException {
+        Set<Long> interchangeablePartsToReindex = new HashSet<>();
+        collectInterchangeablePartIdsFor(partId, interchangeablePartsToReindex);
+        collectInterchangeablePartIdsFor(pickedPartId, interchangeablePartsToReindex);
         MigrateInterchangeResponse response = graphDbService.moveGroupToOtherInterchangeableGroup(pickedPartId,
                 partId);
         checkSuccess(response);
+        collectInterchangeablePartIdsFor(partId, interchangeablePartsToReindex);
+        collectInterchangeablePartIdsFor(pickedPartId, interchangeablePartsToReindex);
+        reindexIntechangeableParts(interchangeablePartsToReindex);
         Long oldInterchangeHeaderId = response.getOldHeaderId();
         Long newInterchangeHeaderId = response.getNewHeaderId();
         List<RelatedPart> relatedParts = new ArrayList<>(2);
@@ -219,6 +252,23 @@ public class InterchangeService {
                 relatedParts);
         changelogSourceService.link(httpRequest, changelog, sourcesIds, ratings, description, attachIds);
         partChangeService.changedInterchange(oldInterchangeHeaderId, newInterchangeHeaderId);
+    }
+
+    private void collectInterchangeablePartIdsFor(Long partId, Set<Long> result) {
+        result.add(partId);
+        Interchange interchange = findForPart(partId);
+        com.turbointernational.metadata.web.dto.Part[] parts = interchange.getParts();
+        if (parts != null && parts.length > 0) {
+            for (com.turbointernational.metadata.web.dto.Part p : parts) {
+                result.add(p.getPartId());
+            }
+        }
+    }
+
+    private void reindexIntechangeableParts(Set<Long> partIds) {
+        if (partIds != null && !partIds.isEmpty()) {
+            partIds.forEach(pid -> searchService.indexPart(pid));
+        }
     }
 
 }

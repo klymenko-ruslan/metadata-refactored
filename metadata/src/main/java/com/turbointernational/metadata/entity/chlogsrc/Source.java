@@ -36,6 +36,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.entity.User;
+import com.turbointernational.metadata.service.InterchangeService;
 import com.turbointernational.metadata.service.SearchService;
 import com.turbointernational.metadata.service.SearchableEntity;
 import com.turbointernational.metadata.util.View;
@@ -265,7 +266,7 @@ public class Source implements SearchableEntity, Serializable {
     }
 
     @Override
-    public void beforeIndexing() {
+    public void beforeIndexing(InterchangeService interchangeService) {
     }
 
     @Override

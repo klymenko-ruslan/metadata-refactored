@@ -57,7 +57,7 @@ public class SearchServiceMockImpl implements SearchService {
 
     @Override
     public void indexPart(Part part) {
-        log.debug("Indexing: indexPart(Part part)");
+        log.debug("Indexing: indexPart(Part part, boolean initInterchange)");
     }
 
     @Override

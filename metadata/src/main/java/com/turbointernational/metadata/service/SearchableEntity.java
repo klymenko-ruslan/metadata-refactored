@@ -24,7 +24,7 @@ public interface SearchableEntity {
      *
      * This method is useful to initialize transient attributes of a entity before indexing.
      */
-    void beforeIndexing();
+    void beforeIndexing(InterchangeService interchangeService);
 
     String toSearchJson(List<CriticalDimension> criticalDimensions);
 

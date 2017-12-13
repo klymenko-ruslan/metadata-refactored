@@ -30,7 +30,7 @@ angular.module('ngMetaCrudApp')
     $scope.selection = null;
     $scope.partTypes = partTypes;
 
-    $scope.onPartTypeChanged = function(val) {
+    $scope.onPartTypeChanged = function() {
       $scope.selection = null;
     };
 

@@ -80,7 +80,19 @@ angular.module('ngMetaCrudApp')
           },
           {
             title: 'Interchanges',
-            getter: $parse('_source.interchanges')
+            getter: function(context, locals) {
+              var retVal = null;
+              var intrchgParts = $parse('_source.interchange.parts')(context, locals);
+              _.each(intrchgParts, function(p) {
+                if (retVal === null) {
+                  retVal = '';
+                } else {
+                  retVal += ', ';
+                }
+                retVal += ('<a href="/part/' + p.partId + '">' + p.partNumber + '</a>');
+              });
+              return retVal;
+            }
           },
           {
             title: 'State',
