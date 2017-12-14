@@ -284,7 +284,7 @@ angular.module('ngMetaCrudApp')
             }
 
             return restService.filterParts(searchPartTypeId, $scope.fltrPart.manufacturer,
-              $scope.fltrPart.name, fltrPart.interchangeParts,
+              $scope.fltrPart.name, $scope.fltrPart.interchangeParts,
               $scope.fltrPart.partNumber, $scope.fltrPart.inactive, turboModelName, turboTypeName,
               $scope.fltrPart.year, $scope.fltrPart.make, $scope.fltrPart.model,
               $scope.fltrPart.engine, $scope.fltrPart.fuelType,

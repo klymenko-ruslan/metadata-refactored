@@ -41,6 +41,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
@@ -852,7 +853,7 @@ public class SearchServiceEsImpl implements SearchService {
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypePart)
                 .setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
-        if (sterms.isEmpty()) {
+        if (sterms.isEmpty() && StringUtils.isBlank(interchangeParts)) {
             query = QueryBuilders.matchAllQuery();
         } else {
             BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
@@ -931,6 +932,11 @@ public class SearchServiceEsImpl implements SearchService {
                     throw new IllegalArgumentException("Unsupported search term type: " + astType);
                 }
             }
+            if (isNotBlank(interchangeParts)) {
+                String normalizedInterchangeParts = str2shotfield.apply(interchangeParts);
+                MatchQueryBuilder matchQuery = QueryBuilders.matchQuery("interchange.parts.partNumber.short", normalizedInterchangeParts);
+                boolQuery.must(matchQuery);
+            }
             query = boolQuery;
         }
         srb.setQuery(query);
@@ -964,6 +970,7 @@ public class SearchServiceEsImpl implements SearchService {
             srb.setSize(limit);
         }
         log.debug("Search request (parts) to search engine:\n{}", srb);
+        System.out.println("Search request (parts) to search engine:\n" + srb.toString());
         return srb.execute().actionGet(timeout).toString();
     }
 
