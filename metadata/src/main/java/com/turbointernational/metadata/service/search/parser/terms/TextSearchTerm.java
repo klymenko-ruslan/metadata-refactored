@@ -1,6 +1,6 @@
-package com.turbointernational.metadata.service.search.parser;
+package com.turbointernational.metadata.service.search.parser.terms;
 
-import static com.turbointernational.metadata.service.search.parser.SearchTermEnum.TEXT;
+import static com.turbointernational.metadata.service.search.parser.terms.SearchTermEnum.TEXT;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 08.08.16.

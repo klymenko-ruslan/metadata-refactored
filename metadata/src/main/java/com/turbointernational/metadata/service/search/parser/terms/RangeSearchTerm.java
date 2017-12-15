@@ -1,6 +1,6 @@
-package com.turbointernational.metadata.service.search.parser;
+package com.turbointernational.metadata.service.search.parser.terms;
 
-import static com.turbointernational.metadata.service.search.parser.SearchTermEnum.DECIMAL_RANGE;
+import static com.turbointernational.metadata.service.search.parser.terms.SearchTermEnum.DECIMAL_RANGE;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 08.08.16.

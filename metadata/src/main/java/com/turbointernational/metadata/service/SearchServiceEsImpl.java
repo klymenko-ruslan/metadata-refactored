@@ -3,13 +3,15 @@ package com.turbointernational.metadata.service;
 import static com.turbointernational.metadata.service.SearchService.IndexingStatus.PHASE_ESTIMATION;
 import static com.turbointernational.metadata.service.SearchService.IndexingStatus.PHASE_FINISHED;
 import static com.turbointernational.metadata.service.SearchService.IndexingStatus.PHASE_INDEXING;
-import static com.turbointernational.metadata.service.search.parser.SearchTermCmpOperatorEnum.EQ;
-import static com.turbointernational.metadata.service.search.parser.SearchTermFactory.newBooleanSearchTerm;
-import static com.turbointernational.metadata.service.search.parser.SearchTermFactory.newIntegerSearchTerm;
-import static com.turbointernational.metadata.service.search.parser.SearchTermFactory.newSearchTerm;
-import static com.turbointernational.metadata.service.search.parser.SearchTermFactory.newTextSearchTerm;
+import static com.turbointernational.metadata.service.search.parser.terms.SearchTermCmpOperatorEnum.EQ;
+import static com.turbointernational.metadata.service.search.parser.terms.SearchTermFactory.newBooleanSearchTerm;
+import static com.turbointernational.metadata.service.search.parser.terms.SearchTermFactory.newIntegerSearchTerm;
+import static com.turbointernational.metadata.service.search.parser.terms.SearchTermFactory.newSearchTerm;
+import static com.turbointernational.metadata.service.search.parser.terms.SearchTermFactory.newTextSearchTerm;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.lucene.search.join.ScoreMode.None;
 import static org.elasticsearch.action.search.SearchType.DFS_QUERY_THEN_FETCH;
+import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 import java.io.IOException;
@@ -41,7 +43,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
@@ -85,12 +87,16 @@ import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.chlogsrc.Source;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.service.search.index.IndexBuilder;
-import com.turbointernational.metadata.service.search.parser.AbstractSearchTerm;
-import com.turbointernational.metadata.service.search.parser.BooleanSearchTerm;
-import com.turbointernational.metadata.service.search.parser.NumberSearchTerm;
-import com.turbointernational.metadata.service.search.parser.RangeSearchTerm;
-import com.turbointernational.metadata.service.search.parser.SearchTermEnum;
-import com.turbointernational.metadata.service.search.parser.TextSearchTerm;
+import com.turbointernational.metadata.service.search.parser.AbstractQueryItem;
+import com.turbointernational.metadata.service.search.parser.AbstractQueryItem.TypeEnum;
+import com.turbointernational.metadata.service.search.parser.NestedQueryItem;
+import com.turbointernational.metadata.service.search.parser.PlainQueryItem;
+import com.turbointernational.metadata.service.search.parser.terms.AbstractSearchTerm;
+import com.turbointernational.metadata.service.search.parser.terms.BooleanSearchTerm;
+import com.turbointernational.metadata.service.search.parser.terms.NumberSearchTerm;
+import com.turbointernational.metadata.service.search.parser.terms.RangeSearchTerm;
+import com.turbointernational.metadata.service.search.parser.terms.SearchTermEnum;
+import com.turbointernational.metadata.service.search.parser.terms.TextSearchTerm;
 
 /**
  * Implementation of the {@link SearchService} based on the ElasticSearch.
@@ -774,58 +780,65 @@ public class SearchServiceEsImpl implements SearchService {
             String turboModelName, String cmeyYear, String cmeyMake, String cmeyModel, String cmeyEngine,
             String cmeyFuelType, Map<String, String[]> queriedCriticalDimensions, String sortProperty,
             String sortOrder, Integer offset, Integer limit) {
-        List<AbstractSearchTerm> sterms = new ArrayList<>(64);
+        List<AbstractQueryItem> rootQueryItems = new ArrayList<>(100);
+        //List<AbstractSearchTerm> plainRootItems = new ArrayList<>(64);
         partNumber = StringUtils.defaultIfEmpty(partNumber, null);
         if (isNotBlank(partNumber)) {
             String normalizedPartNumber = str2shotfield.apply(partNumber);
-            sterms.add(newTextSearchTerm("manufacturerPartNumber.short", normalizedPartNumber));
+            rootQueryItems.add(new PlainQueryItem(newTextSearchTerm("manufacturerPartNumber.short", normalizedPartNumber)));
         }
         if (partTypeId != null) {
-            sterms.add(newIntegerSearchTerm("partType.id", EQ, partTypeId));
+            rootQueryItems.add(new PlainQueryItem(newIntegerSearchTerm("partType.id", EQ, partTypeId)));
         }
         if (manufacturerName != null) {
-            sterms.add(newTextSearchTerm("manufacturer.name.full", manufacturerName));
+            rootQueryItems.add(new PlainQueryItem(newTextSearchTerm("manufacturer.name.full", manufacturerName)));
         }
         if (isNotBlank(name)) {
             String normalizedName = str2shotfield.apply(name);
-            sterms.add(newTextSearchTerm("name.short", normalizedName));
+            rootQueryItems.add(new PlainQueryItem(newTextSearchTerm("name.short", normalizedName)));
+        }
+        if (isNotBlank(interchangeParts)) {
+            String normalizedInterchangeParts = str2shotfield.apply(interchangeParts);
+            NestedQueryItem nqi = new NestedQueryItem("interchange.parts");
+            nqi.addTerm(newTextSearchTerm("interchange.parts.partNumber.short", normalizedInterchangeParts));
+            rootQueryItems.add(nqi);
         }
         if (isNotBlank(description)) {
             String normalizedDescription = str2shotfield.apply(description);
-            sterms.add(newTextSearchTerm("description.short", normalizedDescription));
+            rootQueryItems.add(new PlainQueryItem(newTextSearchTerm("description.short", normalizedDescription)));
         }
         if (inactive != null) {
-            sterms.add(newBooleanSearchTerm("inactive", inactive));
+            rootQueryItems.add(new PlainQueryItem(newBooleanSearchTerm("inactive", inactive)));
         }
 
         if (isNotBlank(cmeyYear)) {
             String normalizedCmeyYear = str2shotfield.apply(cmeyYear);
-            sterms.add(newTextSearchTerm("cmeyYear.short", normalizedCmeyYear));
+            rootQueryItems.add(new PlainQueryItem(newTextSearchTerm("cmeyYear.short", normalizedCmeyYear)));
         }
         if (isNotBlank(cmeyMake)) {
             String normalizedCmeyMake = str2shotfield.apply(cmeyMake);
-            sterms.add(newTextSearchTerm("cmeyMake.short", normalizedCmeyMake));
+            rootQueryItems.add(new PlainQueryItem(newTextSearchTerm("cmeyMake.short", normalizedCmeyMake)));
         }
         if (isNotBlank(cmeyModel)) {
             String normalizedCmeyModel = str2shotfield.apply(cmeyModel);
-            sterms.add(newTextSearchTerm("cmeyModel.short", normalizedCmeyModel));
+            rootQueryItems.add(new PlainQueryItem(newTextSearchTerm("cmeyModel.short", normalizedCmeyModel)));
         }
         if (isNotBlank(cmeyEngine)) {
             String normalizedCmeyEngine = str2shotfield.apply(cmeyEngine);
-            sterms.add(newTextSearchTerm("cmeyEngine.short", normalizedCmeyEngine));
+            rootQueryItems.add(new PlainQueryItem(newTextSearchTerm("cmeyEngine.short", normalizedCmeyEngine)));
         }
         if (isNotBlank(cmeyFuelType)) {
             String normalizedCmeyFuelType = str2shotfield.apply(cmeyFuelType);
-            sterms.add(newTextSearchTerm("cmeyFuelType.short", normalizedCmeyFuelType));
+            rootQueryItems.add(new PlainQueryItem(newTextSearchTerm("cmeyFuelType.short", normalizedCmeyFuelType)));
         }
 
         if (isNotBlank(turboTypeName)) {
             String normalizedTurboTypeName = str2shotfield.apply(turboTypeName);
-            sterms.add(newTextSearchTerm("turboModel.turboType.name.short", normalizedTurboTypeName));
+            rootQueryItems.add(new PlainQueryItem(newTextSearchTerm("turboModel.turboType.name.short", normalizedTurboTypeName)));
         }
         if (isNotBlank(turboModelName)) {
             String normalizedTurboModelName = str2shotfield.apply(turboModelName);
-            sterms.add(newTextSearchTerm("turboModel.name.short", normalizedTurboModelName));
+            rootQueryItems.add(new PlainQueryItem(newTextSearchTerm("turboModel.name.short", normalizedTurboModelName)));
         }
         if (partTypeId != null) {
             List<CriticalDimension> criticalDimensions = criticalDimensionService
@@ -842,7 +855,7 @@ public class SearchServiceEsImpl implements SearchService {
                         if (isNotBlank(val)) {
                             AbstractSearchTerm asterm = newSearchTerm(cd, val);
                             log.debug("Critical dimension [{}]  search: {}", idxName, asterm);
-                            sterms.add(asterm);
+                            rootQueryItems.add(new PlainQueryItem(asterm));
                         }
                     } catch (IllegalArgumentException e) {
                         // ignore
@@ -853,91 +866,25 @@ public class SearchServiceEsImpl implements SearchService {
         SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypePart)
                 .setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
-        if (sterms.isEmpty() && StringUtils.isBlank(interchangeParts)) {
+        if (rootQueryItems.isEmpty()) {
             query = QueryBuilders.matchAllQuery();
         } else {
-            BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-            for (AbstractSearchTerm ast : sterms) {
-                SearchTermEnum astType = ast.getType();
-                switch (astType) {
-                case BOOLEAN:
-                    BooleanSearchTerm bst = (BooleanSearchTerm) ast;
-                    boolQuery.must(QueryBuilders.termQuery(bst.getFieldName(), bst.getTerm()));
+            BoolQueryBuilder rootBoolQuery = QueryBuilders.boolQuery();
+            for (AbstractQueryItem rqi : rootQueryItems) {
+                TypeEnum qit = rqi.getType();
+                switch(qit) {
+                case PLAIN:
+                    plainSubquery(rootBoolQuery, ((PlainQueryItem) rqi).getTerm());
                     break;
-                case DECIMAL:
-                    NumberSearchTerm dst = (NumberSearchTerm) ast;
-                    QueryBuilder dqb;
-                    switch (dst.getCmpOperator()) {
-                    case EQ:
-                        dqb = QueryBuilders.termQuery(dst.getFieldName(), dst.getTerm());
-                        break;
-                    case LT:
-                        dqb = QueryBuilders.rangeQuery(dst.getFieldName()).lt(dst.getTerm());
-                        break;
-                    case LTE:
-                        dqb = QueryBuilders.rangeQuery(dst.getFieldName()).lte(dst.getTerm());
-                        break;
-                    case GTE:
-                        dqb = QueryBuilders.rangeQuery(dst.getFieldName()).gte(dst.getTerm());
-                        break;
-                    case GT:
-                        dqb = QueryBuilders.rangeQuery(dst.getFieldName()).gt(dst.getTerm());
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unsupported compare operator: " + dst.getCmpOperator());
-                    }
-                    boolQuery.must(dqb);
-                    break;
-                case INTEGER:
-                    NumberSearchTerm ist = (NumberSearchTerm) ast;
-                    QueryBuilder iqb;
-                    switch (ist.getCmpOperator()) {
-                    case EQ:
-                        iqb = QueryBuilders.termQuery(ist.getFieldName(), ist.getTerm());
-                        break;
-                    case LT:
-                        iqb = QueryBuilders.rangeQuery(ist.getFieldName()).lt(ist.getTerm());
-                        break;
-                    case LTE:
-                        iqb = QueryBuilders.rangeQuery(ist.getFieldName()).lte(ist.getTerm());
-                        break;
-                    case GTE:
-                        iqb = QueryBuilders.rangeQuery(ist.getFieldName()).gte(ist.getTerm());
-                        break;
-                    case GT:
-                        iqb = QueryBuilders.rangeQuery(ist.getFieldName()).gt(ist.getTerm());
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unsupported compare operator: " + ist.getCmpOperator());
-                    }
-                    boolQuery.must(iqb);
-                    break;
-                case TEXT:
-                    TextSearchTerm tst = (TextSearchTerm) ast;
-                    boolQuery.must(QueryBuilders.termQuery(tst.getFieldName(), tst.getTerm()));
-                    break;
-                case DECIMAL_RANGE:
-                    RangeSearchTerm drst = (RangeSearchTerm) ast;
-                    RangeQueryBuilder drqb = QueryBuilders.rangeQuery(drst.getFieldName());
-                    drqb.gte(drst.getFrom().doubleValue()).lte(drst.getTo().doubleValue());
-                    boolQuery.must(drqb);
-                    break;
-                case INTEGER_RANGE:
-                    RangeSearchTerm irst = (RangeSearchTerm) ast;
-                    RangeQueryBuilder irqb = QueryBuilders.rangeQuery(irst.getFieldName());
-                    irqb.gte(irst.getFrom().longValue()).lte(irst.getTo().longValue());
-                    boolQuery.must(irqb);
+                case NESTED:
+                    NestedQueryItem nqi = (NestedQueryItem) rqi;
+                    nestedSubquery(rootBoolQuery, nqi.getPath(), nqi.getTerms());
                     break;
                 default:
-                    throw new IllegalArgumentException("Unsupported search term type: " + astType);
+                    throw new IllegalArgumentException("Unsupported subquery type: " + qit);
                 }
             }
-            if (isNotBlank(interchangeParts)) {
-                String normalizedInterchangeParts = str2shotfield.apply(interchangeParts);
-                MatchQueryBuilder matchQuery = QueryBuilders.matchQuery("interchange.parts.partNumber.short", normalizedInterchangeParts);
-                boolQuery.must(matchQuery);
-            }
-            query = boolQuery;
+            query = rootBoolQuery;
         }
         srb.setQuery(query);
         if (sortProperty != null) {
@@ -970,8 +917,94 @@ public class SearchServiceEsImpl implements SearchService {
             srb.setSize(limit);
         }
         log.debug("Search request (parts) to search engine:\n{}", srb);
-        System.out.println("Search request (parts) to search engine:\n" + srb.toString());
         return srb.execute().actionGet(timeout).toString();
+    }
+
+    private void plainSubquery(BoolQueryBuilder rootBoolQuery, AbstractSearchTerm ast) {
+        SearchTermEnum astType = ast.getType();
+        switch (astType) {
+        case BOOLEAN:
+            BooleanSearchTerm bst = (BooleanSearchTerm) ast;
+            rootBoolQuery.must(QueryBuilders.termQuery(bst.getFieldName(), bst.getTerm()));
+            break;
+        case DECIMAL:
+            NumberSearchTerm dst = (NumberSearchTerm) ast;
+            QueryBuilder dqb;
+            switch (dst.getCmpOperator()) {
+            case EQ:
+                dqb = QueryBuilders.termQuery(dst.getFieldName(), dst.getTerm());
+                break;
+            case LT:
+                dqb = QueryBuilders.rangeQuery(dst.getFieldName()).lt(dst.getTerm());
+                break;
+            case LTE:
+                dqb = QueryBuilders.rangeQuery(dst.getFieldName()).lte(dst.getTerm());
+                break;
+            case GTE:
+                dqb = QueryBuilders.rangeQuery(dst.getFieldName()).gte(dst.getTerm());
+                break;
+            case GT:
+                dqb = QueryBuilders.rangeQuery(dst.getFieldName()).gt(dst.getTerm());
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported compare operator: " + dst.getCmpOperator());
+            }
+            rootBoolQuery.must(dqb);
+            break;
+        case INTEGER:
+            NumberSearchTerm ist = (NumberSearchTerm) ast;
+            QueryBuilder iqb;
+            switch (ist.getCmpOperator()) {
+            case EQ:
+                iqb = QueryBuilders.termQuery(ist.getFieldName(), ist.getTerm());
+                break;
+            case LT:
+                iqb = QueryBuilders.rangeQuery(ist.getFieldName()).lt(ist.getTerm());
+                break;
+            case LTE:
+                iqb = QueryBuilders.rangeQuery(ist.getFieldName()).lte(ist.getTerm());
+                break;
+            case GTE:
+                iqb = QueryBuilders.rangeQuery(ist.getFieldName()).gte(ist.getTerm());
+                break;
+            case GT:
+                iqb = QueryBuilders.rangeQuery(ist.getFieldName()).gt(ist.getTerm());
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported compare operator: " + ist.getCmpOperator());
+            }
+            rootBoolQuery.must(iqb);
+            break;
+        case TEXT:
+            TextSearchTerm tst = (TextSearchTerm) ast;
+            rootBoolQuery.must(QueryBuilders.termQuery(tst.getFieldName(), tst.getTerm()));
+            break;
+        case DECIMAL_RANGE:
+            RangeSearchTerm drst = (RangeSearchTerm) ast;
+            RangeQueryBuilder drqb = QueryBuilders.rangeQuery(drst.getFieldName());
+            drqb.gte(drst.getFrom().doubleValue()).lte(drst.getTo().doubleValue());
+            rootBoolQuery.must(drqb);
+            break;
+        case INTEGER_RANGE:
+            RangeSearchTerm irst = (RangeSearchTerm) ast;
+            RangeQueryBuilder irqb = QueryBuilders.rangeQuery(irst.getFieldName());
+            irqb.gte(irst.getFrom().longValue()).lte(irst.getTo().longValue());
+            rootBoolQuery.must(irqb);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported search term type: " + astType);
+        }
+    }
+
+    private void nestedSubquery(BoolQueryBuilder rootBoolQuery, String path, List<AbstractSearchTerm> terms) {
+        if (!terms.isEmpty()) {
+            BoolQueryBuilder nestedBoolQuery = QueryBuilders.boolQuery();
+            for (AbstractSearchTerm ast : terms) {
+                plainSubquery(nestedBoolQuery, ast);
+            }
+            NestedQueryBuilder nestedQuery = nestedQuery(path, nestedBoolQuery, None);
+            rootBoolQuery.must(nestedQuery);
+        }
     }
 
     @Override

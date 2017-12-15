@@ -1,8 +1,8 @@
-package com.turbointernational.metadata.service.search.parser;
+package com.turbointernational.metadata.service.search.parser.terms;
 
 import org.junit.Test;
 
-import static com.turbointernational.metadata.service.search.parser.SearchTermCmpOperatorEnum.*;
+import static com.turbointernational.metadata.service.search.parser.terms.SearchTermCmpOperatorEnum.*;
 import static org.junit.Assert.*;
 
 /**

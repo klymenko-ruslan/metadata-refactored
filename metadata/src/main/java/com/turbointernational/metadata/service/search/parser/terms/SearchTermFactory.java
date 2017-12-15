@@ -1,13 +1,13 @@
-package com.turbointernational.metadata.service.search.parser;
+package com.turbointernational.metadata.service.search.parser.terms;
 
 import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.util.RegExpUtils;
 
 import java.util.regex.Matcher;
 
-import static com.turbointernational.metadata.service.search.parser.SearchTermCmpOperatorEnum.*;
-import static com.turbointernational.metadata.service.search.parser.SearchTermEnum.DECIMAL;
-import static com.turbointernational.metadata.service.search.parser.SearchTermEnum.INTEGER;
+import static com.turbointernational.metadata.service.search.parser.terms.SearchTermCmpOperatorEnum.*;
+import static com.turbointernational.metadata.service.search.parser.terms.SearchTermEnum.DECIMAL;
+import static com.turbointernational.metadata.service.search.parser.terms.SearchTermEnum.INTEGER;
 import static com.turbointernational.metadata.util.RegExpUtils.PTRN_DOUBLE_LIMIT;
 
 /**
