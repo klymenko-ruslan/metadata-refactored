@@ -67,7 +67,7 @@ public class SearchController {
                                               @RequestParam(name = "pgLimit", defaultValue = "10") Integer limit) throws Exception {
 
         Map<String, String[]> queriedCriticalDimensions = webRequest.getParameterMap();
-        String json = searchService.filterParts(partNumber, partTypeId, manufacturerName, name, interchangeParts,
+        String json = searchService.filterParts(null, partNumber, partTypeId, manufacturerName, name, interchangeParts,
                 description, inactive, turboTypeName, turboModelName, year, make, model, engine, fuelType,
                 queriedCriticalDimensions, sortProperty, sortOrder, offset, limit);
         return new ResponseEntity<>(json, OK);

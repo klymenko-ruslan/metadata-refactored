@@ -15,6 +15,10 @@ import static com.turbointernational.metadata.util.RegExpUtils.PTRN_DOUBLE_LIMIT
  */
 public class SearchTermFactory {
 
+    public static ArraySearchTerm newArraySearchTerm(String fieldName, Object[] terms) {
+        return new ArraySearchTerm(fieldName, terms);
+    }
+
     public static TextSearchTerm newTextSearchTerm(String fieldName, String term) {
         return new TextSearchTerm(fieldName, term);
     }
@@ -23,7 +27,8 @@ public class SearchTermFactory {
         return new BooleanSearchTerm(fieldName, term);
     }
 
-    public static NumberSearchTerm newIntegerSearchTerm(String fieldName, SearchTermCmpOperatorEnum cmpOperator, Long term) {
+    public static NumberSearchTerm newIntegerSearchTerm(String fieldName, SearchTermCmpOperatorEnum cmpOperator,
+            Long term) {
         return new NumberSearchTerm(INTEGER, fieldName, cmpOperator, term);
     }
 
@@ -33,31 +38,31 @@ public class SearchTermFactory {
         String idxName = cd.getIdxName();
         CriticalDimension.DataTypeEnum dataType = cd.getDataType();
         switch (dataType) {
-            case DECIMAL:
-                pr = parseSearchStr(s);
-                if (pr.isBoundLimit()) {
-                    retVal = new RangeSearchTerm(idxName, pr.limit1.val, pr.limit2.val);
-                } else {
-                    retVal = new NumberSearchTerm(DECIMAL, idxName, pr.limit1.operator, pr.limit1.val);
-                }
-                break;
-            case ENUMERATION:
-                Long n = Long.valueOf(s);
-                retVal = new NumberSearchTerm(INTEGER, idxName, EQ, n);
-                break;
-            case INTEGER:
-                pr = parseSearchStr(s);
-                if (pr.isBoundLimit()) {
-                    retVal = new RangeSearchTerm(idxName, pr.limit1.val, pr.limit2.val);
-                } else {
-                    retVal = new NumberSearchTerm(INTEGER, idxName, pr.limit1.operator, pr.limit1.val);
-                }
-                break;
-            case TEXT:
-                retVal = newTextSearchTerm(idxName, s);
-                break;
-            default:
-                throw new AssertionError("Unsupported data type: " + dataType);
+        case DECIMAL:
+            pr = parseSearchStr(s);
+            if (pr.isBoundLimit()) {
+                retVal = new RangeSearchTerm(idxName, pr.limit1.val, pr.limit2.val);
+            } else {
+                retVal = new NumberSearchTerm(DECIMAL, idxName, pr.limit1.operator, pr.limit1.val);
+            }
+            break;
+        case ENUMERATION:
+            Long n = Long.valueOf(s);
+            retVal = new NumberSearchTerm(INTEGER, idxName, EQ, n);
+            break;
+        case INTEGER:
+            pr = parseSearchStr(s);
+            if (pr.isBoundLimit()) {
+                retVal = new RangeSearchTerm(idxName, pr.limit1.val, pr.limit2.val);
+            } else {
+                retVal = new NumberSearchTerm(INTEGER, idxName, pr.limit1.operator, pr.limit1.val);
+            }
+            break;
+        case TEXT:
+            retVal = newTextSearchTerm(idxName, s);
+            break;
+        default:
+            throw new AssertionError("Unsupported data type: " + dataType);
         }
         return retVal;
     }
@@ -96,7 +101,7 @@ public class SearchTermFactory {
             throw new IllegalArgumentException("Invalid range: " + s);
         }
         int p1 = p0 + 2;
-        while(p1 < n && s.charAt(p1) == '.') {
+        while (p1 < n && s.charAt(p1) == '.') {
             p1++;
         }
         // Find the high limit.
@@ -139,22 +144,22 @@ public class SearchTermFactory {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
 
             Limit limit = (Limit) o;
 
-            if (operator != limit.operator) return false;
+            if (operator != limit.operator)
+                return false;
             return val != null ? val.equals(limit.val) : limit.val == null;
 
         }
 
         @Override
         public String toString() {
-            return "Limit{" +
-                    "operator=" + operator +
-                    ", val=" + val +
-                    '}';
+            return "Limit{" + "operator=" + operator + ", val=" + val + '}';
         }
 
     }
@@ -175,22 +180,22 @@ public class SearchTermFactory {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
 
             Range range = (Range) o;
 
-            if (limit1 != null ? !limit1.equals(range.limit1) : range.limit1 != null) return false;
+            if (limit1 != null ? !limit1.equals(range.limit1) : range.limit1 != null)
+                return false;
             return limit2 != null ? limit2.equals(range.limit2) : range.limit2 == null;
 
         }
 
         @Override
         public String toString() {
-            return "Range{" +
-                    "limit1=" + limit1 +
-                    ", limit2=" + limit2 +
-                    '}';
+            return "Range{" + "limit1=" + limit1 + ", limit2=" + limit2 + '}';
         }
 
     }

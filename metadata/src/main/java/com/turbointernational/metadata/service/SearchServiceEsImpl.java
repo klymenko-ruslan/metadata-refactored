@@ -92,10 +92,12 @@ import com.turbointernational.metadata.service.search.parser.AbstractQueryItem.T
 import com.turbointernational.metadata.service.search.parser.NestedQueryItem;
 import com.turbointernational.metadata.service.search.parser.PlainQueryItem;
 import com.turbointernational.metadata.service.search.parser.terms.AbstractSearchTerm;
+import com.turbointernational.metadata.service.search.parser.terms.ArraySearchTerm;
 import com.turbointernational.metadata.service.search.parser.terms.BooleanSearchTerm;
 import com.turbointernational.metadata.service.search.parser.terms.NumberSearchTerm;
 import com.turbointernational.metadata.service.search.parser.terms.RangeSearchTerm;
 import com.turbointernational.metadata.service.search.parser.terms.SearchTermEnum;
+import com.turbointernational.metadata.service.search.parser.terms.SearchTermFactory;
 import com.turbointernational.metadata.service.search.parser.terms.TextSearchTerm;
 
 /**
@@ -775,13 +777,15 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     @Override
-    public String filterParts(String partNumber, Long partTypeId, String manufacturerName,
+    public String filterParts(Long[] subsetPartIds, String partNumber, Long partTypeId, String manufacturerName,
             String name, String interchangeParts, String description, Boolean inactive, String turboTypeName,
             String turboModelName, String cmeyYear, String cmeyMake, String cmeyModel, String cmeyEngine,
             String cmeyFuelType, Map<String, String[]> queriedCriticalDimensions, String sortProperty,
             String sortOrder, Integer offset, Integer limit) {
         List<AbstractQueryItem> rootQueryItems = new ArrayList<>(100);
-        //List<AbstractSearchTerm> plainRootItems = new ArrayList<>(64);
+        if (subsetPartIds != null && subsetPartIds.length > 0) {
+            rootQueryItems.add(new PlainQueryItem(SearchTermFactory.newArraySearchTerm("id", subsetPartIds)));
+        }
         partNumber = StringUtils.defaultIfEmpty(partNumber, null);
         if (isNotBlank(partNumber)) {
             String normalizedPartNumber = str2shotfield.apply(partNumber);
@@ -923,6 +927,10 @@ public class SearchServiceEsImpl implements SearchService {
     private void plainSubquery(BoolQueryBuilder rootBoolQuery, AbstractSearchTerm ast) {
         SearchTermEnum astType = ast.getType();
         switch (astType) {
+        case ARRAY:
+            ArraySearchTerm aast = (ArraySearchTerm) ast;
+            rootBoolQuery.must(QueryBuilders.termsQuery(aast.getFieldName(), aast.getTerms()));
+            break;
         case BOOLEAN:
             BooleanSearchTerm bst = (BooleanSearchTerm) ast;
             rootBoolQuery.must(QueryBuilders.termQuery(bst.getFieldName(), bst.getTerm()));

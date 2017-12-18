@@ -514,7 +514,7 @@ public interface SearchService {
 
     void deleteChangelogSource(Source source) throws Exception;
 
-    String filterParts(String partNumber, Long partTypeId, String manufacturerName,
+    String filterParts(Long[] subsetPartIds, String partNumber, Long partTypeId, String manufacturerName,
                        String name, String interchangeParts, String description, Boolean inactive,
                        String turboTypeName, String turboModelName,
                        String year, String make, String model, String engine, String fuelType,
