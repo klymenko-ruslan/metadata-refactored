@@ -9,6 +9,7 @@ import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -88,7 +89,13 @@ public class InterchangeService {
      */
     public Interchange findForPart(Long partId) {
         GetInterchangeResponse response = graphDbService.findInterchangeForPart(partId);
-        return dtoMapperService.map(response, Interchange.class);
+        Interchange retVal =  dtoMapperService.map(response, Interchange.class);
+        com.turbointernational.metadata.web.dto.Part[] parts = retVal.getParts();
+        if (parts != null && parts.length > 0) {
+            // Ticket (Redmine) #277. Sorting of interchangeable parts.
+            Arrays.sort(parts, (p0, p1) -> p0.getPartNumber().compareTo(p1.getPartNumber()));
+        }
+        return retVal;
     }
 
     public void initInterchange(Part part) {
