@@ -1,14 +1,16 @@
-<metanav>
-  <li authorize="ROLE_CREATE_PART">
-    <a data-ng-click="createPart()" class="btn btn-success">
-      <i class="fa fa-wrench"></i>
-      Create Part
-    </a>
-  </li>
+<metanav hide-hr="true">
 </metanav>
 
 <div class="row">
-  <h1 class="col-xs-12 col-sm-9">Part List</h1>
+  <div class="col-xs-6">
+    <h1>Part List</h1>
+  </div>
+  <div class="col-xs-6">
+    <a data-ng-click="createPart()" authorize="ROLE_CREATE_PART" class="btn btn-success pull-right">
+      <i class="fa fa-plus"></i>
+      Create Part
+    </a>
+  </div>
 </div>
 
 <part-search>

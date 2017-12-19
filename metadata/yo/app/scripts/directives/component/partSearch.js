@@ -59,7 +59,7 @@ angular.module('ngMetaCrudApp')
 
         $scope.fixedCols = [
           {
-            title: 'Part Type',
+            title: 'Type',
             getter: $parse('_source.partType.name'),
             sortable: 'partType.name.lower_case_sort'
           },
@@ -97,9 +97,19 @@ angular.module('ngMetaCrudApp')
           },
           {
             title: 'State',
+            cssClass: ['text-center'],
             getter: function(context, locals) {
               var inactive = $parse('_source.inactive')(context, locals);
-              return inactive ? 'Inactive' : 'Active';
+              var label, cls, element;
+              if (inactive) {
+                label = 'INACTIVE';
+                cls = 'text-danger';
+              } else {
+                label = 'ACTIVE';
+                cls = 'text-success';
+              }
+              element = '<span class="' + cls + '">' + label + '</span>';
+              return element;
             },
             sortable: 'inactive'
           }
@@ -259,9 +269,10 @@ angular.module('ngMetaCrudApp')
         // Part Table
         $scope.partTableParams = new NgTableParams({
           page: 1,
-          count: 10,
+          count: 20,
           sorting: {}
         }, {
+          counts: [10, 20, 50],
           getData: function(params) {
             // Update the pagination info
             var offset = params.count() * (params.page() - 1);

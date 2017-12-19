@@ -6,9 +6,11 @@ angular.module('ngMetaCrudApp')
       transclude: true,
       templateUrl: '/views/component/Metanav.html',
       restrict: 'E',
+      link: function(scope, element, attrs) {
+        scope.hideHr = attrs.hideHr || false;
+      },
       controller: function($scope) {
         $scope.User = User;
-
         $scope.reindexPartSearch = function() {
           dialogs.confirm(
             'Reindex search engine data for parts?',
