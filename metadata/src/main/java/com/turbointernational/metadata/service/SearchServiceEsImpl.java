@@ -777,11 +777,11 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     @Override
-    public String filterParts(Long[] subsetPartIds, String partNumber, Long partTypeId, String manufacturerName,
+    public Object rawFilterParts(Long[] subsetPartIds, String partNumber, Long partTypeId, String manufacturerName,
             String name, String interchangeParts, String description, Boolean inactive, String turboTypeName,
             String turboModelName, String cmeyYear, String cmeyMake, String cmeyModel, String cmeyEngine,
-            String cmeyFuelType, Map<String, String[]> queriedCriticalDimensions, String sortProperty,
-            String sortOrder, Integer offset, Integer limit) {
+            String cmeyFuelType, Map<String, String[]> queriedCriticalDimensions,
+            String sortProperty, String sortOrder, Integer offset, Integer limit) {
         List<AbstractQueryItem> rootQueryItems = new ArrayList<>(100);
         if (subsetPartIds != null && subsetPartIds.length > 0) {
             rootQueryItems.add(new PlainQueryItem(SearchTermFactory.newArraySearchTerm("id", subsetPartIds)));
@@ -921,7 +921,18 @@ public class SearchServiceEsImpl implements SearchService {
             srb.setSize(limit);
         }
         log.debug("Search request (parts) to search engine:\n{}", srb);
-        return srb.execute().actionGet(timeout).toString();
+        return srb.execute().actionGet(timeout);
+    }
+
+    @Override
+    public String filterParts(Long[] subsetPartIds, String partNumber, Long partTypeId, String manufacturerName,
+            String name, String interchangeParts, String description, Boolean inactive, String turboTypeName,
+            String turboModelName, String cmeyYear, String cmeyMake, String cmeyModel, String cmeyEngine,
+            String cmeyFuelType, Map<String, String[]> queriedCriticalDimensions, String sortProperty,
+            String sortOrder, Integer offset, Integer limit) {
+        return rawFilterParts(subsetPartIds, partNumber, partTypeId, manufacturerName, name, interchangeParts,
+                description, inactive, turboTypeName, turboModelName,cmeyYear, cmeyMake, cmeyModel, cmeyEngine,
+                cmeyFuelType, queriedCriticalDimensions, sortProperty, sortOrder, offset, limit).toString();
     }
 
     private void plainSubquery(BoolQueryBuilder rootBoolQuery, AbstractSearchTerm ast) {

@@ -19,14 +19,17 @@ import static java.util.stream.Collectors.toSet;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -35,6 +38,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.im4java.core.CommandException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,6 +133,9 @@ public class PartService {
 
     @Autowired
     private DtoMapperService dtoMapperService;
+
+    @Autowired
+    private SearchService searchService;
 
     private JSONSerializer partJsonSerializer = new JSONSerializer().include("id").include("name")
             .include("manufacturerPartNumber").include("description").include("inactive").include("partType.id")
@@ -443,18 +452,30 @@ public class PartService {
     }
 
     @Secured("ROLE_READ")
-    public GetAncestorsResponse ancestorsIds(Long partId) throws Exception {
-        return graphDbService.getAncestors(partId);
-    }
-
-    @Secured("ROLE_READ")
     public Page<Ancestor> ancestors(Long partId, int offset, int limit) throws Exception {
-        GetAncestorsResponse response = ancestorsIds(partId);
+        GetAncestorsResponse response = graphDbService.getAncestors(partId);
         Row[] rows = response.getRows();
-        sort(rows, cmpComplex);
+        Map<Long, Row> idx = Arrays.stream(rows).collect(Collectors.toMap(Row::getPartId, r -> r));
+        Long[] subsetPartIds = Arrays.stream(rows).map(r -> r.getPartId()).toArray(Long[]::new);
+        SearchResponse sr = (SearchResponse) searchService.rawFilterParts(subsetPartIds, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null, offset, limit);
+        SearchHits hits = sr.getHits();
+        int n = hits.getHits().length;
+        List<Ancestor> ancestors = new ArrayList<>(n);
+        hits.forEach(hit -> {
+            Map<String, Object> s = hit.getSource();
+            /*
+            Ancestor a = new Ancestor();
+            com.turbointernational.metadata.web.dto.Part p = new com.turbointernational.metadata.web.dto.Part();
+            p.setPartId(hit.get);
+            ancestors.add(a);
+            */
+        });
+        //sort(rows, cmpComplex);
         Row[] slice = ArrayUtils.subarray(rows, offset, offset + limit);
         Ancestor[] pgAncestors = dtoMapperService.map(slice, Ancestor[].class);
-        return new Page<Ancestor>(rows.length, asList(pgAncestors));
+        Page<Ancestor> retVal = new Page<>(rows.length, asList(pgAncestors));
+        return retVal;
     }
 
     @Transactional(noRollbackFor = AssertionError.class)

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.directory.SearchResult;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.Application;
@@ -513,6 +515,14 @@ public interface SearchService {
     void indexChangelogSource(Source source);
 
     void deleteChangelogSource(Source source) throws Exception;
+
+    Object rawFilterParts(Long[] subsetPartIds, String partNumber, Long partTypeId, String manufacturerName,
+                       String name, String interchangeParts, String description, Boolean inactive,
+                       String turboTypeName, String turboModelName,
+                       String year, String make, String model, String engine, String fuelType,
+                       Map<String, String[]> queriedCriticalDimensions,
+                       String sortProperty, String sortOrder,
+                       Integer offset, Integer limit);
 
     String filterParts(Long[] subsetPartIds, String partNumber, Long partTypeId, String manufacturerName,
                        String name, String interchangeParts, String description, Boolean inactive,
