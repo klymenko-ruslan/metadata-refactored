@@ -45,13 +45,13 @@ import com.turbointernational.metadata.entity.part.types.Kit;
 import com.turbointernational.metadata.entity.part.types.Turbo;
 import com.turbointernational.metadata.service.InterchangeService;
 import com.turbointernational.metadata.service.PartService;
+import com.turbointernational.metadata.service.PartService.AncestorsResult;
 import com.turbointernational.metadata.service.PriceService;
 import com.turbointernational.metadata.service.StandardOversizePartService;
 import com.turbointernational.metadata.service.StandardOversizePartService.CreateStandardOversizePartRequest;
 import com.turbointernational.metadata.service.StandardOversizePartService.CreateStandardOversizePartResponse;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.dto.AlsoBought;
-import com.turbointernational.metadata.web.dto.Ancestor;
 import com.turbointernational.metadata.web.dto.Page;
 import com.turbointernational.metadata.web.dto.ProductPrices;
 
@@ -423,9 +423,29 @@ public class PartController {
     @ResponseBody
     @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
-    public Page<Ancestor> ancestors(@PathVariable("id") Long partId, @RequestParam("offset") int offset,
-            @RequestParam("limit") int limit) throws Exception {
-        return partService.ancestors(partId, offset, limit);
+    public AncestorsResult ancestors(@PathVariable("id") Long partId,
+            @RequestParam(name = "partNumber", required = false) String partNumber,
+            @RequestParam(name = "partTypeId", required = false) Long partTypeId,
+            @RequestParam(name = "manufacturerName", required = false) String manufacturerName,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "interchangeParts", required = false) String interchangeParts,
+            @RequestParam(name = "description", required = false) String description,
+            @RequestParam(name = "inactive", required = false) Boolean inactive,
+            @RequestParam(name = "turboTypeName", required = false) String turboTypeName,
+            @RequestParam(name = "turboModelName", required = false) String turboModelName,
+            @RequestParam(name = "year", required = false) String year,
+            @RequestParam(name = "make", required = false) String make,
+            @RequestParam(name = "model", required = false) String model,
+            @RequestParam(name = "engine", required = false) String engine,
+            @RequestParam(name = "fuelType", required = false) String fuelType,
+            @RequestParam(name = "pgSortProperty", required = false) String sortProperty,
+            @RequestParam(name = "pgSortOrder", required = false) String sortOrder,
+            @RequestParam(name = "pgOffset", defaultValue = "0") Integer offset,
+            @RequestParam(name = "pgLimit", defaultValue = "10") Integer limit) throws Exception {
+        AncestorsResult ares = partService.filterAncestors(partId, partNumber, partTypeId, manufacturerName, name, interchangeParts,
+                description, inactive, turboTypeName, turboModelName, year, make, model, engine, fuelType,
+                sortProperty, sortOrder, offset, limit);
+        return ares;
     }
 
     @Transactional

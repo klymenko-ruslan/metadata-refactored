@@ -264,6 +264,9 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
       resolve: {
         part: ['$route', 'restService', function ($route, restService) {
           return restService.findPart($route.current.pathParams.id);
+        }],
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
         }]
       }
     });

@@ -11,27 +11,204 @@
 <h2 class="padding-top" part-name="part" part-name-suffix="Ancestors"></h2>
 
 <div class="row">
-  <div class="col-xs-12">
-    <table data-ng-table="ancestorsTableParams" class="table table-bordered table-striped table-hover table-expand">
+
+  <!-- Search by input or facet select options -->
+  <div class="col-xs-12 col-sm-3">
+
+    <button class="btn btn-default input-sm" data-ng-click="clearFilter()">
+      <i class="fa fa-eraser" aria-hidden="true"></i> Clear
+    </button>
+    <div class="form-group">
+      <label for="fltrPartNumber" class="sr-only control-label">Part Number</label>
+      <input class="form-control input-sm" id="fltrPartNumber" name="fltrPartNumber" type="text" data-ng-model="fltrPart.partNumber" data-ng-model-options="{debounce: 200}" data-ng-keyup="$event.keyCode === 13 && onPressedEnter()" placeholder="Search part numbers" focus-me="true" autofocus />
+    </div>
+
+    <uib-accordion close-others="false">
+
+      <uib-accordion-group heading="Basic attributes" is-open="fltrGroupState.basicAttrsOpened" class="panel-default">
+
+        <div class="form-group">
+          <label for="fltrState">State</label>
+          <select id="fltrState" name="fltrState" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="fltrPart.inactive">
+            <option></option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fltrManufacturer">Manufacturer</label>
+          <select id="fltrManufacturer" name="fltrManufacturer" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Manufacturer'].buckets | orderBy: 'key'" data-ng-model="fltrPart.manufacturer">
+            <option></option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fltrName">Name</label>
+          <input id="fltrName" name="fltrName" class="form-control input-sm" type="text" data-ng-model="fltrPart.name" placeholder="Name..." data-ng-model-options="{debounce: 500}" />
+        </div>
+        <div class="form-group">
+          <label for="fltrInterchangeParts">Interchange Parts</label>
+          <input id="fltrInterchangeParts" name="fltrInterchangeParts" class="form-control input-sm" type="text" data-ng-model="fltrPart.interchangeParts" placeholder="Part Number..." data-ng-model-options="{debounce: 500}" />
+        </div>
+        <div class="form-group">
+          <label for="fltrPartType">Type</label>
+          <select id="fltrPartType" name="fltrPartType" class="form-control input-sm" data-ng-options="pt.name for pt in partTypes track by pt.id" data-ng-model="fltrPart.partType">
+             <option></option>
+          </select>
+        </div>
+
+      </uib-accordion-group>
+
+      <uib-accordion-group heading="Attributes for Application" is-open="fltrGroupState.appAttrsOpened" class="panel-default">
+
+        <div class="form-group">
+          <div angucomplete-alt id="fltrYear"
+               placeholder="Search Year"
+               minlength="0" maxlength="64" pause="300"
+               search-fields="key"
+               title-field="key"
+               description-field="doc_count"
+               input-class="form-control"
+               match-class="highlight"
+               text-no-results="Not found"
+               input-changed="onCmeyYearChanged"
+               selected-object="onCmeyYearSelected"
+               local-data="searchResults.aggregations['Car Year'].buckets"></div>
+        </div>
+
+        <div class="form-group">
+          <div angucomplete-alt id="fltrMake"
+               placeholder="Search Make"
+               minlength="0" maxlength="64" pause="300"
+               search-fields="key"
+               title-field="key"
+               description-field="doc_count"
+               input-class="form-control"
+               match-class="highlight"
+               text-no-results="Not found"
+               input-changed="onCmeyMakeChanged"
+               selected-object="onCmeyMakeSelected"
+               local-data="searchResults.aggregations['Car Make'].buckets"></div>
+        </div>
+
+        <div class="form-group">
+          <div angucomplete-alt id="fltrModel"
+               placeholder="Search Model"
+               minlength="0" maxlength="64" pause="300"
+               search-fields="key"
+               title-field="key"
+               description-field="doc_count"
+               input-class="form-control"
+               match-class="highlight"
+               text-no-results="Not found"
+               input-changed="onCmeyModelChanged"
+               selected-object="onCmeyModelSelected"
+               local-data="searchResults.aggregations['Car Model'].buckets"></div>
+        </div>
+
+        <div class="form-group">
+          <div angucomplete-alt id="fltrEngine"
+               placeholder="Search Engine"
+               minlength="0" maxlength="64" pause="300"
+               search-fields="key"
+               title-field="key"
+               description-field="doc_count"
+               input-class="form-control"
+               match-class="highlight"
+               text-no-results="Not found"
+               input-changed="onCmeyEngineChanged"
+               selected-object="onCmeyEngineSelected"
+               local-data="searchResults.aggregations['Car Engine'].buckets"></div>
+        </div>
+
+        <div class="form-group">
+          <div angucomplete-alt id="fltrFuelType"
+               placeholder="Search Fuel Type"
+               minlength="0" maxlength="64" pause="300"
+               search-fields="key"
+               title-field="key"
+               description-field="doc_count"
+               input-class="form-control"
+               match-class="highlight"
+               text-no-results="Not found"
+               input-changed="onCmeyFuelTypeChanged"
+               selected-object="onCmeyFuelTypeSelected"
+               local-data="searchResults.aggregations['Car Fuel Type'].buckets"></div>
+        </div>
+
+      </uib-accordion-group>
+
+      <uib-accordion-group heading="Attributes for Turbo" is-open="fltrGroupState.turboAttrsOpened" is-disabled="fltrPart.partType.id !== 1" class="panel-default">
+
+        <div class="form-group">
+          <div angucomplete-alt id="fltrTurboModel"
+               placeholder="Search turbo models"
+               disable-input="fltrPart.partType.id !== 1"
+               minlength="0" maxlength="64" pause="300"
+               search-fields="key"
+               title-field="key"
+               description-field="doc_count"
+               input-class="form-control"
+               match-class="highlight"
+               text-no-results="Not found"
+               input-changed="onTurboModelChanged"
+               selected-object="onTurboModelSelected"
+               local-data="searchResults.aggregations['Turbo Model'].buckets"></div>
+        </div>
+
+        <div class="form-group">
+          <div angucomplete-alt id="fltrTurboType"
+               placeholder="Search turbo types"
+               disable-input="fltrPart.partType.id !== 1"
+               minlength="0" maxlength="64" pause="300"
+               search-fields="key"
+               title-field="key"
+               description-field="doc_count"
+               input-class="form-control"
+               match-class="highlight"
+               text-no-results="Not found"
+               input-changed="onTurboTypeChanged"
+               selected-object="onTurboTypeSelected"
+               local-data="searchResults.aggregations['Turbo Type'].buckets"></div>
+        </div>
+
+      </uib-accordion-group>
+
+    </uib-accordion>
+
+  </div>
+
+  <div class="col-xs-12 col-sm-9">
+    <table data-ng-table="partTableParams" class="table table-bordered table-striped table-hover table-expand">
       <tr data-ng-repeat="item in $data">
-        <td title="'Part #'" class="text-left text-nowrap" data-sortable="'part.partNumber'">
-          <a authorize="ROLE_READ" data-ng-href="/part/{{item.part.partId}}">
-            {{item.part.partNumber}}
+        <td title="'Part #'" class="text-left text-nowrap" data-sortable="'manufacturerPartNumber'">
+          <a authorize="ROLE_READ" data-ng-href="/part/{{item._source.id}}">
+            {{item._source.manufacturerPartNumber}}
           </a>
         </td>
-        <td title="'Part Type'" class="text-left" data-sortable="'part.partType.name'">{{item.part.partType.name}}</td>
-        <td title="'Manufacturer'" class="text-left" data-sortable="'part.manufacturer.name'">{{item.part.manufacturer.name}}</td>
-        <td title="'Relation Type'" class="text-left">
-            <span data-ng-show="item.relationType">direct</span>
-            <span data-ng-hide="item.relationType">interchange</span>
+        <td title="'Type'" class="text-left" data-sortable="'partType.name.lower_case_sort'">{{item._source.partType.name}}</td>
+        <td title="'Manufacturer'" class="text-left" data-sortable="'manufacturer.name'">{{item._source.manufacturer.name}}</td>
+        <td title="'Name'" class="text-left" data-sortable="'name'">{{item._source.name}}</td>
+        <td title="'Interchanges'" class="text-left">
+          <ul class="list-inline" data-ng-if="item._source.interchange.parts.length">
+            <li data-ng-repeat="i in item._source.interchange.parts">
+              <a href="/part/{{i.partId}}">{{i.partNumber}}</a><span data-ng-if="!$last">, </span>
+            </li>
+          </ul>
         </td>
-        <td title="'Relation Distance'" class="text-left" data-sortable="'relationDistance'">{{item.relationDistance}}</td>
+        <td title="'State'" class="text-center" data-sortable="'inactive'" data-ng-switch="item._source.inactive">
+          <span data-ng-switch-when="true" class="text-danger">INACTIVE</span>
+          <span data-ng-switch-when="false" class="text-success">ACTIVE</span>
+        </td>
+        <td title="'Relation Type'" class="text-center">
+          {{getRelationTypeFor(item._source.id)}}
+        </td>
+        <td title="'Relation Distance'" class="text-right">
+          {{getRelationDistanceFor(item._source.id)}}
+        </td>
       </tr>
       <tr data-ng-hide="$data.length > 0">
-        <td colspan="5">No parts to display.</td>
+        <td colspan="8">No parts to display.</td>
       </tr>
     </table>
-    <table-summary rowscount="ancestorsTableParams.total()" />
+    <table-summary rowscount="searchResults.hits.total" />
   </div>
-</div>
 
+</div>

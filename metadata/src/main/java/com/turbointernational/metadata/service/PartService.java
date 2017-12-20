@@ -53,7 +53,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.validation.Errors;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.dao.KitTypeDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
@@ -76,12 +82,14 @@ import com.turbointernational.metadata.service.GraphDbService.GetAncestorsRespon
 import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse.Row;
 import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
 import com.turbointernational.metadata.service.GraphDbService.Response;
+import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.controller.PartController;
 import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Ancestor;
 import com.turbointernational.metadata.web.dto.Interchange;
 import com.turbointernational.metadata.web.dto.Page;
 
+import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 
 /**
@@ -451,31 +459,49 @@ public class PartService {
         return part.getTurboTypes();
     }
 
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    public static class AncestorsResult implements Serializable {
+
+        private static final long serialVersionUID = -1352264734673815345L;
+
+        @JsonView(View.Summary.class)
+        private final Map<String, ?> parts;
+
+        @JsonView(View.Summary.class)
+        private final Map<Long, Row> meta;
+
+        public AncestorsResult(Map<String, ?> parts, Map<Long, Row> meta) {
+            this.parts = parts;
+            this.meta = meta;
+        }
+
+        public Map<String, ?> getParts() {
+            return parts;
+        }
+
+        public Map<?, ?> getMeta() {
+            return meta;
+        }
+
+    }
+
     @Secured("ROLE_READ")
-    public Page<Ancestor> ancestors(Long partId, int offset, int limit) throws Exception {
+    public AncestorsResult filterAncestors(Long partId, String partNumber, Long partTypeId,
+            String manufacturerName, String name, String interchangeParts, String description, Boolean inactive,
+            String turboTypeName, String turboModelName, String cmeyYear, String cmeyMake, String cmeyModel,
+            String cmeyEngine, String cmeyFuelType, String sortProperty, String sortOrder,
+            Integer offset, Integer limit) throws IOException {
         GetAncestorsResponse response = graphDbService.getAncestors(partId);
         Row[] rows = response.getRows();
-        Map<Long, Row> idx = Arrays.stream(rows).collect(Collectors.toMap(Row::getPartId, r -> r));
+        Map<Long, Row> meta = Arrays.stream(rows).collect(Collectors.toMap(Row::getPartId, r -> r));
         Long[] subsetPartIds = Arrays.stream(rows).map(r -> r.getPartId()).toArray(Long[]::new);
-        SearchResponse sr = (SearchResponse) searchService.rawFilterParts(subsetPartIds, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null, null, offset, limit);
-        SearchHits hits = sr.getHits();
-        int n = hits.getHits().length;
-        List<Ancestor> ancestors = new ArrayList<>(n);
-        hits.forEach(hit -> {
-            Map<String, Object> s = hit.getSource();
-            /*
-            Ancestor a = new Ancestor();
-            com.turbointernational.metadata.web.dto.Part p = new com.turbointernational.metadata.web.dto.Part();
-            p.setPartId(hit.get);
-            ancestors.add(a);
-            */
-        });
-        //sort(rows, cmpComplex);
-        Row[] slice = ArrayUtils.subarray(rows, offset, offset + limit);
-        Ancestor[] pgAncestors = dtoMapperService.map(slice, Ancestor[].class);
-        Page<Ancestor> retVal = new Page<>(rows.length, asList(pgAncestors));
-        return retVal;
+        SearchResponse sr = (SearchResponse) searchService.rawFilterParts(subsetPartIds, partNumber, partTypeId,
+            manufacturerName, name, interchangeParts, description, inactive, turboTypeName, turboModelName,
+            cmeyYear, cmeyMake, cmeyModel, cmeyEngine, cmeyFuelType, null, sortProperty, sortOrder, offset, limit);
+        // TODO: optimization
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> map = mapper.readValue(sr.toString(), new TypeReference<Map<String, Object>>(){});
+        return new AncestorsResult(map, meta);
     }
 
     @Transactional(noRollbackFor = AssertionError.class)

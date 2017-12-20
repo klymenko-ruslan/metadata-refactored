@@ -162,11 +162,31 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('part', id).one('prices').get();
       };
 
-      this.loadAncestors = function(partId, offset, limit) {
-        Restangular.setParentless(false);
+      this.filterAncestors = function(partId, searchPartTypeId,
+        searchManufacturerName,
+          searchName, searchInterchangeParts, searchPartNumber,
+          searchInactive, searchTurboModelName, searchTurboTypeName,
+          year, make, model, engine, fuelType,
+          sortProperty, sortOrder, offset, limit) {
         var params = {
-          offset: offset,
-          limit: limit
+          partId: partId,
+          partNumber: searchPartNumber,
+          inactive: searchInactive,
+          partTypeId: searchPartTypeId,
+          manufacturerName: searchManufacturerName,
+          turboModelName: searchTurboModelName,
+          turboTypeName: searchTurboTypeName,
+          name: searchName,
+          interchangeParts: searchInterchangeParts,
+          year: year,
+          make: make,
+          model: model,
+          engine: engine,
+          fuelType: fuelType,
+          pgSortProperty: sortProperty,
+          pgSortOrder: sortOrder,
+          pgOffset: offset,
+          pgLimit: limit
         };
         return Restangular.one('part/' + partId + '/ancestors').get(params);
       };
