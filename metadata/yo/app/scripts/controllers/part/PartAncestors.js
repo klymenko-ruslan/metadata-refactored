@@ -275,6 +275,6 @@ angular.module('ngMetaCrudApp')
     );
 
     $scope.clearFilter();
-    $scope.partTableParams.reload();
+    //$scope.partTableParams.reload();
 
   }]);

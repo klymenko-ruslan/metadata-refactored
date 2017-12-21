@@ -31,17 +31,21 @@ public class Part {
     @JsonView({ View.Summary.class })
     private Manufacturer manufacturer;
 
+    @JsonView({ View.Summary.class })
+    private boolean inactive;
+
     public Part() {
     }
 
     public Part(Long partId, String name, String description, String partNumber, PartType partType,
-            Manufacturer manufacturer) {
+            Manufacturer manufacturer, boolean inactive) {
         this.partId = partId;
         this.name = name;
         this.description = description;
         this.partNumber = partNumber;
         this.partType = partType;
         this.manufacturer = manufacturer;
+        this.inactive = inactive;
     }
 
     public static Part from(PartDao dao, Long partID) {
@@ -67,7 +71,7 @@ public class Part {
     private static Part entity2dto(com.turbointernational.metadata.entity.part.Part p) {
         PartType pt = PartType.from(p.getPartType());
         Manufacturer m = Manufacturer.from(p.getManufacturer());
-        return new Part(p.getId(), p.getName(), p.getDescription(), p.getManufacturerPartNumber(), pt, m);
+        return new Part(p.getId(), p.getName(), p.getDescription(), p.getManufacturerPartNumber(), pt, m, p.getInactive());
     }
 
     public Long getPartId() {
@@ -118,10 +122,19 @@ public class Part {
         this.manufacturer = manufacturer;
     }
 
+    public boolean isInactive() {
+        return inactive;
+    }
+
+    public void setInactive(boolean inactive) {
+        this.inactive = inactive;
+    }
+
     @Override
     public String toString() {
         return "Part [partId=" + partId + ", name=" + name + ", description=" + description + ", partNumber="
-                + partNumber + ", partType=" + partType + ", manufacturer=" + manufacturer + "]";
+                + partNumber + ", partType=" + partType + ", manufacturer=" + manufacturer + ", inactive=" + inactive
+                + "]";
     }
 
 }

@@ -7,14 +7,11 @@ import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
 import static com.turbointernational.metadata.entity.Manufacturer.TI_ID;
 import static com.turbointernational.metadata.entity.PartType.PTID_GASKET_KIT;
 import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
-import static com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse.Row.cmpComplex;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_WIDTH;
 import static com.turbointernational.metadata.service.ImageService.SIZES;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 import static com.turbointernational.metadata.util.FormatUtils.formatProductImage;
-import static java.util.Arrays.asList;
-import static java.util.Arrays.sort;
 import static java.util.stream.Collectors.toSet;
 
 import java.io.File;
@@ -23,13 +20,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -37,10 +32,10 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.im4java.core.CommandException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,11 +50,7 @@ import org.springframework.validation.Errors;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.turbointernational.metadata.dao.KitTypeDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
@@ -84,12 +75,12 @@ import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
 import com.turbointernational.metadata.service.GraphDbService.Response;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.controller.PartController;
+import com.turbointernational.metadata.web.dto.Aggregation;
 import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Ancestor;
 import com.turbointernational.metadata.web.dto.Interchange;
 import com.turbointernational.metadata.web.dto.Page;
 
-import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 
 /**
@@ -465,22 +456,22 @@ public class PartService {
         private static final long serialVersionUID = -1352264734673815345L;
 
         @JsonView(View.Summary.class)
-        private final Map<String, ?> parts;
+        private final Page<Ancestor> ancestors;
 
         @JsonView(View.Summary.class)
-        private final Map<Long, Row> meta;
+        private final List<Aggregation> aggregations;
 
-        public AncestorsResult(Map<String, ?> parts, Map<Long, Row> meta) {
-            this.parts = parts;
-            this.meta = meta;
+        public AncestorsResult(Page<Ancestor> ancestors, List<Aggregation> aggregations) {
+            this.ancestors = ancestors;
+            this.aggregations = aggregations;
         }
 
-        public Map<String, ?> getParts() {
-            return parts;
+        public Page<Ancestor> getAncestors() {
+            return ancestors;
         }
 
-        public Map<?, ?> getMeta() {
-            return meta;
+        public List<Aggregation> getAggregations() {
+            return aggregations;
         }
 
     }
@@ -493,15 +484,55 @@ public class PartService {
             Integer offset, Integer limit) throws IOException {
         GetAncestorsResponse response = graphDbService.getAncestors(partId);
         Row[] rows = response.getRows();
-        Map<Long, Row> meta = Arrays.stream(rows).collect(Collectors.toMap(Row::getPartId, r -> r));
+        Map<Long, Row> idxMeta = Arrays.stream(rows).collect(Collectors.toMap(Row::getPartId, r -> r));
         Long[] subsetPartIds = Arrays.stream(rows).map(r -> r.getPartId()).toArray(Long[]::new);
         SearchResponse sr = (SearchResponse) searchService.rawFilterParts(subsetPartIds, partNumber, partTypeId,
             manufacturerName, name, interchangeParts, description, inactive, turboTypeName, turboModelName,
-            cmeyYear, cmeyMake, cmeyModel, cmeyEngine, cmeyFuelType, null, sortProperty, sortOrder, offset, limit);
-        // TODO: optimization
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> map = mapper.readValue(sr.toString(), new TypeReference<Map<String, Object>>(){});
-        return new AncestorsResult(map, meta);
+            cmeyYear, cmeyMake, cmeyModel, cmeyEngine, cmeyFuelType, null, sortProperty, sortOrder, null, null);
+        SearchHit[] hits = sr.getHits().getHits();
+        List<Ancestor> allAncestors = new ArrayList<>(hits.length);
+        sr.getHits().forEach(sh -> {
+            Map<String, Object> source = sh.getSource();
+            Long shPartId = ((Number) source.get("id")).longValue();
+            String shName = (String) source.getOrDefault("name", null);
+            String shDescription = (String) source.getOrDefault("description", null);
+            Boolean shIsInactive = (Boolean) source.get("inactive");
+            String shManufacturerPartNumber = (String) source.get("manufacturerPartNumber");
+            Map<String, Object> rawPartType = (Map<String, Object>) source.get("partType");
+            com.turbointernational.metadata.web.dto.PartType shPartType = null; // TODO
+            Map<String, Object> rawManufacturer = (Map<String, Object>) source.get("manufacturer");
+            com.turbointernational.metadata.web.dto.Manufacturer shManufacturer = null; // TODO
+            com.turbointernational.metadata.web.dto.Part part = new com.turbointernational.metadata.web.dto.Part(
+                    shPartId, shName, shDescription, shManufacturerPartNumber, shPartType,  shManufacturer,
+                    shIsInactive);
+            // TODO: interchange
+            Interchange interchange = null;
+            Row row = idxMeta.get(shPartId);
+            Ancestor a = new Ancestor(part, interchange, row.getRelationDistance(), row.isRelationType());
+            allAncestors.add(a);
+        });
+        List<Aggregation> aggregations = new ArrayList<>(32);
+        sr.getAggregations().forEach(a -> {
+            if (a instanceof InternalTerms) {
+                InternalTerms<?, ?> it = (InternalTerms<?, ?>) a;
+                List<Bucket> itBuckets = it.getBuckets();
+                List<com.turbointernational.metadata.web.dto.Aggregation.Bucket> buckets = null;
+                if (itBuckets != null) {
+                     buckets = itBuckets.stream().map(b -> new Aggregation.Bucket(b.getKey(), b.getDocCount()))
+                             .collect(Collectors.toList());
+                }
+                String aggrName  = a.getName();
+                Aggregation aggr = new Aggregation(aggrName, buckets);
+                aggregations.add(aggr);
+            }
+        });
+        int toIndex = offset + limit;
+        if (toIndex >= allAncestors.size()) {
+            toIndex = allAncestors.size();
+        }
+        List<Ancestor> ancestors = allAncestors.subList(offset, toIndex);
+        Page<Ancestor> page = new Page<>(sr.getHits().getTotalHits(), ancestors);
+        return new AncestorsResult(page, aggregations);
     }
 
     @Transactional(noRollbackFor = AssertionError.class)

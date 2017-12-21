@@ -14,10 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse;
 import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
 import com.turbointernational.metadata.service.GraphDbService.GetInterchangeResponse;
-import com.turbointernational.metadata.web.dto.Ancestor;
 import com.turbointernational.metadata.web.dto.Bom;
 import com.turbointernational.metadata.web.dto.Interchange;
 import com.turbointernational.metadata.web.dto.Manufacturer;
@@ -133,10 +131,12 @@ public class DtoMapperService {
                  .include(com.turbointernational.metadata.entity.part.types.Turbo.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.Washer.class, Part.class);
         // DTO: Ancestor
+        /*
         modelMapper.createTypeMap(GetAncestorsResponse.Row.class, Ancestor.class)
                 .addMapping(GetAncestorsResponse.Row::getPartId, Ancestor::setPart)
                 .addMapping(GetAncestorsResponse.Row::isRelationType, Ancestor::setRelationType)
                 .addMapping(GetAncestorsResponse.Row::getRelationDistance, Ancestor::setRelationDistance);
+        */
         // DTO: Interchange
         modelMapper.createTypeMap(GetInterchangeResponse.class, Interchange.class)
                 .addMapping(GetInterchangeResponse::getHeaderId, Interchange::setId)

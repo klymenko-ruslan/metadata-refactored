@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -224,6 +225,7 @@ public class DtoMapperServiceTest {
     }
 
     @Test
+    @Ignore
     public void testMapAncestors() {
         GetAncestorsResponse.Row row = new GetAncestorsResponse.Row(49576L, true, 1);
         when(partDao.findOne(49576L)).thenReturn(entityPart);

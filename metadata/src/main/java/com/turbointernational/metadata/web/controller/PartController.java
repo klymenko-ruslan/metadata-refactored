@@ -442,10 +442,10 @@ public class PartController {
             @RequestParam(name = "pgSortOrder", required = false) String sortOrder,
             @RequestParam(name = "pgOffset", defaultValue = "0") Integer offset,
             @RequestParam(name = "pgLimit", defaultValue = "10") Integer limit) throws Exception {
-        AncestorsResult ares = partService.filterAncestors(partId, partNumber, partTypeId, manufacturerName, name, interchangeParts,
-                description, inactive, turboTypeName, turboModelName, year, make, model, engine, fuelType,
-                sortProperty, sortOrder, offset, limit);
-        return ares;
+        AncestorsResult retVal = partService.filterAncestors(partId, partNumber, partTypeId, manufacturerName,
+                name, interchangeParts, description, inactive, turboTypeName, turboModelName, year, make, model,
+                engine, fuelType, sortProperty, sortOrder, offset, limit);
+        return retVal;
     }
 
     @Transactional

@@ -73,6 +73,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.debug>true</maven.compiler.debug>
+        <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
         <sqlserver.version>4.2</sqlserver.version>
         <es.version>5.0.2</es.version>
     </properties>
