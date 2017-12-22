@@ -23,9 +23,9 @@ public class Ancestor {
      * Relation type: true - direct false - interchange
      */
     @JsonView({ View.Summary.class })
-    private Boolean relationType;
+    private boolean relationType;
 
-    public Ancestor(Part part, Interchange interchange, int relationDistance, Boolean isDirect) {
+    public Ancestor(Part part, Interchange interchange, int relationDistance, boolean isDirect) {
         this.part = part;
         this.interchange = interchange;
         this.relationDistance = relationDistance;
@@ -40,7 +40,7 @@ public class Ancestor {
         return relationDistance;
     }
 
-    public Boolean getRelationType() {
+    public boolean getRelationType() {
         return relationType;
     }
 

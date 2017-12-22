@@ -35,7 +35,7 @@
         </div>
         <div class="form-group">
           <label for="fltrManufacturer">Manufacturer</label>
-          <select id="fltrManufacturer" name="fltrManufacturer" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Manufacturer'].buckets | orderBy: 'key'" data-ng-model="fltrPart.manufacturer">
+          <select id="fltrManufacturer" name="fltrManufacturer" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.count + ')' for itm in searchResults.aggregations['Manufacturer'] | orderBy: 'key'" data-ng-model="fltrPart.manufacturer">
             <option></option>
           </select>
         </div>
@@ -179,36 +179,37 @@
     <table data-ng-table="partTableParams" class="table table-bordered table-striped table-hover table-expand">
       <tr data-ng-repeat="item in $data">
         <td title="'Part #'" class="text-left text-nowrap" data-sortable="'manufacturerPartNumber'">
-          <a authorize="ROLE_READ" data-ng-href="/part/{{item._source.id}}">
-            {{item._source.manufacturerPartNumber}}
+          <a authorize="ROLE_READ" data-ng-href="/part/{{item.part.partId}}">
+            {{item.part.partNumber}}
           </a>
         </td>
-        <td title="'Type'" class="text-left" data-sortable="'partType.name.lower_case_sort'">{{item._source.partType.name}}</td>
-        <td title="'Manufacturer'" class="text-left" data-sortable="'manufacturer.name'">{{item._source.manufacturer.name}}</td>
-        <td title="'Name'" class="text-left" data-sortable="'name'">{{item._source.name}}</td>
+        <td title="'Type'" class="text-center" data-sortable="'partType.name.lower_case_sort'">{{item.part.partType.name}}</td>
+        <td title="'Manufacturer'" class="text-left" data-sortable="'manufacturer.name'">{{item.part.manufacturer.name}}</td>
+        <td title="'Name'" class="text-left" data-sortable="'name'">{{item.part.name}}</td>
         <td title="'Interchanges'" class="text-left">
-          <ul class="list-inline" data-ng-if="item._source.interchange.parts.length">
-            <li data-ng-repeat="i in item._source.interchange.parts">
+          <ul class="list-inline" data-ng-if="!item.interchange.alone">
+            <li data-ng-repeat="i in item.interchange.parts">
               <a href="/part/{{i.partId}}">{{i.partNumber}}</a><span data-ng-if="!$last">, </span>
             </li>
           </ul>
         </td>
-        <td title="'State'" class="text-center" data-sortable="'inactive'" data-ng-switch="item._source.inactive">
+        <td title="'State'" class="text-center" data-sortable="'inactive'" data-ng-switch="item.part.inactive">
           <span data-ng-switch-when="true" class="text-danger">INACTIVE</span>
-          <span data-ng-switch-when="false" class="text-success">ACTIVE</span>
+          <span data-ng-switch-when="false" class="text-success"><b>ACTIVE</b></span>
         </td>
-        <td title="'Relation Type'" class="text-center">
-          {{getRelationTypeFor(item._source.id)}}
+        <td title="'Relation Type'" class="text-center" data-sortable="'relationType'" data-ng-switch="item.relationType">
+          <span data-ng-switch-when="true">direct</span>
+          <span data-ng-switch-when="false">interchange</span>
         </td>
-        <td title="'Relation Distance'" class="text-right">
-          {{getRelationDistanceFor(item._source.id)}}
+        <td title="'Relation Distance'" data-sortable="'relationDistance'" class="text-right">
+          {{item.relationDistance}}
         </td>
       </tr>
       <tr data-ng-hide="$data.length > 0">
         <td colspan="8">No parts to display.</td>
       </tr>
     </table>
-    <table-summary rowscount="searchResults.hits.total" />
+    <table-summary rowscount="searchResults.ancestors.total" />
   </div>
 
 </div>

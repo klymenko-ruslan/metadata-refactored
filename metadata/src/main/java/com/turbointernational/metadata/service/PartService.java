@@ -20,11 +20,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -33,9 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.im4java.core.CommandException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,9 +76,9 @@ import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
 import com.turbointernational.metadata.service.GraphDbService.Response;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.controller.PartController;
-import com.turbointernational.metadata.web.dto.Aggregation;
 import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Ancestor;
+import com.turbointernational.metadata.web.dto.Bucket;
 import com.turbointernational.metadata.web.dto.Interchange;
 import com.turbointernational.metadata.web.dto.Page;
 
@@ -131,9 +132,6 @@ public class PartService {
     private GraphDbService graphDbService;
 
     @Autowired
-    private DtoMapperService dtoMapperService;
-
-    @Autowired
     private SearchService searchService;
 
     private JSONSerializer partJsonSerializer = new JSONSerializer().include("id").include("name")
@@ -176,7 +174,8 @@ public class PartService {
         String json = partJsonSerializer.serialize(newPart);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(newPart.getId(), PART0));
-        Changelog chlog = changelogService.log(PART, user, "Created part " + formatPart(newPart) + ".", json, relatedParts);
+        Changelog chlog = changelogService.log(PART, user, "Created part " + formatPart(newPart) + ".", json,
+                relatedParts);
         return chlog;
     }
 
@@ -274,9 +273,9 @@ public class PartService {
     /**
      * Update only part details attributes.
      * 
-     * Unlike {@link #updatePart(HttpServletRequest, Long, Part, boolean) this method doesn't update
-     * critical dimensions. We separate these methods because on the UI critical dimensions of a part
-     * and its details are edited on separate views.
+     * Unlike {@link #updatePart(HttpServletRequest, Long, Part, boolean) this method doesn't update critical
+     * dimensions. We separate these methods because on the UI critical dimensions of a part and its details are edited
+     * on separate views.
      *
      * @param request
      * @param id
@@ -415,13 +414,14 @@ public class PartService {
         if (details) {
             interchangeService.initInterchange(part);
         }
-         // Update the changelog.
+        // Update the changelog.
         String json = partJsonSerializer.serialize(part);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(turboTypeId, PART1));
-        changelogService.log(PART, "Added turbo type " + formatPart(turboTypeId) +
-                " to the part " + formatPart(part) + ".", json, relatedParts);
+        changelogService.log(PART,
+                "Added turbo type " + formatPart(turboTypeId) + " to the part " + formatPart(part) + ".", json,
+                relatedParts);
         return part.getTurboTypes();
     }
 
@@ -445,8 +445,9 @@ public class PartService {
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
         relatedParts.add(new RelatedPart(turboTypeId, PART1));
-        changelogService.log(PART, "Deleted turbo type " + formatPart(turboTypeId) +
-                " in the part " + formatPart(part) + ".", json, relatedParts);
+        changelogService.log(PART,
+                "Deleted turbo type " + formatPart(turboTypeId) + " in the part " + formatPart(part) + ".", json,
+                relatedParts);
         return part.getTurboTypes();
     }
 
@@ -459,9 +460,9 @@ public class PartService {
         private final Page<Ancestor> ancestors;
 
         @JsonView(View.Summary.class)
-        private final List<Aggregation> aggregations;
+        private final Map<String, Bucket[]> aggregations;
 
-        public AncestorsResult(Page<Ancestor> ancestors, List<Aggregation> aggregations) {
+        public AncestorsResult(Page<Ancestor> ancestors, Map<String, Bucket[]> aggregations) {
             this.ancestors = ancestors;
             this.aggregations = aggregations;
         }
@@ -470,61 +471,156 @@ public class PartService {
             return ancestors;
         }
 
-        public List<Aggregation> getAggregations() {
+        public Map<String, Bucket[]> getAggregations() {
             return aggregations;
         }
 
     }
 
-    @Secured("ROLE_READ")
-    public AncestorsResult filterAncestors(Long partId, String partNumber, Long partTypeId,
-            String manufacturerName, String name, String interchangeParts, String description, Boolean inactive,
-            String turboTypeName, String turboModelName, String cmeyYear, String cmeyMake, String cmeyModel,
-            String cmeyEngine, String cmeyFuelType, String sortProperty, String sortOrder,
-            Integer offset, Integer limit) throws IOException {
-        GetAncestorsResponse response = graphDbService.getAncestors(partId);
-        Row[] rows = response.getRows();
-        Map<Long, Row> idxMeta = Arrays.stream(rows).collect(Collectors.toMap(Row::getPartId, r -> r));
-        Long[] subsetPartIds = Arrays.stream(rows).map(r -> r.getPartId()).toArray(Long[]::new);
-        SearchResponse sr = (SearchResponse) searchService.rawFilterParts(subsetPartIds, partNumber, partTypeId,
-            manufacturerName, name, interchangeParts, description, inactive, turboTypeName, turboModelName,
-            cmeyYear, cmeyMake, cmeyModel, cmeyEngine, cmeyFuelType, null, sortProperty, sortOrder, null, null);
-        SearchHit[] hits = sr.getHits().getHits();
-        List<Ancestor> allAncestors = new ArrayList<>(hits.length);
-        sr.getHits().forEach(sh -> {
-            Map<String, Object> source = sh.getSource();
+    private static Function<Map<String, ?>, com.turbointernational.metadata.web.dto.PartType> dict2partType = new Function<Map<String, ?>, com.turbointernational.metadata.web.dto.PartType>() {
+
+        @Override
+        public com.turbointernational.metadata.web.dto.PartType apply(Map<String, ?> dict) {
+            Integer ptid = (Integer) dict.get("id");
+            String ptname = (String) dict.get("name");
+            return new com.turbointernational.metadata.web.dto.PartType(ptid.longValue(), ptname);
+        }
+
+    };
+
+    private static Function<Map<String, ?>, com.turbointernational.metadata.web.dto.Manufacturer> dict2manfr = new Function<Map<String, ?>, com.turbointernational.metadata.web.dto.Manufacturer>() {
+
+        @Override
+        public com.turbointernational.metadata.web.dto.Manufacturer apply(Map<String, ?> dict) {
+            Integer mnid = (Integer) dict.get("id");
+            String mnname = (String) dict.get("name");
+            return new com.turbointernational.metadata.web.dto.Manufacturer(mnid.longValue(), mnname);
+        }
+
+    };
+
+    private static Function<Map<String, ?>, com.turbointernational.metadata.web.dto.Part> dict2interchangePart = new Function<Map<String, ?>, com.turbointernational.metadata.web.dto.Part>() {
+
+        @Override
+        public com.turbointernational.metadata.web.dto.Part apply(Map<String, ?> dict) {
+            Integer partId = (Integer) dict.get("partId");
+            String partNumber = (String) dict.get("partNumber");
+            return new com.turbointernational.metadata.web.dto.Part(partId.longValue(), partNumber);
+        }
+
+    };
+
+    private static Function<Map<String, ?>, com.turbointernational.metadata.web.dto.Interchange> dict2interchange = new Function<Map<String, ?>, com.turbointernational.metadata.web.dto.Interchange>() {
+
+        @Override
+        public Interchange apply(Map<String, ?> dict) {
+            Integer id = (Integer) dict.get("id");
+            @SuppressWarnings("unchecked")
+            List<Map<String, ?>> rawParts = (List<Map<String, ?>>) dict.get("parts");
+            com.turbointernational.metadata.web.dto.Part[] parts = rawParts.stream()
+                    .map(e -> dict2interchangePart.apply(e))
+                    .toArray(com.turbointernational.metadata.web.dto.Part[]::new);
+            return new Interchange(id.longValue(), parts);
+        }
+
+    };
+
+    private static BiFunction<Map<String, ?>, Map<Long, Row>, Ancestor> source2ancestor = new BiFunction<Map<String, ?>, Map<Long, Row>, Ancestor>() {
+
+        @Override
+        public Ancestor apply(Map<String, ?> source, Map<Long, Row> idxMeta) {
             Long shPartId = ((Number) source.get("id")).longValue();
             String shName = (String) source.getOrDefault("name", null);
             String shDescription = (String) source.getOrDefault("description", null);
             Boolean shIsInactive = (Boolean) source.get("inactive");
             String shManufacturerPartNumber = (String) source.get("manufacturerPartNumber");
-            Map<String, Object> rawPartType = (Map<String, Object>) source.get("partType");
-            com.turbointernational.metadata.web.dto.PartType shPartType = null; // TODO
-            Map<String, Object> rawManufacturer = (Map<String, Object>) source.get("manufacturer");
-            com.turbointernational.metadata.web.dto.Manufacturer shManufacturer = null; // TODO
+            @SuppressWarnings("unchecked")
+            Map<String, ?> rawPartType = (Map<String, ?>) source.get("partType");
+            com.turbointernational.metadata.web.dto.PartType shPartType = dict2partType.apply(rawPartType);
+            @SuppressWarnings("unchecked")
+            Map<String, ?> rawManufacturer = (Map<String, ?>) source.get("manufacturer");
+            com.turbointernational.metadata.web.dto.Manufacturer shManufacturer = dict2manfr.apply(rawManufacturer);
             com.turbointernational.metadata.web.dto.Part part = new com.turbointernational.metadata.web.dto.Part(
-                    shPartId, shName, shDescription, shManufacturerPartNumber, shPartType,  shManufacturer,
+                    shPartId, shName, shDescription, shManufacturerPartNumber, shPartType, shManufacturer,
                     shIsInactive);
-            // TODO: interchange
-            Interchange interchange = null;
+            @SuppressWarnings("unchecked")
+            Map<String, ?> rawInterchange = (Map<String, ?>) source.get("interchange");
+            Interchange interchange = dict2interchange.apply(rawInterchange);
             Row row = idxMeta.get(shPartId);
-            Ancestor a = new Ancestor(part, interchange, row.getRelationDistance(), row.isRelationType());
-            allAncestors.add(a);
-        });
-        List<Aggregation> aggregations = new ArrayList<>(32);
-        sr.getAggregations().forEach(a -> {
-            if (a instanceof InternalTerms) {
-                InternalTerms<?, ?> it = (InternalTerms<?, ?>) a;
-                List<Bucket> itBuckets = it.getBuckets();
-                List<com.turbointernational.metadata.web.dto.Aggregation.Bucket> buckets = null;
-                if (itBuckets != null) {
-                     buckets = itBuckets.stream().map(b -> new Aggregation.Bucket(b.getKey(), b.getDocCount()))
-                             .collect(Collectors.toList());
-                }
-                String aggrName  = a.getName();
-                Aggregation aggr = new Aggregation(aggrName, buckets);
-                aggregations.add(aggr);
+            return new Ancestor(part, interchange, row.getRelationDistance(), row.isRelationType());
+        }
+
+    };
+
+    private static Function<InternalTerms<?, ?>, Bucket[]> internalTerm2buckets = new Function<InternalTerms<?, ?>, Bucket[]>() {
+
+        @Override
+        public Bucket[] apply(InternalTerms<?, ?> it) {
+            List<org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket> itBuckets = it.getBuckets();
+            return itBuckets.stream().map(b -> new Bucket(b.getKey(), b.getDocCount())).toArray(Bucket[]::new);
+        }
+
+    };
+
+    @Secured("ROLE_READ")
+    public AncestorsResult filterAncestors(Long partId, String partNumber, Long partTypeId, String manufacturerName,
+            String name, String interchangeParts, String description, Boolean inactive, String turboTypeName,
+            String turboModelName, String cmeyYear, String cmeyMake, String cmeyModel, String cmeyEngine,
+            String cmeyFuelType, String sortProperty, String sortOrder, Integer offset, Integer limit)
+            throws IOException {
+        boolean sortAscByRelationType = false;
+        boolean sortDescByRelationType = false;
+        boolean sortAscByRelationDistance = false;
+        boolean sortDescByRelationDistance = false;
+        boolean specialSort = false;
+        if ("relationType".equals(sortProperty)) {
+            if ("asc".equals(sortOrder)) {
+                sortAscByRelationType = true;
+                specialSort = true;
+            } else if ("desc".equals(sortOrder)) {
+                sortDescByRelationType = true;
+                specialSort = true;
             }
+        } else if ("relationDistance".equals(sortProperty)) {
+            if ("asc".equals(sortOrder)) {
+                sortAscByRelationDistance = true;
+                specialSort = true;
+            } else if ("desc".equals(sortOrder)) {
+                sortDescByRelationDistance = true;
+                specialSort = true;
+            }
+        }
+        if (specialSort) {
+            sortProperty = null;
+            sortOrder = null;
+        }
+        GetAncestorsResponse response = graphDbService.getAncestors(partId);
+        Row[] rows = response.getRows();
+        Map<Long, Row> idxMeta = Arrays.stream(rows).collect(Collectors.toMap(Row::getPartId, r -> r, (r1, r2) -> r1));
+        Long[] subsetPartIds = Arrays.stream(rows).map(r -> r.getPartId()).toArray(Long[]::new);
+        SearchResponse sr = (SearchResponse) searchService.rawFilterParts(subsetPartIds, partNumber, partTypeId,
+                manufacturerName, name, interchangeParts, description, inactive, turboTypeName, turboModelName,
+                cmeyYear, cmeyMake, cmeyModel, cmeyEngine, cmeyFuelType, null, sortProperty, sortOrder, 0, 10000);
+        List<Ancestor> allAncestors = Arrays.stream(sr.getHits().getHits())
+                .map(sh -> source2ancestor.apply(sh.getSource(), idxMeta)).collect(Collectors.toList());
+        if (specialSort) {
+            if (sortAscByRelationType) {
+                allAncestors.sort(
+                        (a, b) -> Boolean.valueOf(a.getRelationType()).compareTo(Boolean.valueOf(b.getRelationType())));
+            } else if (sortDescByRelationType) {
+                allAncestors.sort(
+                        (a, b) -> Boolean.valueOf(b.getRelationType()).compareTo(Boolean.valueOf(a.getRelationType())));
+            } else if (sortAscByRelationDistance) {
+                allAncestors.sort((a, b) -> a.getRelationDistance() - b.getRelationDistance());
+            } else if (sortDescByRelationDistance) {
+                allAncestors.sort((a, b) -> b.getRelationDistance() - a.getRelationDistance());
+            }
+        }
+        Map<String, Bucket[]> aggregations = new HashMap<>();
+        sr.getAggregations().asList().stream().filter(a -> a instanceof InternalTerms).forEach(a -> {
+            String term = a.getName();
+            Bucket[] buckets = internalTerm2buckets.apply((InternalTerms<?, ?>) a);
+            aggregations.put(term, buckets);
         });
         int toIndex = offset + limit;
         if (toIndex >= allAncestors.size()) {

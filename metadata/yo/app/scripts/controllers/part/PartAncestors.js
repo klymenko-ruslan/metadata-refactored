@@ -34,14 +34,7 @@ angular.module('ngMetaCrudApp')
       appAttrsOpened: false
     };
 
-    $scope.searchResults = {
-      hits: {
-        total: 0,
-        hits: []
-      }
-    };
-
-    $scope.meta = {};
+    $scope.searchResults = null;
 
     $scope.clearFilter = function() {
 
@@ -177,24 +170,6 @@ angular.module('ngMetaCrudApp')
       $scope.partTableParams.reload();
     }, true);
 
-    $scope.getRelationTypeFor = function(partId) {
-      var retVal = null;
-      var m = $scope.meta[partId.toString()];
-      if (m) {
-        retVal = m.relationType ? 'direct' : 'interchange';
-      }
-      return retVal;
-    };
-
-    $scope.getRelationDistanceFor = function(partId) {
-      var retVal = null;
-      var m = $scope.meta[partId.toString()];
-      if (m) {
-        retVal = m.relationDistance;
-      }
-      return retVal;
-    };
-
     $scope.partTableParams = new NgTableParams({
         page: 1,
         count: 25
@@ -227,18 +202,17 @@ angular.module('ngMetaCrudApp')
             $scope.fltrPart.year, $scope.fltrPart.make, $scope.fltrPart.model,
             $scope.fltrPart.engine, $scope.fltrPart.fuelType,
             sortProperty, sortOrder, offset, limit).then(
-            function(filtered) { // The 'filtered' is a JSON returned by ElasticSearch.
-              $scope.searchResults = filtered.parts;
-              $scope.meta = filtered.meta;
+            function(result) { // The 'filtered' is a JSON returned by ElasticSearch.
+              $scope.searchResults = result;
               // Update values for UI combobox -- 'State'.
               $scope.stateItems = [];
-              _.each(filtered.parts.aggregations.State.buckets, function(b) {
+              _.each($scope.searchResults.aggregations.State, function(b) {
                 if (b.key === 0) {
                   $scope.stateItems.push({
                     name: 'Active',
                     val: false,
                     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-                    count: b.doc_count
+                    count: b.count
                     // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
                   });
                 } else if (b.key === 1) {
@@ -246,7 +220,7 @@ angular.module('ngMetaCrudApp')
                     name: 'Inactive',
                     val: true,
                     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-                    count: b.doc_count
+                    count: b.count
                     // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
                   });
                 }
@@ -263,8 +237,8 @@ angular.module('ngMetaCrudApp')
               }
 
               // Update the total and slice the result
-              params.total($scope.searchResults.hits.total);
-              return $scope.searchResults.hits.hits;
+              params.total($scope.searchResults.ancestors.total);
+              return $scope.searchResults.ancestors.recs;
             },
             function(errorResponse) {
               $log.log('Parts search failed: ' + errorResponse);

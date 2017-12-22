@@ -37,12 +37,16 @@ public class Part {
     public Part() {
     }
 
+    public Part(Long partId, String partNumber) {
+        this.partId = partId;
+        this.partNumber = partNumber;
+    }
+
     public Part(Long partId, String name, String description, String partNumber, PartType partType,
             Manufacturer manufacturer, boolean inactive) {
-        this.partId = partId;
+        this(partId, partNumber);
         this.name = name;
         this.description = description;
-        this.partNumber = partNumber;
         this.partType = partType;
         this.manufacturer = manufacturer;
         this.inactive = inactive;
