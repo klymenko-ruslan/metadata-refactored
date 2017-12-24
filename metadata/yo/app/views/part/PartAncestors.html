@@ -187,11 +187,7 @@
         <td title="'Manufacturer'" class="text-left" data-sortable="'manufacturer.name'">{{item.part.manufacturer.name}}</td>
         <td title="'Name'" class="text-left" data-sortable="'name'">{{item.part.name}}</td>
         <td title="'Interchanges'" class="text-left">
-          <ul class="list-inline" data-ng-if="!item.interchange.alone">
-            <li data-ng-repeat="i in item.interchange.parts">
-              <a href="/part/{{i.partId}}">{{i.partNumber}}</a><span data-ng-if="!$last">, </span>
-            </li>
-          </ul>
+          <interchanges interchange="item.interchange" />
         </td>
         <td title="'State'" class="text-center" data-sortable="'inactive'" data-ng-switch="item.part.inactive">
           <span data-ng-switch-when="true" class="text-danger">INACTIVE</span>
