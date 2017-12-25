@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -564,7 +565,8 @@ public class PartService {
 
     @Secured("ROLE_READ")
     public AncestorsResult filterAncestors(Long partId, String partNumber, Long partTypeId, String manufacturerName,
-            String name, String interchangeParts, String description, Boolean inactive, String turboTypeName,
+            String name, Integer relationDistance, Boolean relationType,
+            String interchangeParts, String description, Boolean inactive, String turboTypeName,
             String turboModelName, String cmeyYear, String cmeyMake, String cmeyModel, String cmeyEngine,
             String cmeyFuelType, String sortProperty, String sortOrder, Integer offset, Integer limit)
             throws IOException {
@@ -601,8 +603,19 @@ public class PartService {
         SearchResponse sr = (SearchResponse) searchService.rawFilterParts(subsetPartIds, partNumber, partTypeId,
                 manufacturerName, name, interchangeParts, description, inactive, turboTypeName, turboModelName,
                 cmeyYear, cmeyMake, cmeyModel, cmeyEngine, cmeyFuelType, null, sortProperty, sortOrder, 0, 10000);
+        AtomicInteger skipped = new AtomicInteger();
         List<Ancestor> allAncestors = Arrays.stream(sr.getHits().getHits())
-                .map(sh -> source2ancestor.apply(sh.getSource(), idxMeta)).collect(Collectors.toList());
+                .map(sh -> source2ancestor.apply(sh.getSource(), idxMeta))
+                .filter(a -> {
+                    boolean skip = relationDistance != null && relationDistance != a.getRelationDistance()
+                            || relationType != null && relationType != a.getRelationType();
+                    if (skip) {
+                        skipped.incrementAndGet();
+                        return false;
+                    }
+                    return true;
+                })
+                .collect(Collectors.toList());
         if (specialSort) {
             if (sortAscByRelationType) {
                 allAncestors.sort(
@@ -627,7 +640,7 @@ public class PartService {
             toIndex = allAncestors.size();
         }
         List<Ancestor> ancestors = allAncestors.subList(offset, toIndex);
-        Page<Ancestor> page = new Page<>(sr.getHits().getTotalHits(), ancestors);
+        Page<Ancestor> page = new Page<>(allAncestors.size(), ancestors);
         return new AncestorsResult(page, aggregations);
     }
 

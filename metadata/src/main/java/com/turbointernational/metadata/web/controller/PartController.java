@@ -429,6 +429,8 @@ public class PartController {
             @RequestParam(name = "manufacturerName", required = false) String manufacturerName,
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "interchangeParts", required = false) String interchangeParts,
+            @RequestParam(name = "relationDistance", required = false) String relationDistance,
+            @RequestParam(name = "relationType", required = false) Boolean relationType,
             @RequestParam(name = "description", required = false) String description,
             @RequestParam(name = "inactive", required = false) Boolean inactive,
             @RequestParam(name = "turboTypeName", required = false) String turboTypeName,
@@ -442,9 +444,17 @@ public class PartController {
             @RequestParam(name = "pgSortOrder", required = false) String sortOrder,
             @RequestParam(name = "pgOffset", defaultValue = "0") Integer offset,
             @RequestParam(name = "pgLimit", defaultValue = "10") Integer limit) throws Exception {
+        Integer numRelationDistance = null;
+        if (relationDistance != null) {
+            try {
+                numRelationDistance = Integer.valueOf(relationDistance);
+            } catch(NumberFormatException e) {
+                numRelationDistance = Integer.MIN_VALUE; // invalid input value
+            }
+        }
         AncestorsResult retVal = partService.filterAncestors(partId, partNumber, partTypeId, manufacturerName,
-                name, interchangeParts, description, inactive, turboTypeName, turboModelName, year, make, model,
-                engine, fuelType, sortProperty, sortOrder, offset, limit);
+                name, numRelationDistance, relationType, interchangeParts, description, inactive, turboTypeName,
+                turboModelName, year, make, model, engine, fuelType, sortProperty, sortOrder, offset, limit);
         return retVal;
     }
 

@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-.controller('PartAncestorsCtrl', ['$log', '$routeParams', '$scope',
-    'restService', 'NgTableParams', 'part', 'partTypes',
-  function($log, $routeParams, $scope, restService, NgTableParams, part,
-    partTypes)
+.controller('PartAncestorsCtrl', ['$log', '$routeParams', '$location',
+    '$scope', 'restService', 'NgTableParams', 'part', 'partTypes',
+  function($log, $routeParams, $location, $scope, restService, NgTableParams,
+    part, partTypes)
   {
 
     $scope.partId = $routeParams.id;
@@ -20,6 +20,8 @@ angular.module('ngMetaCrudApp')
       turboType: null,
       name: null,
       interchangeParts: null,
+      relationDistance: null,
+      relationType: null,
       partNumber: null,
       year: null,
       make: null,
@@ -45,6 +47,8 @@ angular.module('ngMetaCrudApp')
       $scope.fltrPart.turboType = null;
       $scope.fltrPart.name = null;
       $scope.fltrPart.interchangeParts = null;
+      $scope.relationDistance = null;
+      $scope.relationType = null;
       $scope.fltrPart.partNumber = null;
 
       $scope.fltrPart.year = null;
@@ -161,7 +165,8 @@ angular.module('ngMetaCrudApp')
     };
 
     $scope.$watch('[fltrPart.partNumber, fltrPart.inactive, fltrPart.manufacturer, ' +
-      'fltrPart.name, fltrPart.partType, fltrPart.interchangeParts]', function(newVal, oldVal)
+      'fltrPart.name, fltrPart.relationType, fltrPart.relationDistance, ' +
+      'fltrPart.partType, fltrPart.interchangeParts]', function(newVal, oldVal)
     {
       // Debounce
       if (angular.equals(newVal, oldVal, true)) {
@@ -194,10 +199,12 @@ angular.module('ngMetaCrudApp')
             turboModelName = $scope.fltrPart.turboModel;
             turboTypeName = $scope.fltrPart.turboType;
           }
+          var searchRelationType = $scope.fltrPart.relationType ? $scope.fltrPart.relationType.id : null;
 
           return restService.filterAncestors($scope.partId, searchPartTypeId,
             $scope.fltrPart.manufacturer, $scope.fltrPart.name,
             $scope.fltrPart.interchangeParts, $scope.fltrPart.partNumber,
+            $scope.fltrPart.relationDistance, searchRelationType,
             $scope.fltrPart.inactive, turboModelName, turboTypeName,
             $scope.fltrPart.year, $scope.fltrPart.make, $scope.fltrPart.model,
             $scope.fltrPart.engine, $scope.fltrPart.fuelType,

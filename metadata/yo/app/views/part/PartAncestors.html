@@ -53,6 +53,16 @@
              <option></option>
           </select>
         </div>
+        <div class="form-group">
+          <label for="fltrRelationType">Relation Type</label>
+          <select id="fltrRelationType" name="fltrRelationType" class="form-control input-sm" data-ng-options="rt.name for rt in [{id: true, name: 'direct'}, {id: false, name: 'interchange'}] track by rt.id" data-ng-model="fltrPart.relationType">
+            <option></option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fltrRelationDistance">Relation Distance</label>
+          <input id="fltrRelationDistance" name="fltrRelationDistance" class="form-control input-sm" type="number" step="1" min="1" data-ng-model="fltrPart.relationDistance" placeholder="Distance..." data-ng-model-options="{debounce: 500}" />
+        </div>
 
       </uib-accordion-group>
 

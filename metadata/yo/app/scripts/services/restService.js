@@ -165,12 +165,15 @@ angular.module('ngMetaCrudApp')
       this.filterAncestors = function(partId, searchPartTypeId,
         searchManufacturerName,
           searchName, searchInterchangeParts, searchPartNumber,
+          searchRelationDistance, searchRelationType,
           searchInactive, searchTurboModelName, searchTurboTypeName,
           year, make, model, engine, fuelType,
           sortProperty, sortOrder, offset, limit) {
         var params = {
           partId: partId,
           partNumber: searchPartNumber,
+          relationDistance: searchRelationDistance,
+          relationType: searchRelationType,
           inactive: searchInactive,
           partTypeId: searchPartTypeId,
           manufacturerName: searchManufacturerName,
