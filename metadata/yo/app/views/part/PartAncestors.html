@@ -197,7 +197,7 @@
         <td title="'Manufacturer'" class="text-left" data-sortable="'manufacturer.name'">{{item.part.manufacturer.name}}</td>
         <td title="'Name'" class="text-left" data-sortable="'name'">{{item.part.name}}</td>
         <td title="'Interchanges'" class="text-left">
-          <interchanges interchange="item.interchange" />
+          <interchanges parts="item.interchange.parts" />
         </td>
         <td title="'State'" class="text-center" data-sortable="'inactive'" data-ng-switch="item.part.inactive">
           <span data-ng-switch-when="true" class="text-danger">INACTIVE</span>

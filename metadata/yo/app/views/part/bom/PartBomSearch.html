@@ -25,11 +25,11 @@
         <td title="'Part Type'" data-sortable="'part.partType.name'">
           {{bom.part.partType.name}}
         </td>
-        <td title="'Manufacturer'" data-sortable="'part.manufacturer.name'">
-          {{bom.part.manufacturer.name}}
-        </td>
         <td title="'Part#'" class="text-center text-nowrap" data-sortable="'part.partNumber'">
           {{bom.part.partNumber}}
+        </td>
+        <td title="'Interchanges'">
+          <interchanges parts="bom.interchanges" />
         </td>
         <td title="'Qty'" class="text-right" data-sortable="'qty'">
           {{bom.qty}}
@@ -67,6 +67,9 @@
         <tr data-ng-repeat="rec in $data">
           <td title="'Part Type'" class="text-nowrap">{{rec.partType.name}}</td>
           <td title="'Part#'" class="text-nowrap">{{rec.manufacturerPartNumber}}</td>
+          <td title="'Interchanges'">
+            <interchanges parts="rec.interchange.parts" />
+          </td>
           <td title="'Qty'">
             <input type="number" data-ng-model="rec.extra.qty" data-ng-min="0" style="width:5em;" required />
           </td>
