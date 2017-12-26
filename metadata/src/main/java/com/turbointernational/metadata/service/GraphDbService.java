@@ -205,13 +205,6 @@ public class GraphDbService {
         @JsonInclude(JsonInclude.Include.ALWAYS)
         public static class Row {
 
-            private static Comparator<Row> cmpDistance = (a0, a1) -> {return a0.getRelationDistance() - a1.getRelationDistance();};
-            private static Comparator<Row> cmpRelationType = (a0, a1) -> /* reverse */ Boolean.valueOf(a1.isRelationType()).compareTo(a0.isRelationType());
-            private static Comparator<Row> cmpPartNumber = (a0, a1) -> a0.getPartId().compareTo(a1.getPartId());
-
-            @SuppressWarnings("unchecked")
-            public final static Comparator<Row> cmpComplex = new ComparatorChain(asList(cmpDistance, cmpRelationType, cmpPartNumber));
-
             @JsonView({ View.Summary.class })
             private Long partId;
 

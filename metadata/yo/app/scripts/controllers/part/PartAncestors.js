@@ -47,8 +47,8 @@ angular.module('ngMetaCrudApp')
       $scope.fltrPart.turboType = null;
       $scope.fltrPart.name = null;
       $scope.fltrPart.interchangeParts = null;
-      $scope.relationDistance = null;
-      $scope.relationType = null;
+      $scope.fltrPart.relationDistance = null;
+      $scope.fltrPart.relationType = null;
       $scope.fltrPart.partNumber = null;
 
       $scope.fltrPart.year = null;

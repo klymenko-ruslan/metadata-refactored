@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,6 +36,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.io.FileUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
@@ -140,6 +142,15 @@ public class PartService {
             .include("partType.name").exclude("partType.*").include("manufacturer.id").include("manufacturer.name")
             .exclude("manufacturer.*").exclude("bomParentParts").exclude("bom").exclude("interchange").exclude("turbos")
             .exclude("productImages").exclude("*.class");
+
+    private static Comparator<Ancestor> cmpDistance = (a0, a1) -> {return a0.getRelationDistance() - a1.getRelationDistance();};
+    private static Comparator<Ancestor> cmpRelationType = (a0, a1) -> /* reverse */ Boolean.valueOf(a1.getRelationType()).compareTo(a0.getRelationType());
+    private static Comparator<Ancestor> cmpPartNumber = (a0, a1) -> a0.getPart().getPartNumber().compareTo(a1.getPart().getPartNumber());
+
+    @SuppressWarnings("unchecked")
+    private final static Comparator<Ancestor> defaultAncestorsSort = new ComparatorChain(Arrays.asList(
+            cmpDistance, cmpRelationType, cmpPartNumber
+    ));
 
     @Transactional
     public List<PartController.PartCreateResponse.Row> createPart(HttpServletRequest httpRequest, Part origin,
@@ -553,12 +564,12 @@ public class PartService {
 
     };
 
-    private static Function<InternalTerms<?, ?>, Bucket[]> internalTerm2buckets = new Function<InternalTerms<?, ?>, Bucket[]>() {
+    private static BiFunction<InternalTerms<?, ?>, Integer, Bucket[]> internalTerm2buckets = new BiFunction<InternalTerms<?, ?>, Integer, Bucket[]>() {
 
         @Override
-        public Bucket[] apply(InternalTerms<?, ?> it) {
+        public Bucket[] apply(InternalTerms<?, ?> it, Integer delta) {
             List<org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket> itBuckets = it.getBuckets();
-            return itBuckets.stream().map(b -> new Bucket(b.getKey(), b.getDocCount())).toArray(Bucket[]::new);
+            return itBuckets.stream().map(b -> new Bucket(b.getKey(), b.getDocCount() + delta)).toArray(Bucket[]::new);
         }
 
     };
@@ -628,11 +639,14 @@ public class PartService {
             } else if (sortDescByRelationDistance) {
                 allAncestors.sort((a, b) -> b.getRelationDistance() - a.getRelationDistance());
             }
+        } else if (sortProperty == null) {
+            allAncestors.sort(defaultAncestorsSort);
         }
         Map<String, Bucket[]> aggregations = new HashMap<>();
+        Integer delta = /*TODO: -Integer.valueOf(skipped.get())*/ 0;
         sr.getAggregations().asList().stream().filter(a -> a instanceof InternalTerms).forEach(a -> {
             String term = a.getName();
-            Bucket[] buckets = internalTerm2buckets.apply((InternalTerms<?, ?>) a);
+            Bucket[] buckets = internalTerm2buckets.apply((InternalTerms<?, ?>) a, delta);
             aggregations.put(term, buckets);
         });
         int toIndex = offset + limit;
