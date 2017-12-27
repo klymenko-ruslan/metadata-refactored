@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.4
+#!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 # vim: set tabstop=8 expandtab shiftwidth=4 softtabstop=4 :
 

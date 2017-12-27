@@ -1,6 +1,7 @@
 package com.turbointernational.metadata.web.dto;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -33,6 +34,8 @@ public class Part {
 
     @JsonView({ View.Summary.class })
     private boolean inactive;
+
+    public final static Comparator<Part> SORTBY_PARTNUM = (a, b) -> a.partNumber.compareTo(b.partNumber);
 
     public Part() {
     }

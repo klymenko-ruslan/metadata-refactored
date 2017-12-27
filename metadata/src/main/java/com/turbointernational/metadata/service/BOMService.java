@@ -6,6 +6,7 @@ import static com.turbointernational.metadata.service.BOMService.AddToParentBOMs
 import static com.turbointernational.metadata.service.GraphDbService.checkSuccess;
 import static com.turbointernational.metadata.util.FormatUtils.formatBOMAlternative;
 import static com.turbointernational.metadata.util.FormatUtils.formatBom;
+import static com.turbointernational.metadata.web.dto.Part.SORTBY_PARTNUM;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -443,21 +444,22 @@ public class BOMService {
         }
         GetBomsResponse bomsResponse = graphDbService.getBoms(parentPartId);
         partChangeService.addedBoms(parentPartId, relatedPartIds);
-        // Bom[] boms = Bom.from(partDao, bomsResponse.getRows());
         Bom[] boms = dtoMapperService.map(bomsResponse.getRows(), Bom[].class);
         return new CreateBOMsResponse(failures, boms);
     }
 
     public Bom[] getByParentId(Long partId) throws Exception {
         GetBomsResponse response = graphDbService.getBoms(partId);
-        return dtoMapperService.map(response.getRows(), Bom[].class);
-        // return Bom.from(partDao, response.getRows());
+        Bom[] boms = dtoMapperService.map(response.getRows(), Bom[].class);
+        for (Bom b : boms) {
+            Arrays.sort(b.getInterchanges(), SORTBY_PARTNUM);
+        }
+        return boms;
     }
 
     public Bom[] getParentsForBom(Long partId) throws Exception {
         GetBomsResponse response = graphDbService.getParentsBoms(partId);
         return dtoMapperService.map(response.getRows(), Bom[].class);
-        // return Bom.from(partDao, response.getRows());
     }
 
     public Bom[] getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {

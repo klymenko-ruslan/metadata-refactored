@@ -6,6 +6,7 @@ import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
 import static com.turbointernational.metadata.service.GraphDbService.checkSuccess;
 import static com.turbointernational.metadata.util.FormatUtils.formatInterchange;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
+import static com.turbointernational.metadata.web.dto.Part.SORTBY_PARTNUM;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,8 +72,9 @@ public class InterchangeService {
     @Transactional
     public Interchange findById(Long id) {
         GetInterchangeResponse response = graphDbService.findInterchangeById(id);
-        return dtoMapperService.map(response, Interchange.class);
-        // return Interchange.from(partDao, response);
+        Interchange retVal = dtoMapperService.map(response, Interchange.class);
+        Arrays.sort(retVal.getParts(), SORTBY_PARTNUM);
+        return retVal;
     }
 
     public Interchange findForPart(Part part) {

@@ -150,7 +150,7 @@ module.exports = function (grunt) {
             let partIdsUnderDebug = [
               1, 2, 3,
               289,    // 'Where used (ancestors)'
-              1449, 2318,
+              1449, 1461, 2318,
               6751,
               6233,   // Many BOMs; Tabs: 'Prices', 'Also Bought'
               6246,
@@ -164,7 +164,7 @@ module.exports = function (grunt) {
               42768,  // Tabs: 'Critical Dimensions'
               43748,  // 'Where used (ancestors)'
               43754, 43889,
-              45456, 45328 /* 'Where used (ancestors)'*/, // Tabs: 'Prices', 'Also Bought' + tab 'Turbo Types' has record
+              45456, 45328, 43751 /* 'Where used (ancestors)'*/, // Tabs: 'Prices', 'Also Bought' + tab 'Turbo Types' has record
               45495,  // Tabs: 'Non Standard'
               45524,  // Tabs: 'Non Standard', many records 'non standard parts'
               46722,  // Tabs: 'Non Standard', many records 'standard parts'
