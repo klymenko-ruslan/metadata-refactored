@@ -29,13 +29,13 @@
 
         <div class="form-group">
           <label for="fltrState">State</label>
-          <select id="fltrState" name="fltrState" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="fltrPart.inactive">
+          <select id="fltrState" name="fltrState" class="form-control input-sm" data-ng-options="itm.val as itm.name for itm in stateItems | orderBy: 'name'" data-ng-model="fltrPart.inactive">
             <option></option>
           </select>
         </div>
         <div class="form-group">
           <label for="fltrManufacturer">Manufacturer</label>
-          <select id="fltrManufacturer" name="fltrManufacturer" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.count + ')' for itm in searchResults.aggregations['Manufacturer'] | orderBy: 'key'" data-ng-model="fltrPart.manufacturer">
+          <select id="fltrManufacturer" name="fltrManufacturer" class="form-control input-sm" data-ng-options="itm.key as itm.key for itm in searchResults.aggregations['Manufacturer'] | orderBy: 'key'" data-ng-model="fltrPart.manufacturer">
             <option></option>
           </select>
         </div>

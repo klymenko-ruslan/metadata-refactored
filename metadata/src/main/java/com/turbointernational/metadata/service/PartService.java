@@ -546,6 +546,9 @@ public class PartService {
         public Ancestor apply(Row row, Map<Long, Map<String, ?>> idxSources) {
             Long shPartId = row.getPartId();
             Map<String, ?> source = idxSources.get(shPartId);
+            if (source == null) {
+                return null;
+            }
             String shName = (String) source.getOrDefault("name", null);
             String shDescription = (String) source.getOrDefault("description", null);
             Boolean shIsInactive = (Boolean) source.get("inactive");
@@ -621,7 +624,7 @@ public class PartService {
         List<Ancestor> allAncestors = Arrays.stream(rows)
                 .map(r -> source2ancestor.apply(r, idxSources))
                 .filter(a -> {
-                    boolean skip = relationDistance != null && relationDistance != a.getRelationDistance()
+                    boolean skip = a == null || relationDistance != null && relationDistance != a.getRelationDistance()
                             || relationType != null && relationType != a.getRelationType();
                     if (skip) {
                         return false;
