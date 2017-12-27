@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -39,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.io.FileUtils;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
 import org.im4java.core.CommandException;
 import org.slf4j.Logger;
@@ -143,14 +143,17 @@ public class PartService {
             .exclude("manufacturer.*").exclude("bomParentParts").exclude("bom").exclude("interchange").exclude("turbos")
             .exclude("productImages").exclude("*.class");
 
-    private static Comparator<Ancestor> cmpDistance = (a0, a1) -> {return a0.getRelationDistance() - a1.getRelationDistance();};
-    private static Comparator<Ancestor> cmpRelationType = (a0, a1) -> /* reverse */ Boolean.valueOf(a1.getRelationType()).compareTo(a0.getRelationType());
-    private static Comparator<Ancestor> cmpPartNumber = (a0, a1) -> a0.getPart().getPartNumber().compareTo(a1.getPart().getPartNumber());
+    private static Comparator<Ancestor> cmpDistance = (a0, a1) -> {
+        return a0.getRelationDistance() - a1.getRelationDistance();
+    };
+    private static Comparator<Ancestor> cmpRelationType = (a0, a1) -> /* reverse */ Boolean
+            .valueOf(a1.getRelationType()).compareTo(a0.getRelationType());
+    private static Comparator<Ancestor> cmpPartNumber = (a0, a1) -> a0.getPart().getPartNumber()
+            .compareTo(a1.getPart().getPartNumber());
 
     @SuppressWarnings("unchecked")
-    private final static Comparator<Ancestor> defaultAncestorsSort = new ComparatorChain(Arrays.asList(
-            cmpDistance, cmpRelationType, cmpPartNumber
-    ));
+    private final static Comparator<Ancestor> defaultAncestorsSort = new ComparatorChain(
+            Arrays.asList(cmpDistance, cmpRelationType, cmpPartNumber));
 
     @Transactional
     public List<PartController.PartCreateResponse.Row> createPart(HttpServletRequest httpRequest, Part origin,
@@ -537,11 +540,12 @@ public class PartService {
 
     };
 
-    private static BiFunction<Map<String, ?>, Map<Long, Row>, Ancestor> source2ancestor = new BiFunction<Map<String, ?>, Map<Long, Row>, Ancestor>() {
+    private static BiFunction<Row, Map<Long, Map<String, ?>>, Ancestor> source2ancestor = new BiFunction<Row, Map<Long, Map<String, ?>>, Ancestor>() {
 
         @Override
-        public Ancestor apply(Map<String, ?> source, Map<Long, Row> idxMeta) {
-            Long shPartId = ((Number) source.get("id")).longValue();
+        public Ancestor apply(Row row, Map<Long, Map<String, ?>> idxSources) {
+            Long shPartId = row.getPartId();
+            Map<String, ?> source = idxSources.get(shPartId);
             String shName = (String) source.getOrDefault("name", null);
             String shDescription = (String) source.getOrDefault("description", null);
             Boolean shIsInactive = (Boolean) source.get("inactive");
@@ -558,29 +562,27 @@ public class PartService {
             @SuppressWarnings("unchecked")
             Map<String, ?> rawInterchange = (Map<String, ?>) source.get("interchange");
             Interchange interchange = dict2interchange.apply(rawInterchange);
-            Row row = idxMeta.get(shPartId);
             return new Ancestor(part, interchange, row.getRelationDistance(), row.isRelationType());
         }
 
     };
 
-    private static BiFunction<InternalTerms<?, ?>, Integer, Bucket[]> internalTerm2buckets = new BiFunction<InternalTerms<?, ?>, Integer, Bucket[]>() {
+    private static Function<InternalTerms<?, ?>, Bucket[]> internalTerm2buckets = new Function<InternalTerms<?, ?>, Bucket[]>() {
 
         @Override
-        public Bucket[] apply(InternalTerms<?, ?> it, Integer delta) {
+        public Bucket[] apply(InternalTerms<?, ?> it) {
             List<org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket> itBuckets = it.getBuckets();
-            return itBuckets.stream().map(b -> new Bucket(b.getKey(), b.getDocCount() + delta)).toArray(Bucket[]::new);
+            return itBuckets.stream().map(b -> new Bucket(b.getKey(), b.getDocCount())).toArray(Bucket[]::new);
         }
 
     };
 
     @Secured("ROLE_READ")
     public AncestorsResult filterAncestors(Long partId, String partNumber, Long partTypeId, String manufacturerName,
-            String name, Integer relationDistance, Boolean relationType,
-            String interchangeParts, String description, Boolean inactive, String turboTypeName,
-            String turboModelName, String cmeyYear, String cmeyMake, String cmeyModel, String cmeyEngine,
-            String cmeyFuelType, String sortProperty, String sortOrder, Integer offset, Integer limit)
-            throws IOException {
+            String name, Integer relationDistance, Boolean relationType, String interchangeParts, String description,
+            Boolean inactive, String turboTypeName, String turboModelName, String cmeyYear, String cmeyMake,
+            String cmeyModel, String cmeyEngine, String cmeyFuelType, String sortProperty, String sortOrder,
+            Integer offset, Integer limit) throws IOException {
         boolean sortAscByRelationType = false;
         boolean sortDescByRelationType = false;
         boolean sortAscByRelationDistance = false;
@@ -603,30 +605,31 @@ public class PartService {
                 specialSort = true;
             }
         }
-        if (specialSort) {
-            sortProperty = null;
-            sortOrder = null;
-        }
         GetAncestorsResponse response = graphDbService.getAncestors(partId);
         Row[] rows = response.getRows();
-        Map<Long, Row> idxMeta = Arrays.stream(rows).collect(Collectors.toMap(Row::getPartId, r -> r, (r1, r2) -> r1));
         Long[] subsetPartIds = Arrays.stream(rows).map(r -> r.getPartId()).toArray(Long[]::new);
         SearchResponse sr = (SearchResponse) searchService.rawFilterParts(subsetPartIds, partNumber, partTypeId,
                 manufacturerName, name, interchangeParts, description, inactive, turboTypeName, turboModelName,
-                cmeyYear, cmeyMake, cmeyModel, cmeyEngine, cmeyFuelType, null, sortProperty, sortOrder, 0, 10000);
-        AtomicInteger skipped = new AtomicInteger();
-        List<Ancestor> allAncestors = Arrays.stream(sr.getHits().getHits())
-                .map(sh -> source2ancestor.apply(sh.getSource(), idxMeta))
+                cmeyYear, cmeyMake, cmeyModel, cmeyEngine, cmeyFuelType, null, null, null, 0, 10000);
+        Map<Long, Map<String, ?>> idxSources = new HashMap<>();
+        for (SearchHit sh : sr.getHits().getHits()) {
+            Map<String, ?> src = sh.getSource();
+            Long srcPartId = ((Number) src.get("id")).longValue();
+            idxSources.put(srcPartId, src);
+        }
+        //@formatter:off
+        List<Ancestor> allAncestors = Arrays.stream(rows)
+                .map(r -> source2ancestor.apply(r, idxSources))
                 .filter(a -> {
                     boolean skip = relationDistance != null && relationDistance != a.getRelationDistance()
                             || relationType != null && relationType != a.getRelationType();
                     if (skip) {
-                        skipped.incrementAndGet();
                         return false;
                     }
                     return true;
                 })
                 .collect(Collectors.toList());
+        //@formatter:on
         if (specialSort) {
             if (sortAscByRelationType) {
                 allAncestors.sort(
@@ -643,10 +646,9 @@ public class PartService {
             allAncestors.sort(defaultAncestorsSort);
         }
         Map<String, Bucket[]> aggregations = new HashMap<>();
-        Integer delta = /*TODO: -Integer.valueOf(skipped.get())*/ 0;
         sr.getAggregations().asList().stream().filter(a -> a instanceof InternalTerms).forEach(a -> {
             String term = a.getName();
-            Bucket[] buckets = internalTerm2buckets.apply((InternalTerms<?, ?>) a, delta);
+            Bucket[] buckets = internalTerm2buckets.apply((InternalTerms<?, ?>) a);
             aggregations.put(term, buckets);
         });
         int toIndex = offset + limit;

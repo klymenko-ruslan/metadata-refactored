@@ -188,18 +188,18 @@
   <div class="col-xs-12 col-sm-9">
     <table data-ng-table="partTableParams" class="table table-bordered table-striped table-hover table-expand">
       <tr data-ng-repeat="item in $data">
-        <td title="'Part #'" class="text-left text-nowrap" data-sortable="'manufacturerPartNumber'">
+        <td title="'Part #'" class="text-left text-nowrap">
           <a authorize="ROLE_READ" data-ng-href="/part/{{item.part.partId}}">
             {{item.part.partNumber}}
           </a>
         </td>
-        <td title="'Type'" class="text-center" data-sortable="'partType.name.lower_case_sort'">{{item.part.partType.name}}</td>
-        <td title="'Manufacturer'" class="text-left" data-sortable="'manufacturer.name'">{{item.part.manufacturer.name}}</td>
-        <td title="'Name'" class="text-left" data-sortable="'name'">{{item.part.name}}</td>
+        <td title="'Type'" class="text-center">{{item.part.partType.name}}</td>
+        <td title="'Manufacturer'" class="text-left">{{item.part.manufacturer.name}}</td>
+        <td title="'Name'" class="text-left">{{item.part.name}}</td>
         <td title="'Interchanges'" class="text-left">
           <interchanges parts="item.interchange.parts" />
         </td>
-        <td title="'State'" class="text-center" data-sortable="'inactive'" data-ng-switch="item.part.inactive">
+        <td title="'State'" class="text-center" data-ng-switch="item.part.inactive">
           <span data-ng-switch-when="true" class="text-danger">INACTIVE</span>
           <span data-ng-switch-when="false" class="text-success"><b>ACTIVE</b></span>
         </td>
