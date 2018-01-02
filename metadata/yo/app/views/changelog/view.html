@@ -34,16 +34,53 @@
           <span id="log_user">{{user.name}}</span>
         </div>
       </div>
-      <div class="row">
+      <!-- div class="row">
         <div class="col-xs-12">
           <label for="log_description">Description</label>
           <pre id="log_description" style="max-height: 10em;">{{description}}</pre>
         </div>
-      </div>
-      <div class="row">
+      </div -->
+      <!-- div class="row">
         <div class="col-xs-12">
           <label for="log_data">Data</label>
           <pre id="log_data" style="max-height: 15em;">{{changes | json : 2}}</pre>
+        </div>
+      </div -->
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div id="main">
+            <div class="initContainer">
+  
+              <div class="left">
+                <textarea spellcheck="false" id="textarealeft">
+                  {{changes.original | json:2}}
+                </textarea>
+                <pre id="errorLeft" class="error"></pre>
+              </div>
+  
+              <div class="center">
+                <button onclick="jdd.compare()">Compare</button>
+                <div class="throbber-loader"></div>
+              </div>
+  
+              <div class="right">
+                <textarea spellcheck="false" class="right" id="textarearight">
+                  {{changes.updated | json:2}}
+                </textarea>
+                <pre id="errorRight" class="error"></pre>
+              </div>
+
+              <div class="diffcontainer">
+                <div id="report">
+                </div>
+                <pre id="out" class="left" class="codeBlock"></pre>
+                <pre id="out2" class="right" class="codeBlock"></pre>
+                <ul id="toolbar" class="toolbar"></ul>
+              </div>
+
+            </div>
+          </div>
         </div>
       </div>
 
