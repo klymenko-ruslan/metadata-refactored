@@ -31,56 +31,35 @@
       <div class="row">
         <div class="col-xs-12">
           <label for="log_user" style="width: 10em;">User</label>
-          <span id="log_user">{{user.name}}</span>
+          <span id="log_user"><a href="#" data-ng-click="onUserView(user.id)">{{user.name}}</a></span>
         </div>
       </div>
-      <!-- div class="row">
+      <div class="row">
         <div class="col-xs-12">
           <label for="log_description">Description</label>
           <pre id="log_description" style="max-height: 10em;">{{description}}</pre>
         </div>
-      </div -->
-      <!-- div class="row">
-        <div class="col-xs-12">
-          <label for="log_data">Data</label>
-          <pre id="log_data" style="max-height: 15em;">{{changes | json : 2}}</pre>
-        </div>
-      </div -->
-
+      </div>
       <div class="row">
         <div class="col-xs-12">
-          <div id="main">
-            <div class="initContainer">
-  
-              <div class="left">
-                <textarea spellcheck="false" id="textarealeft">
-                  {{changes.original | json:2}}
-                </textarea>
-                <pre id="errorLeft" class="error"></pre>
-              </div>
-  
-              <div class="center">
-                <button onclick="jdd.compare()">Compare</button>
-                <div class="throbber-loader"></div>
-              </div>
-  
-              <div class="right">
-                <textarea spellcheck="false" class="right" id="textarearight">
-                  {{changes.updated | json:2}}
-                </textarea>
-                <pre id="errorRight" class="error"></pre>
+
+          <label for="changes" style="width: 10em;">Changes</label>
+          <div class="row">
+            <div class="col-xs-12">
+              <div id="changes" class="btn-group" data-ng-show="::diffHtml">
+                <label class="btn btn-primary" data-ng-model="showChanges.as" uib-btn-radio="'raw'">Raw</label>
+                <label class="btn btn-primary" data-ng-model="showChanges.as" uib-btn-radio="'diff'">Diff</label>
               </div>
 
-              <div class="diffcontainer">
-                <div id="report">
+              <div style="margin-top:5px">
+                <pre data-ng-show="showChanges.as=='raw'" style="max-height: 15em;">{{changes | json : 2}}</pre>
+                <div data-ng-show="showChanges.as=='diff'" style="background-color:#f5f5f5;padding:9.5px;margin:0 0 10px;border:1px solid #ccc;border-radius:4px;">
+                  <div data-ng-bind-html="::diffHtml"></div>
                 </div>
-                <pre id="out" class="left" class="codeBlock"></pre>
-                <pre id="out2" class="right" class="codeBlock"></pre>
-                <ul id="toolbar" class="toolbar"></ul>
               </div>
-
             </div>
           </div>
+
         </div>
       </div>
 

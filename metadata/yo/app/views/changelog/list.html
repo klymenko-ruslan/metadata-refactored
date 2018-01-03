@@ -61,6 +61,7 @@
 </form>
 <div class="row" style="margin-top:0.1em">
   <div class="col-xs-12">
+
     <table data-ng-table="changelogTableParams" class="table table-bordered table-striped table-hover table-expand">
       <tr data-ng-repeat="rec in $data">
         <td title="'Date'" data-sortable="'changeDate'" width="5%" class="text-center text-nowrap">{{rec.changeDate | date : "yyyy-MM-dd HH:mm.ss"}}</td>
@@ -76,5 +77,6 @@
       </tr>
     </table>
     <table-summary rowscount="changelogTableParams.total()" />
+
   </div>
 </div>

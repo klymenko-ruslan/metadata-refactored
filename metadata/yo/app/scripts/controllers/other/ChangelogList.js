@@ -134,9 +134,32 @@ angular.module('ngMetaCrudApp')
         }
       }
 
+      $scope.showChanges = {
+        as: 'raw'
+      };
+      var hasDiff = $scope.changes && typeof($scope.changes) === 'object'
+        && $scope.changes.hasOwnProperty('original')
+        && $scope.changes.hasOwnProperty('updated');
+      if (hasDiff) {
+        var original = $scope.changes.original;
+        var updated = $scope.changes.updated;
+        var delta = jsondiffpatch.create({
+          objectHash: function(obj, index) {
+            return obj.name || obj.id || obj._id || '$$index:' + index;
+          }
+        }).diff(original, updated);
+        jsondiffpatch.formatters.html.hideUnchanged();
+        $scope.diffHtml = jsondiffpatch.formatters.html.format(delta, original);
+      }
+
       $scope.onSourceView = function(srcId) {
         $uibModalInstance.close();
         $location.path('/changelog/source/' + srcId);
+      };
+
+      $scope.onUserView = function(id) {
+        $uibModalInstance.close();
+        $location.path('/security/user/' + id);
       };
 
       $scope.onCloseViewDlg = function() {
