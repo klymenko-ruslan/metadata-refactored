@@ -40,12 +40,30 @@
           <pre id="log_description" style="max-height: 10em;">{{description}}</pre>
         </div>
       </div>
+
       <div class="row">
         <div class="col-xs-12">
-          <label for="log_data">Data</label>
-          <pre id="log_data" style="max-height: 15em;">{{changes | json : 2}}</pre>
+
+          <label for="changes" style="width: 10em;">Changes</label>
+          <div class="row">
+            <div class="col-xs-12">
+              <div id="changes" class="btn-group" data-ng-show="::diffHtml">
+                <label class="btn btn-primary" data-ng-model="showChanges.as" uib-btn-radio="'raw'">Raw</label>
+                <label class="btn btn-primary" data-ng-model="showChanges.as" uib-btn-radio="'diff'">Diff</label>
+              </div>
+
+              <div style="margin-top:5px">
+                <pre data-ng-show="showChanges.as=='raw'" style="max-height: 15em;">{{changes | json : 2}}</pre>
+                <div data-ng-show="showChanges.as=='diff'" style="background-color:#f5f5f5;padding:9.5px;margin:0 0 10px;border:1px solid #ccc;border-radius:4px;">
+                  <div data-ng-bind-html="::diffHtml"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
+
 
     </div>
 
