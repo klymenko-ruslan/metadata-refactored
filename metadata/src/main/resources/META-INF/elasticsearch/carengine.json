@@ -2,7 +2,7 @@
   "properties": {
     "id": {
       "type": "long",
-      "store": "yes"
+      "store": true
     },
     "engineSize": {
       "type": "text",
@@ -12,19 +12,19 @@
           "type": "text",
           "fielddata": true,
           "analyzer": "keyword",
-          "store": "yes"
+          "store": true
         },
         "short": {
           "type": "text",
           "fielddata": true,
           "analyzer": "normalized_short",
-          "store": "yes"
+          "store": true
         },
         "lower_case_sort": {
           "type": "text",
           "fielddata": true,
           "analyzer": "case_insensitive_sort",
-          "store": "yes"
+          "store": true
         }
       }
     },
@@ -38,19 +38,19 @@
               "type": "text",
               "fielddata": true,
               "analyzer": "keyword",
-              "store": "yes"
+              "store": true
             },
             "short": {
               "type": "text",
               "fielddata": true,
               "analyzer": "keyword",
-              "store": "yes"
+              "store": true
             },
             "lower_case_sort": {
               "type": "text",
               "fielddata": true,
               "analyzer": "case_insensitive_sort",
-              "store": "yes"
+              "store": true
             }
           }
         }

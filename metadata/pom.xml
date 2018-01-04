@@ -76,7 +76,7 @@
         <maven.compiler.debug>true</maven.compiler.debug>
         <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
         <sqlserver.version>4.2</sqlserver.version>
-        <es.version>5.0.2</es.version>
+        <es.version>6.1.1</es.version>
     </properties>
     
     <repositories>

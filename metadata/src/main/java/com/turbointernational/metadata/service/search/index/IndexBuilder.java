@@ -3,12 +3,19 @@ package com.turbointernational.metadata.service.search.index;
 import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.service.CriticalDimensionService;
 import com.turbointernational.metadata.service.ResourceService;
+
+import org.apache.commons.io.IOUtils;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.common.settings.loader.JsonSettingsLoader;
+import org.elasticsearch.common.settings.Settings;
+//import org.elasticsearch.common.settings.loader.JsonSettingsLoader;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.common.xcontent.XContentType;
+
+import static java.lang.Boolean.TRUE;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +31,7 @@ public class IndexBuilder {
                 "carmodel", "carmodelengineyear", "salesnotepart", "source"}) {
             String resourceName = "elasticsearch/" + indexType + ".json";
             String typeDef = resourceService.loadFromMeta(resourceName);
-            indexRequestBuilder.addMapping(indexType, typeDef);
+            indexRequestBuilder.addMapping(indexType, typeDef, XContentType.JSON);
         }
         // Add Part fields to the index.
         String partDef = resourceService.loadFromMeta("elasticsearch/part.json");
@@ -33,14 +40,16 @@ public class IndexBuilder {
         int n = partDef.lastIndexOf('}');
         n = partDef.lastIndexOf('}', n - 1);
         partDef = partDef.substring(0, n) + "," + critDimsDef + partDef.substring(n);
-        indexRequestBuilder.addMapping("part", partDef);
-        String settingsDefinition = resourceService.loadFromMeta("elasticsearch/settings.json");
-
-        Map<String, String> settings = (new JsonSettingsLoader(true)).load(settingsDefinition);
-        settings.put("index.number_of_shards", Integer.toString(numberOfShards));
-        settings.put("index.number_of_replicas", Integer.toString(numberOfReplicas));
-        settings.put("index.max_result_window", Integer.toString(maxResultWindow));
-        indexRequestBuilder.setSettings(settings);
+        indexRequestBuilder.addMapping("part", partDef, XContentType.JSON);
+        String nameOfsettingsJson = "elasticsearch/settings.json";
+        String settingsDefinition = resourceService.loadFromMeta(nameOfsettingsJson);
+        InputStream settingsInStream = IOUtils.toInputStream(settingsDefinition, "UTF-8");
+        Settings.Builder builder = Settings.builder().loadFromStream(nameOfsettingsJson, settingsInStream, false);
+        //Map<String, String> settings = (new JsonSettingsLoader(true)).load(settingsDefinition);
+        builder.put("index.number_of_shards", numberOfShards);
+        builder.put("index.number_of_replicas", numberOfReplicas);
+        builder.put("index.max_result_window", maxResultWindow);
+        indexRequestBuilder.setSettings(builder.build());
     }
 
     private static String critDimsIndexDef(CriticalDimensionService criticalDimensionService) throws IOException {
@@ -88,7 +97,7 @@ public class IndexBuilder {
     private static void critDimsIndexDefPlainType(XContentBuilder xcb, String idxName, String idxType) throws IOException {
         xcb.startObject(idxName)
                 .field("type", idxType)
-                .field("store", "yes")
+                .field("store", TRUE)
                 .endObject();
     }
 
@@ -100,7 +109,7 @@ public class IndexBuilder {
         // in a WEB UI (e.g. in tables).
         xcb.startObject(idxName)
                 .field("type", "long")
-                .field("store", "yes")
+                .field("store", TRUE)
                 .endObject();
         // Index to store enumeration item LABEL.
         // Caveat. The suffix "Label" below is hardcoded in the
@@ -118,13 +127,13 @@ public class IndexBuilder {
                 .field("type", "text")
                 .field("fielddata", true)
                 .field("analyzer", "keyword")
-                .field("store", "yes")
+                .field("store", TRUE)
                 .endObject()
                 .startObject("lower_case_sort")
                 .field("type", "text")
                 .field("fielddata", true)
                 .field("analyzer", "case_insensitive_sort")
-                .field("store", "yes")
+                .field("store", TRUE)
                 .endObject()
                 .endObject()
                 .endObject();

@@ -40,7 +40,6 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.NestedQueryBuilder;
@@ -227,7 +226,7 @@ public class SearchServiceEsImpl implements SearchService {
     private void init() throws UnknownHostException {
         // Establish connection to ElasticSearch cluster.
         InetAddress inetAddrElasticSearchHost = InetAddress.getByName(elasticSearchHost);
-        TransportAddress taddr = new InetSocketTransportAddress(inetAddrElasticSearchHost, elasticSearchPort);
+        TransportAddress taddr = new TransportAddress(inetAddrElasticSearchHost, elasticSearchPort);
         Settings settings = Settings.builder().put("cluster.name", clusterName).build();
         this.elasticSearch = new PreBuiltTransportClient(settings).addTransportAddress(taddr);
     }
