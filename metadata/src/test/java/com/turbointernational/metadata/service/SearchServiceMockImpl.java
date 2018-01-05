@@ -32,7 +32,7 @@ public class SearchServiceMockImpl implements SearchService {
     private final static Logger log = LoggerFactory.getLogger(SearchServiceMockImpl.class);
 
     @Override
-    public void createIndex() {
+    public void createIndexes() {
         log.debug("Indexing: createIndex.");
     }
 

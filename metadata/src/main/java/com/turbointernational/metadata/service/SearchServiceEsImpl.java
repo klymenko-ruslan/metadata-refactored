@@ -15,6 +15,7 @@ import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -29,10 +30,10 @@ import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -114,8 +115,8 @@ public class SearchServiceEsImpl implements SearchService {
     @Autowired
     private PlatformTransactionManager txManager; // JPA
 
-    @Value("${elasticsearch.index}")
-    protected String elasticSearchIndex = "metadata";
+    @Value("${elasticsearch.index.prefix}")
+    protected String elasticSearchIndexPrefix = "metadata.";
 
     @Value("${elasticsearch.host}")
     private String elasticSearchHost;
@@ -241,14 +242,12 @@ public class SearchServiceEsImpl implements SearchService {
     /**
      * Transform a string to a string for search in the "name.short" field.
      * <p>
-     * Some types in the ElasticSearch index has property "name" that is mapped
-     * on two versions:
+     * Some types in the ElasticSearch index has property "name" that is mapped on two versions:
      * <dd>
      * <dt>full</dt>
      * <dd>the field indexed as is</dd>
      * <dt>short</dt>
-     * <dd>the field transformed to a lower-case string and removed all non-word
-     * characters</dd></dd>
+     * <dd>the field transformed to a lower-case string and removed all non-word characters</dd></dd>
      *
      * @param s
      *            string to transform. null not allowed.
@@ -496,7 +495,7 @@ public class SearchServiceEsImpl implements SearchService {
 
                     try {
                         if (recreateIndex) {
-                            createIndex();
+                            createIndexes();
                         }
                         if (indexParts) {
                             scrollableParts = partDao.getScrollableResults(fetchSize, true, "id");
@@ -636,27 +635,53 @@ public class SearchServiceEsImpl implements SearchService {
         }
     }
 
+    private Settings loadIndexSettings(int numberOfShards, int numberOfReplicas, int maxResultWindow)
+            throws IOException {
+        String nameOfsettingsJson = "elasticsearch/settings.json";
+        String settingsDefinition = resourceService.loadFromMeta(nameOfsettingsJson);
+        InputStream settingsInStream = IOUtils.toInputStream(settingsDefinition, "UTF-8");
+        try {
+            Settings.Builder builder = Settings.builder().loadFromStream(nameOfsettingsJson, settingsInStream, false);
+            builder.put("index.number_of_shards", numberOfShards);
+            builder.put("index.number_of_replicas", numberOfReplicas);
+            builder.put("index.max_result_window", maxResultWindow);
+            return builder.build();
+        } finally {
+            settingsInStream.close();
+        }
+    }
+
+    private String toIndexName(String indexType) {
+        return elasticSearchIndexPrefix + "_" + indexType;
+    }
+
     @Override
-    public void createIndex() throws IOException, AssertionError {
+    public void createIndexes() throws IOException, AssertionError {
         IndicesAdminClient indices = elasticSearch.admin().indices();
-        // Delete index.
-        boolean indexExists = indices.prepareExists(elasticSearchIndex).execute().actionGet().isExists();
-        if (indexExists) {
-            indices.prepareDelete(elasticSearchIndex).toString();
-            DeleteIndexResponse delIdxResponse = indices.prepareDelete(elasticSearchIndex).get();
-            if (!delIdxResponse.isAcknowledged()) {
+        Settings settings = loadIndexSettings(numberOfShards, numberOfReplicas, maxResultWindow);
+        for (String indexType : new String[] { elasticSearchTypeCarEngine, elasticSearchTypeCarFuelType,
+                elasticSearchTypeCarYear, elasticSearchTypeCarMake, elasticSearchTypeCarModel,
+                elasticSearchTypeCarModelEngineYear, elasticSearchTypeSalesNotePart, elasticSearchTypeSource }) {
+            String indexName = toIndexName(indexType);
+            IndexBuilder.deleteIndex(indices, indexName);
+            CreateIndexRequestBuilder indexRequestBuilder = IndexBuilder.build(resourceService, indices,
+                    indexType, indexName, settings);
+            CreateIndexResponse createIndexResponse = indexRequestBuilder.get();
+            if (!createIndexResponse.isAcknowledged()) {
                 throw new AssertionError(
-                        String.format("Deletion of the ElasticSearch index '%1$s' failed.", elasticSearchIndex));
+                        String.format("Creation of the ElasticSearch index (type) '%1$s' failed.", indexType));
             }
         }
-        CreateIndexRequestBuilder indexRequestBuilder = indices.prepareCreate(elasticSearchIndex);
-
-        IndexBuilder.build(criticalDimensionService, resourceService, indexRequestBuilder, numberOfShards,
-                numberOfReplicas, maxResultWindow);
+        // Create index for parts.
+        String indexType = "part";
+        String indexName = toIndexName(indexType);
+        IndexBuilder.deleteIndex(indices, indexName);
+        CreateIndexRequestBuilder indexRequestBuilder = IndexBuilder.buildIndexForParts(criticalDimensionService,
+                resourceService, indices, indexType, indexName, settings);
         CreateIndexResponse createIndexResponse = indexRequestBuilder.get();
         if (!createIndexResponse.isAcknowledged()) {
             throw new AssertionError(
-                    String.format("Creation of the ElasticSearch index '%1$s' failed.", elasticSearchIndex));
+                    String.format("Creation of the ElasticSearch index '%1$s' failed.", indexName));
         }
     }
 
@@ -779,8 +804,8 @@ public class SearchServiceEsImpl implements SearchService {
     public Object rawFilterParts(Long[] subsetPartIds, String partNumber, Long partTypeId, String manufacturerName,
             String name, String interchangeParts, String description, Boolean inactive, String turboTypeName,
             String turboModelName, String cmeyYear, String cmeyMake, String cmeyModel, String cmeyEngine,
-            String cmeyFuelType, Map<String, String[]> queriedCriticalDimensions,
-            String sortProperty, String sortOrder, Integer offset, Integer limit) {
+            String cmeyFuelType, Map<String, String[]> queriedCriticalDimensions, String sortProperty, String sortOrder,
+            Integer offset, Integer limit) {
         List<AbstractQueryItem> rootQueryItems = new ArrayList<>(100);
         if (subsetPartIds != null && subsetPartIds.length > 0) {
             rootQueryItems.add(new PlainQueryItem(SearchTermFactory.newArraySearchTerm("id", subsetPartIds)));
@@ -788,7 +813,8 @@ public class SearchServiceEsImpl implements SearchService {
         partNumber = StringUtils.defaultIfEmpty(partNumber, null);
         if (isNotBlank(partNumber)) {
             String normalizedPartNumber = str2shotfield.apply(partNumber);
-            rootQueryItems.add(new PlainQueryItem(newTextSearchTerm("manufacturerPartNumber.short", normalizedPartNumber)));
+            rootQueryItems
+                    .add(new PlainQueryItem(newTextSearchTerm("manufacturerPartNumber.short", normalizedPartNumber)));
         }
         if (partTypeId != null) {
             rootQueryItems.add(new PlainQueryItem(newIntegerSearchTerm("partType.id", EQ, partTypeId)));
@@ -837,11 +863,13 @@ public class SearchServiceEsImpl implements SearchService {
 
         if (isNotBlank(turboTypeName)) {
             String normalizedTurboTypeName = str2shotfield.apply(turboTypeName);
-            rootQueryItems.add(new PlainQueryItem(newTextSearchTerm("turboModel.turboType.name.short", normalizedTurboTypeName)));
+            rootQueryItems.add(
+                    new PlainQueryItem(newTextSearchTerm("turboModel.turboType.name.short", normalizedTurboTypeName)));
         }
         if (isNotBlank(turboModelName)) {
             String normalizedTurboModelName = str2shotfield.apply(turboModelName);
-            rootQueryItems.add(new PlainQueryItem(newTextSearchTerm("turboModel.name.short", normalizedTurboModelName)));
+            rootQueryItems
+                    .add(new PlainQueryItem(newTextSearchTerm("turboModel.name.short", normalizedTurboModelName)));
         }
         if (partTypeId != null) {
             List<CriticalDimension> criticalDimensions = criticalDimensionService
@@ -866,7 +894,8 @@ public class SearchServiceEsImpl implements SearchService {
                 }
             }
         }
-        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypePart)
+        String indexName = toIndexName(elasticSearchTypePart);
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(indexName).setTypes(elasticSearchTypePart)
                 .setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (rootQueryItems.isEmpty()) {
@@ -875,7 +904,7 @@ public class SearchServiceEsImpl implements SearchService {
             BoolQueryBuilder rootBoolQuery = QueryBuilders.boolQuery();
             for (AbstractQueryItem rqi : rootQueryItems) {
                 TypeEnum qit = rqi.getType();
-                switch(qit) {
+                switch (qit) {
                 case PLAIN:
                     plainSubquery(rootBoolQuery, ((PlainQueryItem) rqi).getTerm());
                     break;
@@ -927,10 +956,10 @@ public class SearchServiceEsImpl implements SearchService {
     public String filterParts(Long[] subsetPartIds, String partNumber, Long partTypeId, String manufacturerName,
             String name, String interchangeParts, String description, Boolean inactive, String turboTypeName,
             String turboModelName, String cmeyYear, String cmeyMake, String cmeyModel, String cmeyEngine,
-            String cmeyFuelType, Map<String, String[]> queriedCriticalDimensions, String sortProperty,
-            String sortOrder, Integer offset, Integer limit) {
+            String cmeyFuelType, Map<String, String[]> queriedCriticalDimensions, String sortProperty, String sortOrder,
+            Integer offset, Integer limit) {
         return rawFilterParts(subsetPartIds, partNumber, partTypeId, manufacturerName, name, interchangeParts,
-                description, inactive, turboTypeName, turboModelName,cmeyYear, cmeyMake, cmeyModel, cmeyEngine,
+                description, inactive, turboTypeName, turboModelName, cmeyYear, cmeyMake, cmeyModel, cmeyEngine,
                 cmeyFuelType, queriedCriticalDimensions, sortProperty, sortOrder, offset, limit).toString();
     }
 
@@ -1029,7 +1058,8 @@ public class SearchServiceEsImpl implements SearchService {
     public String filterCarModelEngineYears(String carModelEngineYear, String year, String make, String model,
             String engine, String fuel, String sortProperty, String sortOrder, Integer offset, Integer limit) {
         carModelEngineYear = StringUtils.defaultIfEmpty(carModelEngineYear, null);
-        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
+        String indexName = toIndexName(elasticSearchTypeCarModelEngineYear);
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(indexName)
                 .setTypes(elasticSearchTypeCarModelEngineYear).setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (carModelEngineYear == null && year == null && make == null && model == null && engine == null
@@ -1087,8 +1117,9 @@ public class SearchServiceEsImpl implements SearchService {
     @Override
     public String filterCarMakes(String carMake, String sortProperty, String sortOrder, Integer offset, Integer limit) {
         carMake = StringUtils.defaultIfEmpty(carMake, null);
-        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypeCarMake)
-                .setSearchType(DFS_QUERY_THEN_FETCH);
+        String indexName = toIndexName(elasticSearchTypeCarMake);
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(indexName)
+                .setTypes(elasticSearchTypeCarMake).setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (carMake == null) {
             query = QueryBuilders.matchAllQuery();
@@ -1120,8 +1151,9 @@ public class SearchServiceEsImpl implements SearchService {
     public String filterCarModels(String carModel, String make, String sortProperty, String sortOrder, Integer offset,
             Integer limit) {
         carModel = StringUtils.defaultIfEmpty(carModel, null);
-        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypeCarModel)
-                .setSearchType(DFS_QUERY_THEN_FETCH);
+        String indexName = toIndexName(elasticSearchTypeCarModel);
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(indexName)
+                .setTypes(elasticSearchTypeCarModel).setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (carModel == null && make == null) {
             query = QueryBuilders.matchAllQuery();
@@ -1159,8 +1191,9 @@ public class SearchServiceEsImpl implements SearchService {
     public String filterCarEngines(String carEngine, String fuelType, String sortProperty, String sortOrder,
             Integer offset, Integer limit) {
         carEngine = StringUtils.defaultIfEmpty(carEngine, null);
-        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypeCarEngine)
-                .setSearchType(DFS_QUERY_THEN_FETCH);
+        String indexName = toIndexName(elasticSearchTypeCarEngine);
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(indexName)
+                .setTypes(elasticSearchTypeCarEngine).setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (carEngine == null && fuelType == null) {
             query = QueryBuilders.matchAllQuery();
@@ -1198,7 +1231,8 @@ public class SearchServiceEsImpl implements SearchService {
     public String filterCarFuelTypes(String fuelType, String sortProperty, String sortOrder, Integer offset,
             Integer limit) {
         fuelType = StringUtils.defaultIfEmpty(fuelType, null);
-        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
+        String indexName = toIndexName(elasticSearchTypeCarFuelType);
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(indexName)
                 .setTypes(elasticSearchTypeCarFuelType).setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         if (fuelType == null) {
@@ -1231,7 +1265,8 @@ public class SearchServiceEsImpl implements SearchService {
     public String filterSalesNotes(String partNumber, String comment, Long primaryPartId, Set<SalesNoteState> states,
             boolean includePrimary, boolean includeRelated, String sortProperty, String sortOrder, Integer offset,
             Integer limit) {
-        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex)
+        String indexName = toIndexName(elasticSearchTypeSalesNotePart);
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(indexName)
                 .setTypes(elasticSearchTypeSalesNotePart).setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
@@ -1281,8 +1316,9 @@ public class SearchServiceEsImpl implements SearchService {
     @Override
     public String filterChanglelogSources(String name, String descritpion, String url, Long sourceNameId,
             String sortProperty, String sortOrder, Integer offset, Integer limit) {
-        SearchRequestBuilder srb = elasticSearch.prepareSearch(elasticSearchIndex).setTypes(elasticSearchTypeSource)
-                .setSearchType(DFS_QUERY_THEN_FETCH);
+        String indexName = toIndexName(elasticSearchTypeSource);
+        SearchRequestBuilder srb = elasticSearch.prepareSearch(indexName)
+                .setTypes(elasticSearchTypeSource).setSearchType(DFS_QUERY_THEN_FETCH);
         QueryBuilder query;
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         if (isNotBlank(name)) {
@@ -1320,7 +1356,7 @@ public class SearchServiceEsImpl implements SearchService {
     @Override
     public void indexAll() throws Exception {
         log.info("All documents are being indexed.");
-        createIndex();
+        createIndexes();
         ScrollableResults scrollableParts = partDao.getScrollableResults(DEF_FETCH_SIZE, true, "id");
         indexAllDocs(scrollableParts, DEF_FETCH_SIZE, elasticSearchTypePart, null);
         ScrollableResults scrollableCarModelEngineYears = carModelEngineYearDao.getScrollableResults(DEF_FETCH_SIZE,
@@ -1343,7 +1379,8 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     private void deleteDoc(String elasticSearchType, String searchId) throws Exception {
-        DeleteRequest delete = new DeleteRequest(elasticSearchIndex, elasticSearchType, searchId);
+        String indexName = toIndexName(elasticSearchType);
+        DeleteRequest delete = new DeleteRequest(indexName, elasticSearchType, searchId);
         elasticSearch.delete(delete).actionGet(timeout);
     }
 
@@ -1358,6 +1395,7 @@ public class SearchServiceEsImpl implements SearchService {
     }
 
     private void indexDoc(SearchableEntity doc, String elasticSearchType) {
+        String indexName = toIndexName(elasticSearchType);
         TransactionTemplate tt = new TransactionTemplate(txManager);
         tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
         tt.execute((TransactionCallback<Void>) ts -> {
@@ -1365,9 +1403,9 @@ public class SearchServiceEsImpl implements SearchService {
             doc.beforeIndexing(interchangeService);
             List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
             String asJson = doc.toSearchJson(criticalDimensions);
-            log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}", elasticSearchIndex,
-                    elasticSearchType, searchId, asJson);
-            IndexRequest index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
+            log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
+                    indexName, elasticSearchType, searchId, asJson);
+            IndexRequest index = new IndexRequest(indexName, elasticSearchType, searchId);
             index.source(asJson);
             elasticSearch.index(index).actionGet(timeout);
             return null;
@@ -1376,6 +1414,7 @@ public class SearchServiceEsImpl implements SearchService {
 
     private void indexAllDocs(ScrollableResults scrollableResults, int batchSize, String elasticSearchType,
             Observer observer) throws Exception {
+        String indexName = toIndexName(elasticSearchType);
         TransactionTemplate tt = new TransactionTemplate(txManager);
         tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
         tt.execute((TransactionCallback<Void>) ts -> {
@@ -1395,14 +1434,14 @@ public class SearchServiceEsImpl implements SearchService {
                         Object entity = scrollableResults.get(0);
                         SearchableEntity doc = (SearchableEntity) entity;
                         searchId = doc.getSearchId();
-                        index = new IndexRequest(elasticSearchIndex, elasticSearchType, searchId);
+                        index = new IndexRequest(indexName, elasticSearchType, searchId);
                         doc.beforeIndexing(interchangeService);
                         List<CriticalDimension> criticalDimensions = getCriticalDimensions(doc);
                         asJson = doc.toSearchJson(criticalDimensions);
                     }
                     Thread.yield();
-                    log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
-                            elasticSearchIndex, elasticSearchType, searchId, asJson);
+                    log.debug("indexName: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
+                            indexName, elasticSearchType, searchId, asJson);
                     index.source(asJson);
                     if (bulk == null) {
                         bulk = new BulkRequest();

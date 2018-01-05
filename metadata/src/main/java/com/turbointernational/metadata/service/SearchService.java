@@ -476,7 +476,7 @@ public interface SearchService {
 
     SearchService.IndexingStatus getIndexingStatus() throws Exception;
 
-    void createIndex() throws IOException;
+    void createIndexes() throws IOException;
 
     void indexPart(long id);
 
