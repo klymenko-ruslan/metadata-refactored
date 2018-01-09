@@ -11,6 +11,7 @@ import static com.turbointernational.metadata.service.search.parser.terms.Search
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.lucene.search.join.ScoreMode.None;
 import static org.elasticsearch.action.search.SearchType.DFS_QUERY_THEN_FETCH;
+import static org.elasticsearch.common.xcontent.XContentType.JSON;
 import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
@@ -1442,7 +1443,7 @@ public class SearchServiceEsImpl implements SearchService {
                     Thread.yield();
                     log.debug("indexName: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
                             indexName, elasticSearchType, searchId, asJson);
-                    index.source(asJson);
+                    index.source(asJson, JSON);
                     if (bulk == null) {
                         bulk = new BulkRequest();
                     }

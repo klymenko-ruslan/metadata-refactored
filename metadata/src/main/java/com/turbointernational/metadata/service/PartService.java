@@ -574,10 +574,7 @@ public class PartService {
 
         @Override
         public Bucket[] apply(InternalTerms<?, ?> it) {
-            // List<org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket> itBuckets = it.getBuckets();
-            List<?> itBuckets = it.getBuckets();
-            //return itBuckets.stream().map(b -> new Bucket(b.getKey(), b.getDocCount())).toArray(Bucket[]::new);
-            return null; // TODO: fix
+            return it.getBuckets().stream().map(b -> new Bucket(b.getKey(), b.getDocCount())).toArray(Bucket[]::new);
         }
 
     };
@@ -618,10 +615,9 @@ public class PartService {
                 cmeyYear, cmeyMake, cmeyModel, cmeyEngine, cmeyFuelType, null, null, null, 0, 10000);
         Map<Long, Map<String, ?>> idxSources = new HashMap<>();
         for (SearchHit sh : sr.getHits().getHits()) {
-            // TODO: fix
-            //Map<String, ?> src = sh.getSource();
-            //Long srcPartId = ((Number) src.get("id")).longValue();
-            //idxSources.put(srcPartId, src);
+            Map<String, ?> src = sh.getSourceAsMap();
+            Long srcPartId = ((Number) src.get("id")).longValue();
+            idxSources.put(srcPartId, src);
         }
         //@formatter:off
         List<Ancestor> allAncestors = Arrays.stream(rows)
@@ -653,8 +649,9 @@ public class PartService {
         }
         Map<String, Bucket[]> aggregations = new HashMap<>();
         sr.getAggregations().asList().stream().filter(a -> a instanceof InternalTerms).forEach(a -> {
-            String term = a.getName();
-            Bucket[] buckets = internalTerm2buckets.apply((InternalTerms<?, ?>) a);
+            InternalTerms<?, ?> it = (InternalTerms<?, ?>) a;
+            String term = it.getName();
+            Bucket[] buckets = internalTerm2buckets.apply(it);
             aggregations.put(term, buckets);
         });
         int toIndex = offset + limit;
