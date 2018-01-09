@@ -1407,7 +1407,7 @@ public class SearchServiceEsImpl implements SearchService {
             log.debug("elasticSearchIndex: {}, elasticSearchType: {}, searchId: {}, asJson: {}",
                     indexName, elasticSearchType, searchId, asJson);
             IndexRequest index = new IndexRequest(indexName, elasticSearchType, searchId);
-            index.source(asJson);
+            index.source(asJson, JSON);
             elasticSearch.index(index).actionGet(timeout);
             return null;
         });
