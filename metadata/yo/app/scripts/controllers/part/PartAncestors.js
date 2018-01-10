@@ -247,8 +247,8 @@ angular.module('ngMetaCrudApp')
               params.total($scope.searchResults.ancestors.total);
               return $scope.searchResults.ancestors.recs;
             },
-            function(errorResponse) {
-              $log.log('Parts search failed: ' + errorResponse);
+            function(error) {
+              restService.error('Parts search failed: ', error);
             }
           );
         }

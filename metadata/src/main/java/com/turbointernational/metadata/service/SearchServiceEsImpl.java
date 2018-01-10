@@ -872,7 +872,7 @@ public class SearchServiceEsImpl implements SearchService {
             rootQueryItems
                     .add(new PlainQueryItem(newTextSearchTerm("turboModel.name.short", normalizedTurboModelName)));
         }
-        if (partTypeId != null) {
+        if (partTypeId != null && queriedCriticalDimensions != null) {
             List<CriticalDimension> criticalDimensions = criticalDimensionService
                     .getCriticalDimensionForPartType(partTypeId);
             if (criticalDimensions != null && !criticalDimensions.isEmpty()) {

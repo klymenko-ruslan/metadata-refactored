@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import javax.naming.directory.SearchResult;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.Application;
