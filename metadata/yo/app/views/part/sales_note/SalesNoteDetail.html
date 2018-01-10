@@ -73,6 +73,17 @@
 </metanav>
 
 <h1 class="padding-top" part-name="part" part-name-suffix="Sales Note {{salesNoteId}}"></h1>
+<div class="row">
+  <div class="col-xs-12">
+    <span>
+      Created <i>{{salesNote.createDate | date : "yyyy-MM-dd HH:mm:ss" }}</i> by <a href="#" data-ng-href="/security/user/{{salesNote.creator.id}}">{{salesNote.creator.name}}</a>.
+    </span>
+    <span data-ng-if="salesNote.createDate != salesNote.updateDate">
+      Last updated <i>{{salesNote.updateDate | date : "yyyy-MM-dd HH:mm:ss" }}</i> by <a href="#" data-ng-href="/security/user/{{salesNote.updater.id}}">{{salesNote.updater.name}}.</a>
+
+    </span>
+  </div>
+</div>
 <hr>
 
 <div data-ng-if="!isEditing()">

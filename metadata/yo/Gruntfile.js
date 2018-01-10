@@ -195,6 +195,7 @@ module.exports = function (grunt) {
             }
             middlewares.push(connect().use('/part/1/bom/4/alt/31726739', indexHtml));
             middlewares.push(connect().use('/part/1/bom/4/alt/31722278', indexHtml));
+            middlewares.push(connect().use('/part/68674/sales_note/617', indexHtml));
 
             if (!Array.isArray(options.base)) {
               options.base = [options.base];
