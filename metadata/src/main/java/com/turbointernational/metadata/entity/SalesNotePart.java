@@ -222,6 +222,13 @@ public class SalesNotePart implements Serializable, SearchableEntity {
     protected JSONSerializer getSearchSerializer() {
         return new JSONSerializer()
                 .include("createDate")
+                .include("creator.id")
+                .include("creator.name")
+                .exclude("creator.*")
+                .include("updateDate")
+                .include("updater.id")
+                .include("updater.name")
+                .exclude("updater.*")
                 .include("primary")
                 .include("primaryPartId")
                 .include("pk.salesNote.id")

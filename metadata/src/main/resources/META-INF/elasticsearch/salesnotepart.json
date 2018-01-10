@@ -6,6 +6,76 @@
       "analyzer": "keyword",
       "store": true
     },
+    "creator": {
+      "properties": {
+        "id": {
+          "type": "long",
+          "store": true
+        },
+        "name": {
+          "type": "text",
+          "fielddata": true,
+          "fields": {
+            "full": {
+              "type": "text",
+              "fielddata": true,
+              "analyzer": "keyword",
+              "store": true
+            },
+            "short": {
+              "type": "text",
+              "fielddata": true,
+              "analyzer": "normalized_short",
+              "store": true
+            },
+            "lower_case_sort": {
+              "type": "text",
+              "fielddata": true,
+              "analyzer": "case_insensitive_sort",
+              "store": true
+            }
+          }
+        }
+      }
+    },
+    "updateDate": {
+      "type": "text",
+      "fielddata": true,
+      "analyzer": "keyword",
+      "store": true
+    },
+    "updater": {
+      "properties": {
+        "id": {
+          "type": "long",
+          "store": true
+        },
+        "name": {
+          "type": "text",
+          "fielddata": true,
+          "fields": {
+            "full": {
+              "type": "text",
+              "fielddata": true,
+              "analyzer": "keyword",
+              "store": true
+            },
+            "short": {
+              "type": "text",
+              "fielddata": true,
+              "analyzer": "normalized_short",
+              "store": true
+            },
+            "lower_case_sort": {
+              "type": "text",
+              "fielddata": true,
+              "analyzer": "case_insensitive_sort",
+              "store": true
+            }
+          }
+        }
+      }
+    },
     "primary": {
       "type": "boolean",
       "store": true

@@ -135,6 +135,7 @@ module.exports = function (grunt) {
               connect().use('/changelog/source', indexHtml),
               connect().use('/criticaldimension/enums', indexHtml),
               connect().use('/search/indexing/status', indexHtml),
+              connect().use('/other/salesNotes', indexHtml),
             ];
 
             let partTypeIds = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15,
@@ -150,6 +151,7 @@ module.exports = function (grunt) {
             let partIdsUnderDebug = [
               1, 2, 3,
               289,    // 'Where used (ancestors)'
+              1258,
               1449, 1461, 2318,
               6751,
               6233,   // Many BOMs; Tabs: 'Prices', 'Also Bought'
@@ -178,7 +180,10 @@ module.exports = function (grunt) {
               69690, 70079, 70090,   // Tabs: 'Turbos'
               78252
             ];
-            let urlSuffixes = ['', '/bom/search', '/ancestors', '/parentbom/search', '/oversize/add', '/application/search'];
+            let urlSuffixes = [
+              '', '/bom/search', '/ancestors', '/parentbom/search',
+              '/oversize/add', '/application/search', 'sales_notes'
+          ];
             for(let partId of partIdsUnderDebug) {
               for(let s of urlSuffixes) {
                 let url = '/part/' + partId.toString() + s;
