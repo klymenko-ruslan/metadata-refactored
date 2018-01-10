@@ -1,5 +1,7 @@
 'use strict';
 
+/* globals jsondiffpatch:false */
+
 angular.module('ngMetaCrudApp')
   .controller('ChangelogListCtrl', ['$scope', '$log', 'NgTableParams', '$uibModal', 'restService', 'users',
     'DATE_FORMAT', function(
@@ -137,9 +139,9 @@ angular.module('ngMetaCrudApp')
       $scope.showChanges = {
         as: 'raw'
       };
-      var hasDiff = $scope.changes && typeof($scope.changes) === 'object'
-        && $scope.changes.hasOwnProperty('original')
-        && $scope.changes.hasOwnProperty('updated');
+      var hasDiff = $scope.changes && typeof($scope.changes) === 'object' &&
+        $scope.changes.hasOwnProperty('original') &&
+        $scope.changes.hasOwnProperty('updated');
       if (hasDiff) {
         var original = $scope.changes.original;
         var updated = $scope.changes.updated;
