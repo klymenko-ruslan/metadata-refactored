@@ -2,6 +2,7 @@ package com.turbointernational.metadata.service;
 
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.SALESNOTES;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
+import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 import static com.turbointernational.metadata.util.FormatUtils.formatSalesNote;
 import static org.apache.commons.io.FileUtils.writeByteArrayToFile;
@@ -9,8 +10,10 @@ import static org.apache.commons.io.FileUtils.writeByteArrayToFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,6 +28,8 @@ import com.turbointernational.metadata.dao.SalesNoteAttachmentDao;
 import com.turbointernational.metadata.dao.SalesNoteDao;
 import com.turbointernational.metadata.dao.SalesNotePartDao;
 import com.turbointernational.metadata.entity.Changelog;
+import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
+import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.SalesNote;
 import com.turbointernational.metadata.entity.SalesNoteAttachment;
 import com.turbointernational.metadata.entity.SalesNotePart;
@@ -138,17 +143,6 @@ public class SalesNoteService {
             throw new RemovePrimaryPartException("Can't delete the primary part for a sales note.");
         }
         salesNotePartDao.delete(salesNotePart);
-        /*
-         * // Find the entities SalesNote salesNote =
-         * salesNotes.findOne(salesNoteId); hasEditAccess(request, salesNote);
-         * // Find the SNP SalesNotePart salesNotePart = Iterables.find(
-         * salesNote.getParts(), snp -> snp.getPart().getId() == partId); //
-         * Can't delete primary part if (salesNotePart.isPrimary()) { throw new
-         * RemovePrimaryPartException("Can't delete the primary part for a sales note."
-         * ); } // Delete the SNP salesNote.getParts().remove(salesNotePart);
-         * salesNoteParts.delete(salesNotePart); // Save
-         * salesNotes.save(salesNote);
-         */
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
         changelogService.log(SALESNOTES,
@@ -259,7 +253,12 @@ public class SalesNoteService {
 
     @Transactional
     public void removeSalesNote(Long id) {
+        SalesNote salesNote = salesNoteDao.findOne(id);
+        Collection<RelatedPart> relatedParts = salesNote.getParts().stream()
+                .map(snp -> new RelatedPart(snp.getPartId(), snp.isPrimary() ? PART0 : PART1))
+                .collect(Collectors.toList());
         salesNoteDao.delete(id);
+        changelogService.log(SALESNOTES, "Deleted sales note [" + id + "].", relatedParts);
     }
 
     private void hasEditAccess(HttpServletRequest request, SalesNote salesNote) {

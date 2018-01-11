@@ -153,6 +153,7 @@ module.exports = function (grunt) {
               289,    // 'Where used (ancestors)'
               1258,
               1449, 1461, 2318,
+              4160,
               6751,
               6233,   // Many BOMs; Tabs: 'Prices', 'Also Bought'
               6246,
@@ -178,7 +179,8 @@ module.exports = function (grunt) {
               65254,
               63398, 64449,
               69690, 70079, 70090,   // Tabs: 'Turbos'
-              78252
+              78252,
+              82137
             ];
             let urlSuffixes = [
               '', '/bom/search', '/ancestors', '/parentbom/search',
