@@ -520,6 +520,7 @@ div.table-summary {
   margin-top: -25px;
   font-size: 12pt;
   color: #777;
+
 }
 
 div.table-summary span.row-count {
@@ -529,4 +530,23 @@ div.table-summary span.row-count {
 
 div.table-summary span.row-count-txt {
   font-family: Arial Helvetica sans-serif;
+}
+
+div.tiny-bttn {
+  display: inline-block;
+  cursor: pointer;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin: 0;
+  padding: auto 10px;
+  font-size:70%;
+}
+
+div.tiny-bttn:hover {
+  background-color: #eee;
+}
+
+div.tiny-bttn:active {
+  background-color: #ccc;
 }

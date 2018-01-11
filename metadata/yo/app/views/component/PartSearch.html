@@ -16,7 +16,12 @@
       <uib-accordion-group heading="Basic attributes" is-open="fltrGroupState.basicAttrsOpened" class="panel-default">
 
         <div class="form-group">
-          <label for="fltrState">State</label>
+          <label for="fltrState">
+            State
+          </label>
+          <div class="tiny-bttn" title="Reset">
+            <i class="fa fa-times" aria-hidden="true"></i>
+          </div>
           <select id="fltrState" name="fltrState" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="fltrPart.inactive">
             <option></option>
           </select>
