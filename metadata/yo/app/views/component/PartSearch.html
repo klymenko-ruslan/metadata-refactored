@@ -3,8 +3,8 @@
   <!-- Search by input or facet select options -->
   <div class="col-xs-12 col-sm-3">
 
-    <button class="btn btn-default input-sm" data-ng-click="clearFilter()">
-      <i class="fa fa-eraser" aria-hidden="true"></i> Clear
+    <button class="btn btn-warning btn-sm" data-ng-click="clearFilter()" style="margin-bottom: 3px;">
+      <i class="fa fa-eraser" aria-hidden="true"></i> <span style="font-family:monospace;font-variant:small-caps;font-stretch:expanded;">RESET FILTER</span>
     </button>
     <div class="form-group">
       <label for="fltrPartNumber" class="sr-only control-label">Part Number</label>
@@ -13,35 +13,37 @@
 
     <uib-accordion close-others="false">
 
-      <uib-accordion-group heading="Basic attributes" is-open="fltrGroupState.basicAttrsOpened" class="panel-default">
+      <uib-accordion-group heading="Basic attributes" is-open="fltrGroupState.basicAttrsOpened" class="panel-info">
 
         <div class="form-group">
           <label for="fltrState">
             State
           </label>
-          <div class="tiny-bttn" title="Reset">
-            <i class="fa fa-times" aria-hidden="true"></i>
-          </div>
+          <reset-bttn action="resetState()" />
           <select id="fltrState" name="fltrState" class="form-control input-sm" data-ng-options="itm.val as itm.name + ' (' + itm.count + ')' for itm in stateItems | orderBy: 'name'" data-ng-model="fltrPart.inactive">
             <option></option>
           </select>
         </div>
         <div class="form-group">
           <label for="fltrManufacturer">Manufacturer</label>
+          <reset-bttn action="resetManufacturer()" />
           <select id="fltrManufacturer" name="fltrManufacturer" class="form-control input-sm" data-ng-options="itm.key as itm.key + ' (' + itm.doc_count + ')' for itm in searchResults.aggregations['Manufacturer'].buckets | orderBy: 'key'" data-ng-model="fltrPart.manufacturer">
             <option></option>
           </select>
         </div>
         <div class="form-group">
           <label for="fltrName">Name</label>
+          <reset-bttn action="resetName()" />
           <input id="fltrName" name="fltrName" class="form-control input-sm" type="text" data-ng-model="fltrPart.name" placeholder="Name..." data-ng-model-options="{debounce: 500}" />
         </div>
         <div class="form-group">
           <label for="fltrInterchangeParts">Interchange Parts</label>
+          <reset-bttn action="resetInterchangeParts()" />
           <input id="fltrInterchangeParts" name="fltrInterchangeParts" class="form-control input-sm" type="text" data-ng-model="fltrPart.interchangeParts" placeholder="Part Number..." data-ng-model-options="{debounce: 500}" />
         </div>
         <div class="form-group">
           <label for="fltrPartType">Type</label>
+          <reset-bttn action="resetPartType()" />
           <select id="fltrPartType" name="fltrPartType" class="form-control input-sm" data-ng-options="pt.name for pt in partTypes track by pt.id" data-ng-model="fltrPart.partType">
              <option></option>
           </select>
@@ -49,7 +51,7 @@
 
       </uib-accordion-group>
 
-      <uib-accordion-group heading="Attributes for Application" is-open="fltrGroupState.appAttrsOpened" class="panel-default">
+      <uib-accordion-group heading="Attributes for Application" is-open="fltrGroupState.appAttrsOpened" class="panel-info">
 
         <div class="form-group">
           <div angucomplete-alt id="fltrYear"
@@ -128,7 +130,7 @@
 
       </uib-accordion-group>
 
-      <uib-accordion-group heading="Attributes for Turbo" is-open="fltrGroupState.turboAttrsOpened" is-disabled="fltrPart.partType.id !== 1" class="panel-default">
+      <uib-accordion-group heading="Attributes for Turbo" is-open="fltrGroupState.turboAttrsOpened" is-disabled="fltrPart.partType.id !== 1" class="panel-info">
 
         <div class="form-group">
           <div angucomplete-alt id="fltrTurboModel"
@@ -164,7 +166,7 @@
 
       </uib-accordion-group>
 
-      <uib-accordion-group heading="Critical dimensions" is-open="fltrGroupState.critDimsOpened" is-disabled="!isCritDimsForCurrentPartTypeAvailable()" class="panel-default">
+      <uib-accordion-group heading="Critical dimensions" is-open="fltrGroupState.critDimsOpened" is-disabled="!isCritDimsForCurrentPartTypeAvailable()" class="panel-info">
 
         <div class="form-group" data-ng-repeat="cd in critDims">
           <input type="text" placeholder="{{cd.name}}" class="form-control input-sm" data-ng-if="cd.dataType !== 'ENUMERATION'" data-ng-model="fltrPart.critDims[cd.idxName]" data-ng-model-options="{debounce: 500}" />

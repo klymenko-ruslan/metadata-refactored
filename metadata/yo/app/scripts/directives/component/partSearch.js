@@ -57,6 +57,31 @@ angular.module('ngMetaCrudApp')
 
         $scope.actions = utils.transclude2html($transclude);
 
+        $scope.resetState = function() {
+          $scope.fltrPart.inactive = null;
+          $scope.$apply();
+        }
+
+        $scope.resetManufacturer = function() {
+          $scope.fltrPart.manufacturer = null;
+          $scope.$apply();
+        }
+
+        $scope.resetName = function() {
+          $scope.fltrPart.name = null;
+          $scope.$apply();
+        }
+
+        $scope.resetInterchangeParts = function() {
+          $scope.fltrPart.interchangeParts = null;
+          $scope.$apply();
+        }
+
+        $scope.resetPartType = function() {
+          $scope.fltrPart.partType = null;
+          $scope.$apply();
+        }
+
         $scope.fixedCols = [
           {
             title: 'Type',
