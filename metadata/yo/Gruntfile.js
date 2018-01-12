@@ -178,13 +178,14 @@ module.exports = function (grunt) {
               50055,  // Common Component Mapping
               65254,
               63398, 64449,
+              68674,
               69690, 70079, 70090,   // Tabs: 'Turbos'
               78252,
               82137
             ];
             let urlSuffixes = [
               '', '/bom/search', '/ancestors', '/parentbom/search',
-              '/oversize/add', '/application/search', 'sales_notes'
+              '/oversize/add', '/application/search', '/sales_notes'
           ];
             for(let partId of partIdsUnderDebug) {
               for(let s of urlSuffixes) {

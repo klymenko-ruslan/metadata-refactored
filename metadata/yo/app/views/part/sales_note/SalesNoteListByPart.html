@@ -38,6 +38,9 @@
         <td title="'Created'" data-sortable="'createDate'" class="text-nowrap">
           {{row._source.createDate | date : "yyyy-MM-dd HH:mm" }}
         </td>
+        <td title="'User'" data-sortable="'creator.name.lower_case_sort'" class="text-nowrap">
+          <a href="#" data-ng-href="/security/user/{{row._source.creator.id}}">{{row._source.creator.name}}</a>
+        </td>
         <td title="'Primary Part'" data-sortable="'pk.part.manufacturerPartNumber.lower_case_sort'" class="text-nowrap">
           {{row._source.pk.part.manufacturerPartNumber}}
         </td>
@@ -79,7 +82,7 @@
         </td>
       </tr>
       <tr data-ng-hide="$data.length > 0">
-        <td colspan="6">Sales notes for this part (and filter) not found.</td>
+        <td colspan="7">Sales notes for this part (and filter) not found.</td>
       </tr>
     </table>
   </div>
