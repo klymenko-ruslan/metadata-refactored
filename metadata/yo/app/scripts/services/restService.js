@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .service('restService', ['$log', '$http', 'Restangular', 'dialogs', '$q', '$rootScope', '$filter',
+  .service('restService', ['$log', '$http', 'Restangular', 'dialogs', '$q', '$filter',
       'METADATA_BASE', 'DATE_FORMAT',
-      function RestService($log, $http, Restangular, dialogs, $q, $rootScope, $filter, METADATA_BASE, DATE_FORMAT) {
+      function RestService($log, $http, Restangular, dialogs, $q, $filter, METADATA_BASE, DATE_FORMAT) {
 
     function TheService() { // jshint ignore:line
 

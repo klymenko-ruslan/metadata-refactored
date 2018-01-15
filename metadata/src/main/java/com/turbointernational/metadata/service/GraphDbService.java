@@ -15,12 +15,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriTemplate;
 
@@ -470,10 +474,10 @@ public class GraphDbService {
      * @param response
      * @throws DataAccessResourceFailureException
      */
-    public static void checkSuccess(Response response) throws DataAccessResourceFailureException {
+    public static void checkSuccess(Response response) throws DataAccessException {
         if (!response.isSuccess()) {
-            log.warn("Call to GraphDb searvice returns an error: " + response.getMsg());
-            throw new DataAccessResourceFailureException(response.getMsg());
+            log.error("Call to GraphDb searvice returns an error: " + response.getMsg());
+            throw new DataIntegrityViolationException(response.getMsg());
         }
     }
 
@@ -487,10 +491,16 @@ public class GraphDbService {
      * @return
      * @throws DataAccessResourceFailureException
      */
-    private <T> T get(URI uri, Class<T> responseClazz) {
-        T response = restArangoDbService.getForObject(uri, responseClazz);
-        // checkSuccess(response);
-        return response;
+    private <T> T get(URI uri, Class<T> responseClazz) throws DataAccessException {
+        try {
+            T response = restArangoDbService.getForObject(uri, responseClazz);
+            return response;
+        } catch(HttpClientErrorException e) {
+            String msg = String.format("A GET request to the URL '%s' failed with HTTP code %d and status '%s'.", uri,
+                    e.getRawStatusCode(), e.getStatusText());
+            log.error(msg);
+            throw new DataRetrievalFailureException(msg);
+        }
     }
 
     private <T extends Response> T exchange(URI uri, HttpMethod method, Object body, Class<T> responseClazz)
@@ -599,19 +609,19 @@ public class GraphDbService {
 
     public GetAncestorsResponse getAncestors(Long partId) {
         URI uri = uriTmplGetAncestors.expand(partId);
-        GetAncestorsResponse.Row[] rows = restArangoDbService.getForObject(uri, GetAncestorsResponse.Row[].class);
+        GetAncestorsResponse.Row[] rows = get(uri, GetAncestorsResponse.Row[].class);
         return new GetAncestorsResponse(rows);
     }
 
     public GetBomsResponse getBoms(Long partId) {
         URI uri = uriTmplGetBoms.expand(partId);
-        GetBomsResponse.Row[] rows = restArangoDbService.getForObject(uri, GetBomsResponse.Row[].class);
+        GetBomsResponse.Row[] rows = get(uri, GetBomsResponse.Row[].class);
         return new GetBomsResponse(rows);
     }
 
     public GetBomsResponse getParentsBoms(Long partId) {
         URI uri = uriTmplGetParentBoms.expand(partId);
-        GetBomsResponse.Row[] rows = restArangoDbService.getForObject(uri, GetBomsResponse.Row[].class);
+        GetBomsResponse.Row[] rows = get(uri, GetBomsResponse.Row[].class);
         return new GetBomsResponse(rows);
     }
 
@@ -656,7 +666,7 @@ public class GraphDbService {
 
     public GetAltBomsResponse.Group[] getAltBoms(Long parentPartId, Long childPartId) {
         URI uri = uriTmplGetAltBoms.expand(parentPartId, childPartId);
-        return restArangoDbService.getForObject(uri, GetAltBomsResponse.Group[].class);
+        return get(uri, GetAltBomsResponse.Group[].class);
     }
 
     public CreateAltBomResponse createAltBom(Long parentPartId, Long childPartId, Long altHeaderId, Long altPartId)

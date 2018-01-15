@@ -714,4 +714,12 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
     $routeProvider.otherwise({
       redirectTo: '/'
     });
+  }])
+  .run(['$rootScope', '$log', function($rootScope, $log) {
+    $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
+      $log.error('Encountered internal error: ');
+      $log.error(error);
+      alert('Error: ' + angular.toJson(error, 2));
+    });
+
   }]);
