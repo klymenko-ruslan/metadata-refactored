@@ -35,6 +35,13 @@ angular.module('ngMetaCrudApp')
           });
       };
 
+      $scope.canPick = function(id) {
+        var exists = _.find($scope.salesNote.parts, function(p) {
+          return p.part.id === id;
+        });
+        return !exists;
+      };
+
       $scope.canSave = function() {
         return $scope.pickedPart !== null;
       };

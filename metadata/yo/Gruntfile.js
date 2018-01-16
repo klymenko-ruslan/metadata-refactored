@@ -188,8 +188,10 @@ module.exports = function (grunt) {
               '', '/bom/search', '/ancestors', '/parentbom/search',
               '/oversize/add', '/application/search', '/sales_notes'
           ];
-            for(let partId of partIdsUnderDebug) {
-              for(let s of urlSuffixes) {
+            for(let m = 0; m < partIdsUnderDebug.length; m++) {
+              let partId = partIdsUnderDebug[m];
+              for(let j = 0; j < urlSuffixes.length; j++) {
+                let s = urlSuffixes[j];
                 let url = '/part/' + partId.toString() + s;
                 let entry = connect().use(url, indexHtml);
                 middlewares.push(entry);
@@ -200,6 +202,8 @@ module.exports = function (grunt) {
             middlewares.push(connect().use('/part/1/bom/4/alt/31726739', indexHtml));
             middlewares.push(connect().use('/part/1/bom/4/alt/31722278', indexHtml));
             middlewares.push(connect().use('/part/68674/sales_note/617', indexHtml));
+            middlewares.push(connect().use('/part/6569/sales_note/633', indexHtml));
+            middlewares.push(connect().use('/part/6569/sales_note/633/related_part/search', indexHtml));
 
             if (!Array.isArray(options.base)) {
               options.base = [options.base];

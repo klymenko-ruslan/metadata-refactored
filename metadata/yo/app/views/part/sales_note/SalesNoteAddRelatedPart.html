@@ -49,8 +49,8 @@
     <h3>Related Parts</h3>
     <table data-ng-table="relatedPartTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="relatedPart in $data">
-            <td title="'Part #'" sortable="'relatedPart.part.manufacturerPartNumber'">
-                {{relatedPart.part.manufacturerPartNumber}}
+            <td title="'Part #'" class="text-left" sortable="'relatedPart.part.manufacturerPartNumber'">
+              <a href="#" data-ng-href="/part/{{relatedPart.part.id}}">{{relatedPart.part.manufacturerPartNumber}}</p>
             </td>
             <td title="'Part Type'" sortable="'relatedPart.part.partType.name'">
                 {{relatedPart.part.partType.name}}
@@ -73,5 +73,5 @@
 
 <part-search class="well well-lg">
   <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs"><i class="fa fa-eye"></i> View</a>
-  <a authorize="ROLE_BOM" data-ng-click="pickPart($part._source.id)" class="btn btn-success btn-xs"><i class="fa fa-bullseye"></i> Pick</a>
+  <button authorize="ROLE_BOM" data-ng-disabled="::!canPick($part._source.id)" data-ng-click="pickPart($part._source.id)" class="btn btn-success btn-xs"><i class="fa fa-bullseye"></i> Pick</button>
 </part-search>
