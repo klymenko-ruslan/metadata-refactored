@@ -9,14 +9,10 @@ angular.module('ngMetaCrudApp')
         if (attrs.action) {
           var action = $parse(attrs.action);
           element.on('click', function() {
-            scope.$eval(action)
+            scope.$eval(action);
           });
         }
-      },
-      controller: ['$scope',
-        function($scope) {
-        }
-      ]
+      }
     };
   }
 ]);

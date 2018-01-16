@@ -1,5 +1,7 @@
 'use strict';
 
+/* globals alert:false */
+
 angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
     'ui.bootstrap', 'restangular', 'dialogs.main',
     'dialogs.default-translations', 'toastr', 'angucomplete-alt',

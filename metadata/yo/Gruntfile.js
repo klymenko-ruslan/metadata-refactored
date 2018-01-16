@@ -142,7 +142,8 @@ module.exports = function (grunt) {
               16, 17, 18, 19, 20, 21, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
               40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52];
 
-            for(let ptid of partTypeIds) {
+            for(let k = 0; k < partTypeIds.length; k++) {
+              let ptid = partTypeIds[k];
               let url = '/part/createByPartTypeId/' + ptid.toString();
               let entry = connect().use(url, indexHtml);
               middlewares.push(entry);
