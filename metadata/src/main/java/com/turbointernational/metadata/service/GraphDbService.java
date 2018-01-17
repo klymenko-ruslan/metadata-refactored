@@ -464,6 +464,8 @@ public class GraphDbService {
         uriTmplDeleteAltBomGroup = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
                 + restArangoDbServicePort + "/boms/{parentPartId}/children/{childPartId}/alternatives/{altHeaderId}");
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        // Timeouts below is set as fix for (Redmine #301).
+        // See http://redmine.turbointernational.com/issues/301.
         requestFactory.setConnectionRequestTimeout(5000);
         requestFactory.setReadTimeout(5000);
         requestFactory.setConnectionRequestTimeout(5000);
