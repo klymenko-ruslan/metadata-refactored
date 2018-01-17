@@ -23,6 +23,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -66,7 +67,6 @@ public class GraphDbService {
     @Value("${rest.arangodb.service.port}")
     private Integer restArangoDbServicePort;
 
-    @Autowired
     private RestTemplate restArangoDbService;
 
     @Autowired
@@ -463,6 +463,11 @@ public class GraphDbService {
                 + restArangoDbServicePort + "/boms/{parentPartId}/children/{childPartId}/alternatives");
         uriTmplDeleteAltBomGroup = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
                 + restArangoDbServicePort + "/boms/{parentPartId}/children/{childPartId}/alternatives/{altHeaderId}");
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        requestFactory.setConnectionRequestTimeout(5000);
+        requestFactory.setReadTimeout(5000);
+        requestFactory.setConnectionRequestTimeout(5000);
+        this.restArangoDbService = new RestTemplate(requestFactory);
 
     }
 
