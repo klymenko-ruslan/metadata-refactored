@@ -11,6 +11,8 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -463,7 +465,11 @@ public class GraphDbService {
                 + restArangoDbServicePort + "/boms/{parentPartId}/children/{childPartId}/alternatives");
         uriTmplDeleteAltBomGroup = new UriTemplate(restArangoDbServiceProtocol + "://" + restArangoDbServiceHost + ":"
                 + restArangoDbServicePort + "/boms/{parentPartId}/children/{childPartId}/alternatives/{altHeaderId}");
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        HttpClient httpClient = HttpClientBuilder.create()
+                .setMaxConnTotal(1000)
+                .setMaxConnPerRoute(1000)
+                .build();
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
         // Timeouts below is set as fix for (Redmine #301).
         // See http://redmine.turbointernational.com/issues/301.
         requestFactory.setConnectionRequestTimeout(5000);
