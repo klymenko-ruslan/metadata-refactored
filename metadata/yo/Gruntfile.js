@@ -181,8 +181,8 @@ module.exports = function (grunt) {
               63398, 64449,
               68674,
               69690, 70079, 70090,   // Tabs: 'Turbos'
-              78252,
-              82137
+              78450 /* Audit log ~50 */, 78252,
+              82137, 82219
             ];
             let urlSuffixes = [
               '', '/bom/search', '/ancestors', '/parentbom/search',
