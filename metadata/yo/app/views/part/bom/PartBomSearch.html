@@ -72,6 +72,7 @@
           </td>
           <td title="'Qty'">
             <input type="number" data-ng-model="rec.extra.qty" data-ng-min="0" style="width:5em;" required />
+            <!-- pre>{{rec.extra | json:2}}</pre -->
           </td>
           <td class="actions text-center" title="'Actions'">
             <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpick(rec.id)">
@@ -81,7 +82,7 @@
           </td>
         </tr>
         <tr data-ng-hide="$data.length > 0">
-          <td colspan="4">No picked parts.</td>
+          <td colspan="5">No picked parts.</td>
         </tr>
       </table>
     </form>

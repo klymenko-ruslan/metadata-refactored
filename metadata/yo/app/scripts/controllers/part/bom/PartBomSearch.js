@@ -50,10 +50,10 @@ angular.module('ngMetaCrudApp')
     );
 
     $scope.pick = function(pickedPart) {
-      pickedParts.push(pickedPart);
       pickedPart.extra = {
         qty: 1
       };
+      pickedParts.push(pickedPart);
       pickedPartIds[pickedPart.id] = true;
       $scope.pickedPartsTableParams.settings({dataset: pickedParts});
     };
