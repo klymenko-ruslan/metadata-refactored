@@ -560,7 +560,7 @@ public class PartController {
 
     @Transactional
     @RequestMapping(value = "/part/{partId}/turboType/{turboTypeId}", method = POST)
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @Secured("ROLE_ALTER_PART")
     @ResponseBody 
     public Collection<TurboType> addTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
@@ -569,7 +569,7 @@ public class PartController {
 
     @Transactional
     @RequestMapping(value = "/part/{partId}/turboType/{turboTypeId}", method = DELETE)
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @Secured("ROLE_ALTER_PART")
     @ResponseBody 
     public Collection<TurboType> deleteTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
