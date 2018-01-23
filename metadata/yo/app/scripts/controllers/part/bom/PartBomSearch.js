@@ -22,7 +22,7 @@ angular.module('ngMetaCrudApp')
     function updateExistingBomPartIds() {
       existingBomPartIds = {};
       _.each(boms, function(b) {
-        existingBomPartIds[b.partId] = true;
+        existingBomPartIds[b.part.partId] = true;
       });
     }
 
