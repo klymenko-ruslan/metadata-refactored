@@ -55,6 +55,8 @@ import org.springframework.validation.Errors;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.turbointernational.metadata.dao.KitTypeDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
@@ -535,6 +537,16 @@ public class PartService {
             com.turbointernational.metadata.web.dto.Part[] parts = rawParts.stream()
                     .map(e -> dict2interchangePart.apply(e))
                     .toArray(com.turbointernational.metadata.web.dto.Part[]::new);
+            if (id == null) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                String json = null;
+                try {
+                    json = objectMapper.writeValueAsString(dict);
+                } catch (JsonProcessingException e1) {
+                    log.error("Debugging #298. Error during serialization.", e1);
+                }
+                log.error("Debugging #298. Found null ID. dict: ", json);
+            }
             return new Interchange(id.longValue(), parts);
         }
 
@@ -620,7 +632,9 @@ public class PartService {
             idxSources.put(srcPartId, src);
         }
         //@formatter:off
-        List<Ancestor> allAncestors = Arrays.stream(rows)
+        List<Ancestor> allAncestors = null;
+        try {
+            allAncestors = Arrays.stream(rows)
                 .map(r -> source2ancestor.apply(r, idxSources))
                 .filter(a -> {
                     boolean skip = a == null || relationDistance != null && relationDistance != a.getRelationDistance()
@@ -631,6 +645,14 @@ public class PartService {
                     return true;
                 })
                 .collect(Collectors.toList());
+        } catch(NullPointerException e) {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectWriter jsonWriter = mapper.writerWithView(View.Summary.class);
+            String txtResponse = jsonWriter.writeValueAsString(response);
+            String msg = String.format("Debugging of #298.\nresponse: %s\nsr: %s", txtResponse, sr.toString());
+            log.error(msg, e);
+            throw e;
+        }
         //@formatter:on
         if (specialSort) {
             if (sortAscByRelationType) {
