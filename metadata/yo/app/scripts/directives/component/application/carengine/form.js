@@ -86,27 +86,6 @@ angular.module('ngMetaCrudApp')
                 restService.error('Could not validate the car engine.', response);
               }
             );
-            /*
-            restService.existsCarEngine($scope.cmey.model.id, $scope.cmey.engine.id,
-              $scope.cmey.year.name).then(
-                function success(exists) {
-                  if (exists) {
-                    $scope.cmeyForm.$valid = false;
-                    $scope.cmeyForm.$invalid = true;
-                    $scope.cmeyForm.$error.nonUniqueApp = true;
-                  } else {
-                    delete $scope.cmeyForm.$error.nonUniqueApp;
-                    if (jQuery.isEmptyObject($scope.cmeyForm.$error)) {
-                      $scope.cmeyForm.$valid = false;
-                      $scope.cmeyForm.$invalid = true;
-                    }
-                  }
-                },
-                function failure(response) {
-                  restService.error('Could not validate application.', response);
-                }
-              );
-              */
           };
 
           $scope.$watch('carengine', function() {
