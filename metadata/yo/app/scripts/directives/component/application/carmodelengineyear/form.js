@@ -325,7 +325,7 @@ angular.module('ngMetaCrudApp')
             if (engineId === null || $scope.pickedEngineIds[engineId]) {
               return;
             }
-            var pickedEngine = _.find($scope.carEngines, function(ce) {
+            var pickedEngine = _.find($scope.carengines, function(ce) {
               return ce.id === engineId;
             });
             if (pickedEngine !== undefined) {
@@ -441,11 +441,6 @@ angular.module('ngMetaCrudApp')
                     if (_.isArray($scope.carmakes)) {
                       var pos = _.sortedIndex($scope.carmakes, newCarMake, 'name');
                       $scope.carmakes.splice(pos, 0, newCarMake);
-                      /*
-                      if ($scope.cmey.model === null || $scope.cmey.model === undefined) {
-                        $scope.cmey.model = {};
-                      }
-                      */
                       $scope.cmey.model.make = newCarMake;
                       $scope.cmeyForm.$setDirty();
                     }

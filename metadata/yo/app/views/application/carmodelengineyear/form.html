@@ -45,8 +45,7 @@
       </div>
       <table id="cmey-frm-tbl-pickedengines" data-ng-table="pickedEnginesTableParams" class="table table-bordered table-striped table-hover table-responsive">
       <tr data-ng-repeat="rec in $data">
-        <td title="'Engine'">{{rec.engineSize}}</td>
-        <td title="'Fuel Type'">{{rec.fuelType.name}}</td>
+        <td title="'Engine'">{{rec.name}}</td>
         <td class="actions text-center" title="'Actions'">
           <button type="button" class="btn btn-danger btn-xs" data-ng-click="unpickCarEngine(rec.id)">
             <i class="fa fa-times"></i>
@@ -55,7 +54,7 @@
         </td>
       </tr>
       <tr data-ng-hide="$data.length > 0">
-        <td colspan="3">No data.</td>
+        <td colspan="2">No data.</td>
       </tr>
       </table>
     </div>
