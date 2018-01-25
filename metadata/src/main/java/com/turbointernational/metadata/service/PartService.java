@@ -531,28 +531,34 @@ public class PartService {
 
         @Override
         public Interchange apply(Map<String, ?> dict) {
+            if (dict == null) {
+                return null;
+            }
             Integer id = (Integer) dict.get("id");
+            if (id == null) {
+                // It is possible that ElasticSearch stores absent interchange as:
+                // "interchange": {
+                //   "parts": [],
+                //   "id": null
+                //  }
+                // instead of:
+                //  "interchange": null
+                // So this 'if' condition handle this case.
+                // See (Redmine) #298
+                // http://redmine.turbointernational.com/issues/298
+                return null;
+            }
             @SuppressWarnings("unchecked")
             List<Map<String, ?>> rawParts = (List<Map<String, ?>>) dict.get("parts");
             com.turbointernational.metadata.web.dto.Part[] parts = rawParts.stream()
                     .map(e -> dict2interchangePart.apply(e))
                     .toArray(com.turbointernational.metadata.web.dto.Part[]::new);
-            if (id == null) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                String json = null;
-                try {
-                    json = objectMapper.writeValueAsString(dict);
-                } catch (JsonProcessingException e1) {
-                    log.error("Debugging #298. Error during serialization.", e1);
-                }
-                log.error("Debugging #298. Found null ID. dict: ", json);
-            }
             return new Interchange(id.longValue(), parts);
         }
 
     };
 
-    private static BiFunction<Row, Map<Long, Map<String, ?>>, Ancestor> source2ancestor = new BiFunction<Row, Map<Long, Map<String, ?>>, Ancestor>() {
+    private static BiFunction<Row, Map<Long, Map<String, ?>>, Ancestor> row2ancestor = new BiFunction<Row, Map<Long, Map<String, ?>>, Ancestor>() {
 
         @Override
         public Ancestor apply(Row row, Map<Long, Map<String, ?>> idxSources) {
@@ -621,11 +627,23 @@ public class PartService {
         }
         GetAncestorsResponse response = graphDbService.getAncestors(partId);
         Row[] rows = response.getRows();
-        Long[] subsetPartIds = Arrays.stream(rows).map(r -> r.getPartId()).toArray(Long[]::new);
-        SearchResponse sr = (SearchResponse) searchService.rawFilterParts(subsetPartIds, partNumber, partTypeId,
+        // It is possible that the same part in the 'response' can has relation type as 'direct'
+        // as well as 'interchange'. In other words it can have two rows in the 'response'.
+        // To eleminate duplications of part Ids during search in the ElasticSearch we use below
+        // a 'set' instead of a 'list'.
+        Set<Long> subsetPartIds = new HashSet<>();
+        if (rows != null) {
+            for(int i = 0; i < rows.length; i++) {
+                subsetPartIds.add(rows[i].getPartId());
+            }
+        }
+        Long[] lstSubsetPartIds = new Long[subsetPartIds.size()];
+        lstSubsetPartIds  = subsetPartIds.toArray(lstSubsetPartIds);
+        SearchResponse sr = (SearchResponse) searchService.rawFilterParts(lstSubsetPartIds, partNumber, partTypeId,
                 manufacturerName, name, interchangeParts, description, inactive, turboTypeName, turboModelName,
-                cmeyYear, cmeyMake, cmeyModel, cmeyEngine, cmeyFuelType, null, null, null, 0, 10000);
-        Map<Long, Map<String, ?>> idxSources = new HashMap<>();
+                cmeyYear, cmeyMake, cmeyModel, cmeyEngine, cmeyFuelType, null, null, null, 0,
+                10000 /* Some unreachable value */);
+        Map<Long, Map<String, ?>> idxSources = new HashMap<>(); // partId => Map of search hits
         for (SearchHit sh : sr.getHits().getHits()) {
             Map<String, ?> src = sh.getSourceAsMap();
             Long srcPartId = ((Number) src.get("id")).longValue();
@@ -635,21 +653,22 @@ public class PartService {
         List<Ancestor> allAncestors = null;
         try {
             allAncestors = Arrays.stream(rows)
-                .map(r -> source2ancestor.apply(r, idxSources))
+                .map(r -> row2ancestor.apply(r, idxSources))
                 .filter(a -> {
-                    boolean skip = a == null || relationDistance != null && relationDistance != a.getRelationDistance()
-                            || relationType != null && relationType != a.getRelationType();
-                    if (skip) {
-                        return false;
-                    }
-                    return true;
+                    boolean skip = a == null || relationDistance != null 
+                            && relationDistance.intValue() != a.getRelationDistance()
+                            || relationType != null && relationType.booleanValue() != a.getRelationType();
+                    return !skip;
                 })
                 .collect(Collectors.toList());
-        } catch(NullPointerException e) {
+        // TODO: the catch block below can be removed, the issue has been fixed
+        } catch(Exception e) {
             ObjectMapper mapper = new ObjectMapper();
             ObjectWriter jsonWriter = mapper.writerWithView(View.Summary.class);
             String txtResponse = jsonWriter.writeValueAsString(response);
-            String msg = String.format("Debugging of #298.\nresponse: %s\nsr: %s", txtResponse, sr.toString());
+            String txtSubsetPartIds = jsonWriter.writeValueAsString(subsetPartIds);
+            String txtIdxSources = jsonWriter.writeValueAsString(idxSources);
+            String msg = String.format("Debugging of #298. partId: %d%n\n\nresponse: %s\n\nsubsetPartIds: %s\n\nidxSources: %s\n\nsr: %s", partId, txtResponse, txtSubsetPartIds, txtIdxSources, sr.toString());
             log.error(msg, e);
             throw e;
         }
