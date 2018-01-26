@@ -11,6 +11,7 @@ import urllib.request
 import sys
 
 import mysql.connector
+from elasticsearch import Elasticsearch
 from tqdm import tqdm
 
 
@@ -31,6 +32,14 @@ parser.add_argument('--graphdb-host', default='localhost',
                     help='Host with a running instance of GraphDb service.')
 parser.add_argument('--graphdb-port', default=9009, type=int,
                     help='A port for the instntance of the GraphDb service.')
+parser.add_argument('--es-host', default='localhost',
+                    help='Host with a running instance of ElasticSearch '
+                    'service.')
+parser.add_argument('--es-port', default=9200, type=int,
+                    help='A port for the instance of the ElasticSearch '
+                    'service.')
+parser.add_argument('--es-index-part', default='metadata_dev_part',
+                    help='An index name for Parts in the ElasticSearch.')
 args = parser.parse_args()
 
 PartRecord = namedtuple('PartRecord', 'id manfr_part_num manfr_id '
@@ -89,7 +98,7 @@ def _checkBoms(p, parts):
         if child_id not in parts:
             _error(p, 'Invalid ID of a child in BOM: {}. Part with this ID '
                    'is not exist in the DB.'.format(child_id))
-        qty = b['qty']
+        qty = int(b['qty'])
         if qty < 0:
             _error(p, 'Found a negative value {} of attribute "qty" '
                    'in a BOM for child part ID {}.'
@@ -123,7 +132,7 @@ def _checkBoms(p, parts):
                            .format(child_id, alt_part_id))
 
 
-def _checkInterchanges(p, parts):
+def _checkInterchanges(p, es_src, parts):
     url = 'http://{}:{}/parts/{}/interchanges'.format(args.graphdb_host,
                                                       args.graphdb_port,
                                                       p.id)
@@ -136,10 +145,31 @@ def _checkInterchanges(p, parts):
     body = res.read()
     # print('body: {}'.format(body))
     response_obj = json.loads(body.decode('utf-8'))
-    for pid in response_obj['parts']:
+    # Check that interchange stored in the ElasticSearch is
+    # the same as returned by GraphDb.
+    es_interchange = es_src.get('interchange')
+    es_interchange_id = es_interchange.get('id')
+    es_parts = [ip['partId'] for ip in es_interchange.get('parts')]
+    # print('es_parts: {}'.format(es_parts))
+    if es_interchange_id != response_obj['headerId']:
+        _error(p, 'Interchange ID in the GrapgDb ({}) is different than in '
+               'the ElasticSearch ({}).'.format(response_obj['id'],
+                                                es_interchange_id))
+    gdb_parts = response_obj['parts']
+    for pid in gdb_parts:
         if pid not in parts:
-            _error(p, 'Invalid interchange. Part with this ID [{}] '
-                   'not found.'.format(pid))
+            _error(p, 'Invalid interchange. Part with ID [{}] '
+                   'found in the GraphDb but not found in the MySql database.'
+                   .format(pid))
+    for pid in es_parts:
+        if pid not in parts:
+            _error(p, 'Invalid interchange. Part with ID [{}] '
+                   'found in the ElasticSearch but not found in the MySql '
+                   'database.'.format(pid))
+    if set(es_parts) != set(gdb_parts):
+        _error(p, 'Interchanges registered in the ElasticSearch ({}) '
+               'are not the same interchanges registered in the GraphDb ({}).'
+               .format(es_parts, gdb_parts))
 
 
 def _checkAncestors(p, parts):
@@ -165,12 +195,43 @@ def _checkAncestors(p, parts):
                    'is not exist in the DB.'.format(ancestor_id))
 
 
+def checkElasticSearch(es, p):
+    """Check presense of a part in an ElasticSearch index."""
+    try:
+        response = es.get(index=args.es_index_part, doc_type='part', id=p.id)
+        src = response.get('_source')
+        src_id = src.get('id')
+        if src_id != p.id:
+            _error(p, 'Part ID in the ElasticSearch is different '
+                   '(is it ever possible?): {}'.format(src_id))
+        src_pn = src.get('manufacturerPartNumber')
+        if src_pn != p.manfr_part_num:
+            _error(p, 'Part number in the ElasticSearch is different: {}'
+                   .format(src_pn))
+        src_mnfr_id = src.get('manufacturer').get('id')
+        if src_mnfr_id != p.manfr_id:
+            _error(p, 'Manufacturer ID in the ElasticSearch is different: {}'
+                   .format(src_mnfr_id))
+        src_pt_id = src.get('partType').get('id')
+        if src_pt_id != p.part_type_id:
+            _error(p, 'Part type ID int the ElasticSearch is different: {}'
+                   .format(src_pt_id))
+        return src
+    except TransportError as e:
+        if e.status_code == 404:
+            _error(p, 'Part not found in the ElasticSearch index.')
+            return src
+        else:
+            raise e
+
+
 cnx = mysql.connector.connect(host=args.db_host, port=args.db_port,
                               database=args.db_name,
                               user=args.db_username,
                               password=args.db_password,
-                              connection_timeout=3600000,
-                              use_pure=False)
+                              connection_timeout=3600000)
+
+es = Elasticsearch([args.es_host], port=args.es_port)
 
 try:
     cur = cnx.cursor()
@@ -184,6 +245,7 @@ try:
             print('Porcessing...')
             for id in tqdm(parts.keys()):
                 p = parts[id]
+                es_src = checkElasticSearch(es, p)
                 url = 'http://{}:{}/parts/{}'.format(args.graphdb_host,
                                                      args.graphdb_port,
                                                      id)
@@ -202,7 +264,7 @@ try:
                 obj = json.loads(body.decode('utf-8'))
                 _checkPart(obj, p)
                 _checkBoms(p, parts)
-                _checkInterchanges(p, parts)
+                _checkInterchanges(p, es_src, parts)
                 _checkAncestors(p, parts)
         except urllib.error.HTTPError as e:
             _fatal(repr(e))
