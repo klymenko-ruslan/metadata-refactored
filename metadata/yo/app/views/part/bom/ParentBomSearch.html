@@ -32,16 +32,14 @@
           {{b.part.manufacturer.name}}
         </td>
         <td title="'Part#'" class="text-center text-nowrap" data-sortable="'part.partNumber'">
-          {{b.part.partNumber}}
+          <a data-ng-href="/part/{{b.part.partId}}" authorize="ROLE_READ">
+            {{b.part.partNumber}}
+          </a>
         </td>
         <td title="'Qty'" class="text-right" data-sortable="'qty'">
           {{b.qty}}
         </td>
         <td title="'Actions'" class="actions text-center">
-          <a data-ng-href="/part/{{b.partId}}"
-             authorize="ROLE_READ" class="btn btn-primary btn-xs">
-            <i class="fa fa-eye"></i> View
-          </a>
           <button data-ng-click="removeBom(b.part.partId)"
                   authorize="ROLE_BOM" class="btn btn-danger btn-xs">
             <i class="fa fa-trash-o"></i> Remove
@@ -69,12 +67,18 @@
       <table data-ng-table="pickedPartsTableParams" class="table table-bordered table-striped table-hover table-responsive">
         <tr data-ng-repeat="rec in $data">
           <td title="'Part Type'" class="text-nowrap">{{rec.partType.name}}</td>
-          <td title="'Part#'" class="text-nowrap">{{rec.manufacturerPartNumber}}</td>
+          <td title="'Part#'" class="text-nowrap">
+            <a data-ng-href="/part/{{rec.id}}" authorize="ROLE_READ">
+              {{rec.manufacturerPartNumber}}
+            </a>
+          </td>
           <td title="'Qty'">
             <input type="number" data-ng-model="rec.extra.qty" data-ng-min="0" style="width:5em;" required />
           </td>
           <td title="'Existing BOM'">
-            <span class="text-nowrap">{{rec.extra.existingBoms[0].partNumber}}<span data-ng-show="rec.extra.existingBoms.length > 1">,</span></span>
+            <span class="text-nowrap">
+              <a data-ng-href="/part/{{rec.extra.existingBoms[0].part.partId}}">{{rec.extra.existingBoms[0].part.partNumber}}</a>
+            <span data-ng-show="rec.extra.existingBoms.length > 1">,</span></span>
             &nbsp;<a href="#" title="See more..." data-ng-show="rec.extra.existingBoms.length > 1" data-ng-click="displayExistingBOMs(rec)">...</a>
           </td>
           <td title="'Resolution'">

@@ -164,6 +164,7 @@ module.exports = function (grunt) {
               289,    // 'Where used (ancestors)'
               1258,
               1449, 1461, 2318,
+              3010,
               4160,
               6751,
               6233,   // Many BOMs; Tabs: 'Prices', 'Also Bought'
@@ -171,6 +172,7 @@ module.exports = function (grunt) {
               6681,   // Turbo
               6692,   // Alternative BOM(s)
               17415,  // Interchanges, Tabs: 'Applications'
+              18504,
               18505,
               25493,  // Tabs: 'Applications'
               29878,  // Tabs: 'Applications'

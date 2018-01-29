@@ -463,13 +463,13 @@ public class BOMService {
     }
 
     public Bom[] getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {
-        Bom[] parents = getParentsForBom(partId);  // TODO: batch?
+        Bom[] parents = getByParentId(partId);  // TODO: batch?
         Bom[] retVal = Arrays.stream(parents).filter(b -> b.getPart().getPartType().getId().equals(partTypeId))
                 .toArray(size -> new Bom[size]);
         return retVal;
     }
 
-    public CreateBOMsResponse addToParentsBOMs(HttpServletRequest httpRequest, Long primaryPartId,
+    public CreateBOMsResponse addToParentsBOMs(HttpServletRequest httpRequest, /* parent */ Long primaryPartId,
             AddToParentBOMsRequest request) throws Exception {
         Part primaryPart = partDao.findOne(primaryPartId);
         Long primaryPartTypeId = primaryPart.getPartType().getId();
@@ -493,13 +493,14 @@ public class BOMService {
                 // Remove existing BOMs in the picked part.
                 for (int i = 0; i < pickedPartBoms.length; i++) {
                     GetBomsResponse.Row row = pickedPartBoms[i];
-                    Part ppb = partDao.findOne(row.getPartId());
-                    Long childPartTypeId = ppb.getPartType().getId();
+                    Long ppbchldId = row.getPartId();
+                    Part ppbchld = partDao.findOne(ppbchldId);
+                    Long childPartTypeId = ppbchld.getPartType().getId();
                     if (childPartTypeId.equals(primaryPartTypeId)) {
                         List<RelatedPart> relatedParts = new ArrayList<>(2);
-                        relatedParts.add(new RelatedPart(primaryPartId, ChangelogPart.Role.BOM_PARENT));
-                        relatedParts.add(new RelatedPart(row.getPartId(), ChangelogPart.Role.BOM_CHILD));
-                        Response response = graphDbService.removePartFromBom(pickedPartId, primaryPartId);
+                        relatedParts.add(new RelatedPart(pickedPartId, ChangelogPart.Role.BOM_PARENT));
+                        relatedParts.add(new RelatedPart(ppbchldId, ChangelogPart.Role.BOM_CHILD));
+                        Response response = graphDbService.removePartFromBom(pickedPartId, ppbchldId);
                         checkSuccess(response);
                         String txtAudit = row.toAuditLog();
                         changelogService.log(BOM,
