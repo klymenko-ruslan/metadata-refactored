@@ -23,7 +23,7 @@ angular.module('ngMetaCrudApp')
       function updateParentPartsIds() {
         parentPartsIds = {};
         _.each(parents, function(bi) {
-          parentPartsIds[bi.partId] = true;
+          parentPartsIds[bi.part.partId] = true;
         });
       }
 
