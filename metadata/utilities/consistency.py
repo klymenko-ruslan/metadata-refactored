@@ -153,7 +153,7 @@ def _checkInterchanges(p, es_src, parts):
     # print('es_parts: {}'.format(es_parts))
     if es_interchange_id != response_obj['headerId']:
         _error(p, 'Interchange ID in the GrapgDb ({}) is different than in '
-               'the ElasticSearch ({}).'.format(response_obj['id'],
+               'the ElasticSearch ({}).'.format(response_obj['headerId'],
                                                 es_interchange_id))
     gdb_parts = response_obj['parts']
     for pid in gdb_parts:
