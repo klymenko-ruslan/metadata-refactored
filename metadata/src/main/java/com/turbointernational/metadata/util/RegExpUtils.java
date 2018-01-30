@@ -8,10 +8,10 @@ import java.util.regex.Pattern;
  */
 public class RegExpUtils {
 
-    public final static String MANUFACTURER_NUMBER_STR_REGEX_0 = "[0-9]-[a-z|A-Z]-[0-6][0-9][0-9][0-9]";
-    public final static String MANUFACTURER_NUMBER_STR_REGEX_1 = "[0-9]-[a-z|A-Z]-[0-6][0-9][0-9][0-9][a-z|A-Z|0-9]";
-    public final static String MANUFACTURER_NUMBER_STR_REGEX_2 = "[0-9][0-9]-[a-z|A-Z]-[0-6][0-9][0-9][0-9]";
-    public final static String MANUFACTURER_NUMBER_STR_REGEX_3 = "[0-9][0-9]-[a-z|A-Z]-[0-6][0-9][0-9][0-9][a-z|A-Z|0-9]";
+    public final static String MANUFACTURER_NUMBER_STR_REGEX_0 = "[0-9]-[a-z|A-Z]-[0-9][0-9][0-9][0-9]";
+    public final static String MANUFACTURER_NUMBER_STR_REGEX_1 = "[0-9]-[a-z|A-Z]-[0-9][0-9][0-9][0-9][a-z|A-Z|0-9]";
+    public final static String MANUFACTURER_NUMBER_STR_REGEX_2 = "[0-9][0-9]-[a-z|A-Z]-[0-9][0-9][0-9][0-9]";
+    public final static String MANUFACTURER_NUMBER_STR_REGEX_3 = "[0-9][0-9]-[a-z|A-Z]-[0-9][0-9][0-9][0-9][a-z|A-Z|0-9]";
 
     public final static Pattern PTRN_MANUFACTURER_NUMBER = Pattern.compile(MANUFACTURER_NUMBER_STR_REGEX_0 +
             "|" + MANUFACTURER_NUMBER_STR_REGEX_1 + "|" + MANUFACTURER_NUMBER_STR_REGEX_2 +
