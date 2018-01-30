@@ -28,8 +28,6 @@ import com.turbointernational.metadata.dao.SalesNoteAttachmentDao;
 import com.turbointernational.metadata.dao.SalesNoteDao;
 import com.turbointernational.metadata.dao.SalesNotePartDao;
 import com.turbointernational.metadata.entity.Changelog;
-import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
-import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.SalesNote;
 import com.turbointernational.metadata.entity.SalesNoteAttachment;
 import com.turbointernational.metadata.entity.SalesNotePart;
