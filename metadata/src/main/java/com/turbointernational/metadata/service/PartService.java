@@ -173,6 +173,8 @@ public class PartService {
             origin.setId(null);
             origin.setManufacturerPartNumber(mpn);
             Changelog chlog = registerPart(PART, user, origin);
+            interchangeService.initInterchange(origin);
+            searchService.indexPart(origin);
             changelogSourceService.link(httpRequest, chlog, sourcesIds, ratings, description, attachIds);
             results.add(new PartController.PartCreateResponse.Row(origin.getId(), mpn, true, null));
             added.add(mpn);
@@ -210,6 +212,7 @@ public class PartService {
         interchangeService.create(partId, originalPartId);
         if (details) {
             interchangeService.initInterchange(toCreate);
+            searchService.indexPart(toCreate);
         }
         return toCreate;
     }

@@ -503,9 +503,8 @@ public class BOMService {
                         Response response = graphDbService.removePartFromBom(pickedPartId, ppbchldId);
                         checkSuccess(response);
                         String txtAudit = row.toAuditLog();
-                        changelogService.log(BOM,
-                                "Deleted BOM item: " + formatBom(pickedPart, primaryPart, row.getQty()), txtAudit,
-                                relatedParts);
+                        changelogService.log(BOM, "Deleted BOM item: " + formatBom(pickedPart, ppbchld, row.getQty()),
+                                txtAudit, relatedParts);
                     }
                 }
             }
