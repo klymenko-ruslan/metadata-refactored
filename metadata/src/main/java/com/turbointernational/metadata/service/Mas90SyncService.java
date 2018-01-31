@@ -51,7 +51,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.turbointernational.metadata.dao.Mas90SyncDao;
 import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.entity.Manufacturer;
 import com.turbointernational.metadata.entity.Mas90Sync;
 import com.turbointernational.metadata.entity.Mas90SyncFailure;
@@ -526,9 +525,6 @@ public class Mas90SyncService {
                         String logMsg = String.format("Inserted a new part: [%d] %s", part.getId(),
                                 part.getManufacturerPartNumber());
                         log.info(logMsg);
-                        List<RelatedPart> relatedParts = new ArrayList<>(1);
-                        relatedParts.add(new RelatedPart(partId, PART0));
-                        changelogService.log(MAS90SYNC, user, logMsg, relatedParts);
                         synchronized (syncProcessStatus) {
                             syncProcessStatus.incPartsUpdateInserts();
                             registerModification(logMsg);
@@ -579,7 +575,7 @@ public class Mas90SyncService {
             p.setDescription(itemcodedesc);
             p.setPartType(partType);
             p.setInactive(inactive);
-            partService.registerPart(ServiceEnum.MAS90SYNC, user, p);
+            partService.registerPart(MAS90SYNC, user, p);
             return p;
         }
 

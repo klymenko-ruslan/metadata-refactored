@@ -193,7 +193,7 @@ public class PartService {
         String json = partJsonSerializer.serialize(newPart);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(newPart.getId(), PART0));
-        Changelog chlog = changelogService.log(PART, user, "Created part " + formatPart(newPart) + ".", json,
+        Changelog chlog = changelogService.log(service, user, "Created part " + formatPart(newPart) + ".", json,
                 relatedParts);
         return chlog;
     }
