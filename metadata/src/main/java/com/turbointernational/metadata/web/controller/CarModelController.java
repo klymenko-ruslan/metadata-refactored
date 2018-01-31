@@ -1,5 +1,7 @@
 package com.turbointernational.metadata.web.controller;
 
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.APPLICATIONS;
+import static com.turbointernational.metadata.util.FormatUtils.formatCarModel;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -21,6 +23,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.CarModelDao;
 import com.turbointernational.metadata.entity.CarModel;
+import com.turbointernational.metadata.service.ChangelogService;
+import com.turbointernational.metadata.util.FormatUtils;
+import com.turbointernational.metadata.util.SerializationUtils;
 import com.turbointernational.metadata.util.View;
 
 /**
@@ -29,6 +34,9 @@ import com.turbointernational.metadata.util.View;
 @RequestMapping("/metadata/application")
 @Controller
 public class CarModelController {
+
+    @Autowired
+    private ChangelogService changelogService;
 
     @Autowired
     private CarModelDao carModelDao;
@@ -57,6 +65,7 @@ public class CarModelController {
     @Secured("ROLE_APPLICATION_CRUD")
     public CarModel create(@RequestBody CarModel carModel) {
         carModelDao.persist(carModel);
+        changelogService.log(APPLICATIONS, "Created Car Fuel Type " + formatCarModel(carModel) + ".", null);
         return carModel;
     }
 
@@ -64,8 +73,14 @@ public class CarModelController {
     @RequestMapping(value = "/carmodel/{id}", method = PUT)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
-    public void update(@RequestBody CarModel carModel) {
-        carModelDao.merge(carModel);
+    public void update(@PathVariable("id") long id, @RequestBody CarModel carModel) {
+        CarModel original = carModelDao.findOne(id);
+        String jsonOriginal = original.toJson();
+        CarModel updated = carModelDao.merge(carModel);
+        String jsonUpdated = updated.toJson();
+        String json = SerializationUtils.update(jsonOriginal, jsonUpdated);
+        changelogService.log(APPLICATIONS, "The Car Model " + formatCarModel(updated) + " has been updated.", json,
+              null);
     }
 
     @Transactional
@@ -74,6 +89,7 @@ public class CarModelController {
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {
         carModelDao.delete(id);
+        changelogService.log(APPLICATIONS, "Removed Car Model " + formatCarModel(id) + ".", null);
     }
 
     @RequestMapping(value = "/carmodel/exists", method = GET)

@@ -41,6 +41,7 @@ import com.turbointernational.metadata.entity.CarModel;
 import com.turbointernational.metadata.entity.CarModelEngineYear;
 import com.turbointernational.metadata.entity.CarYear;
 import com.turbointernational.metadata.service.ChangelogService;
+import com.turbointernational.metadata.util.SerializationUtils;
 import com.turbointernational.metadata.util.View;
 
 @RequestMapping("/metadata/application")
@@ -256,10 +257,15 @@ public class ApplicationController {
     @RequestMapping(value = "/carmodelengineyear/{id}", method = PUT)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
-    public void update(@RequestBody CarModelEngineYear cmey) {
+    public void update(@PathVariable("id") long id, @RequestBody CarModelEngineYear cmey) {
         normalize(cmey);
-        carModelEngineYearDao.merge(cmey);
-        changelogService.log(APPLICATIONS, "The application " + formatApplication(cmey) + " has been updated.", null);
+        CarModelEngineYear original = carModelEngineYearDao.findOne(id);
+        String jsonOriginal = original.toJson();
+        CarModelEngineYear updated = carModelEngineYearDao.merge(cmey);
+        String jsonUpdated = updated.toJson();
+        String json = SerializationUtils.update(jsonOriginal, jsonUpdated);
+        changelogService.log(APPLICATIONS, "The application " + formatApplication(cmey) + " has been updated.", json,
+                null);
     }
 
     @Transactional

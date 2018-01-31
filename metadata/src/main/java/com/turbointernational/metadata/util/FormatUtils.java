@@ -2,6 +2,10 @@ package com.turbointernational.metadata.util;
 
 import static org.apache.commons.lang.StringUtils.abbreviate;
 
+import com.turbointernational.metadata.entity.CarEngine;
+import com.turbointernational.metadata.entity.CarFuelType;
+import com.turbointernational.metadata.entity.CarMake;
+import com.turbointernational.metadata.entity.CarModel;
 import com.turbointernational.metadata.entity.CarModelEngineYear;
 import com.turbointernational.metadata.entity.CarYear;
 import com.turbointernational.metadata.entity.SalesNote;
@@ -71,6 +75,54 @@ public class FormatUtils {
 
     public static String formatApplication(Long cmeyId) {
         return "[" + cmeyId + "]";
+    }
+
+    public static String formatCarEngine(CarEngine carEngine) {
+        if (carEngine == null) {
+            return "null";
+        } else {
+            return formatCarEngine(carEngine.getId());
+        }
+    }
+
+    public static String formatCarEngine(Long ceId) {
+        return "[" + ceId + "]";
+    }
+
+    public static String formatCarFuelType(CarFuelType cft) {
+        if (cft == null) {
+            return "null";
+        } else {
+            return formatCarFuelType(cft.getId());
+        }
+    }
+
+    public static String formatCarFuelType(Long cftId) {
+        return "[" + cftId + "]";
+    }
+
+    public static String formatCarMake(CarMake cm) {
+        if (cm == null) {
+            return "null";
+        } else {
+            return formatCarMake(cm.getId());
+        }
+    }
+
+    public static String formatCarMake(Long cmId) {
+        return "[" + cmId + "]";
+    }
+
+    public static String formatCarModel(CarModel cm) {
+        if (cm == null) {
+            return "null";
+        } else {
+            return formatCarModel(cm.getId());
+        }
+    }
+
+    public static String formatCarModel(Long cmId) {
+        return "[" + cmId + "]";
     }
 
     public static String formatBom(Part parentPart, Part childPart) {

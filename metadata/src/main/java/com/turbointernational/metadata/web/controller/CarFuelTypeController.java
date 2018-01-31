@@ -1,17 +1,29 @@
 package com.turbointernational.metadata.web.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.CarFuelType;
-import com.turbointernational.metadata.dao.CarFuelTypeDao;
-import com.turbointernational.metadata.util.View;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.APPLICATIONS;
+import static com.turbointernational.metadata.util.FormatUtils.formatCarFuelType;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.dao.CarFuelTypeDao;
+import com.turbointernational.metadata.entity.CarFuelType;
+import com.turbointernational.metadata.service.ChangelogService;
+import com.turbointernational.metadata.util.FormatUtils;
+import com.turbointernational.metadata.util.SerializationUtils;
+import com.turbointernational.metadata.util.View;
 
 /**
  * Created by trunikov on 12/15/15.
@@ -19,6 +31,9 @@ import java.util.List;
 @RequestMapping("/metadata/application")
 @Controller
 public class CarFuelTypeController {
+
+    @Autowired
+    private ChangelogService changelogService;
 
     @Autowired
     private CarFuelTypeDao carFuelTypeDao;
@@ -47,6 +62,7 @@ public class CarFuelTypeController {
     @Secured("ROLE_APPLICATION_CRUD")
     public long create(@RequestBody CarFuelType carFuelType) {
         carFuelTypeDao.persist(carFuelType);
+        changelogService.log(APPLICATIONS, "Created Car Fuel Type " + formatCarFuelType(carFuelType) + ".", null);
         return carFuelType.getId();
     }
 
@@ -54,8 +70,14 @@ public class CarFuelTypeController {
     @RequestMapping(value = "/carfueltype/{id}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured("ROLE_APPLICATION_CRUD")
-    public void update(@RequestBody CarFuelType carFuelType) {
-        carFuelTypeDao.merge(carFuelType);
+    public void update(@PathVariable("id") long id, @RequestBody CarFuelType carFuelType) {
+        CarFuelType original = carFuelTypeDao.findOne(id);
+        String jsonOriginal = original.toJson();
+        CarFuelType updated = carFuelTypeDao.merge(carFuelType);
+        String jsonUpdated = updated.toJson();
+        String json = SerializationUtils.update(jsonOriginal, jsonUpdated);
+        changelogService.log(APPLICATIONS, "The Car Fuel Type " + formatCarFuelType(updated) + " has been updated.", json,
+              null);
     }
 
     @Transactional
@@ -64,5 +86,6 @@ public class CarFuelTypeController {
     @Secured("ROLE_APPLICATION_CRUD")
     public void remove(@PathVariable("id") long id) {
         carFuelTypeDao.delete(id);
+        changelogService.log(APPLICATIONS, "Removed Car Fuel Type " + formatCarFuelType(id) + ".", null);
     }
 }

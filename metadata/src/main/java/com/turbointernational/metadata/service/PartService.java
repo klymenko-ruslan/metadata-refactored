@@ -79,6 +79,7 @@ import com.turbointernational.metadata.service.GraphDbService.GetAncestorsRespon
 import com.turbointernational.metadata.service.GraphDbService.GetAncestorsResponse.Row;
 import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
 import com.turbointernational.metadata.service.GraphDbService.Response;
+import com.turbointernational.metadata.util.SerializationUtils;
 import com.turbointernational.metadata.util.View;
 import com.turbointernational.metadata.web.controller.PartController;
 import com.turbointernational.metadata.web.dto.AlsoBought;
@@ -281,12 +282,9 @@ public class PartService {
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(part.getId(), PART0));
-        changelogService.log(PART, "Updated part " + formatPart(part) + ".",
-                "{original: " + originalPartJson + ",updated: "
-                        + part.toJson(
-                                criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId()))
-                        + "}",
-                relatedParts);
+        String json = SerializationUtils.update(originalPartJson,
+                part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())));
+        changelogService.log(PART, "Updated part " + formatPart(part) + ".", json, relatedParts);
         return retVal;
     }
 
