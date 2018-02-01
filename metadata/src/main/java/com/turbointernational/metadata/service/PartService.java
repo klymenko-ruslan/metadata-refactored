@@ -140,11 +140,12 @@ public class PartService {
     @Autowired
     private SearchService searchService;
 
-    private JSONSerializer partJsonSerializer = new JSONSerializer().include("id").include("name")
-            .include("manufacturerPartNumber").include("description").include("inactive").include("partType.id")
-            .include("partType.name").exclude("partType.*").include("manufacturer.id").include("manufacturer.name")
-            .exclude("manufacturer.*").exclude("bomParentParts").exclude("bom").exclude("interchange").exclude("turbos")
-            .exclude("productImages").exclude("*.class");
+    //@formatter:off
+    JSONSerializer partJsonSerializer = new JSONSerializer()
+            .include("id", "name", "manufacturerPartNumber", "description", "inactive", "partType.id", "partType.name",
+                    "manufacturer.id", "manufacturer.name")
+            .exclude("*");
+    //@formatter:on
 
     private static Comparator<Ancestor> cmpDistance = (a0, a1) -> {
         return a0.getRelationDistance() - a1.getRelationDistance();
@@ -424,6 +425,7 @@ public class PartService {
         return part;
     }
 
+    @Transactional
     public Collection<TurboType> addTurboType(Long partId, Long turboTypeId, boolean details) {
         Part part = getPart(partId, false);
         TurboType turboType = turboTypeDao.findOne(turboTypeId);

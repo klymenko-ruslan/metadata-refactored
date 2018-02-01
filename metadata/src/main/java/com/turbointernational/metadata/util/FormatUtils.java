@@ -6,8 +6,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.turbointernational.metadata.entity.CarEngine;
 import com.turbointernational.metadata.entity.CarFuelType;
 import com.turbointernational.metadata.entity.CarMake;
