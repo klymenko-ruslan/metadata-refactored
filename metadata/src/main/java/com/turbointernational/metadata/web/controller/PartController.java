@@ -308,7 +308,7 @@ public class PartController {
         @JsonView({ View.Summary.class })
         private List<Turbo> turbos;
 
-        LinkTurboResponse(List<Row> rows, List<Turbo> turbos) {
+        public LinkTurboResponse(List<Row> rows, List<Turbo> turbos) {
             this.rows = rows;
             this.turbos = turbos;
         }
@@ -640,6 +640,18 @@ public class PartController {
     @Secured("ROLE_ALTER_PART")
     public List<Turbo> unlinkTurboInGasketKit(@PathVariable("partId") Long partId) {
         return partService.unlinkTurboInGasketKit(partId, true);
+    }
+    
+    @Transactional(noRollbackFor = AssertionError.class)
+    @Secured("ROLE_ALTER_PART")
+    @JsonView(View.Detail.class)
+    @ResponseBody
+    @RequestMapping(value = "/part/{partId}/gasketkits", method = PUT, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public LinkTurboResponse linkTurbosToGasketKit(@RequestBody LinkTurboRequest request) {
+        Long gasketKitId = request.getGasketKitId();
+        List<Long> turboIds = request.getPickedTurbos();
+        LinkTurboResponse retVal = partService.linkTurbosToGasketKit(gasketKitId, turboIds);
+        return retVal;
     }
 
 }

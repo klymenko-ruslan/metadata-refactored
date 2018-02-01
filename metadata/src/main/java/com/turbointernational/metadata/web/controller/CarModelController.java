@@ -24,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.CarModelDao;
 import com.turbointernational.metadata.entity.CarModel;
 import com.turbointernational.metadata.service.ChangelogService;
-import com.turbointernational.metadata.util.FormatUtils;
 import com.turbointernational.metadata.util.SerializationUtils;
 import com.turbointernational.metadata.util.View;
 

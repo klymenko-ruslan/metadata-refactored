@@ -791,7 +791,7 @@ public class PartService {
     }
 
     @Transactional(noRollbackFor = AssertionError.class)
-    public List<PartController.LinkTurboResponse.Row> linkTurbosToGasketKit(Long gasketKitId, List<Long> turboIds) {
+    public PartController.LinkTurboResponse linkTurbosToGasketKit(Long gasketKitId, List<Long> turboIds) {
         List<PartController.LinkTurboResponse.Row> rows = new ArrayList<>();
         for (Long turboId : turboIds) {
             boolean success = true;
@@ -806,7 +806,8 @@ public class PartService {
             rows.add(new PartController.LinkTurboResponse.Row(turboId, part.getManufacturerPartNumber(), success,
                     errMsg));
         }
-        return rows;
+        List<Turbo> turbos = partDao.listTurbosLinkedToGasketKit(gasketKitId);
+        return new PartController.LinkTurboResponse(rows, turbos);
     }
 
     public Page<AlsoBought> filterAlsoBough(String manufacturerPartNumber, String fltrManufacturerPartNumber,
