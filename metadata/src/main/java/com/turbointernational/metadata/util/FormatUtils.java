@@ -1,6 +1,12 @@
 package com.turbointernational.metadata.util;
 
 import static org.apache.commons.lang.StringUtils.abbreviate;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.turbointernational.metadata.entity.CarEngine;
 import com.turbointernational.metadata.entity.CarFuelType;
@@ -69,7 +75,48 @@ public class FormatUtils {
         if (cmey == null) {
             return "null";
         } else {
-            return formatApplication(cmey.getId());
+            List<String> fields = new ArrayList<>(5);
+            CarModel model = cmey.getModel();
+            if (model != null) {
+                CarMake make = model.getMake();
+                if (make != null) {
+                    String makeName = make.getName();
+                    if (isNotBlank(makeName)) {
+                        fields.add(makeName);
+                    }
+                }
+                String modelName = model.getName();
+                if (isNotBlank(modelName)) {
+                    fields.add(modelName);
+                }
+            }
+            CarEngine carEngine = cmey.getEngine();
+            if (carEngine != null) {
+                String engineSize = carEngine.getEngineSize();
+                if (isNotBlank(engineSize)) {
+                    fields.add(engineSize);
+                }
+                CarFuelType fuelType = carEngine.getFuelType();
+                if (fuelType != null) {
+                    String name = fuelType.getName();
+                    if (isNotBlank(name)) {
+                        fields.add(name);
+                    }
+                }
+            }
+            CarYear year = cmey.getYear();
+            if (year != null) {
+                String name = year.getName();
+                fields.add(name);
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.append(formatApplication(cmey.getId()));
+            String s = String.join(", ", fields);
+            if (isNotBlank(s)) {
+                sb.append(' ');
+                sb.append(s);
+            }
+            return sb.toString();
         }
     }
 

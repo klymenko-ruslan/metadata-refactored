@@ -1,24 +1,36 @@
 package com.turbointernational.metadata.service;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.dao.CarModelEngineYearDao;
-import com.turbointernational.metadata.entity.*;
-import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.entity.part.types.Turbo;
-import com.turbointernational.metadata.entity.part.TurboCarModelEngineYear;
-import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao;
-import com.turbointernational.metadata.service.OtherService.GenerateApplicationsResponse.Failure;
-import com.turbointernational.metadata.util.View;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.APPLICATIONS;
+import static com.turbointernational.metadata.util.FormatUtils.formatApplication;
+import static com.turbointernational.metadata.util.FormatUtils.formatPart;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.turbointernational.metadata.dao.CarModelEngineYearDao;
+import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.dao.TurboCarModelEngineYearDao;
+import com.turbointernational.metadata.entity.CarEngine;
+import com.turbointernational.metadata.entity.CarFuelType;
+import com.turbointernational.metadata.entity.CarMake;
+import com.turbointernational.metadata.entity.CarModel;
+import com.turbointernational.metadata.entity.CarModelEngineYear;
+import com.turbointernational.metadata.entity.CarYear;
+import com.turbointernational.metadata.entity.ChangelogPart;
+import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.entity.part.TurboCarModelEngineYear;
+import com.turbointernational.metadata.entity.part.types.Turbo;
+import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
+import com.turbointernational.metadata.service.OtherService.GenerateApplicationsResponse.Failure;
+import com.turbointernational.metadata.util.View;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2016-09-27.
@@ -36,6 +48,9 @@ public class OtherService {
 
     @Autowired
     private TurboCarModelEngineYearDao tcmeyDao;
+
+    @Autowired
+    private ChangelogService changelogService;
 
 
     public static class GenerateApplicationsRequest {
@@ -221,6 +236,13 @@ public class OtherService {
                         tcmey.setCarModelEngineYear(cmey);
                         tcmeyDao.persist(tcmey);
                         generated++;
+                        Collection<RelatedPart> relatedParts = new ArrayList<>(1);
+                        relatedParts.add(new RelatedPart(partId, ChangelogPart.Role.PART0));
+                        String turboDesc = formatPart(turbo);
+                        String appDesc = formatApplication(cmey);
+                        String logMsg = String.format("Turbo %s has been associated with application %s.",
+                                turboDesc, appDesc);
+                        changelogService.log(APPLICATIONS, logMsg, relatedParts);
                     } else {
                         errorMessage = "This association already exists.";
                     }
