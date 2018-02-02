@@ -193,7 +193,7 @@ module.exports = function (grunt) {
               50055,  // Common Component Mapping
               65254,
               63398, 64449,
-              68674,
+              68674, 68895,
               69690, 70079, 70090,   // Tabs: 'Turbos'
               78450 /* Audit log ~50 */, 78252,
               82137, 82219

@@ -759,6 +759,12 @@ public class PartService {
         newGasketKit.getTurbos().add(turbo);
         turbo.setGasketKit(newGasketKit);
         partDao.merge(part);
+        Collection<RelatedPart> relatedParts = new ArrayList<>(2);
+        relatedParts.add(new RelatedPart(gasketKitId, PART0));
+        relatedParts.add(new RelatedPart(turboId, PART1));
+        String logMsg = String.format("Gasket Kit %s and Turbo %s have been linked.",
+                formatPart(part2), formatPart(part));
+        changelogService.log(PART, logMsg, relatedParts);
     }
 
     @Transactional
@@ -785,6 +791,14 @@ public class PartService {
         GasketKit gasketKit = turbo.getGasketKit();
         gasketKit.getTurbos().remove(turbo);
         turbo.setGasketKit(null);
+        // Update the changelog.
+        Collection<RelatedPart> relatedParts = new ArrayList<>(2);
+        relatedParts.add(new RelatedPart(gasketKit.getId(), PART0));
+        relatedParts.add(new RelatedPart(partId, PART1));
+        String logMsg = String.format("Gasket Kit %s and Turbo %s have been unlinked.",
+                formatPart(gasketKit), formatPart(turbo));
+        changelogService.log(PART, logMsg, relatedParts);
+        // Prepare a response.
         List<Turbo> retVal = partDao.listTurbosLinkedToGasketKit(gasketKit.getId());
         if (details) {
             retVal.forEach(t -> interchangeService.initInterchange(t));
