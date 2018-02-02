@@ -1,12 +1,15 @@
 package com.turbointernational.metadata.web.controller;
 
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.KIT;
+import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +25,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.KitComponentDao;
 import com.turbointernational.metadata.dao.PartDao;
+import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.part.types.kit.KitComponent;
 import com.turbointernational.metadata.service.ChangelogService;
+import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
 import com.turbointernational.metadata.util.View;
 
 @RequestMapping("/metadata/kit/{kitId}/component")
@@ -46,11 +51,16 @@ public class KitComponentController {
     @JsonView(View.Detail.class)
     public KitComponent create(@RequestBody KitComponent component) throws Exception {
         kitComponentDao.persist(component);
-
-        // Update the changelog
-        changelogService.log(KIT, "Created kit common component [" + component.getKit().getId() + "].", component,
-                null);
-
+        // Update the changelog.
+        Long kitId = component.getKit().getId();
+        Long pickedPartId = component.getPart().getId();
+        Collection<RelatedPart> relatedParts = new ArrayList<>(2);
+        relatedParts.add(new RelatedPart(kitId, ChangelogPart.Role.PART0));
+        relatedParts.add(new RelatedPart(pickedPartId, ChangelogPart.Role.PART1));
+        String logMsg = String.format("Created kit common component. Kit is %s. Picked part is %s.",
+                formatPart(component.getKit()), formatPart(component.getPart()));
+        String json = component.toJson();
+        changelogService.log(KIT, logMsg, json, relatedParts);
         return component;
     }
 
@@ -68,16 +78,20 @@ public class KitComponentController {
     @ResponseBody
     @Secured("ROLE_ALTER_PART")
     public void update(@PathVariable("id") Long id, @RequestParam Boolean exclude) throws Exception {
-
         // Get the item
         KitComponent component = kitComponentDao.findOne(id);
-
-        // Update the changelog
-        changelogService.log(KIT, "Changed kit component mapping exclude to " + exclude, component.toJson(), null);
-
         // Update
         component.setExclude(exclude);
         kitComponentDao.merge(component);
+        // Update the changelog.
+        Long kitId = component.getKit().getId();
+        Long pickedPartId = component.getPart().getId();
+        Collection<RelatedPart> relatedParts = new ArrayList<>(2);
+        relatedParts.add(new RelatedPart(kitId, ChangelogPart.Role.PART0));
+        relatedParts.add(new RelatedPart(pickedPartId, ChangelogPart.Role.PART1));
+        String logMsg = String.format("Changed kit component mapping exclude to %B.", exclude);
+        String json = component.toJson();
+        changelogService.log(KIT, logMsg, json, relatedParts);
     }
 
     @Transactional
@@ -85,18 +99,19 @@ public class KitComponentController {
     @ResponseBody
     @Secured("ROLE_ALTER_PART")
     public void delete(@PathVariable("id") Long id) throws Exception {
-
         // Get the object
         KitComponent component = kitComponentDao.findOne(id);
-
-        // Remove from the component
-        // TODO: line below commented out during migration to critical
-        // dimensions
-        // component.getKit().getComponents().remove(component);
         kitComponentDao.remove(component);
-
-        // Update the changelog
-        changelogService.log(KIT, "Deleted kit component [" + id + "].", component, null);
+        // Update the changelog.
+        Long kitId = component.getKit().getId();
+        Long pickedPartId = component.getPart().getId();
+        Collection<RelatedPart> relatedParts = new ArrayList<>(2);
+        relatedParts.add(new RelatedPart(kitId, ChangelogPart.Role.PART0));
+        relatedParts.add(new RelatedPart(pickedPartId, ChangelogPart.Role.PART1));
+        String logMsg = String.format("Deleted kit component [%d]. Kit is %s. Picked part is %s.", id,
+                formatPart(component.getKit()), formatPart(component.getPart()));
+        String json = component.toJson();
+        changelogService.log(KIT, logMsg, json, relatedParts);
     }
 
 }
