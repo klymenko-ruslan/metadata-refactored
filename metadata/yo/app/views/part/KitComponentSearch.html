@@ -56,11 +56,12 @@
     View
   </a>
 
-  <a authorize="ROLE_ALTER_PART"
+  <button authorize="ROLE_ALTER_PART"
      data-ng-click="pick($part._source.id)"
+     data-ng-disabled="cantBePicked($part._source.id)"
      class="btn btn-success btn-xs">
       <i class="fa fa-bullseye"></i>
     Pick
-  </a>
+  </button>
 
 </part-search>

@@ -160,6 +160,9 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
       resolve: {
         partTypes: ['cachedDictionaries', function(cachedDictionaries) {
           return cachedDictionaries.getPartTypes();
+        }],
+        components: ['$route', 'Kits', function($route, Kits) {
+          return Kits.listComponents($route.current.pathParams.id);
         }]
       }
     });
