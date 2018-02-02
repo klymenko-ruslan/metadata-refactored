@@ -177,6 +177,7 @@ module.exports = function (grunt) {
               25493,  // Tabs: 'Applications'
               29878,  // Tabs: 'Applications'
               33284,
+              41506,
               42051,  // Part Type: Kit
               42768,  // Tabs: 'Critical Dimensions'
               43748,  // 'Where used (ancestors)'

@@ -1,12 +1,14 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-    .controller('KitComponentSearchCtrl', function ($log, $scope, $location, $routeParams, Kits, restService, dialogs, toastr) {
+    .controller('KitComponentSearchCtrl', function ($log, $scope, $location, $routeParams, Kits, restService, dialogs, toastr, partTypes) {
         $scope.partId = $routeParams.id;
         $scope.partType = 'Kit';
 
         $scope.pickedPart = null;
         $scope.showPickedPart = false;
+
+        $scope.partTypes = partTypes;
 
         // The base kit
         $scope.part = restService.findPart($scope.partId)
