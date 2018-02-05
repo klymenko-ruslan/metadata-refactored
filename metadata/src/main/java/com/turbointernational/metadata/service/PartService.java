@@ -274,17 +274,21 @@ public class PartService {
             log.error("Validation critical dimensions for the part (ID: {}) failed. Details: {}", part.getId(), errors);
             throw new AssertionError(errors.toString());
         }
+        if (details) {
+            interchangeService.initInterchange(originPart);
+        }
         String originalPartJson = originPart
                 .toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId()));
         Part retVal = partDao.merge(part);
         if (details) {
             interchangeService.initInterchange(retVal);
         }
-        // Update the changelog
+        String modifiedPartJson = retVal.toJson(criticalDimensionService
+                .getCriticalDimensionForPartType(part.getPartType().getId()));
+        // Update the changelog.
         List<RelatedPart> relatedParts = new ArrayList<>(1);
-        relatedParts.add(new RelatedPart(part.getId(), PART0));
-        String json = SerializationUtils.update(originalPartJson,
-                part.toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId())));
+        relatedParts.add(new RelatedPart(id, PART0));
+        String json = SerializationUtils.update(originalPartJson, modifiedPartJson);
         changelogService.log(PART, "Updated part " + formatPart(part) + ".", json, relatedParts);
         return retVal;
     }

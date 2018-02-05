@@ -147,7 +147,10 @@ angular.module('ngMetaCrudApp')
         var updated = $scope.changes.updated;
         var delta = jsondiffpatch.create({
           objectHash: function(obj, index) {
-            return obj.name || obj.id || obj._id || '$$index:' + index;
+            return obj.name || obj.id || obj.partId || obj._id || '$$index:' + index;
+          },
+          arrays: {
+            detectMove: true
           }
         }).diff(original, updated);
         jsondiffpatch.formatters.html.hideUnchanged();

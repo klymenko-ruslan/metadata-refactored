@@ -12,8 +12,6 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -241,12 +239,12 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
             joinColumns = @JoinColumn(name = "part_id"),
             inverseJoinColumns = @JoinColumn(name = "turbo_type_id"))
     @JsonView({View.Detail.class})
-    private Set<TurboType> turboTypes = new TreeSet<>();
+    private List<TurboType> turboTypes = new ArrayList<>();
 
     @OneToMany(cascade = REFRESH, mappedBy = "part", fetch = LAZY)
     @JsonView({View.Detail.class})
     @OrderBy("id")
-    private Set<ProductImage> productImages = new TreeSet<>();
+    private List<ProductImage> productImages = new ArrayList<>();
 
     @OneToMany(cascade = REFRESH, mappedBy = "pk.part", fetch = LAZY)
     @OrderBy("pk.salesNote.id")
@@ -372,11 +370,11 @@ public abstract class Part implements Comparable<Part>, Serializable, Searchable
         this.interchange = interchange;
     }
 
-    public Set<TurboType> getTurboTypes() {
+    public List<TurboType> getTurboTypes() {
         return turboTypes;
     }
 
-    public Set<ProductImage> getProductImages() {
+    public List<ProductImage> getProductImages() {
         return productImages;
     }
 

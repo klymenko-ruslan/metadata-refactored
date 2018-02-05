@@ -172,14 +172,14 @@ module.exports = function (grunt) {
               6681,   // Turbo
               6692,   // Alternative BOM(s)
               17415,  // Interchanges, Tabs: 'Applications'
-              18504,
-              18505,
+              18501, 18504, 18505,
               25493,  // Tabs: 'Applications'
               29878,  // Tabs: 'Applications'
               33284,
               41506,
               42051,  // Part Type: Kit
               42768,  // Tabs: 'Critical Dimensions'
+              42875,
               43748,  // 'Where used (ancestors)'
               43754, 43889,
               45456, 45328, 43751 /* 'Where used (ancestors)'*/, // Tabs: 'Prices', 'Also Bought' + tab 'Turbo Types' has record
