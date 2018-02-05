@@ -67,7 +67,7 @@ public class Changelog implements Serializable {
     @JsonView(View.Summary.class)
     private User user;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, length = 255)
     @JsonView(View.Summary.class)
     private String description;
 

@@ -10,6 +10,9 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +33,8 @@ import com.turbointernational.metadata.web.dto.Page;
  */
 @Service
 public class ChangelogService {
+
+    private final static Logger logger = LoggerFactory.getLogger(ChangelogService.class);
 
     /**
      * A part that participates in an operation that is being registered as a
@@ -108,7 +113,17 @@ public class ChangelogService {
                 dataNormalized = "Could not serialize data: " + e.getMessage();
             }
         }
-        Changelog log = changelogDao.log(service, user, description, dataNormalized);
+        String normDescription = description;
+        boolean descrHasBeenNormalized = false;
+        if (description != null && description.length() > 255) {
+            normDescription = StringUtils.abbreviate(description, 255);
+            descrHasBeenNormalized = true;
+        }
+        Changelog log = changelogDao.log(service, user, normDescription, dataNormalized);
+        if (descrHasBeenNormalized) {
+            logger.warn("Message to the audit log [{}] is too long and was cut. Original message: {}", log.getId(),
+                    description);
+        }
         if (relatedParts != null && !relatedParts.isEmpty()) {
             for (RelatedPart rp : relatedParts) {
                 Part part = partDao.getReference(rp.getPartId());
