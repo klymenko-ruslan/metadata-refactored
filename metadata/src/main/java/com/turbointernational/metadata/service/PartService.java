@@ -260,12 +260,12 @@ public class PartService {
      */
     public Part updatePart(HttpServletRequest request, Long id, Part part, boolean details)
             throws AssertionError, SecurityException {
-        Part originPart = partDao.findOne(id);
-        if (originPart.getManufacturer().getId() != part.getManufacturer().getId()
+        Part originalPart = partDao.findOne(id);
+        if (originalPart.getManufacturer().getId() != part.getManufacturer().getId()
                 && !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
             throw new SecurityException("You have no permission to modify a manufacturer.");
         }
-        if (!originPart.getManufacturerPartNumber().equals(part.getManufacturerPartNumber())
+        if (!originalPart.getManufacturerPartNumber().equals(part.getManufacturerPartNumber())
                 && !request.isUserInRole("ROLE_ALTER_PART_NUMBER")) {
             throw new SecurityException("You have no permission to modify a manufacturer.");
         }
@@ -275,22 +275,22 @@ public class PartService {
             throw new AssertionError(errors.toString());
         }
         if (details) {
-            interchangeService.initInterchange(originPart);
+            interchangeService.initInterchange(originalPart);
         }
-        String originalPartJson = originPart
+        String originalPartJson = originalPart
                 .toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId()));
-        Part retVal = partDao.merge(part);
+        Part updatedPart = partDao.merge(part);
         if (details) {
-            interchangeService.initInterchange(retVal);
+            interchangeService.initInterchange(updatedPart);
         }
-        String modifiedPartJson = retVal.toJson(criticalDimensionService
+        String modifiedPartJson = updatedPart.toJson(criticalDimensionService
                 .getCriticalDimensionForPartType(part.getPartType().getId()));
         // Update the changelog.
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(id, PART0));
         String json = SerializationUtils.update(originalPartJson, modifiedPartJson);
         changelogService.log(PART, "Updated part " + formatPart(part) + ".", json, relatedParts);
-        return retVal;
+        return updatedPart;
     }
 
     /**
@@ -316,47 +316,50 @@ public class PartService {
     public Part updatePartDetails(HttpServletRequest request, Long id, String manfrPartNum, Long manfrId, String name,
             String description, Boolean inactive, Double dimLength, Double dimWidth, Double dimHeight, Double weight,
             Long kitTypeId, boolean details) {
-        Part originPart = partDao.findOne(id);
-        if (!originPart.getManufacturer().getId().equals(manfrId)
+        Part originalPart = partDao.findOne(id);
+        if (!originalPart.getManufacturer().getId().equals(manfrId)
                 && !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
             throw new SecurityException("You have no permission to modify a manufacturer.");
         }
-        if (!originPart.getManufacturerPartNumber().equals(manfrPartNum)
+        if (!originalPart.getManufacturerPartNumber().equals(manfrPartNum)
                 && !request.isUserInRole("ROLE_ALTER_PART_NUMBER")) {
             throw new SecurityException("You have no permission to modify a manufacturer.");
         }
-        String originalPartStr = formatPart(originPart);
-        String originalPartJson = originPart
-                .toJson(criticalDimensionService.getCriticalDimensionForPartType(originPart.getPartType().getId()));
+        String originalPartStr = formatPart(originalPart);
+        if (details) {
+            interchangeService.initInterchange(originalPart);
+        }
+        String originalPartJson = originalPart
+                .toJson(criticalDimensionService.getCriticalDimensionForPartType(originalPart.getPartType().getId()));
         Manufacturer mnfr = partDao.getEntityManager().getReference(Manufacturer.class, manfrId);
-        originPart.setManufacturerPartNumber(manfrPartNum);
-        originPart.setManufacturer(mnfr);
-        originPart.setName(name);
-        originPart.setDescription(description);
-        originPart.setInactive(inactive);
-        originPart.setDimLength(dimLength);
-        originPart.setDimWidth(dimWidth);
-        originPart.setDimHeight(dimHeight);
-        originPart.setWeight(weight);
-        if (originPart.getPartType().getId() == PartType.PTID_KIT) {
-            Kit originKit = (Kit) originPart;
+        originalPart.setManufacturerPartNumber(manfrPartNum);
+        originalPart.setManufacturer(mnfr);
+        originalPart.setName(name);
+        originalPart.setDescription(description);
+        originalPart.setInactive(inactive);
+        originalPart.setDimLength(dimLength);
+        originalPart.setDimWidth(dimWidth);
+        originalPart.setDimHeight(dimHeight);
+        originalPart.setWeight(weight);
+        if (originalPart.getPartType().getId() == PartType.PTID_KIT) {
+            Kit originKit = (Kit) originalPart;
             if (originKit.getKitType().getId() != kitTypeId) {
                 KitType kitType = kitTypeDao.getReference(kitTypeId);
                 originKit.setKitType(kitType);
             }
         }
-        Part retVal = partDao.merge(originPart);
+        Part updatedPart = partDao.merge(originalPart);
         if (details) {
-            interchangeService.initInterchange(retVal);
+            interchangeService.initInterchange(updatedPart);
         }
-        String updatedPartJson = originPart
-                .toJson(criticalDimensionService.getCriticalDimensionForPartType(originPart.getPartType().getId()));
+        String updatedPartJson = originalPart
+                .toJson(criticalDimensionService.getCriticalDimensionForPartType(originalPart.getPartType().getId()));
         // Update the changelog
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(id, PART0));
         changelogService.log(PART, "Updated part " + originalPartStr + ".",
                 "{original: " + originalPartJson + ",updated: " + updatedPartJson + "}", relatedParts);
-        return retVal;
+        return updatedPart;
     }
 
     @Transactional
