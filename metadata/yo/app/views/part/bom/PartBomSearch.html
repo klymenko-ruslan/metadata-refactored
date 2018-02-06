@@ -35,7 +35,7 @@
           {{bom.qty}}
         </td>
         <td title="'Actions'" class="actions text-center">
-          <a data-ng-href="/part/{{bom.part.partId}}"
+          <a data-ng-href="/part/{{bom.part.partId}}" target="_blank"
              authorize="ROLE_READ" class="btn btn-primary btn-xs">
             <i class="fa fa-eye"></i> View
           </a>
@@ -94,7 +94,7 @@
 <hr/>
 
 <part-search fltr-init-manufacturer="{{part.manufacturer.name}}">
-  <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs">
+  <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs" target="_blank">
     <i class="fa fa-eye"></i> View
   </a>
   <button type="button" authorize="ROLE_BOM"
