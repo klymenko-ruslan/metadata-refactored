@@ -41,7 +41,7 @@ public class Changelog implements Serializable {
      * to load record by ID from the 'service' table.
      */
     public enum ServiceEnum {
-        BOM, INTERCHANGE, MAS90SYNC, SALESNOTES, APPLICATIONS, KIT, PART, TURBOMODEL, TURBOTYPE
+        BOM, INTERCHANGE, MAS90SYNC, SALESNOTES, APPLICATIONS, KIT, PART, TURBOMODEL, TURBOTYPE, CRITICALDIM, IMAGE
     }
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
