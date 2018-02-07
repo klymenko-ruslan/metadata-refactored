@@ -1,6 +1,8 @@
 package com.turbointernational.metadata.web.controller;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
+import static com.turbointernational.metadata.entity.PartType.PTID_KIT;
+import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
 import static com.turbointernational.metadata.web.controller.PartController.GasketKitResultStatus.ASSERTION_ERROR;
 import static com.turbointernational.metadata.web.controller.PartController.GasketKitResultStatus.OK;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
@@ -37,7 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.turbointernational.metadata.entity.PartType;
+import com.turbointernational.metadata.entity.CoolType;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
@@ -500,13 +502,21 @@ public class PartController {
             Double dimWidth = part.getDimWidth();
             Double dimHeight = part.getDimHeight();
             Double weight = part.getWeight();
-            Long kitTypeId = null;
-            if (part.getPartType().getId() == PartType.PTID_KIT) {
+            Long partTypeId = part.getPartType().getId();
+            Long kitTypeId = null, coolTypeId = null, turboModelId = null;
+            if (partTypeId == PTID_KIT) {
                 Kit kit = (Kit) part;
                 kitTypeId = kit.getKitType().getId();
+            } else if (partTypeId == PTID_TURBO) {
+                Turbo turbo = (Turbo) part;
+                CoolType coolType = turbo.getCoolType();
+                if (coolType != null) {
+                    coolTypeId = coolType.getId();
+                }
+                turboModelId = turbo.getTurboModel().getId(); // this is mandatory attribute
             }
             return partService.updatePartDetails(request, id, manfrPartNum, manfrId, name, description, inactive,
-                    dimLength, dimWidth, dimHeight, weight, kitTypeId, true);
+                    dimLength, dimWidth, dimHeight, weight, kitTypeId, coolTypeId, turboModelId, true);
         } catch (SecurityException e) {
             response.sendError(SC_FORBIDDEN, e.toString());
             return null;

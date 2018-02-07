@@ -1,13 +1,14 @@
 package com.turbointernational.metadata.service;
 
 import static com.turbointernational.metadata.Application.TEST_SKIPFILEIO;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.CRITICALDIM;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.IMAGE;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.PART;
-import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.CRITICALDIM;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
 import static com.turbointernational.metadata.entity.Manufacturer.TI_ID;
 import static com.turbointernational.metadata.entity.PartType.PTID_GASKET_KIT;
+import static com.turbointernational.metadata.entity.PartType.PTID_KIT;
 import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_WIDTH;
@@ -59,15 +60,19 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.turbointernational.metadata.dao.CoolTypeDao;
 import com.turbointernational.metadata.dao.KitTypeDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.ProductImageDao;
+import com.turbointernational.metadata.dao.TurboModelDao;
 import com.turbointernational.metadata.dao.TurboTypeDao;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.entity.ChangelogPart;
+import com.turbointernational.metadata.entity.CoolType;
+import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.entity.Manufacturer;
-import com.turbointernational.metadata.entity.PartType;
+import com.turbointernational.metadata.entity.TurboModel;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.part.Part;
@@ -110,7 +115,13 @@ public class PartService {
     private InterchangeService interchangeService;
 
     @Autowired
+    private TurboModelDao turboModelDao;
+
+    @Autowired
     private TurboTypeDao turboTypeDao;
+
+    @Autowired
+    private CoolTypeDao coolTypeDao;
 
     @Autowired
     private KitTypeDao kitTypeDao;
@@ -318,7 +329,7 @@ public class PartService {
      */
     public Part updatePartDetails(HttpServletRequest request, Long id, String manfrPartNum, Long manfrId, String name,
             String description, Boolean inactive, Double dimLength, Double dimWidth, Double dimHeight, Double weight,
-            Long kitTypeId, boolean details) {
+            Long kitTypeId, Long coolTypeId, Long turboModelId, boolean details) {
         Part originalPart = partDao.findOne(id);
         if (!originalPart.getManufacturer().getId().equals(manfrId)
                 && !request.isUserInRole("ROLE_ALTER_PART_MANUFACTURER")) {
@@ -332,8 +343,9 @@ public class PartService {
         if (details) {
             interchangeService.initInterchange(originalPart);
         }
-        String originalPartJson = originalPart
-                .toJson(criticalDimensionService.getCriticalDimensionForPartType(originalPart.getPartType().getId()));
+        Long partTypeId = originalPart.getPartType().getId();
+        List<CriticalDimension> cdfpt = criticalDimensionService.getCriticalDimensionForPartType(partTypeId);
+        String originalPartJson = originalPart.toJson(cdfpt);
         Manufacturer mnfr = partDao.getEntityManager().getReference(Manufacturer.class, manfrId);
         originalPart.setManufacturerPartNumber(manfrPartNum);
         originalPart.setManufacturer(mnfr);
@@ -344,20 +356,36 @@ public class PartService {
         originalPart.setDimWidth(dimWidth);
         originalPart.setDimHeight(dimHeight);
         originalPart.setWeight(weight);
-        if (originalPart.getPartType().getId() == PartType.PTID_KIT) {
+        if (partTypeId == PTID_KIT) {
             Kit originKit = (Kit) originalPart;
-            if (originKit.getKitType().getId() != kitTypeId) {
+            if (!originKit.getKitType().getId().equals(kitTypeId)) {
                 KitType kitType = kitTypeDao.getReference(kitTypeId);
                 originKit.setKitType(kitType);
+            }
+        } else if (partTypeId == PTID_TURBO) {
+            Turbo originTurbo = (Turbo) originalPart;
+            if (!originTurbo.getTurboModel().getId().equals(turboModelId)) {
+                TurboModel turboModel = turboModelDao.getReference(turboModelId);
+                originTurbo.setTurboModel(turboModel);
+            }
+            CoolType originCoolType = originTurbo.getCoolType();
+            boolean coolTypeChanged = coolTypeId == null && originCoolType != null 
+                    || coolTypeId != null && (originCoolType == null || !coolTypeId.equals(originCoolType.getId()));
+            if (coolTypeChanged) {
+                if (coolTypeId == null) {
+                    originTurbo.setCoolType(null);
+                } else {
+                    CoolType coolType = coolTypeDao.getReference(coolTypeId);
+                    originTurbo.setCoolType(coolType);
+                }
             }
         }
         Part updatedPart = partDao.merge(originalPart);
         if (details) {
             interchangeService.initInterchange(updatedPart);
         }
-        String updatedPartJson = originalPart
-                .toJson(criticalDimensionService.getCriticalDimensionForPartType(originalPart.getPartType().getId()));
-        // Update the changelog
+        String updatedPartJson = originalPart.toJson(cdfpt);
+        // Update the changelog.
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(id, PART0));
         changelogService.log(PART, "Updated part " + originalPartStr + ".",
