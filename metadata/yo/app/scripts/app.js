@@ -117,6 +117,7 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         }]
       }
     });
+    // TODO: it seems the entry below is obsolete and dont used anymore
     $routeProvider.when('/part/:id/form', {
       templateUrl: 'views/part/PartForm.html',
       controller: 'PartFormCtrl',

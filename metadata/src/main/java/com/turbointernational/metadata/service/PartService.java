@@ -1,7 +1,9 @@
 package com.turbointernational.metadata.service;
 
 import static com.turbointernational.metadata.Application.TEST_SKIPFILEIO;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.IMAGE;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.PART;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.CRITICALDIM;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
 import static com.turbointernational.metadata.entity.Manufacturer.TI_ID;
@@ -289,7 +291,8 @@ public class PartService {
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(id, PART0));
         String json = SerializationUtils.update(originalPartJson, modifiedPartJson);
-        changelogService.log(PART, "Updated part " + formatPart(part) + ".", json, relatedParts);
+        changelogService.log(CRITICALDIM, "Updated critical dimensions in the part " + formatPart(part) + ".", json,
+                relatedParts);
         return updatedPart;
     }
 
@@ -405,7 +408,7 @@ public class PartService {
         }
         Collection<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(part.getId(), ChangelogPart.Role.PART0));
-        changelogService.log(PART, "A product image " + formatProductImage(productImage)
+        changelogService.log(IMAGE, "A product image " + formatProductImage(productImage)
                 + " has been added to the part " + formatPart(part) + ".", relatedParts);
         return productImage;
     }
@@ -429,6 +432,10 @@ public class PartService {
         if (details) {
             interchangeService.initInterchange(part);
         }
+        Collection<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(part.getId(), ChangelogPart.Role.PART0));
+        changelogService.log(IMAGE, "A critical dimension legend image '" + filenameOriginal
+                + "' has been added to the part " + formatPart(part) + ".", relatedParts);
         return part;
     }
 

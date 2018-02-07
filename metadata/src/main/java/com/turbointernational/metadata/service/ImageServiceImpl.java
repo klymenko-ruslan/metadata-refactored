@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.service;
 
-import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.PART;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.IMAGE;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 import static com.turbointernational.metadata.util.FormatUtils.formatProductImage;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -111,7 +111,7 @@ public class ImageServiceImpl implements ImageService {
         }
         Collection<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(part.getId(), ChangelogPart.Role.PART0));
-        changelogService.log(PART, "A product image " + formatProductImage(image) + " of the part " + formatPart(part)
+        changelogService.log(IMAGE, "A product image " + formatProductImage(image) + " of the part " + formatPart(part)
                 + " has been removed.", relatedParts);
     }
 
@@ -138,7 +138,7 @@ public class ImageServiceImpl implements ImageService {
         Collection<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(part.getId(), ChangelogPart.Role.PART0));
         String newState = publish ? "published" : "unpublished";
-        changelogService.log(PART, "A product image " + formatProductImage(pi) + " of the part " + formatPart(part)
+        changelogService.log(IMAGE, "A product image " + formatProductImage(pi) + " of the part " + formatPart(part)
                 + " has been " + newState + ".", relatedParts);
     }
 
@@ -152,7 +152,7 @@ public class ImageServiceImpl implements ImageService {
         Part part = pi.getPart();
         Collection<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(part.getId(), ChangelogPart.Role.PART0));
-        changelogService.log(PART, "A product image " + formatProductImage(pi) + " of the part " + formatPart(part)
+        changelogService.log(IMAGE, "A product image " + formatProductImage(pi) + " of the part " + formatPart(part)
                 + " has been set as primary.", relatedParts);
     }
 
