@@ -13,7 +13,7 @@ angular.module('ngMetaCrudApp')
 
       var file = null;
       var formData = new FormData();
-      var attachments = salesNote.attachments || [];
+      var attachments = [];
 
       $scope.isUploadBttnDisabled = function () {
         return !formData.has('file') || $scope.isEditing();
@@ -33,11 +33,34 @@ angular.module('ngMetaCrudApp')
         formData = new FormData();
       }
 
+      // Attachment Table
+      $scope.attachmentsTableParams = new NgTableParams({
+        page: 1,
+        count: 10,
+        sorting: {'createDate': 'asc'}
+      });
+
+      // Related Part Table
+      $scope.relatedPartTableParams = new NgTableParams({
+        page: 1,
+        count: 10,
+        sorting: {'part.manufacturerPartNumber': 'asc'}
+      });
+
+      function _updateSalesNote(updatedSalesNote) {
+        $scope.salesNote = updatedSalesNote;
+        _updateAttachmentsTable($scope.salesNote.attachments);
+        attachments = $scope.salesNote.attachments || [];
+        $scope.attachmentsTableParams.settings({dataset: attachments});
+        $scope.relatedPartTableParams.settings({dataset: $scope.salesNote.parts});
+      }
+
+      _updateSalesNote(salesNote);
+
       $scope.uploadAttachment = function() {
         restService.uploadAttachmentForSalesNote($scope.salesNoteId, file.name, file).then(
-          function success(salesNote) {
-            $scope.salesNote = salesNote;
-            _updateAttachmentsTable(salesNote.attachments);
+          function success(updatedSalesNote) {
+            _updateSalesNote(updatedSalesNote);
             toastr.success('File uploaded.');
             formData.delete('file');
           },
@@ -52,9 +75,8 @@ angular.module('ngMetaCrudApp')
           .result.then(
             function yes() {
               restService.removeAttachmentForSalesNote($scope.salesNoteId, attachmentId).then(
-                function success(salesNote) {
-                  $scope.salesNote = salesNote;
-                  _updateAttachmentsTable(salesNote.attachments);
+                function success(updatedSalesNote) {
+                  _updateSalesNote(updatedSalesNote);
                   toastr.success('The attachment has been successfully removed.');
                 },
                 function failure(response) {
@@ -67,26 +89,29 @@ angular.module('ngMetaCrudApp')
       };
 
       $scope.isPrimaryRelatedPart = function(relatedPart) {
-        return salesNote.primaryPartId === relatedPart.part.id;
+        return $scope.salesNote.primaryPartId === relatedPart.part.id;
       };
 
-      // Attachment Table
-      $scope.attachmentsTableParams = new NgTableParams({
-        page: 1,
-        count: 10,
-        sorting: {'createDate': 'asc'}
-      }, {
-        dataset: attachments
-      });
 
-      // Related Part Table
-      $scope.relatedPartTableParams = new NgTableParams({
-        page: 1,
-        count: 10,
-        sorting: {'part.manufacturerPartNumber': 'asc'}
-      }, {
-        dataset: salesNote.parts
-      });
+      $scope.removeRelatedPart = function(partId) {
+        dialogs.confirm('Confirmation', 'Are you sure?\nDo you want to remove this related part?')
+          .result.then(
+            function yes() {
+              SalesNotes.removeRelatedPart($scope.salesNoteId, partId).then(
+                function success(updatedSalesNote) {
+                  _updateSalesNote(updatedSalesNote);
+                  toastr.success('The related part has been successfully removed.');
+                },
+                function failure(response) {
+                  restService.error('Can not remove the related part.', response);
+                }
+              );
+            },
+            function no() {
+              // ignore
+            }
+          );
+      };
 
       // Editing flag
       var editing = false;
@@ -97,7 +122,7 @@ angular.module('ngMetaCrudApp')
 
       $scope.edit = function() {
         editing = true;
-        $scope.editedSalesNote.comment = salesNote.comment;
+        $scope.editedSalesNote.comment = $scope.salesNote.comment;
       };
 
       $scope.cancel = function() {

@@ -6,30 +6,12 @@ angular.module('ngMetaCrudApp')
 
       this.states = ['draft', 'submitted', 'approved', 'rejected', 'published'];
 
-      this.addRelatedPart = function(salesNote, part) {
-        return Restangular.one('other/salesNote/' + salesNote.id + '/part')
-          .post(part.id, null)
-          .then(function() {
-            // TODO: Add the related part? Right now it's reloaded.
-          }, function(errorResponse) {
-            $log.log('Could not add related part', errorResponse);
-          });
+      this.addRelatedParts = function(salesNote, partIds) {
+        return Restangular.one('other/salesNote/' + salesNote.id).post('parts', partIds);
       };
 
-      this.removeRelatedPart = function(salesNote, partId, tableParams) {
-        return Restangular.one('other/salesNote/' + salesNote.id + '/part', partId)
-          .remove()
-          .then(function() {
-            var idx = _.findIndex(salesNote.parts, function(salesNotePart) {
-              return salesNotePart.part.id === partId;
-            });
-            if (idx !== -1) {
-              salesNote.parts.splice(idx, 1);
-              tableParams.reload();
-            }
-          }, function(errorResponse) {
-            $log.log('Could not remove related part', errorResponse);
-          });
+      this.removeRelatedPart = function(salesNoteId, partId) {
+        return Restangular.one('other/salesNote/' + salesNoteId + '/part', partId).remove();
       };
 
       this.canSubmit = function(salesNote) {

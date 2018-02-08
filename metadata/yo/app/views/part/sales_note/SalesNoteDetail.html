@@ -157,12 +157,12 @@
         data-ng-href="/part/{{ relatedPart.part.id }}">
         <i class="fa fa-eye"></i> View {{isPrimaryRelatedPart(relatedPart) ? "Primary" : "Related"}}
       </a>
-      <a class="btn btn-danger btn-xs"
-        data-ng-click="SalesNotes.removeRelatedPart(salesNote, relatedPart.part.id, relatedPartTableParams)"
+      <button type="button" class="btn btn-danger btn-xs"
+        data-ng-click="removeRelatedPart(relatedPart.part.id)"
         data-ng-if="salesNote.primaryPartId !== relatedPart.part.id"
         data-ng-disabled="isEditing()">
         <i class="fa fa-trash-o"></i> Remove
-      </a>
+      </button>
     </td>
   </tr>
 

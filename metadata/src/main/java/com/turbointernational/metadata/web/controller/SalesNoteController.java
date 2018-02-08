@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +37,6 @@ import com.turbointernational.metadata.util.View;
 
 @Controller
 @RequestMapping(value = { "/other/salesNote", "/metadata/other/salesNote" })
-@SuppressWarnings("deprecation")
 public class SalesNoteController {
 
     private static final Logger log = LoggerFactory.getLogger(SalesNoteController.class);
@@ -195,21 +194,25 @@ public class SalesNoteController {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Related Parts">
-    @ResponseBody
     @Transactional
-    @RequestMapping(value = "{salesNoteId}/part/{partId}", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public void addRelatedPart(HttpServletRequest request,
+    @ResponseBody
+    @JsonView(View.DetailWithPartsAndAttachments.class)
+    @RequestMapping(value = "{salesNoteId}/parts", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public SalesNote addRelatedPart(HttpServletRequest request,
             @AuthenticationPrincipal(errorOnInvalidType = true) User user,
-            @PathVariable("salesNoteId") long salesNoteId, @PathVariable("partId") long partId) {
-        salesNoteService.addRelatedPart(request, user, salesNoteId, partId);
+            @PathVariable("salesNoteId") long salesNoteId, @RequestBody Long[] partIds) {
+        SalesNote retVal = salesNoteService.addRelatedPart(request, user, salesNoteId, partIds);
+        return retVal;
     }
 
-    @ResponseBody
     @Transactional
+    @ResponseBody
+    @JsonView(View.DetailWithPartsAndAttachments.class)
     @RequestMapping(value = "{salesNoteId}/part/{partId}", method = DELETE, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public void deleteRelatedPart(HttpServletRequest request, @PathVariable("salesNoteId") Long salesNoteId,
+    public SalesNote deleteRelatedPart(HttpServletRequest request, @PathVariable("salesNoteId") Long salesNoteId,
             @PathVariable("partId") Long partId) throws RemovePrimaryPartException {
-        salesNoteService.deleteRelatedPart(request, salesNoteId, partId);
+        SalesNote salesNote = salesNoteService.deleteRelatedPart(request, salesNoteId, partId);
+        return salesNote;
     }
     // </editor-fold>
 

@@ -74,19 +74,43 @@ public class SalesNoteService {
     }
 
     @Transactional
-    public void addRelatedPart(HttpServletRequest request, User user, Long salesNoteId, Long partId) {
+    public SalesNote addRelatedPart(HttpServletRequest request, User user, Long salesNoteId, Long[] partIds) {
         // Find the entities
         SalesNote salesNote = salesNoteDao.findOne(salesNoteId);
         hasEditAccess(request, salesNote);
-        Part part = partDao.findOne(partId);
-        // Create the primary part association
-        SalesNotePart snp = new SalesNotePart(salesNote, part, false, user);
-        partDao.getEntityManager().persist(snp);
+        if (partIds != null) {
+            for (Long partId : partIds) {
+                Part part = partDao.findOne(partId);
+                // Create the primary part association
+                SalesNotePart snp = new SalesNotePart(salesNote, part, false, user);
+                salesNotePartDao.persist(snp);
+                List<RelatedPart> relatedParts = new ArrayList<>(1);
+                relatedParts.add(new RelatedPart(partId, PART0));
+                changelogService.log(SALESNOTES,
+                        "Added related part " + formatPart(part) + " to sales note " + formatSalesNote(salesNoteId),
+                        relatedParts);
+            }
+            salesNoteDao.refresh(salesNote);
+        }
+        return salesNote;
+    }
+
+    @Transactional
+    public SalesNote deleteRelatedPart(HttpServletRequest request, Long salesNoteId, final Long partId)
+            throws RemovePrimaryPartException {
+        SalesNotePart salesNotePart = salesNotePartDao.findOne(salesNoteId, partId);
+        // Can't delete primary part
+        if (salesNotePart.isPrimary()) {
+            throw new RemovePrimaryPartException("Can't delete the primary part for a sales note.");
+        }
+        salesNotePartDao.delete(salesNotePart);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
         changelogService.log(SALESNOTES,
-                "Added related part " + formatPart(part) + " to sales note " + formatSalesNote(salesNoteId),
+                "Deleted related part " + formatPart(partId, null) + " from sales note " + formatSalesNote(salesNoteId),
                 relatedParts);
+        SalesNote salesNote = salesNoteDao.findOne(salesNoteId);
+        return salesNote;
     }
 
     @Transactional
@@ -130,22 +154,6 @@ public class SalesNoteService {
         salesNoteDao.persist(salesNote);
         changelogService.log(SALESNOTES, "Changed sales note (" + formatSalesNote(salesNote) + ") comment: \""
                 + salesNote.getComment() + "\" -> \"" + comment + "\".", null);
-    }
-
-    @Transactional
-    public void deleteRelatedPart(HttpServletRequest request, Long salesNoteId, final Long partId)
-            throws RemovePrimaryPartException {
-        SalesNotePart salesNotePart = salesNotePartDao.findOne(salesNoteId, partId);
-        // Can't delete primary part
-        if (salesNotePart.isPrimary()) {
-            throw new RemovePrimaryPartException("Can't delete the primary part for a sales note.");
-        }
-        salesNotePartDao.delete(salesNotePart);
-        List<RelatedPart> relatedParts = new ArrayList<>(1);
-        relatedParts.add(new RelatedPart(partId, PART0));
-        changelogService.log(SALESNOTES,
-                "Deleted related part " + formatPart(partId, null) + " from sales note " + formatSalesNote(salesNoteId),
-                relatedParts);
     }
 
     public static class AttachmentDto {
