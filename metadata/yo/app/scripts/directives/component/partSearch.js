@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-  .directive('partSearch', ['$log', 'restService', function($log, restService) {
+  .directive('partSearch', ['$parse', '$log', 'restService', function($parse, $log, restService) {
     return {
       restrict: 'E',
       replace: true,
@@ -11,6 +11,11 @@ angular.module('ngMetaCrudApp')
         if (attrs.fltrInitManufacturer !== undefined && attrs.fltrInitManufacturer !== null && attrs.fltrInitManufacturer !== '') {
           scope.fltrPart.manufacturer = attrs.fltrInitManufacturer;
         }
+        console.log('on-press-enter-callback: ' + attrs.onPressEnterCallback);
+        console.log('typeof(on-press-enter-callback): ' + typeof attrs.onPressEnterCallback);
+        var foo = $parse(/*attrs.onPressEnterCallback*/ 'console.log("hello world")');
+        foo(scope);
+        console.log('finished');
       },
       controller: ['$transclude', '$parse', '$sce', '$log', '$q', '$location',
                    '$scope', 'NgTableParams', 'utils',
