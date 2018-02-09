@@ -4,7 +4,7 @@
       <td title="'Part Type'" data-sortable="'partType.name'">{{item.partType.name}}</td>
       <td title="'Manufacturer'" data-sortable="'manufacturer.name'">{{item.manufacturer.name}}</td>
       <td title="'Part #'" class="text-nowrap" data-sortable="'partNumber'">
-        <a data-ng-href="/part/{{item.partId}}">{{item.partNumber}}</a>
+        <a data-ng-href="/part/{{item.partId}}" target="_blank">{{item.partNumber}}</a>
       </td>
     </tr>
     <tr data-ng-hide="$data.length > 0">

@@ -32,7 +32,7 @@
           {{b.part.manufacturer.name}}
         </td>
         <td title="'Part#'" class="text-center text-nowrap" data-sortable="'part.partNumber'">
-          <a data-ng-href="/part/{{b.part.partId}}" authorize="ROLE_READ">
+          <a data-ng-href="/part/{{b.part.partId}}" target="_blank" authorize="ROLE_READ">
             {{b.part.partNumber}}
           </a>
         </td>
@@ -68,7 +68,7 @@
         <tr data-ng-repeat="rec in $data">
           <td title="'Part Type'" class="text-nowrap">{{rec.partType.name}}</td>
           <td title="'Part#'" class="text-nowrap">
-            <a data-ng-href="/part/{{rec.id}}" authorize="ROLE_READ">
+            <a data-ng-href="/part/{{rec.id}}" target="_blank" authorize="ROLE_READ">
               {{rec.manufacturerPartNumber}}
             </a>
           </td>
@@ -109,7 +109,7 @@
 <div class="row">
   <div class="col-xs-12">
     <part-search>
-      <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs">
+      <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" target="_blank" class="btn btn-primary btn-xs">
         <i class="fa fa-eye"></i> View
       </a>
       <button type="button" authorize="ROLE_BOM"

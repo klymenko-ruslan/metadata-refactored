@@ -201,7 +201,8 @@ module.exports = function (grunt) {
             ];
             let urlSuffixes = [
               '', '/bom/search', '/ancestors', '/parentbom/search',
-              '/oversize/add', '/application/search', '/sales_notes'
+              '/oversize/add', '/application/search', '/sales_notes',
+              '/interchange/search'
           ];
             for(let m = 0; m < partIdsUnderDebug.length; m++) {
               let partId = partIdsUnderDebug[m];

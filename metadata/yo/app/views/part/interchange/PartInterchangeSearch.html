@@ -53,7 +53,7 @@
 
     <div class="row">
       <div class="col-xs-12" data-ng-show="pickedPart">
-        <h3>Picked Part Interchanges</h3>
+        <h3>Interchanges of the Picked Part</h3>
         <interchangeable-parts part="pickedPart"></interchangeable-parts>
       </div>
     </div>
@@ -65,6 +65,6 @@
 <hr/>
 
 <part-search>
-  <a authorize="ROLE_READ" href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs"><i class="fa fa-eye"></i> View</a>
+  <a authorize="ROLE_READ" href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs" target="_blank"><i class="fa fa-eye"></i> View</a>
   <a authorize="ROLE_INTERCHANGE" data-ng-click="pick($part._source.id)" class="btn btn-success btn-xs"><i class="fa fa-bullseye"></i> Pick</a>
 </part-search>
