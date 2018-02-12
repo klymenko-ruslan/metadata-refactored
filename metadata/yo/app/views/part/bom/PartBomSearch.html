@@ -93,7 +93,7 @@
 
 <hr/>
 
-<part-search fltr-init-manufacturer="{{part.manufacturer.name}}" on-press-enter-callback="alert('Hello world!')">
+<part-search fltr-init-manufacturer="{{part.manufacturer.name}}" on-press-enter-callback="cbPickOnEnter(searchResults)">
   <a authorize="ROLE_READ" data-ng-href="/part/{{$part._source.id}}" class="btn btn-primary btn-xs" target="_blank">
     <i class="fa fa-eye"></i> View
   </a>

@@ -8,7 +8,7 @@
     </button>
     <div class="form-group">
       <label for="fltrPartNumber" class="sr-only control-label">Part Number</label>
-      <input class="form-control input-sm" id="fltrPartNumber" name="fltrPartNumber" type="text" data-ng-model="fltrPart.partNumber" data-ng-model-options="{debounce: 200}" data-ng-keyup="$event.keyCode === 13 && onPressedEnter()" placeholder="Search part numbers" focus-me="true" autofocus />
+      <input class="form-control input-sm" id="fltrPartNumber" name="fltrPartNumber" type="text" data-ng-model="fltrPart.partNumber" data-ng-model-options="{debounce: 200}" data-ng-keyup="onKeyUpInPartNumber($event)" placeholder="Search part numbers" focus-me="true" autofocus />
     </div>
 
     <uib-accordion close-others="false">

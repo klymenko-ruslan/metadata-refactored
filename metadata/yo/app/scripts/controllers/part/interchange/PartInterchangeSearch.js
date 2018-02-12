@@ -66,6 +66,31 @@ angular.module('ngMetaCrudApp')
         });
     };
 
+    /**
+     * This is a callback that invoked when an user presses key 'Enter'
+     * while focus is in an input field 'Part Number'
+     * of a 'part search filter'.
+     *
+     * See also a view PartInterchangeSearch.html and
+     * an attribute 'on-press-enter-callback' in a declaration of a directive
+     * 'part-search'.
+     */
+    $scope.cbPickOnEnter = function(searchResults) {
+      // When a result of a search is a single part
+      // and this part is suitable to be picked then
+      // we pick its.
+      if (searchResults && searchResults.hits.total === 1) {
+        var rec = searchResults.hits.hits[0]._source;
+        var partId = rec.id;
+        $scope.pick(partId);
+      }
+      // Return statement below
+      // signals that default behaviour on the pressed 'Enter' key should
+      // not be invoked.
+      // See function 'onKeyUpInPartNumber' in the partSearch.js.
+      return true;
+    };
+
     function cbAddPartToThisInterchangeGroup(srcIds, ratings, description, attachIds) {
       // Add part to this interchange group
       restService.updatePartInterchange($scope.partId, $scope.pickedPart.id, MERGE_OPTIONS.PICKED_ALONE_TO_PART,

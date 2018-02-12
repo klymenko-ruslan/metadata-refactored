@@ -2,8 +2,8 @@
 
 angular.module('ngMetaCrudApp')
 
-.controller('PartListCtrl', ['$scope', '$log', '$uibModal', 'partTypes', 'cachedDictionaries', 'critDimsByPartTypes', 'critDimEnumVals',
-  function ($scope, $log, $uibModal, partTypes, cachedDictionaries, critDimsByPartTypes, critDimEnumVals) {
+.controller('PartListCtrl', ['$scope', '$log', '$location', '$uibModal', 'partTypes', 'cachedDictionaries', 'critDimsByPartTypes', 'critDimEnumVals',
+  function ($scope, $log, $location, $uibModal, partTypes, cachedDictionaries, critDimsByPartTypes, critDimEnumVals) {
     $scope.createPart = function () {
       $uibModal.open({
         'templateUrl': '/views/part/PartCreateModal.html',

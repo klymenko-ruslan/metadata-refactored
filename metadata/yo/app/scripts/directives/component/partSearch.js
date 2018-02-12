@@ -11,11 +11,7 @@ angular.module('ngMetaCrudApp')
         if (attrs.fltrInitManufacturer !== undefined && attrs.fltrInitManufacturer !== null && attrs.fltrInitManufacturer !== '') {
           scope.fltrPart.manufacturer = attrs.fltrInitManufacturer;
         }
-        console.log('on-press-enter-callback: ' + attrs.onPressEnterCallback);
-        console.log('typeof(on-press-enter-callback): ' + typeof attrs.onPressEnterCallback);
-        var foo = $parse(/*attrs.onPressEnterCallback*/ 'console.log("hello world")');
-        foo(scope);
-        console.log('finished');
+        scope.onPressEnterCallback = $parse(attrs.onPressEnterCallback);
       },
       controller: ['$transclude', '$parse', '$sce', '$log', '$q', '$location',
                    '$scope', 'NgTableParams', 'utils',
@@ -455,11 +451,18 @@ angular.module('ngMetaCrudApp')
         var getSearch = $location.search();
         $scope.fltrPart.partNumber = getSearch.pn;
 
-        $scope.onPressedEnter = function() {
-          if ($scope.searchResults.hits.total === 1) {
-            var rec = $scope.searchResults.hits.hits[0]._source;
-            var partId = rec.id;
-            $location.path('/part/' + partId);
+        $scope.onKeyUpInPartNumber = function($event) {
+          if ($event.keyCode === 13) {
+            var retval = $scope.onPressEnterCallback($scope);
+            // If the invocation of a callback above
+            if (!retval) {  // Default behaviour.
+              // Open part's view if a search result contains a single row.
+              if ($scope.searchResults && $scope.searchResults.hits.total === 1) {
+                var rec = $scope.searchResults.hits.hits[0]._source;
+                var partId = rec.id;
+                $location.path('/part/' + partId);
+              }
+            }
           }
         };
 

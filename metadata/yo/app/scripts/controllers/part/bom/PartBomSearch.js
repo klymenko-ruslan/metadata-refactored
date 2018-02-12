@@ -90,6 +90,32 @@ angular.module('ngMetaCrudApp')
         $scope.partId === p.id || pickedPartIds[p.id] || existingBomPartIds[p.id];
     };
 
+    /**
+     * This is a callback that invoked when an user presses key 'Enter'
+     * while focus is in an input field 'Part Number'
+     * of a 'part search filter'.
+     *
+     * See also a view PartBomSearch.html and
+     * an attribute 'on-press-enter-callback' in a declaration of a directive
+     * 'part-search'.
+     */
+    $scope.cbPickOnEnter = function(searchResults) {
+      // When a result of a search is a single part
+      // and this part is suitable to be picked then
+      // we pick its.
+      if (searchResults && searchResults.hits.total === 1) {
+        var rec = searchResults.hits.hits[0]._source;
+        if (!$scope.isBttnPickDisabled(rec)) {
+          $scope.pick(rec);
+        }
+      }
+      // Return statement below
+      // signals that default behaviour on the pressed 'Enter' key should
+      // not be invoked.
+      // See function 'onKeyUpInPartNumber' in the partSearch.js.
+      return true;
+    };
+
     function cbSave(srcIds, ratings, description, attachIds) {
       restService.createBom($scope.partId, pickedParts, srcIds, ratings, description, attachIds).then(
         function(response) {
