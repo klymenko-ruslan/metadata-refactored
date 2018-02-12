@@ -119,7 +119,6 @@ angular.module('ngMetaCrudApp')
             },
             function() {
               // No
-console.log('Dialog closed by button No.');
             });
       };
 

@@ -139,7 +139,6 @@ angular.module('ngMetaCrudApp')
     }
 
     var uploadPreviewTemplate = document.getElementById('upload-preview-template');
-    console.log('uploadPreviewTemplate: ' + uploadPreviewTemplate);
 
     $scope.markdownEditorOpts = {
       iconlibrary: 'fa',
