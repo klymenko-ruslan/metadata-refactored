@@ -1,0 +1,77 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div data-ng-show="$scope.kitCommonTurboTypesLoading || $scope.kitCommonComponentMappingLoading">
+      Loading...
+    </div>
+    <div data-ng-hide="$scope.kitCommonTurboTypesLoading || $scope.kitCommonComponentMappingLoading">
+      <div class="row">
+        <div class="col-xs-12">
+          <h5><u>Common Turbo Types</u></h5>
+          <table data-ng-table="kitCommonTurboTypesTableParams" class="table table-bordered table-striped table-hover table-responsive">
+          <tbody>
+          <tr data-ng-repeat="kctt in $data">
+            <td title="'Part #'">
+              <a href="#" data-ng-href="/part/{{kctt.partId}}">{{kctt.manufacturerPartNumber}}</a>
+            </td>
+            <td title="'Kit Type'">{{kctt.kitType}}</td>
+            <td title="'Manufacturer'">{{kctt.manufacturer.name}}</td>
+            <td title="'Mapping'">{{kctt.mapping}}</td>
+            <td title="'Mapping Actions'" class="actions">
+              <button type="button" data-ng-click="kitCommonTurboTypesMappingInclude(kctt)" class="btn btn-xs btn-success">
+                <i class="fa fa-check-circle-o"></i>
+                Include
+              </button>
+              <button type="button" data-ng-click="kitCommonTurboTypesMappingExclude(kctt)" class="btn btn-xs btn-warning">
+                <i class="fa fa-circle-o"></i>
+                Exclude
+              </button>
+            </td>
+          </tr>
+          <tr data-ng-hide="$data.length > 0">
+            <td colspan="5">No data.</td>
+          </tr>
+          </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <h5 style="margin-top:20px;"><u>Common Component Mappings</u></h5>
+          <button id="btn-add-common-component-mapping" type="button" class="btn btn-primary pull-right" data-ng-click="alert('TODO: addCommonComponentMapping')" style="margin-bottom:10px;">
+            <i class="fa fa-plus"></i>
+            Add Mapping
+          </button>
+          <table data-ng-table="kitCommonComponentMappingTableParams" class="table table-bordered table-striped table-hover table-responsive">
+          <tbody>
+          <tr data-ng-repeat="kccm in $data">
+            <td title="'Part #'">
+              <a href="#" data-ng-href="/part/{{kccm.partId}}">{{kccm.manufacturerPartNumber}}</a>
+            </td>
+            <td title="'Kit Type'">{{kccm.kitType}}</td>
+            <td title="'Manufacturer'">{{kccm.manufacturer.name}}</td>
+            <td title="'Mapping'">{{kccm.mapping}}</td>
+            <td title="'Mapping Actions'" class="actions">
+              <button type="button" data-ng-click="kitCommonComponentMappingInclude(kccm)" class="btn btn-xs btn-success">
+                <i class="fa fa-check-circle-o"></i>
+                Include
+              </button>
+              <button type="button" data-ng-click="kitCommonComponentMappingExclude(kccm)" class="btn btn-xs btn-warning">
+                <i class="fa fa-circle-o"></i>
+                Exclude
+              </button>
+              <button type="button" data-ng-click="kitCommonComponentMappingRemove(kccm)" class="btn btn-xs btn-danger">
+                <i class="fa fa-trash-o"></i>
+                Remove
+              </button>
+            </td>
+          </tr>
+          <tr data-ng-hide="$data.length > 0">
+            <td colspan="5">No data.</td>
+          </tr>
+          </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

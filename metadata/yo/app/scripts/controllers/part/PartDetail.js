@@ -60,6 +60,10 @@ angular.module('ngMetaCrudApp')
   $scope.onChangeTab = function(tabId) {
     if (tabId === 'part_details') {
       $scope.refreshTabPartDetails();
+    } else if (tabId === 'kits') {
+      if ($scope.kitCommonTurboTypesTableParams === null || $scope.kitCommonComponentMappingTableParams === null) {
+        $scope.refreshTabKits();
+      }
     } else if (tabId === 'non_standard') {
       if ($scope.oversizeParts === null && $scope.standardParts === null) {
         $scope.refreshTabNonStandard();
@@ -90,6 +94,89 @@ angular.module('ngMetaCrudApp')
   $scope.refreshTabPartDetails = function() {
   };
 
+  $scope.kitCommonTurboTypesLoading = true;
+  $scope.kitCommonTurboTypesRowsCount = null;
+  $scope.kitCommonTurboTypesTableParams = null;
+  $scope.kitCommonComponentMappingLoading = true;
+  $scope.kitCommonComponentMappingRowsCount = null;
+  $scope.kitCommonComponentMappingTableParams = null;
+
+  $scope.refreshTabAuditLog = function() {
+    $scope.kitCommonTurboTypesLoading = true;
+    $scope.kitCommonTurboTypesTableParams = new NgTableParams({
+      'page': 1,
+      'count': 10,
+      'sorting': {
+        'manufacturerPartNumber': 'asc'
+      }
+    }, {
+      getData: function(params) {
+        var sortOrder;
+        var sorting = params.sorting();
+        for (var sortProperty in sorting) {
+          break;
+        }
+        if (sortProperty) {
+          sortOrder = sorting[sortProperty];
+        }
+        var offset = params.count() * (params.page() - 1);
+        var limit = params.count();
+        // var userId = null;
+        var retVal = restService.getKitCommonTurboTypes($scope.partId, sortProperty, sortOrder, offset, limit).then(
+          function(result) {
+            // Update the total and slice the result
+            params.total(result.total);
+            $scope.kitCommonTurboTypesRowsCount = result.total;
+            $scope.kitCommonTurboTypesLoading = false;
+            return result.recs;
+          },
+          function(errorResponse) {
+            $scope.kitCommonTurboTypesLoading = false;
+            restService.error('Loading of Kit Common Turbo Types failed.', errorResponse);
+          }
+        );
+        return retVal;
+      }
+    });
+    $scope.kitCommonComponentMappingLoading = true;
+    $scope.kitCommonComponentMappingTableParams = new NgTableParams({
+      'page': 1,
+      'count': 10,
+      'sorting': {
+        'manufacturerPartNumber': 'asc'
+      }
+    }, {
+      getData: function(params) {
+        var sortOrder;
+        var sorting = params.sorting();
+        for (var sortProperty in sorting) {
+          break;
+        }
+        if (sortProperty) {
+          sortOrder = sorting[sortProperty];
+        }
+        var offset = params.count() * (params.page() - 1);
+        var limit = params.count();
+        // var userId = null;
+        var retVal = restService.getKitCommonComponentMapping($scope.partId, sortProperty, sortOrder, offset, limit).then(
+          function(result) {
+            // Update the total and slice the result
+            params.total(result.total);
+            $scope.kitCommonComponentMappingRowsCount = result.total;
+            $scope.kitCommonComponentMappingLoading = false;
+            return result.recs;
+          },
+          function(errorResponse) {
+            $scope.kitCommonComponentMappingLoading = false;
+            restService.error('Loading of Kit Common Component Mapping failed.', errorResponse);
+          }
+        );
+        return retVal;
+      }
+    });
+
+  };
+
   $scope.oversizeParts = null;
   $scope.oversizePartsTableParams = new NgTableParams({
     'page': 1,
@@ -100,7 +187,7 @@ angular.module('ngMetaCrudApp')
   }, {
     'dataset': $scope.oversizeParts
   });
-  $scope.oversizePartsTableParamsLoading = true; // to shop icon for a progress of a loading
+  $scope.oversizePartsTableParamsLoading = true; // to show icon for a progress of a loading
 
   $scope.standardParts = null;
   $scope.standardPartsTableParams = new NgTableParams({
@@ -112,7 +199,7 @@ angular.module('ngMetaCrudApp')
   }, {
     'dataset': $scope.standardParts
   });
-  $scope.standardPartsTableParamsLoading = true; // to shop icon for a progress of a loading
+  $scope.standardPartsTableParamsLoading = true; // to show icon for a progress of a loading
 
   $scope.refreshTabNonStandard = function() {
     $scope.oversizePartsTableParamsLoading = true;
@@ -142,7 +229,7 @@ angular.module('ngMetaCrudApp')
   };
 
   $scope.changelogTableParams = null;
-  $scope.changelogTableParamsLoading = true; // to shop icon for a progress of a loading
+  $scope.changelogTableParamsLoading = true; // to show icon for a progress of a loading
   $scope.changelogRowsCount = null;
 
   $scope.refreshTabAuditLog = function() {
@@ -186,7 +273,7 @@ angular.module('ngMetaCrudApp')
   };
 
   $scope.prices = null;
-  $scope.pricesLoading = true; // to shop icon for a progress of a loading
+  $scope.pricesLoading = true; // to show icon for a progress of a loading
 
   $scope.refreshTabPrices = function() {
     $scope.pricesLoading = true;
@@ -211,7 +298,7 @@ angular.module('ngMetaCrudApp')
   }, {
     'dataset': $scope.applications
   });
-  $scope.applicationsLoading = true; // to shop icon for a progress of a loading
+  $scope.applicationsLoading = true; // to show icon for a progress of a loading
 
   $scope.refreshTabApplications = function() {
     $scope.applicationsLoading = true;
@@ -250,7 +337,7 @@ angular.module('ngMetaCrudApp')
   };
 
   $scope.alsoBoughtTableParams = null;
-  $scope.alsoBoughtTableParamsLoading = true; // to shop icon for a progress of a loading
+  $scope.alsoBoughtTableParamsLoading = true; // to show icon for a progress of a loading
 
   $scope.refreshTabAlsoBought = function() {
     $scope.alsoBoughtTableParamsLoading = true;
@@ -303,7 +390,7 @@ angular.module('ngMetaCrudApp')
   }, {
     'dataset': $scope.turbos
   });
-  $scope.turbosTableParamsLoading = true; // to shop icon for a progress of a loading
+  $scope.turbosTableParamsLoading = true; // to show icon for a progress of a loading
 
   $scope.refreshTabTurbos = function() {
     $scope.turbosTableParamsLoading = true;

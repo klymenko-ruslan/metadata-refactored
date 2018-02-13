@@ -81,14 +81,30 @@
       <turbo-types part="part"></turbo-types>
     </div>
   </uib-tab>
-  <uib-tab index="3" select="onChangeTab('applications')" classes="'tab-content'" data-ng-show="part.partType.value == 'turbo'">
+  <uib-tab index="3" select="onChangeTab('kits')">
+    <uib-tab-heading>
+      <div class="tab-head">
+        <div class="tab-title">
+          <i class="fa fa-medkit"></i>
+          Kits
+        </div>
+        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabKits()" data-ng-show="activeTabIndex === 3">
+          <i class="fa fa-refresh" aria-hidden="true"></i>
+        </button>
+      </div>
+    </uib-tab-heading>
+    <div role="tabpanel" class="tab-pane tab-part-detail">
+      <data-ng-include src="'/views/part/view/TabKits.html'"></data-ng-include>
+    </div>
+  </uib-tab>
+  <uib-tab index="4" select="onChangeTab('applications')" classes="'tab-content'" data-ng-show="part.partType.value == 'turbo'">
     <uib-tab-heading>
       <div class="tab-head">
         <div class="tab-title">
           <i class="fa fa-paperclip" aria-hidden="true"></i>
           Applications
         </div>
-        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabApplications()" data-ng-show="activeTabIndex === 3">
+        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabApplications()" data-ng-show="activeTabIndex === 4">
           <i class="fa fa-refresh" aria-hidden="true"></i>
         </button>
       </div>
@@ -97,14 +113,14 @@
       <data-ng-include src="'/views/part/view/TabApplications.html'"></data-ng-include>
     </div>
   </uib-tab>
-  <uib-tab index="4" select="onChangeTab('turbos')" classes="'tab-content'" data-ng-show="part.partType.value == 'gasket_kit'">
+  <uib-tab index="5" select="onChangeTab('turbos')" classes="'tab-content'" data-ng-show="part.partType.value == 'gasket_kit'">
     <uib-tab-heading>
       <div class="tab-head">
         <div class="tab-title">
           <i class="fa fa-book" aria-hidden="true"></i>
           Turbos
         </div>
-        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabTurbos()" data-ng-show="activeTabIndex === 4">
+        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabTurbos()" data-ng-show="activeTabIndex === 5">
           <i class="fa fa-refresh" aria-hidden="true"></i>
         </button>
       </div>
@@ -113,14 +129,14 @@
       <data-ng-include src="'/views/part/view/TabTurbos.html'"></data-ng-include>
     </div>
   </uib-tab>
-  <uib-tab index="5" select="onChangeTab('non_standard')" classes="'tab-content'" data-ng-show="part.partType.value == 'journal_bearing' || part.partType.value == 'journal_bearing_spacer' || part.partType.value == 'piston_ring'">
+  <uib-tab index="6" select="onChangeTab('non_standard')" classes="'tab-content'" data-ng-show="part.partType.value == 'journal_bearing' || part.partType.value == 'journal_bearing_spacer' || part.partType.value == 'piston_ring'">
     <uib-tab-heading>
       <div class="tab-head">
         <div class="tab-title">
           <i class="fa fa-slack" aria-hidden="true"></i>
           Non Standard
         </div>
-        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabNonStandard()" data-ng-show="activeTabIndex === 5">
+        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabNonStandard()" data-ng-show="activeTabIndex === 6">
           <i class="fa fa-refresh" aria-hidden="true"></i>
         </button>
       </div>
@@ -129,14 +145,14 @@
       <data-ng-include src="'/views/part/view/TabNonstandard.html'"></data-ng-include>
     </div>
   </uib-tab>
-  <uib-tab index="6" select="onChangeTab('audit_log')" classes="'tab-content'">
+  <uib-tab index="7" select="onChangeTab('audit_log')" classes="'tab-content'">
     <uib-tab-heading>
       <div class="tab-head">
         <div class="tab-title">
           <i class="fa fa-book" aria-hidden="true"></i>
           Audit Log
         </div>
-        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabAuditLog()" data-ng-show="activeTabIndex === 6">
+        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabAuditLog()" data-ng-show="activeTabIndex === 7">
           <i class="fa fa-refresh" aria-hidden="true"></i>
         </button>
       </div>
@@ -145,14 +161,14 @@
       <data-ng-include src="'/views/part/view/TabAuditLog.html'"></data-ng-include>
     </div>
   </uib-tab>
-  <uib-tab index="7" select="onChangeTab('prices')" classes="'tab-content'" data-ng-show="part.manufacturer.name == 'Turbo International'">
+  <uib-tab index="8" select="onChangeTab('prices')" classes="'tab-content'" data-ng-show="part.manufacturer.name == 'Turbo International'">
     <uib-tab-heading>
       <div class="tab-head">
         <div class="tab-title">
           <i class="fa fa-usd" aria-hidden="true"></i>
           Prices
         </div>
-        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabPrices()" data-ng-show="activeTabIndex === 7">
+        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabPrices()" data-ng-show="activeTabIndex === 8">
           <i class="fa fa-refresh" aria-hidden="true"></i>
         </button>
       </div>
@@ -161,14 +177,14 @@
       <data-ng-include src="'/views/part/view/TabPrices.html'"></data-ng-include>
     </div>
   </uib-tab>
-  <uib-tab index="8" select="onChangeTab('also_bought')" classes="'tab-content'" data-ng-show="part.manufacturer.name == 'Turbo International'">
+  <uib-tab index="9" select="onChangeTab('also_bought')" classes="'tab-content'" data-ng-show="part.manufacturer.name == 'Turbo International'">
     <uib-tab-heading>
       <div class="tab-head">
         <div class="tab-title">
           <i class="fa fa-shopping-cart" aria-hidden="true"></i>
           Also Bought
         </div>
-        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabAlsoBought()" data-ng-show="activeTabIndex === 8">
+        <button class="btn btn-default btn-xs" title="Refresh tab" data-ng-click="refreshTabAlsoBought()" data-ng-show="activeTabIndex === 9">
           <i class="fa fa-refresh" aria-hidden="true"></i>
         </button>
       </div>
