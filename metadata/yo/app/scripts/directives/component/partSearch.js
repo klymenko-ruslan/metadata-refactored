@@ -451,10 +451,22 @@ angular.module('ngMetaCrudApp')
         var getSearch = $location.search();
         $scope.fltrPart.partNumber = getSearch.pn;
 
+        /**
+         * This function is bound on event 'keyup' in 'input' element
+         * to filter by 'Part Number' (see PartSearch.html,
+         * element id="fltrPartNumber").
+         * The function consist of two main step:
+         *  1. Call a function specified in attribute 'on-press-enter-callback'
+         *     of this directive.
+         *  2. If the invoked function above fails for any reason (not
+         *     defined, returns logical false) then a default behaviour
+         *     is applied.
+         */
         $scope.onKeyUpInPartNumber = function($event) {
           if ($event.keyCode === 13) {
             var retval = $scope.onPressEnterCallback($scope);
-            // If the invocation of a callback above
+            // If the invocation of a callback above was not return 'true'
+            // then we try apply a default behaviour.
             if (!retval) {  // Default behaviour.
               // Open part's view if a search result contains a single row.
               if ($scope.searchResults && $scope.searchResults.hits.total === 1) {
