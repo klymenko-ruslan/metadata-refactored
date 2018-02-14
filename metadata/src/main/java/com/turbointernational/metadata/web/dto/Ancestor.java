@@ -11,13 +11,13 @@ import com.turbointernational.metadata.util.View;
 public class Ancestor {
 
     @JsonView({ View.Summary.class })
-    private final Part part;
+    private Part part;
 
     @JsonView({ View.Summary.class })
-    private final Interchange interchange;
+    private Interchange interchange;
 
     @JsonView({ View.Summary.class })
-    private final int relationDistance;
+    private int relationDistance;
 
     /**
      * Relation type: true - direct false - interchange
@@ -25,27 +25,50 @@ public class Ancestor {
     @JsonView({ View.Summary.class })
     private boolean relationType;
 
+    public Ancestor() {
+    }
+
     public Ancestor(Part part, Interchange interchange, int relationDistance, boolean isDirect) {
-        this.part = part;
-        this.interchange = interchange;
-        this.relationDistance = relationDistance;
-        this.relationType = isDirect;
+        this.setPart(part);
+        this.setInterchange(interchange);
+        this.setRelationDistance(relationDistance);
+        this.setRelationType(isDirect);
     }
 
     public Part getPart() {
         return part;
     }
 
+    public void setPart(Part part) {
+        this.part = part;
+    }
+
     public int getRelationDistance() {
         return relationDistance;
     }
 
+    public void setRelationDistance(int relationDistance) {
+        this.relationDistance = relationDistance;
+    }
+
     public boolean getRelationType() {
-        return relationType;
+        return isRelationType();
+    }
+
+    public void setRelationType(boolean relationType) {
+        this.relationType = relationType;
     }
 
     public Interchange getInterchange() {
         return interchange;
+    }
+
+    public void setInterchange(Interchange interchange) {
+        this.interchange = interchange;
+    }
+
+    public boolean isRelationType() {
+        return relationType;
     }
 
 }

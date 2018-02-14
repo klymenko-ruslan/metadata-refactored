@@ -3,16 +3,16 @@ package com.turbointernational.metadata.service;
 import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.KIT;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mysql.fabric.xmlrpc.base.Array;
 import com.turbointernational.metadata.dao.KitComponentDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.ChangelogPart;
@@ -28,6 +28,8 @@ import com.turbointernational.metadata.web.dto.Page;
  */
 @Service("commonComponentService")
 public class CommonComponentService {
+
+    private final static Type LISTOFCOMMONCOMPONENTSDTO = new TypeToken<List<CommonComponent>>() {}.getType();
 
     @Autowired
     private ChangelogService changelogService;
@@ -105,8 +107,8 @@ public class CommonComponentService {
         Page<KitComponent> pgKitComponents = kitComponentDao.filter(kitId, null, sortProperty, sortOrder, offset,
                 limit);
         List<KitComponent> recs = pgKitComponents.getRecs();
-        CommonComponent[] cca = dtoMapService.map(recs, CommonComponent[].class);
-        Page<CommonComponent> retVal = new Page<CommonComponent>(recs.size(), new ArrayList<>(Arrays.asList(cca)));
+        List<CommonComponent> ccrecs = dtoMapService.map(recs, LISTOFCOMMONCOMPONENTSDTO);
+        Page<CommonComponent> retVal = new Page<CommonComponent>(ccrecs.size(), ccrecs);
         return retVal;
     }
 

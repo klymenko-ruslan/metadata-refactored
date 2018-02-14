@@ -1,5 +1,6 @@
 package com.turbointernational.metadata.service;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
@@ -156,6 +157,10 @@ public class DtoMapperService {
     }
 
     public <D> D map(Object source, Class<D> destinationType) {
+        return modelMapper.map(source, destinationType);
+    }
+
+    public <D> D map(Object source, Type destinationType) {
         return modelMapper.map(source, destinationType);
     }
 
