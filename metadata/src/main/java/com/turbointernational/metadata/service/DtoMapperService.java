@@ -17,6 +17,7 @@ import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.service.GraphDbService.GetBomsResponse;
 import com.turbointernational.metadata.service.GraphDbService.GetInterchangeResponse;
 import com.turbointernational.metadata.web.dto.Bom;
+import com.turbointernational.metadata.web.dto.CommonComponent;
 import com.turbointernational.metadata.web.dto.Interchange;
 import com.turbointernational.metadata.web.dto.Manufacturer;
 import com.turbointernational.metadata.web.dto.Part;
@@ -146,6 +147,12 @@ public class DtoMapperService {
                 .addMapping(GetBomsResponse.Row::getPartId, Bom::setPart)
                 .addMapping(GetBomsResponse.Row::getQty, Bom::setQty)
                 .addMapping(GetBomsResponse.Row::getInterchanges, Bom::setInterchanges);
+        // DTO: CommonComponent
+        modelMapper.createTypeMap(com.turbointernational.metadata.entity.part.types.kit.KitComponent.class, CommonComponent.class)
+                .addMapping(com.turbointernational.metadata.entity.part.types.kit.KitComponent::getId, CommonComponent::setId)
+                .addMapping(com.turbointernational.metadata.entity.part.types.kit.KitComponent::getKit, CommonComponent::setKit)
+                .addMapping(com.turbointernational.metadata.entity.part.types.kit.KitComponent::getPart, CommonComponent::setPart)
+                .addMapping(com.turbointernational.metadata.entity.part.types.kit.KitComponent::isExclude, CommonComponent::setExclude);
     }
 
     public <D> D map(Object source, Class<D> destinationType) {

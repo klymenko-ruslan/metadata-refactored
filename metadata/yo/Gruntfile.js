@@ -173,10 +173,11 @@ module.exports = function (grunt) {
               6692,   // Alternative BOM(s)
               17415,  // Interchanges, Tabs: 'Applications'
               18501, 18504, 18505,
+              22002, 22007, 22079, // Part Type: Turbo
               25493,  // Tabs: 'Applications'
               29878,  // Tabs: 'Applications'
               33284,
-              41506,
+              41506,  // Part Type: Kit (Common Component Mappings)
               42051,  // Part Type: Kit
               42768,  // Tabs: 'Critical Dimensions'
               42875,

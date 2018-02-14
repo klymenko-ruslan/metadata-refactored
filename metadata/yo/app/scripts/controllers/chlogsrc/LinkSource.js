@@ -138,7 +138,7 @@ angular.module('ngMetaCrudApp')
       markdown.change(markdown);
     }
 
-    var uploadPreviewTemplate = document.getElementById('upload-preview-template');
+    //var uploadPreviewTemplate = document.getElementById('upload-preview-template');
 
     $scope.markdownEditorOpts = {
       iconlibrary: 'fa',

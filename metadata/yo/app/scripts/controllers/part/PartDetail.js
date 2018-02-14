@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-.controller('PartDetailCtrl', ['$scope', '$log', '$q', '$location', '$cookies', '$routeParams', 'Kits',
+.controller('PartDetailCtrl', ['$scope', '$log', '$q', '$location', '$cookies', '$routeParams',
     'NgTableParams', 'restService', 'Restangular', 'User', '$uibModal', 'dialogs', 'toastr',
     'part', 'cachedDictionaries', 'partTypes', 'manufacturers',
-    function ($scope, $log, $q, $location, $cookies, $routeParams, Kits, NgTableParams,
+    function ($scope, $log, $q, $location, $cookies, $routeParams, NgTableParams,
       restService, Restangular, User, $uibModal, dialogs, toastr, part,
       cachedDictionaries, partTypes, manufacturers) {
   $scope.partId = part.id;
@@ -101,7 +101,7 @@ angular.module('ngMetaCrudApp')
   $scope.kitCommonComponentMappingRowsCount = null;
   $scope.kitCommonComponentMappingTableParams = null;
 
-  $scope.refreshTabAuditLog = function() {
+  $scope.refreshTabKits = function() {
     $scope.kitCommonTurboTypesLoading = true;
     $scope.kitCommonTurboTypesTableParams = new NgTableParams({
       'page': 1,
@@ -409,7 +409,7 @@ angular.module('ngMetaCrudApp')
 
   // TODO: Find a better way. Directive?
   if (part.partType.magentoAttributeSet === 'Kit') {
-    $scope.kitComponents = Kits.listComponents($scope.partId).then(
+    $scope.kitComponents = restService.listCommonComponentsByKitId($scope.partId).then(
       function(components) {
         $scope.kitComponents  = components;
       },
@@ -749,7 +749,7 @@ angular.module('ngMetaCrudApp')
       'Do you want to remove this common component mapping from the kit?').result.then(
       function() {
         // Yes
-        restService.removeCommonComponentMapping($scope.partId, componentToRemove.id).then(
+        restService.removeCommonComponentMapping(componentToRemove.id).then(
           function() {
             // Success
             toastr.success('Component removed.');

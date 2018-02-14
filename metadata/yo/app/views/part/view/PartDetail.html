@@ -81,7 +81,7 @@
       <turbo-types part="part"></turbo-types>
     </div>
   </uib-tab>
-  <uib-tab index="3" select="onChangeTab('kits')">
+  <uib-tab index="3" select="onChangeTab('kits')" data-ng-show="part.partType.value == 'turbo'">
     <uib-tab-heading>
       <div class="tab-head">
         <div class="tab-title">
@@ -97,7 +97,7 @@
       <data-ng-include src="'/views/part/view/TabKits.html'"></data-ng-include>
     </div>
   </uib-tab>
-  <uib-tab index="4" select="onChangeTab('applications')" classes="'tab-content'" data-ng-show="part.partType.value == 'turbo'">
+  <uib-tab index="4" select="onChangeTab('applications')" data-ng-show="part.partType.value == 'turbo'">
     <uib-tab-heading>
       <div class="tab-head">
         <div class="tab-title">
@@ -113,7 +113,7 @@
       <data-ng-include src="'/views/part/view/TabApplications.html'"></data-ng-include>
     </div>
   </uib-tab>
-  <uib-tab index="5" select="onChangeTab('turbos')" classes="'tab-content'" data-ng-show="part.partType.value == 'gasket_kit'">
+  <uib-tab index="5" select="onChangeTab('turbos')" data-ng-show="part.partType.value == 'gasket_kit'">
     <uib-tab-heading>
       <div class="tab-head">
         <div class="tab-title">
@@ -129,7 +129,7 @@
       <data-ng-include src="'/views/part/view/TabTurbos.html'"></data-ng-include>
     </div>
   </uib-tab>
-  <uib-tab index="6" select="onChangeTab('non_standard')" classes="'tab-content'" data-ng-show="part.partType.value == 'journal_bearing' || part.partType.value == 'journal_bearing_spacer' || part.partType.value == 'piston_ring'">
+  <uib-tab index="6" select="onChangeTab('non_standard')" data-ng-show="part.partType.value == 'journal_bearing' || part.partType.value == 'journal_bearing_spacer' || part.partType.value == 'piston_ring'">
     <uib-tab-heading>
       <div class="tab-head">
         <div class="tab-title">
@@ -145,7 +145,7 @@
       <data-ng-include src="'/views/part/view/TabNonstandard.html'"></data-ng-include>
     </div>
   </uib-tab>
-  <uib-tab index="7" select="onChangeTab('audit_log')" classes="'tab-content'">
+  <uib-tab index="7" select="onChangeTab('audit_log')">
     <uib-tab-heading>
       <div class="tab-head">
         <div class="tab-title">
@@ -161,7 +161,7 @@
       <data-ng-include src="'/views/part/view/TabAuditLog.html'"></data-ng-include>
     </div>
   </uib-tab>
-  <uib-tab index="8" select="onChangeTab('prices')" classes="'tab-content'" data-ng-show="part.manufacturer.name == 'Turbo International'">
+  <uib-tab index="8" select="onChangeTab('prices')" data-ng-show="part.manufacturer.name == 'Turbo International'">
     <uib-tab-heading>
       <div class="tab-head">
         <div class="tab-title">
@@ -177,7 +177,7 @@
       <data-ng-include src="'/views/part/view/TabPrices.html'"></data-ng-include>
     </div>
   </uib-tab>
-  <uib-tab index="9" select="onChangeTab('also_bought')" classes="'tab-content'" data-ng-show="part.manufacturer.name == 'Turbo International'">
+  <uib-tab index="9" select="onChangeTab('also_bought')" data-ng-show="part.manufacturer.name == 'Turbo International'">
     <uib-tab-heading>
       <div class="tab-head">
         <div class="tab-title">

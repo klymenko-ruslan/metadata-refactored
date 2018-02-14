@@ -10,15 +10,15 @@
   <tbody>
     <tr data-ng-repeat="item in parts track by item.id">
       <td>
-        {{getPart(item).partType.name}}
+        {{::getPart(item).partType.name}}
       </td>
       <td>
-        {{getPart(item).manufacturer.name}}
+        {{::getPart(item).manufacturer.name}}
       </td>
       <td style="white-space: nowrap;">
-        {{getPart(item).manufacturerPartNumber}}
+        <a href="#" data-ng-href="/part/{{::getPart(item).id}}" target="_blank">{{::getPart(item).manufacturerPartNumber}}</a>
       </td>
-      <td part-table-actions>
+      <td class="actions" part-table-actions>
         <a authorize="ROLE_READ"
            data-ng-href="/part/{{getPart(item).id}}"
            class="btn btn-primary btn-xs">

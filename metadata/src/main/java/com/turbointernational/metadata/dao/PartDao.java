@@ -66,6 +66,10 @@ public class PartDao extends AbstractDao<Part> {
         super(Part.class);
     }
 
+    public <T extends Part> T getReferenceOnPart(Class<T> clazz, Long id) {
+        return em.getReference(clazz, id);
+    }
+
     /**
      * Get list of parts ordered by 'id'.
      *

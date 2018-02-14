@@ -32,4 +32,8 @@ public class View {
 
     public interface ChangelogSourceDetailed extends Summary {}
 
+    public interface CommonComponentKit extends Summary {}
+
+    public interface CommonComponentPart extends Summary {}
+
 }
