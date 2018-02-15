@@ -2,11 +2,12 @@
 
 angular.module('ngMetaCrudApp')
 .controller('KitComponentSearchCtrl', ['$log', '$scope', '$location',
-  '$routeParams', 'restService', 'dialogs', 'toastr',
-  'partTypes', 'components',
-  function ($log, $scope, $location, $routeParams, restService, dialogs,
-            toastr, partTypes, components)
+  '$routeParams', 'NgTableParams', 'restService', 'dialogs', 'toastr',
+  'partTypes', 'existingMappings',
+  function ($log, $scope, $location, $routeParams, NgTableParams, restService,
+    dialogs, toastr, partTypes, existingMappings)
   {
+
     $scope.partId = parseInt($routeParams.id);
     $scope.partType = 'Kit';
 
@@ -14,11 +15,21 @@ angular.module('ngMetaCrudApp')
     $scope.showPickedPart = false;
 
     $scope.partTypes = partTypes;
-    $scope.components = components;
+    $scope.existingMappings = existingMappings;
 
-    var existed = _.object(_.map(components, function(c) {
-      return [c.part.id, true];
+    var existed = _.object(_.map(existingMappings.recs, function(c) {
+      return [c.part.partId, true];
     }));
+
+    $scope.existingKitComponentsTableParams = new NgTableParams({
+      page: 1,
+      count: 5,
+      sorting: {
+        'part.manufacturerPartNumber': 'asc'
+      }
+    }, {
+      dataset: existingMappings.recs
+    });
 
     $scope.cantBePicked = function(id) {
       return existed[id];
@@ -38,7 +49,7 @@ angular.module('ngMetaCrudApp')
     };
 
     $scope.save = function () {
-      restService.saveKit($scope.pickedPart.id, $scope.partId /* Kit */, $scope.mapping.exclude).then(
+      restService.createKitComponent($scope.pickedPart.id, $scope.partId /* Kit */, $scope.mapping.exclude).then(
         function success() {
           toastr.success('Common component mapping added.');
           $location.path('/part/' + $scope.partId);

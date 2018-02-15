@@ -314,24 +314,47 @@
   <div class="col-xs-12">
     <h4><u>Common Component Mappings</u></h4>
     <div class="row">
-      <div class="col-xs-12">
-        <div class="pull-right" style="margin-bottom: 5px;">
+      <div class="col-xs-6">
+        <button class="btn btn-default btn-sm" style="margin-top:6px" title="Remove selected mappings." data-ng-disabled="!isThereAnySelectedKitComponentMapping()" data-ng-click="onRemoveSelectedKitComponentsMappings()">
+          <i class="fa fa-trash-o"></i>
+        </button>
+      </div>
+      <div class="col-xs-6">
+        <div class="pull-right" style="margin-bottom:5px;">
           <a authorize="ROLE_ALTER_PART" class="btn btn-primary pull-right"
-              ng-href="/common/component/kit/{{::partId}}/search">
+              ng-href="/kitcomponent/{{::partId}}/search">
             <i class="fa fa-plus"></i> Add Mapping
           </a>
         </div>
       </div>
     </div>
-    <part-table parts="kitComponents " key="part"
-                extra-columns="{&quot;Mapping&quot;: &quot;item.exclude ? 'Exclude' : 'Include'&quot;}">
-      <a ng-click="removeComponent(item)"
-         class="btn btn-xs btn-danger">
-        <i class="fa fa-trash-o"></i>
-        Remove
-      </a>
-    </part-table>
+    <table data-ng-table="kitComponentsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <tr data-ng-repeat="ccm in $data">
+      <td width="30" style="text-align: left" header="'ng-table/headers/kit_components.html'">
+        <input type="checkbox" data-ng-model="selectedItems.ccm.maps[ccm.id]" data-ng-click="$event.stopPropagation();"/>
+      </td>
+      <td title="'Part#'" class="text-center text-nowrap" data-sortable="'part.partNumber'">
+        <a data-ng-href="/part/{{ccm.part.partId}}" target="_blank">{{ccm.part.partNumber}}</a>
+      </td>
+      <td title="'Part Type'" class="text-center text-nowrap" data-sortable="'part.partType.name'">
+        {{ccm.part.partType.name}}
+      </td>
+      <td title="'Manufacturer'" class="text-center text-nowrap" data-sortable="'part.manufacturer.name'">
+        {{ccm.part.manufacturer.name}}
+      </td>
+      <td title="'Mapping'" class="text-center text-nowrap" data-sortable="'exclude'">
+        <span data-ng-if="ccm.exclude">Eclude</span>
+        <span data-ng-if="!ccm.exclude">Include</span>
+      </td>
+    </tr>
+    <tr data-ng-hide="kitComponents.length">
+      <td colspan="5">No parts to display.</td>
+    </tr>
+    </table>
     <table-summary rowscount="kitComponents.length" />
+    <script type="text/ng-template" id="ng-table/headers/kit_components.html">
+      <input type="checkbox" data-ng-model="selectedItems.ccm.allChecked" data-ng-change="onCheckAllCcmItems()" />
+    </script>
   </div>
 </div>
 <hr/>

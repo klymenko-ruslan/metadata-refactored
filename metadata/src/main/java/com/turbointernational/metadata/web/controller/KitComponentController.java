@@ -10,7 +10,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -29,15 +28,17 @@ import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.part.types.kit.KitComponent;
 import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.service.ChangelogService.RelatedPart;
-import com.turbointernational.metadata.service.CommonComponentService;
+import com.turbointernational.metadata.service.KitComponentService;
 import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.CommonComponent;
+import com.turbointernational.metadata.web.dto.Page;
 
-@RequestMapping("/metadata/common/component")
+@RequestMapping("/metadata/kitcomponent")
 @Controller
-public class CommonComponentController {
+public class KitComponentController {
 
     @Autowired
-    private CommonComponentService kitComponentService;
+    private KitComponentService kitComponentService;
 
     @Autowired
     ChangelogService changelogService;
@@ -93,12 +94,16 @@ public class CommonComponentController {
     }
 
     @Transactional
-    @RequestMapping(value = "/kit/{kitId}", method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/listbykit/{kitId}", method = GET, produces = APPLICATION_JSON_VALUE)
     @Secured("ROLE_ALTER_PART")
     @ResponseBody
-    @JsonView(View.Summary.class)
-    public List<KitComponent> listByKit(@PathVariable("kitId") Long kitId) throws Exception {
-        return kitComponentService.listByKit(kitId);
+    @JsonView(View.CommonComponentPart.class)
+    public Page<CommonComponent> listByKit(@PathVariable("kitId") Long kitId,
+            @RequestParam(name = "sortProperty", required = false) String sortProperty,
+            @RequestParam(name = "sortOrder", required = false) String sortOrder,
+            @RequestParam(name = "offset", required = false) Integer offset,
+            @RequestParam(name = "limit", required = false) Integer limit) throws Exception {
+        return kitComponentService.list(kitId, null, sortProperty, sortOrder, offset, limit);
     }
 
     @Transactional

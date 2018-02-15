@@ -26,8 +26,8 @@ import com.turbointernational.metadata.web.dto.Page;
 /**
  * @author dmytro.trunykov@zorallabs.com
  */
-@Service("commonComponentService")
-public class CommonComponentService {
+@Service("kitComponentService")
+public class KitComponentService {
 
     private final static Type LISTOFCOMMONCOMPONENTSDTO = new TypeToken<List<CommonComponent>>() {}.getType();
 
@@ -98,17 +98,13 @@ public class CommonComponentService {
         changelogService.log(KIT, logMsg, json, relatedParts);
     }
 
-    public List<KitComponent> listByKit(Long kitId) {
-        return kitComponentDao.findByKitId(kitId);
-    }
-
-    public Page<CommonComponent> listByKitId(Long kitId, String sortProperty, String sortOrder, Integer offset,
+    public Page<CommonComponent> list(Long kitId, Long partId, String sortProperty, String sortOrder, Integer offset,
             Integer limit) {
-        Page<KitComponent> pgKitComponents = kitComponentDao.filter(kitId, null, sortProperty, sortOrder, offset,
+        Page<KitComponent> pgKitComponents = kitComponentDao.filter(kitId, partId, sortProperty, sortOrder, offset,
                 limit);
         List<KitComponent> recs = pgKitComponents.getRecs();
         List<CommonComponent> ccrecs = dtoMapService.map(recs, LISTOFCOMMONCOMPONENTSDTO);
-        Page<CommonComponent> retVal = new Page<CommonComponent>(ccrecs.size(), ccrecs);
+        Page<CommonComponent> retVal = new Page<CommonComponent>(pgKitComponents.getTotal(), ccrecs);
         return retVal;
     }
 

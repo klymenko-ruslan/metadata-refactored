@@ -6,13 +6,15 @@ import java.util.List;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
+import com.turbointernational.metadata.entity.Manufacturer_;
+import com.turbointernational.metadata.entity.PartType_;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.Part_;
 import com.turbointernational.metadata.entity.part.types.Kit;
@@ -31,15 +33,7 @@ public class KitComponentDao extends AbstractDao<KitComponent> {
         super(KitComponent.class);
     }
 
-    public List<KitComponent> findByKitId(Long kitId) {
-        return getEntityManager()
-                .createQuery("SELECT kc FROM KitComponent kc JOIN kc.part p WHERE kc.kit.id = :kitId", KitComponent.class)
-                .setParameter("kitId", kitId)
-                .getResultList();
-    }
-
-    public Page<KitComponent> filter(Long kitId, Long partId, String sortProperty, String sortOrder, Integer offset,
-            Integer limit) {
+    public Page<KitComponent> filter(Long kitId, Long partId, String sortProperty, String sortOrder, Integer offset, Integer limit) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<KitComponent> ecq = cb.createQuery(KitComponent.class);
         Root<KitComponent> root = ecq.from(KitComponent.class);
@@ -64,21 +58,46 @@ public class KitComponentDao extends AbstractDao<KitComponent> {
             if (sortProperty == null) {
                 throw new NullPointerException("Parameter 'sortOrder' can't be null.");
             }
-            From<?, ?> f;
-            // TODO
-            if (sortProperty.equals("kit.partType.name")) {
+            Path<?> sortPath;
+            if (sortProperty.equals("part.manufacturerPartNumber")) {
+                if (partJoin == null) {
+                    partJoin = root.join(KitComponent_.part);
+                }
+                sortPath = partJoin.get(Part_.manufacturerPartNumber);
+            } else if (sortProperty.equals("part.partType.name")) {
+                if (partJoin == null) {
+                    partJoin = root.join(KitComponent_.part);
+                }
+                sortPath = partJoin.get(Part_.partType).get(PartType_.name);
+            } else if (sortProperty.equals("part.manufacturer.name")) {
+                if (partJoin == null) {
+                    partJoin = root.join(KitComponent_.part);
+                }
+                sortPath = partJoin.get(Part_.manufacturer).get(Manufacturer_.name);
+            } else if (sortProperty.equals("kit.manufacturerPartNumber")) {
                 if (kitJoin == null) {
                     kitJoin = root.join(KitComponent_.kit);
                 }
-                f = kitJoin;
-                sortProperty = "name";
+                sortPath = kitJoin.get(Kit_.manufacturerPartNumber);
+            } else if (sortProperty.equals("kit.partType.name")) {
+                if (kitJoin == null) {
+                    kitJoin = root.join(KitComponent_.kit);
+                }
+                sortPath = kitJoin.get(Part_.partType).get(PartType_.name);
+            } else if (sortProperty.equals("kit.manufacturer.name")) {
+                if (kitJoin == null) {
+                    kitJoin = root.join(KitComponent_.kit);
+                }
+                sortPath = kitJoin.get(Part_.manufacturer).get(Manufacturer_.name);
+            } else if (sortProperty.equals("exclude")) {
+                sortPath = root.get(KitComponent_.exclude);
             } else {
-                f = root;
+                throw new AssertionError("Unsupported sort property: " + sortProperty);
             }
             if (sortOrder.equalsIgnoreCase("asc")) {
-                ecq.orderBy(cb.asc(f.get(sortProperty)));
+                ecq.orderBy(cb.asc(sortPath));
             } else if (sortOrder.equalsIgnoreCase("desc")) {
-                ecq.orderBy(cb.desc(f.get(sortProperty)));
+                ecq.orderBy(cb.desc(sortPath));
             } else {
                 throw new AssertionError("Unknown sort order: " + sortOrder);
             }

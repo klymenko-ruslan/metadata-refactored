@@ -22,9 +22,28 @@
 <div class="row">
 
   <div class="col-xs-6">
-    <h3>Kit Common Component Mappings</h3>
-    <part-table parts="components" key="part"
-                extra-columns="{&quot;Mapping&quot;: &quot;item.exclude ? 'Exclude' : 'Include'&quot;}"></part-table>
+    <h3>Existing Kit Common Component Mappings</h3>
+    <table data-ng-table="existingKitComponentsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <tr data-ng-repeat="ccm in $data">
+      <td title="'Part#'" class="text-center text-nowrap" data-sortable="'part.manufacturerPartNumber'">
+        <a data-ng-href="/part/{{ccm.part.partId}}" target="_blank">{{ccm.part.partNumber}}</a>
+      </td>
+      <td title="'Part Type'" class="text-center text-nowrap" data-sortable="'part.partType.name'">
+        {{ccm.part.partType.name}}
+      </td>
+      <td title="'Manufacturer'" class="text-center text-nowrap" data-sortable="'part.manufacturer.name'">
+        {{ccm.part.manufacturer.name}}
+      </td>
+      <td title="'Mapping'" class="text-center text-nowrap" data-sortable="'exclude'">
+        <span data-ng-if="ccm.exclude">Eclude</span>
+        <span data-ng-if="!ccm.exclude">Include</span>
+      </td>
+    </tr>
+    <tr data-ng-hide="existingKitComponentsTotal">
+      <td colspan="4">No parts to display.</td>
+    </tr>
+    </table>
+    <table-summary rowscount="existingMappings.total" />
   </div>
 
   <!-- Picked Part -->

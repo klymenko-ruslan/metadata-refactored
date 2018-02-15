@@ -407,14 +407,46 @@ angular.module('ngMetaCrudApp')
     );
   };
 
-  // TODO: Find a better way. Directive?
+  $scope.selectedItems = {
+    ccm: {
+      allChecked: false,
+      maps: {}
+    }
+  };
+
+  $scope.$watch('selectedItems.ccm.allChecked', function(val) {
+    if ($scope.bom) {
+      _.each($scope.bom, function(b) {
+        $scope.selectedItems.bom.parts[b._rowid] = val;
+      });
+    }
+  });
+
+  $scope.onRemoveSelectedKitComponentsMappings = function() {
+  };
+
+  $scope.isThereAnySelectedKitComponentMapping = function() {
+  };
+
+  $scope.kitComponentsTableParams = null;
+  $scope.kitComponents = null;
   if (part.partType.magentoAttributeSet === 'Kit') {
-    $scope.kitComponents = restService.listCommonComponentsByKitId($scope.partId).then(
-      function(components) {
-        $scope.kitComponents  = components;
+    $scope.kitComponentsTableParams = new NgTableParams({
+      page: 1,
+      count: 5,
+      sorting: {
+        'part.partNumber': 'asc'
+      }
+    }, {
+      dataset: $scope.kitComponents
+    });
+    restService.listKitComponentsByKitId($scope.partId).then(
+      function(result) {
+        $scope.kitComponents = result.recs;
+        $scope.kitComponentsTableParams.settings({dataset: $scope.kitComponents});
       },
-      function (error) {
-        restService.error('Can\'t load kits.', error);
+      function(errorResponse) {
+        restService.error('Can\'t load common component mappings.', errorResponse);
       }
     );
   }
@@ -749,7 +781,7 @@ angular.module('ngMetaCrudApp')
       'Do you want to remove this common component mapping from the kit?').result.then(
       function() {
         // Yes
-        restService.removeCommonComponentMapping(componentToRemove.id).then(
+        restService.removeKitComponent(componentToRemove.id).then(
           function() {
             // Success
             toastr.success('Component removed.');

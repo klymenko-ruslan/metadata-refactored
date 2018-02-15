@@ -16,7 +16,7 @@ public class CommonComponent {
     @JsonView({ View.CommonComponentKit.class })
     private Part kit;
 
-    @JsonView({ View.CommonComponentPart.class })
+    @JsonView({ View.CommonComponentPart.class})
     private Part part;
 
     @JsonView({ View.Summary.class })

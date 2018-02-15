@@ -157,15 +157,15 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         }]
       }
     });
-    $routeProvider.when('/common/component/kit/:id/search', {
+    $routeProvider.when('/kitcomponent/:id/search', {
       templateUrl: '../views/part/KitComponentSearch.html',
       controller: 'KitComponentSearchCtrl',
       resolve: {
         partTypes: ['cachedDictionaries', function(cachedDictionaries) {
           return cachedDictionaries.getPartTypes();
         }],
-        components: ['$route', 'restService', function($route, restService) {
-          return restService.listCommonComponentsByKitId($route.current.pathParams.id);
+        existingMappings: ['$route', 'restService', function($route, restService) {
+          return restService.listKitComponentsByKitId($route.current.pathParams.id, 'part.manufacturerPartNumber', 'asc');
         }]
       }
     });

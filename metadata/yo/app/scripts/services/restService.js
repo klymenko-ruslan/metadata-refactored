@@ -1233,22 +1233,27 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('/changelogsourcelink/description/attachment', id).remove();
       };
 
-      this.listCommonComponentsByKitId = function(kitId) {
-        return Restangular.one('/common/component/kit/', kitId).get();
+      this.listKitComponentsByKitId = function(kitId, sortProperty, sortOrder, offset, limit) {
+        return Restangular.one('/kitcomponent/listbykit', kitId).get({
+          'sortProperty': sortProperty,
+          'sortOrder': sortOrder,
+          'offset': offset,
+          'limit': limit
+        });
       };
 
-      this.saveKit = function(partId, kitId, exclude) {
+      this.createKitComponent = function(partId, kitId, exclude) {
         Restangular.setParentless(false);
-        return Restangular.all('/common/component').post({
+        return Restangular.all('/kitcomponent').post({
           'partId': partId,
           'kitId': kitId,
           'exclude': exclude
         });
       };
 
-      this.removeCommonComponentMapping = function(mapId) {
+      this.removeKitComponent = function(mapId) {
         Restangular.setParentless(false);
-        return Restangular.one('/common/component', mapId).remove();
+        return Restangular.one('/kitcomponent', mapId).remove();
       };
 
       this.createGroup = function(group) {
