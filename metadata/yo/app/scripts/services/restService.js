@@ -1251,9 +1251,9 @@ angular.module('ngMetaCrudApp')
         });
       };
 
-      this.removeKitComponent = function(mapId) {
+      this.removeKitComponentsInKit = function(kitId, ids) {
         Restangular.setParentless(false);
-        return Restangular.one('/kitcomponent', mapId).remove();
+        return Restangular.one('/kitcomponent/kit', kitId).customDELETE(ids);
       };
 
       this.createGroup = function(group) {

@@ -10,6 +10,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -115,23 +116,11 @@ public class KitComponentController {
     }
 
     @Transactional
-    @RequestMapping(value = "/{id}", method = DELETE)
+    @RequestMapping(value = "/kit/{kitId}/{ids}", method = DELETE)
     @ResponseBody
     @Secured("ROLE_ALTER_PART")
-    public void delete(@PathVariable("id") Long id) throws Exception {
-        // Get the object
-        KitComponent component = kitComponentDao.findOne(id);
-        kitComponentDao.remove(component);
-        // Update the changelog.
-        Long kitId = component.getKit().getId();
-        Long pickedPartId = component.getPart().getId();
-        Collection<RelatedPart> relatedParts = new ArrayList<>(2);
-        relatedParts.add(new RelatedPart(kitId, ChangelogPart.Role.PART0));
-        relatedParts.add(new RelatedPart(pickedPartId, ChangelogPart.Role.PART1));
-        String logMsg = String.format("Deleted kit component [%d]. Kit is %s. Picked part is %s.", id,
-                formatPart(component.getKit()), formatPart(component.getPart()));
-        String json = component.toJson();
-        changelogService.log(KIT, logMsg, json, relatedParts);
+    public List<CommonComponent> delete(@PathVariable("kitId") Long kitId, @PathVariable("ids") Long[] ids) throws Exception {
+        return kitComponentService.delete(kitId, ids);
     }
 
 }

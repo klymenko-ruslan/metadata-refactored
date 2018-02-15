@@ -82,20 +82,23 @@ public class KitComponentService {
     }
 
     @Transactional
-    public void delete(Long id) throws Exception {
-        // Get the object
-        KitComponent component = kitComponentDao.findOne(id);
-        kitComponentDao.remove(component);
-        // Update the changelog.
-        Long kitId = component.getKit().getId();
-        Long pickedPartId = component.getPart().getId();
-        Collection<RelatedPart> relatedParts = new ArrayList<>(2);
-        relatedParts.add(new RelatedPart(kitId, ChangelogPart.Role.PART0));
-        relatedParts.add(new RelatedPart(pickedPartId, ChangelogPart.Role.PART1));
-        String logMsg = String.format("Deleted kit component [%d]. Kit is %s. Picked part is %s.", id,
-                formatPart(component.getKit()), formatPart(component.getPart()));
-        String json = component.toJson();
-        changelogService.log(KIT, logMsg, json, relatedParts);
+    public List<CommonComponent> delete(Long kitId, Long[] ids) throws Exception {
+        for (Long id : ids) {
+            // Get the object
+            KitComponent component = kitComponentDao.findOne(id);
+            kitComponentDao.remove(component);
+            // Update the changelog.
+            Long pickedPartId = component.getPart().getId();
+            Collection<RelatedPart> relatedParts = new ArrayList<>(2);
+            relatedParts.add(new RelatedPart(kitId, ChangelogPart.Role.PART0));
+            relatedParts.add(new RelatedPart(pickedPartId, ChangelogPart.Role.PART1));
+            String logMsg = String.format("Deleted kit component [%d]. Kit is %s. Picked part is %s.", id,
+                    formatPart(component.getKit()), formatPart(component.getPart()));
+            String json = component.toJson();
+            changelogService.log(KIT, logMsg, json, relatedParts);
+        }
+        Page<CommonComponent> pg = list(kitId, null, null, null, null, null);
+        return pg.getRecs();
     }
 
     public Page<CommonComponent> list(Long kitId, Long partId, String sortProperty, String sortOrder, Integer offset,

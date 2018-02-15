@@ -414,18 +414,57 @@ angular.module('ngMetaCrudApp')
     }
   };
 
+  function _initKitComponents(kitComponents) {
+      $scope.selectedItems.ccm.allChecked = false;
+      $scope.selectedItems.ccm.maps = {};
+      $scope.kitComponents = kitComponents;
+      $scope.kitComponentsTableParams.settings({dataset: $scope.kitComponents});
+  };
+
   $scope.$watch('selectedItems.ccm.allChecked', function(val) {
-    if ($scope.bom) {
-      _.each($scope.bom, function(b) {
-        $scope.selectedItems.bom.parts[b._rowid] = val;
+    if ($scope.kitComponents) {
+      _.each($scope.kitComponents, function(kc) {
+        $scope.selectedItems.ccm.maps[kc.id] = val;
       });
     }
   });
 
-  $scope.onRemoveSelectedKitComponentsMappings = function() {
+  $scope.isThereAnySelectedKitComponentMapping = function() {
+    var m = $scope.selectedItems.ccm.maps;
+    if (m) {
+      for (var k in m) {
+        if (m.hasOwnProperty(k) && m[k]) {
+          return true;
+        }
+      }
+    }
+    return false;
   };
 
-  $scope.isThereAnySelectedKitComponentMapping = function() {
+  $scope.onRemoveSelectedKitComponentsMappings = function() {
+    dialogs.confirm(
+      'Remove Common Component Mapping?',
+      'Do you want to remove this common component mapping from the kit?').result.then(
+      function() {
+        // Yes
+        var ids = _.chain(_.pairs($scope.selectedItems.ccm.maps))
+          .filter(function(t) { return t[1]; })
+          .map(function(t) { return parseInt(t[0]); })
+          .value();
+        restService.removeKitComponentsInKit($scope.partId, ids).then(
+          function(result) {
+            // Success
+            toastr.success('Common Components Mapping(s) removed.');
+            _initKitComponents(result);
+          },
+          function(response) {
+            // Error
+            restService.error('Could not delete common component mapping(s).', response);
+          });
+      },
+      function() {
+        // No
+      });
   };
 
   $scope.kitComponentsTableParams = null;
@@ -442,8 +481,7 @@ angular.module('ngMetaCrudApp')
     });
     restService.listKitComponentsByKitId($scope.partId).then(
       function(result) {
-        $scope.kitComponents = result.recs;
-        $scope.kitComponentsTableParams.settings({dataset: $scope.kitComponents});
+        _initKitComponents(result.recs);
       },
       function(errorResponse) {
         restService.error('Can\'t load common component mappings.', errorResponse);
