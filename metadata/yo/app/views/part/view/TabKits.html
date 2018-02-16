@@ -10,18 +10,22 @@
           <table data-ng-table="kitCommonTurboTypesTableParams" class="table table-bordered table-striped table-hover table-responsive">
           <tbody>
           <tr data-ng-repeat="kctt in $data">
-            <td title="'Part #'">
-              <a href="#" data-ng-href="/part/{{kctt.partId}}">{{kctt.manufacturerPartNumber}}</a>
+            <td title="'Part #'" data-sortable="'kit.partId'">
+              <a href="#" data-ng-href="/part/{{kctt.kit.partId}}" target="_blank">{{kctt.kit.partNumber}}</a>
             </td>
-            <td title="'Kit Type'">{{kctt.kitType}}</td>
-            <td title="'Manufacturer'">{{kctt.manufacturer.name}}</td>
-            <td title="'Mapping'">{{kctt.mapping}}</td>
+            <td title="'Kit Type'" data-sortable="'kit.kitType.name'">{{kctt.kit.kitType.name}}</td>
+            <td title="'Manufacturer'" data-sortable="'kit.manufacturer.name'">{{kctt.kit.manufacturer.name}}</td>
+            <td title="'Mapping'">
+              <span data-ng-if="kctt.exclude === true">Exclude</span>
+              <span data-ng-if="kctt.exclude === false">Include</span>
+              <span data-ng-if="kctt.exclude === null">None</span>
+            </td>
             <td title="'Mapping Actions'" class="actions">
-              <button type="button" data-ng-click="kitCommonTurboTypesMappingInclude(kctt)" class="btn btn-xs btn-success" authorize="ROLE_ALTER_PART">
+              <button type="button" data-ng-click="kitCommonTurboTypesMappingInclude(kctt.id)" class="btn btn-xs btn-success" data-ng-hide="kctt.exclude === false" authorize="ROLE_ALTER_PART">
                 <i class="fa fa-check-circle-o"></i>
                 Include
               </button>
-              <button type="button" data-ng-click="kitCommonTurboTypesMappingExclude(kctt)" class="btn btn-xs btn-warning" authorize="ROLE_ALTER_PART">
+              <button type="button" data-ng-click="kitCommonTurboTypesMappingExclude(kctt.id)" class="btn btn-xs btn-warning" data-ng-hide="kctt.exclude === true" authorize="ROLE_ALTER_PART">
                 <i class="fa fa-circle-o"></i>
                 Exclude
               </button>
@@ -32,6 +36,7 @@
           </tr>
           </tbody>
           </table>
+          <table-summary rowscount="kitCommonTurboTypes.length" />
         </div>
       </div>
       <div class="row">
@@ -45,7 +50,7 @@
             </div>
             <div class="col-xs-6">
               <div class="pull-right" style="margin-bottom: 5px;">
-                <a authorize="ROLE_ALTER_PART" class="btn btn-primary" data-ng-href="/TODO">
+                <button type="button" authorize="ROLE_ALTER_PART" class="btn btn-primary" data-ng-click="kitCommonComponentAddMapping()">
                   <i class="fa fa-plus"></i>
                   Add Mapping
                 </a>
@@ -55,21 +60,24 @@
           <table data-ng-table="kitCommonComponentMappingTableParams" class="table table-bordered table-striped table-hover table-responsive">
           <tbody>
           <tr data-ng-repeat="kccm in $data">
-            <td width="30" style="text-align: left" header="'ng-table/headers/checkbox_ccm.html'">
-              <input type="checkbox" data-ng-model="selectedItems.ccm[kccm.id]" data-ng-click="$event.stopPropagation();"/>
+            <td width="30" style="text-align: left" header="'ng-table/headers/checkbox_kccm.html'">
+              <input type="checkbox" data-ng-model="selectedItems.kccm.maps[kccm.id]" data-ng-click="$event.stopPropagation();"/>
             </td>
-            <td title="'Part #'">
-              <a href="#" data-ng-href="/part/{{kccm.partId}}">{{kccm.manufacturerPartNumber}}</a>
+            <td title="'Part #'" data-sortable="'kit.partNumber'">
+              <a href="#" data-ng-href="/part/{{kccm.kit.partId}}" target="_blank">{{kccm.kit.partNumber}}</a>
             </td>
-            <td title="'Kit Type'">{{kccm.kitType}}</td>
-            <td title="'Manufacturer'">{{kccm.manufacturer.name}}</td>
-            <td title="'Mapping'">{{kccm.mapping}}</td>
+            <td title="'Kit Type'" data-sortable="'kit.kitType.name'">{{kccm.kit.kitType.name}}</td>
+            <td title="'Manufacturer'" data-sortable="'kit.manufacturer.name'">{{kccm.kit.manufacturer.name}}</td>
+            <td title="'Mapping'" data-sortable="'exclude'">
+              <span data-ng-if="kccm.exclude">Exclude</span>
+              <span data-ng-if="!kccm.exclude">Include</span>
+            </td>
             <td title="'Mapping Actions'" class="actions">
-              <button type="button" data-ng-click="kitCommonComponentMappingInclude(kccm)" class="btn btn-xs btn-success" authorize="ROLE_ALTER_PART">
+              <button type="button" data-ng-click="kitCommonComponentMappingInclude(kccm.id)" data-ng-show="kccm.exclude" class="btn btn-xs btn-success" authorize="ROLE_ALTER_PART">
                 <i class="fa fa-check-circle-o"></i>
                 Include
               </button>
-              <button type="button" data-ng-click="kitCommonComponentMappingExclude(kccm)" class="btn btn-xs btn-warning" authorize="ROLE_ALTER_PART">
+              <button type="button" data-ng-click="kitCommonComponentMappingExclude(kccm.id)" data-ng-hide="kccm.exclude" class="btn btn-xs btn-warning" authorize="ROLE_ALTER_PART">
                 <i class="fa fa-circle-o"></i>
                 Exclude
               </button>
@@ -80,13 +88,14 @@
           </tr>
           </tbody>
           </table>
+          <table-summary rowscount="kitCommonComponentMapping.length" />
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<script type="text/ng-template" id="ng-table/headers/checkbox_ccm.html">
-  <input type="checkbox" data-ng-model="selectedItems.ccm.allCcmChecked" />
+<script type="text/ng-template" id="ng-table/headers/checkbox_kccm.html">
+  <input type="checkbox" data-ng-model="selectedItems.kccm.allChecked" />
 </script>
 

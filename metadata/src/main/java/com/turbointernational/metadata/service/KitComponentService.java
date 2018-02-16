@@ -82,12 +82,13 @@ public class KitComponentService {
     }
 
     @Transactional
-    public List<CommonComponent> delete(Long kitId, Long[] ids) throws Exception {
+    public void delete(Long[] ids) throws Exception {
         for (Long id : ids) {
             // Get the object
             KitComponent component = kitComponentDao.findOne(id);
             kitComponentDao.remove(component);
             // Update the changelog.
+            Long kitId = component.getKit().getId();
             Long pickedPartId = component.getPart().getId();
             Collection<RelatedPart> relatedParts = new ArrayList<>(2);
             relatedParts.add(new RelatedPart(kitId, ChangelogPart.Role.PART0));
@@ -97,8 +98,6 @@ public class KitComponentService {
             String json = component.toJson();
             changelogService.log(KIT, logMsg, json, relatedParts);
         }
-        Page<CommonComponent> pg = list(kitId, null, null, null, null, null);
-        return pg.getRecs();
     }
 
     public Page<CommonComponent> list(Long kitId, Long partId, String sortProperty, String sortOrder, Integer offset,
@@ -111,4 +110,7 @@ public class KitComponentService {
         return retVal;
     }
 
+    public List<CommonComponent> listCommonTurboTypes(Long partId /* Turbo */) {
+        return kitComponentDao.listCommonTurboTypes(partId);
+    }
 }

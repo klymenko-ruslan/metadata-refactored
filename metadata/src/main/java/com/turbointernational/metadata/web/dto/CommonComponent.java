@@ -9,23 +9,23 @@ import com.turbointernational.metadata.util.View;
  */
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public class CommonComponent {
-    
+
     @JsonView({ View.Summary.class })
     private Long id;
 
     @JsonView({ View.CommonComponentKit.class })
-    private Part kit;
+    private Kit kit;
 
-    @JsonView({ View.CommonComponentPart.class})
+    @JsonView({ View.CommonComponentPart.class })
     private Part part;
 
     @JsonView({ View.Summary.class })
-    private boolean exclude;
+    private Boolean exclude;
 
     public CommonComponent() {
     }
 
-    public CommonComponent(Long id, Part kit, Part part, boolean exclude) {
+    public CommonComponent(Long id, Kit kit, Part part, Boolean exclude) {
         this.setId(id);
         this.setKit(kit);
         this.setPart(part);
@@ -40,11 +40,11 @@ public class CommonComponent {
         this.id = id;
     }
 
-    public Part getKit() {
+    public Kit getKit() {
         return kit;
     }
 
-    public void setKit(Part kit) {
+    public void setKit(Kit kit) {
         this.kit = kit;
     }
 
@@ -56,11 +56,11 @@ public class CommonComponent {
         this.part = part;
     }
 
-    public boolean isExclude() {
+    public Boolean isExclude() {
         return exclude;
     }
 
-    public void setExclude(boolean exclude) {
+    public void setExclude(Boolean exclude) {
         this.exclude = exclude;
     }
 

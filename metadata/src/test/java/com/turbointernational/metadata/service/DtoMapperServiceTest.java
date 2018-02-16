@@ -95,6 +95,8 @@ public class DtoMapperServiceTest {
 
     private com.turbointernational.metadata.entity.part.types.Kit entityKit;
 
+    private com.turbointernational.metadata.entity.part.types.kit.KitType entityKitKitType;
+
     @Before
     public void before() {
         dtoMapperService.init();
@@ -124,6 +126,10 @@ public class DtoMapperServiceTest {
         entityKit.setManufacturerPartNumber("020-0177W");
         entityKit.setManufacturer(entityKitManufacturer);
         entityKit.setPartType(entityKitPartType);
+        entityKitKitType = new com.turbointernational.metadata.entity.part.types.kit.KitType();
+        entityKitKitType.setId(1L);
+        entityKitKitType.setName("Floating Carbon Seal"); 
+        entityKit.setKitType(entityKitKitType);
     }
 
     /**
@@ -289,7 +295,7 @@ public class DtoMapperServiceTest {
         assertNotNull(dtoPart.getManufacturer());
         assertEquals((Long) 11L, dtoPart.getManufacturer().getId());
         assertEquals("Turbo International", dtoPart.getManufacturer().getName());
-        Part dtoKit = dtoCommonComponent.getKit();
+        com.turbointernational.metadata.web.dto.Kit dtoKit = dtoCommonComponent.getKit();
         assertNotNull(dtoKit);
         assertEquals((Long) 40270L, dtoKit.getPartId());
         assertEquals("020-0177W", dtoKit.getPartNumber());
@@ -299,7 +305,9 @@ public class DtoMapperServiceTest {
         assertNotNull(dtoKit.getManufacturer());
         assertEquals((Long) 1L, dtoKit.getManufacturer().getId());
         assertEquals("Garret", dtoKit.getManufacturer().getName());
-
+        assertNotNull(dtoKit.getKitType());
+        assertEquals((Long) 1L, dtoKit.getKitType().getId());
+        assertEquals("Floating Carbon Seal", dtoKit.getKitType().getName());
     }
 
     /**

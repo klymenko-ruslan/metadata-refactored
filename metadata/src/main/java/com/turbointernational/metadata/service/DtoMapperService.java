@@ -20,6 +20,8 @@ import com.turbointernational.metadata.service.GraphDbService.GetInterchangeResp
 import com.turbointernational.metadata.web.dto.Bom;
 import com.turbointernational.metadata.web.dto.CommonComponent;
 import com.turbointernational.metadata.web.dto.Interchange;
+import com.turbointernational.metadata.web.dto.Kit;
+import com.turbointernational.metadata.web.dto.KitType;
 import com.turbointernational.metadata.web.dto.Manufacturer;
 import com.turbointernational.metadata.web.dto.Part;
 import com.turbointernational.metadata.web.dto.PartType;
@@ -106,7 +108,7 @@ public class DtoMapperService {
                  .include(com.turbointernational.metadata.entity.part.types.HeatshieldShroud.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.JournalBearing.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.JournalBearingSpacer.class, Part.class)
-                 .include(com.turbointernational.metadata.entity.part.types.Kit.class, Part.class)
+                 //.include(com.turbointernational.metadata.entity.part.types.Kit.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.MajorComponent.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.MinorComponent.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.Misc.class, Part.class)
@@ -148,6 +150,20 @@ public class DtoMapperService {
                 .addMapping(GetBomsResponse.Row::getPartId, Bom::setPart)
                 .addMapping(GetBomsResponse.Row::getQty, Bom::setQty)
                 .addMapping(GetBomsResponse.Row::getInterchanges, Bom::setInterchanges);
+        // DTO: KitType
+        modelMapper.createTypeMap(com.turbointernational.metadata.entity.part.types.kit.KitType.class, KitType.class)
+                .addMapping(com.turbointernational.metadata.entity.part.types.kit.KitType::getId, KitType::setId)
+                .addMapping(com.turbointernational.metadata.entity.part.types.kit.KitType::getName, KitType::setName);
+        // DTO: Kit
+        // TODO: use inheritance
+        modelMapper.createTypeMap(com.turbointernational.metadata.entity.part.types.Kit.class, Kit.class)
+                .addMapping(com.turbointernational.metadata.entity.part.types.Kit::getId, Part::setPartId)
+                .addMapping(com.turbointernational.metadata.entity.part.types.Kit::getName, Part::setName)
+                .addMapping(com.turbointernational.metadata.entity.part.types.Kit::getDescription, Part::setDescription)
+                .addMapping(com.turbointernational.metadata.entity.part.types.Kit::getManufacturerPartNumber, Part::setPartNumber)
+                .addMapping(com.turbointernational.metadata.entity.part.types.Kit::getPartType, Part::setPartType)
+                .addMapping(com.turbointernational.metadata.entity.part.types.Kit::getManufacturer, Part::setManufacturer)
+            .addMapping(com.turbointernational.metadata.entity.part.types.Kit::getKitType, Kit::setKitType);
         // DTO: CommonComponent
         modelMapper.createTypeMap(com.turbointernational.metadata.entity.part.types.kit.KitComponent.class, CommonComponent.class)
                 .addMapping(com.turbointernational.metadata.entity.part.types.kit.KitComponent::getId, CommonComponent::setId)

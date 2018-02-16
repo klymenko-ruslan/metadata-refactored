@@ -178,6 +178,7 @@ module.exports = function (grunt) {
               29878,  // Tabs: 'Applications'
               33284,
               41506,  // Part Type: Kit (Common Component Mappings)
+              41876,
               42051,  // Part Type: Kit
               42768,  // Tabs: 'Critical Dimensions'
               42875,

@@ -1242,6 +1242,19 @@ angular.module('ngMetaCrudApp')
         });
       };
 
+      this.listKitComponentsByPartId = function(partId, sortProperty, sortOrder, offset, limit) {
+        return Restangular.one('/kitcomponent/listbypart', partId).get({
+          'sortProperty': sortProperty,
+          'sortOrder': sortOrder,
+          'offset': offset,
+          'limit': limit
+        });
+      };
+
+      this.listKitCommonTurboTypes = function(partId) {
+        return Restangular.one('/kitcomponent/commonturbotypes', partId).get();
+      };
+
       this.createKitComponent = function(partId, kitId, exclude) {
         Restangular.setParentless(false);
         return Restangular.all('/kitcomponent').post({
@@ -1251,9 +1264,20 @@ angular.module('ngMetaCrudApp')
         });
       };
 
+      this.updateKitComponent = function(id, exclude) {
+        Restangular.setParentless(false);
+        return Restangular.one('/kitcomponent', id)
+          .put({ 'exclude': exclude });
+      };
+
       this.removeKitComponentsInKit = function(kitId, ids) {
         Restangular.setParentless(false);
         return Restangular.one('/kitcomponent/kit', kitId).customDELETE(ids);
+      };
+
+      this.removeKitComponentsInPart = function(partId, ids) {
+        Restangular.setParentless(false);
+        return Restangular.one('/kitcomponent/part', partId).customDELETE(ids);
       };
 
       this.createGroup = function(group) {

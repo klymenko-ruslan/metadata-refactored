@@ -1,8 +1,11 @@
 package com.turbointernational.metadata.dao;
 
+import static com.turbointernational.metadata.entity.PartType.PTID_KIT;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -10,10 +13,14 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.turbointernational.metadata.entity.Manufacturer_;
+import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.PartType_;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.Part_;
@@ -21,6 +28,7 @@ import com.turbointernational.metadata.entity.part.types.Kit;
 import com.turbointernational.metadata.entity.part.types.Kit_;
 import com.turbointernational.metadata.entity.part.types.kit.KitComponent;
 import com.turbointernational.metadata.entity.part.types.kit.KitComponent_;
+import com.turbointernational.metadata.web.dto.CommonComponent;
 import com.turbointernational.metadata.web.dto.Page;
 
 /**
@@ -29,11 +37,22 @@ import com.turbointernational.metadata.web.dto.Page;
 @Repository
 public class KitComponentDao extends AbstractDao<KitComponent> {
 
+    @Autowired
+    private DataSource dataSource = null;
+
+    private JdbcTemplate jdbcTemplate;
+
     public KitComponentDao() {
         super(KitComponent.class);
     }
 
-    public Page<KitComponent> filter(Long kitId, Long partId, String sortProperty, String sortOrder, Integer offset, Integer limit) {
+    @PostConstruct
+    public void init() {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
+    public Page<KitComponent> filter(Long kitId, Long partId, String sortProperty, String sortOrder, Integer offset,
+            Integer limit) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<KitComponent> ecq = cb.createQuery(KitComponent.class);
         Root<KitComponent> root = ecq.from(KitComponent.class);
@@ -122,6 +141,63 @@ public class KitComponentDao extends AbstractDao<KitComponent> {
         ccq.where(arrPredicates);
         long total = em.createQuery(ccq).getSingleResult();
         return new Page<>(total, recs);
+    }
+
+    public List<CommonComponent> listCommonTurboTypes(Long partId /* Turbo */) {
+        //@formatter:off
+        List<CommonComponent> retVal = jdbcTemplate.query(
+                "select\n" + 
+                "    p.id as id, p.manfr_part_num as manfr_part_num,\n" + 
+                "    p.part_type_id as part_type_id, pt.name as part_type_name,\n" + 
+                "    p.manfr_id as manfr_id, m.name as manfr_name,\n" + 
+                "    p.name as name, p.description as description, p.inactive as inactive,\n" + 
+                "    k.kit_type_id as kit_type_id, kt.name as kit_type_name,\n" + 
+                "    kpcc.id as kpccid, kpcc.exclude as exclude\n" + 
+                "from\n" + 
+                "    part as p\n" + 
+                "    join part_turbo_type as ptt on ptt.part_id = p.id\n" + 
+                "    join part_type as pt on p.part_type_id = pt.id\n" + 
+                "    join manfr as m on p.manfr_id = m.id\n" + 
+                "    join kit as k on p.id = k.part_id\n" + 
+                "    join kit_type as kt on k.kit_type_id = kt.id\n" + 
+                "    left outer join kit_part_common_component as kpcc on p.id = kpcc.kit_id\n" + 
+                "where\n" + 
+                "    p.part_type_id = " + PTID_KIT + "\n" + 
+                "    and ptt.turbo_type_id in(\n" + 
+                "      select tm.turbo_type_id\n" + 
+                "      from turbo as t join turbo_model as tm on t.turbo_model_id = tm.id\n" + 
+                "      where t.part_id = ?\n" + 
+                "    )", 
+                ps -> ps.setLong(1, partId),
+                (rs, rowNum) -> {
+                    Long id = rs.getLong("kpccid");
+                    if (rs.wasNull()) {
+                        id = null;
+                    }
+                    Boolean exclude = rs.getBoolean("exclude");
+                    if (rs.wasNull()) {
+                        exclude = null;
+                    }
+                    Long kitId = rs.getLong("id");
+                    String name = rs.getString("name");
+                    String description = rs.getString("description");
+                    String partNumber = rs.getString("manfr_part_num");
+                    Long partTypeId = rs.getLong("part_type_id");
+                    String partTypeName = rs.getString("part_type_name");
+                    com.turbointernational.metadata.web.dto.PartType partType = new com.turbointernational.metadata.web.dto.PartType(partTypeId, partTypeName);
+                    Long manufacturerId = rs.getLong("manfr_id");
+                    String manufacturerName = rs.getString("manfr_name");
+                    com.turbointernational.metadata.web.dto.Manufacturer manufacturer = new com.turbointernational.metadata.web.dto.Manufacturer(manufacturerId, manufacturerName);
+                    boolean inactive = rs.getBoolean("exclude");
+                    Long kitTypeId = rs.getLong("kit_type_id");
+                    String kitTypeName = rs.getString("kit_type_name");
+                    com.turbointernational.metadata.web.dto.KitType kitType = new com.turbointernational.metadata.web.dto.KitType(kitTypeId, kitTypeName);
+                    com.turbointernational.metadata.web.dto.Kit kit = new com.turbointernational.metadata.web.dto.Kit(kitId,  name,  description, partNumber, partType,
+                            manufacturer, inactive, kitType);
+                    return new CommonComponent(id, kit, null, exclude);
+                });
+        //@formatter:on
+        return retVal;
     }
 
 }
