@@ -44,7 +44,7 @@ public class KitComponentService {
     private DtoMapperService dtoMapService;
 
     @Transactional
-    public KitComponent create(Long kitId, Long partId, Boolean exclude) throws Exception {
+    public CommonComponent create(Long kitId, Long partId, Boolean exclude) throws Exception {
         Kit kit = partDao.getReferenceOnPart(Kit.class, kitId);
         Part part = partDao.getReference(partId);
         KitComponent component = new KitComponent();
@@ -60,7 +60,8 @@ public class KitComponentService {
                 formatPart(part));
         String json = component.toJson();
         changelogService.log(KIT, logMsg, json, relatedParts);
-        return component;
+        CommonComponent retVal = dtoMapService.map(component, CommonComponent.class);
+        return retVal;
     }
 
     @Transactional

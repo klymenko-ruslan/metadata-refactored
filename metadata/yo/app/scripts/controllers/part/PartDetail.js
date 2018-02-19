@@ -95,56 +95,175 @@ angular.module('ngMetaCrudApp')
   };
 
   $scope.kitCommonTurboTypesLoading = true;
-  $scope.kitCommonTurboTypesRowsCount = null;
+  $scope.kitCommonTurboTypesMapping = null;
   $scope.kitCommonTurboTypesTableParams = null;
+
   $scope.kitCommonComponentMappingLoading = true;
   $scope.kitCommonComponentMapping = null;
   $scope.kitCommonComponentMappingTableParams = null;
 
-  function _updateKitComponentMapping(id, exclude) {
-    restService.updateKitComponent(id, exclude).then(
-      function success() {
-        var itm = _.find($scope.kitCommonComponentMapping,
-          function(r) { return r.id === id; }
+  function _createKitCommonComponentMapping(kitId, exclude) {
+    restService.createKitComponent($scope.partId, kitId, exclude).then(
+      function success(newCommonComponent) {
+        var mapId = newCommonComponent.id;
+        var itm = _.find($scope.kitCommonTurboTypesMapping,
+          function(r) { return r.kit.partId === kitId; }
         );
+        itm.id = mapId;
         itm.exclude = exclude;
+        $scope.kitCommonComponentMapping.push(itm);
+        $scope.kitCommonComponentMappingTableParams.settings({dataset: $scope.kitCommonComponentMapping});
       },
       function failure(errorResponse) {
-        restService.error('Update of the kit component mapping [' + id +
+        restService.error('Creation of a kit common component mapping for the Kit [' + kitId +
+          '] failed.', errorResponse);
+      }
+    );
+  }
+
+  function _updateKitCommonTurboTypesRows(mapId, exclude) {
+    var itm = _.find($scope.kitCommonTurboTypesMapping,
+      function(r) { return r.id === mapId; }
+    );
+    itm.exclude = exclude;
+  }
+
+  function _updateKitCommonComponentRows(mapId, exclude) {
+    var itm = _.find($scope.kitCommonComponentMapping,
+      function(r) { return r.id === mapId; }
+    );
+    itm.exclude = exclude;
+  }
+
+  function _updateKitCommonComponentMapping(mapId, exclude) {
+    restService.updateKitComponent(mapId, exclude).then(
+      function success() {
+        _updateKitCommonComponentRows(mapId, exclude);
+        _updateKitCommonTurboTypesRows(mapId, exclude);
+      },
+      function failure(errorResponse) {
+        restService.error('Update of the kit component mapping [' + mapId +
           '] failed.', errorResponse);
       }
     );
   }
 
   $scope.kitCommonComponentMappingInclude = function(kccmId) {
-    _updateKitComponentMapping(kccmId, false);
+    _updateKitCommonComponentMapping(kccmId, false);
   };
 
   $scope.kitCommonComponentMappingExclude = function(kccmId) {
-    _updateKitComponentMapping(kccmId, true);
+    _updateKitCommonComponentMapping(kccmId, true);
   };
 
   $scope.kitCommonComponentAddMapping = function() {
     alert('Under construction.');
   };
 
-  $scope.kitCommonTurboTypesMappingInclude = function(id) {
-    alert('Under construction.');
+  $scope.kitCommonTurboTypesMappingInclude = function(kctt) {
+    var mapId = kctt.id;
+    var kitId = kctt.kit.partId;
+    if (mapId) { // Common Component Mapping already exists.
+      _updateKitCommonComponentMapping(mapId, false);
+    } else {
+      _createKitCommonComponentMapping(kitId, false);
+    }
   };
 
-  $scope.kitCommonTurboTypesMappingExclude = function(id) {
-    alert('Under construction.');
+  $scope.kitCommonTurboTypesMappingExclude = function(kctt) {
+    var mapId = kctt.id;
+    var kitId = kctt.kit.partId;
+    if (mapId) { // Common Component Mapping already exists.
+      _updateKitCommonComponentMapping(mapId, true);
+    } else {
+      _createKitCommonComponentMapping(kitId, true);
+    }
+  };
+
+  function _initKitCommonComponentMapping(kitCommonComponentMapping) {
+    $scope.selectedItems.kccm.allChecked = false;
+    $scope.selectedItems.kccm.maps = {};
+    $scope.kitCommonComponentMapping = kitCommonComponentMapping;
+    $scope.kitCommonComponentMappingTableParams.settings({dataset: $scope.kitCommonComponentMapping});
+  }
+
+  $scope.$watch('selectedItems.kccm.allChecked', function(val) {
+    if ($scope.kitCommonComponentMapping) {
+      _.each($scope.kitCommonComponentMapping, function(kc) {
+        $scope.selectedItems.kccm.maps[kc.id] = val;
+      });
+    }
+  });
+
+  $scope.isThereAnySelectedCommonComponentMapping = function() {
+    var m = $scope.selectedItems.kccm.maps;
+    if (m) {
+      for (var k in m) {
+        if (m.hasOwnProperty(k) && m[k]) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  $scope.onRemoveSelectedCommonComponentsMappings = function() {
+    dialogs.confirm(
+      'Remove Common Component Mapping?',
+      'Do you want to remove this common component mapping?').result.then(
+      function() {
+        // Yes
+        var ids = _.chain(_.pairs($scope.selectedItems.kccm.maps))
+          .filter(function(t) { return t[1]; })
+          .map(function(t) { return parseInt(t[0]); })
+          .value();
+        restService.removeKitComponentsInPart($scope.partId, ids).then(
+          function(result) {
+            // Success
+            toastr.success('Common Components Mapping(s) removed.');
+            _initKitCommonComponentMapping(result);
+            // If some removed common component mapping exists in
+            // the tabe 'common turbo types' then updated
+            // corresponding records.
+            var mapId2recNum = _.chain($scope.kitCommonTurboTypesMapping)
+              .filter(function(e) {
+                return e.id; // filter out nulls
+              })
+              .map(function(e, index) {
+                return [e.kit.id, index];
+              })
+              .object().value();
+$log.log('mapId2recNum: ' + angular.toJson(mapId2recNum, 2));
+            _.each(ids, function(mapId) {
+              var recNum = mapId2recNum[mapId.toString()];
+$log.log('mapId: ' + mapId + ', recNum: ' + recNum);
+              if (recNum !== undefined) {
+                var mapping = $scope.kitCommonTurboTypesMapping[recNum];
+$log.log('mapping: ' + mapping);
+                mapping.id = null;
+                mapping.exclude = null;
+              }
+            });
+            $scope.kitCommonTurboTypesTableParams.settings({dataset: $scope.kitCommonTurboTypesMapping});
+          },
+          function(response) {
+            // Error
+            restService.error('Could not delete common component mapping(s).', response);
+          });
+      },
+      function() {
+        // No
+      });
   };
 
   $scope.refreshTabKits = function() {
-    $scope.kitCommonTurboTypes = null;
-    $scope.kitCommonTurboTypesLoading = true;
 
+    $scope.kitCommonTurboTypesLoading = true;
     restService.listKitCommonTurboTypes($scope.partId).then(
       function(result) {
         $scope.kitCommonTurboTypesLoading = false;
-        $scope.kitCommonTurboTypes = result;
-        $scope.kitCommonTurboTypesTableParams.settings({dataset: $scope.kitCommonTurboTypes});
+        $scope.kitCommonTurboTypesMapping = result;
+        $scope.kitCommonTurboTypesTableParams.settings({dataset: $scope.kitCommonTurboTypesMapping});
       },
       function(errorResponse) {
         $scope.kitCommonTurboTypesLoading = false;
@@ -159,62 +278,10 @@ angular.module('ngMetaCrudApp')
         'kit.partNumber': 'asc'
       }
     }, {
-      dataset: $scope.kitCommonTurboTypes
+      dataset: $scope.kitCommonTurboTypesMapping
     });
 
-    function _initKitCommonComponentMapping(kitCommonComponentMapping) {
-      $scope.selectedItems.kccm.allChecked = false;
-      $scope.selectedItems.kccm.maps = {};
-      $scope.kitCommonComponentMapping = kitCommonComponentMapping;
-      $scope.kitCommonComponentMappingTableParams.settings({dataset: $scope.kitCommonComponentMapping});
-    }
-
-    $scope.$watch('selectedItems.kccm.allChecked', function(val) {
-      if ($scope.kitCommonComponentMapping) {
-        _.each($scope.kitCommonComponentMapping, function(kc) {
-          $scope.selectedItems.kccm.maps[kc.id] = val;
-        });
-      }
-    });
-
-    $scope.isThereAnySelectedCommonComponentMapping = function() {
-      var m = $scope.selectedItems.kccm.maps;
-      if (m) {
-        for (var k in m) {
-          if (m.hasOwnProperty(k) && m[k]) {
-            return true;
-          }
-        }
-      }
-      return false;
-    };
-
-    $scope.onRemoveSelectedCommonComponentsMappings = function() {
-      dialogs.confirm(
-        'Remove Common Component Mapping?',
-        'Do you want to remove this common component mapping?').result.then(
-        function() {
-          // Yes
-          var ids = _.chain(_.pairs($scope.selectedItems.kccm.maps))
-            .filter(function(t) { return t[1]; })
-            .map(function(t) { return parseInt(t[0]); })
-            .value();
-          restService.removeKitComponentsInPart($scope.partId, ids).then(
-            function(result) {
-              // Success
-              toastr.success('Common Components Mapping(s) removed.');
-              _initKitCommonComponentMapping(result);
-            },
-            function(response) {
-              // Error
-              restService.error('Could not delete common component mapping(s).', response);
-            });
-        },
-        function() {
-          // No
-        });
-    };
-
+    $scope.kitCommonComponentMappingLoading = true;
     restService.listKitComponentsByPartId($scope.partId).then(
       function(result) {
         $scope.kitCommonComponentMappingLoading = false;

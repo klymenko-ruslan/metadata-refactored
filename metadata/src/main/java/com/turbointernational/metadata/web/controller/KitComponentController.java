@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.dao.KitComponentDao;
 import com.turbointernational.metadata.dao.PartDao;
-import com.turbointernational.metadata.entity.part.types.kit.KitComponent;
 import com.turbointernational.metadata.service.ChangelogService;
 import com.turbointernational.metadata.service.KitComponentService;
 import com.turbointernational.metadata.util.View;
@@ -82,8 +81,8 @@ public class KitComponentController {
     @RequestMapping(method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @Secured("ROLE_ALTER_PART")
     @ResponseBody
-    @JsonView(View.Summary.class)
-    public KitComponent create(@RequestBody CreateRequest createRequest) throws Exception {
+    @JsonView(View.CommonComponentKitAndPart.class)
+    public CommonComponent create(@RequestBody CreateRequest createRequest) throws Exception {
         return kitComponentService.create(createRequest.getKitId(), createRequest.getPartId(),
                 createRequest.getExclude());
     }

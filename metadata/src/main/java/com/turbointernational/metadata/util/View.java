@@ -36,4 +36,6 @@ public class View {
 
     public interface CommonComponentPart extends Summary {}
 
+    public interface CommonComponentKitAndPart extends CommonComponentKit, CommonComponentPart {}
+
 }

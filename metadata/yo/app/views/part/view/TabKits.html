@@ -10,7 +10,7 @@
           <table data-ng-table="kitCommonTurboTypesTableParams" class="table table-bordered table-striped table-hover table-responsive">
           <tbody>
           <tr data-ng-repeat="kctt in $data">
-            <td title="'Part #'" data-sortable="'kit.partId'">
+            <td title="'Part #'" data-sortable="'kit.partNumber'">
               <a href="#" data-ng-href="/part/{{kctt.kit.partId}}" target="_blank">{{kctt.kit.partNumber}}</a>
             </td>
             <td title="'Kit Type'" data-sortable="'kit.kitType.name'">{{kctt.kit.kitType.name}}</td>
@@ -21,11 +21,11 @@
               <span data-ng-if="kctt.exclude === null">None</span>
             </td>
             <td title="'Mapping Actions'" class="actions">
-              <button type="button" data-ng-click="kitCommonTurboTypesMappingInclude(kctt.id)" class="btn btn-xs btn-success" data-ng-hide="kctt.exclude === false" authorize="ROLE_ALTER_PART">
+              <button type="button" data-ng-click="kitCommonTurboTypesMappingInclude(kctt)" class="btn btn-xs btn-success" data-ng-hide="kctt.exclude === false" authorize="ROLE_ALTER_PART">
                 <i class="fa fa-check-circle-o"></i>
                 Include
               </button>
-              <button type="button" data-ng-click="kitCommonTurboTypesMappingExclude(kctt.id)" class="btn btn-xs btn-warning" data-ng-hide="kctt.exclude === true" authorize="ROLE_ALTER_PART">
+              <button type="button" data-ng-click="kitCommonTurboTypesMappingExclude(kctt)" class="btn btn-xs btn-warning" data-ng-hide="kctt.exclude === true" authorize="ROLE_ALTER_PART">
                 <i class="fa fa-circle-o"></i>
                 Exclude
               </button>
@@ -36,7 +36,7 @@
           </tr>
           </tbody>
           </table>
-          <table-summary rowscount="kitCommonTurboTypes.length" />
+          <table-summary rowscount="kitCommonTurboTypesMapping.length" />
         </div>
       </div>
       <div class="row">
