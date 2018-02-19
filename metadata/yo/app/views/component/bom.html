@@ -6,10 +6,10 @@
   </div>
   <div class="col-xs-6">
     <div class="pull-right" style="margin-bottom: 5px;">
-      <a authorize="ROLE_BOM" class="btn btn-primary" data-ng-href="/part/{{parentPartId}}/parentbom/search">
+      <a authorize="ROLE_BOM" class="btn btn-primary" data-ng-href="/part/{{parentPartId}}/parentbom/search" uib-tooltip="Add this part as a component to other BOM's">
         <i class="fa fa-plus"></i> Add to Parent
       </a>
-      <a authorize="ROLE_BOM" class="btn btn-primary" data-ng-href="/part/{{parentPartId}}/bom/search">
+      <a authorize="ROLE_BOM" class="btn btn-primary" data-ng-href="/part/{{parentPartId}}/bom/search" uib-tooltip="Build out this BOM by adding components">
         <i class="fa fa-plus"></i> Add Child
       </a>
     </div>
