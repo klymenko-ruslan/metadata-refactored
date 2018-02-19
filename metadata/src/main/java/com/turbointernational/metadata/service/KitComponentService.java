@@ -29,7 +29,8 @@ import com.turbointernational.metadata.web.dto.Page;
 @Service("kitComponentService")
 public class KitComponentService {
 
-    private final static Type LISTOFCOMMONCOMPONENTSDTO = new TypeToken<List<CommonComponent>>() {}.getType();
+    private final static Type LISTOFCOMMONCOMPONENTSDTO = new TypeToken<List<CommonComponent>>() {
+    }.getType();
 
     @Autowired
     private ChangelogService changelogService;
@@ -44,7 +45,7 @@ public class KitComponentService {
     private DtoMapperService dtoMapService;
 
     @Transactional
-    public CommonComponent create(Long kitId, Long partId, Boolean exclude) throws Exception {
+    public CommonComponent create(Long kitId, Long partId, Boolean exclude) {
         Kit kit = partDao.getReferenceOnPart(Kit.class, kitId);
         Part part = partDao.getReference(partId);
         KitComponent component = new KitComponent();

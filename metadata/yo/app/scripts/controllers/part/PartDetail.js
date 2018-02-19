@@ -104,15 +104,29 @@ angular.module('ngMetaCrudApp')
 
   function _createKitCommonComponentMapping(kitId, exclude) {
     restService.createKitComponent($scope.partId, kitId, exclude).then(
-      function success(newCommonComponent) {
-        var mapId = newCommonComponent.id;
-        var itm = _.find($scope.kitCommonTurboTypesMapping,
-          function(r) { return r.kit.partId === kitId; }
-        );
-        itm.id = mapId;
-        itm.exclude = exclude;
-        $scope.kitCommonComponentMapping.push(itm);
-        $scope.kitCommonComponentMappingTableParams.settings({dataset: $scope.kitCommonComponentMapping});
+      function success(createResponse) {
+        if (createResponse.failure) {
+          dialogs.error(
+            'Creation of Common Component Mapping failed.',
+            createResponse.errorMessage).result.then(
+              function yes() {
+                // ignore
+              },
+              function no() {
+                // ignore
+              }
+            );
+        } else {
+          var newCommonComponent = createResponse.commonComponent;
+          var mapId = newCommonComponent.id;
+          var itm = _.find($scope.kitCommonTurboTypesMapping,
+            function(r) { return r.kit.partId === kitId; }
+          );
+          itm.id = mapId;
+          itm.exclude = exclude;
+          $scope.kitCommonComponentMapping.push(itm);
+          $scope.kitCommonComponentMappingTableParams.settings({dataset: $scope.kitCommonComponentMapping});
+        }
       },
       function failure(errorResponse) {
         restService.error('Creation of a kit common component mapping for the Kit [' + kitId +
