@@ -108,7 +108,7 @@ public class DtoMapperService {
                  .include(com.turbointernational.metadata.entity.part.types.HeatshieldShroud.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.JournalBearing.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.JournalBearingSpacer.class, Part.class)
-                 //.include(com.turbointernational.metadata.entity.part.types.Kit.class, Part.class)
+                 .include(com.turbointernational.metadata.entity.part.types.Kit.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.MajorComponent.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.MinorComponent.class, Part.class)
                  .include(com.turbointernational.metadata.entity.part.types.Misc.class, Part.class)

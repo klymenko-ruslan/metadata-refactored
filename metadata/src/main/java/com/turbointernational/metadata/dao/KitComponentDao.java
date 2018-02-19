@@ -20,7 +20,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.turbointernational.metadata.entity.Manufacturer_;
-import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.PartType_;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.Part_;
@@ -146,27 +145,27 @@ public class KitComponentDao extends AbstractDao<KitComponent> {
     public List<CommonComponent> listCommonTurboTypes(Long partId /* Turbo */) {
         //@formatter:off
         List<CommonComponent> retVal = jdbcTemplate.query(
-                "select\n" + 
-                "    p.id as id, p.manfr_part_num as manfr_part_num,\n" + 
-                "    p.part_type_id as part_type_id, pt.name as part_type_name,\n" + 
-                "    p.manfr_id as manfr_id, m.name as manfr_name,\n" + 
-                "    p.name as name, p.description as description, p.inactive as inactive,\n" + 
-                "    k.kit_type_id as kit_type_id, kt.name as kit_type_name,\n" + 
-                "    kpcc.id as kpccid, kpcc.exclude as exclude\n" + 
-                "from\n" + 
-                "    part as p\n" + 
-                "    join part_turbo_type as ptt on ptt.part_id = p.id\n" + 
-                "    join part_type as pt on p.part_type_id = pt.id\n" + 
-                "    join manfr as m on p.manfr_id = m.id\n" + 
-                "    join kit as k on p.id = k.part_id\n" + 
-                "    join kit_type as kt on k.kit_type_id = kt.id\n" + 
-                "    left outer join kit_part_common_component as kpcc on p.id = kpcc.kit_id\n" + 
-                "where\n" + 
-                "    p.part_type_id = " + PTID_KIT + "\n" + 
-                "    and ptt.turbo_type_id in(\n" + 
-                "      select tm.turbo_type_id\n" + 
-                "      from turbo as t join turbo_model as tm on t.turbo_model_id = tm.id\n" + 
-                "      where t.part_id = ?\n" + 
+                "select" + 
+                "    p.id as id, p.manfr_part_num as manfr_part_num, " + 
+                "    p.part_type_id as part_type_id, pt.name as part_type_name, " + 
+                "    p.manfr_id as manfr_id, m.name as manfr_name, " + 
+                "    p.name as name, p.description as description, p.inactive as inactive, " + 
+                "    k.kit_type_id as kit_type_id, kt.name as kit_type_name, " + 
+                "    kpcc.id as kpccid, kpcc.exclude as exclude " + 
+                "from " + 
+                "    part as p " + 
+                "    join part_turbo_type as ptt on ptt.part_id = p.id " + 
+                "    join part_type as pt on p.part_type_id = pt.id " + 
+                "    join manfr as m on p.manfr_id = m.id " + 
+                "    join kit as k on p.id = k.part_id " + 
+                "    join kit_type as kt on k.kit_type_id = kt.id " + 
+                "    left outer join kit_part_common_component as kpcc on p.id = kpcc.kit_id " + 
+                "where " + 
+                "    p.part_type_id = " + PTID_KIT + " " + 
+                "    and ptt.turbo_type_id in(" + 
+                "      select tm.turbo_type_id" + 
+                "      from turbo as t join turbo_model as tm on t.turbo_model_id = tm.id" + 
+                "      where t.part_id = ?" + 
                 "    )", 
                 ps -> ps.setLong(1, partId),
                 (rs, rowNum) -> {

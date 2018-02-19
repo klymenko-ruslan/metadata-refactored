@@ -339,7 +339,7 @@ public class DtoMapperServiceTest {
         //@formatter:off
         @Parameters
         public static List<Object[]> parameters() {
-            return Arrays.asList(new Object[][] { 
+            return Arrays.asList(new Object[][] {
                 { 30L, "Actuator", 11L, "Turbo International",
                   Actuator.class, 63497L, null, "*ND* ACTUATOR, K03", "9-D-6079" },
                 { 34L, "Backplate", 11L, "Turbo International",
