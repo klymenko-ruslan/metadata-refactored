@@ -50,9 +50,9 @@
             </div>
             <div class="col-xs-6">
               <div class="pull-right" style="margin-bottom: 5px;">
-                <button type="button" authorize="ROLE_ALTER_PART" class="btn btn-primary" data-ng-click="kitCommonComponentAddMapping()">
-                  <i class="fa fa-plus"></i>
-                  Add Mapping
+                <a authorize="ROLE_ALTER_PART" class="btn btn-primary pull-right"
+                    ng-href="/kitcomponent/{{::partId}}/search/kit">
+                  <i class="fa fa-plus"></i> Add Mapping
                 </a>
               </div>
             </div>

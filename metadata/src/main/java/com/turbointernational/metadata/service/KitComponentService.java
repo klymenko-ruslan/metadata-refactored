@@ -53,6 +53,11 @@ public class KitComponentService {
         component.setPart(part);
         component.setExclude(exclude);
         kitComponentDao.persist(component);
+        // It is important to flush the changes to a database now
+        // because trigger in the database can throw an exception.
+        // If we don't flush the changes here a potential exception
+        // will be called outside of our transaction logic.
+        kitComponentDao.flush();
         // Update the changelog.
         Collection<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(kitId, ChangelogPart.Role.PART0));
@@ -66,12 +71,17 @@ public class KitComponentService {
     }
 
     @Transactional
-    public void update(Long id, Boolean exclude) throws Exception {
+    public void update(Long id, Boolean exclude) {
         // Get the item
         KitComponent component = kitComponentDao.findOne(id);
         // Update
         component.setExclude(exclude);
         kitComponentDao.merge(component);
+        // It is important to flush the changes to a database now
+        // because trigger in the database can throw an exception.
+        // If we don't flush the changes here a potential exception
+        // will be called outside of our transaction logic.
+        kitComponentDao.flush();
         // Update the changelog.
         Long kitId = component.getKit().getId();
         Long pickedPartId = component.getPart().getId();
@@ -84,7 +94,7 @@ public class KitComponentService {
     }
 
     @Transactional
-    public void delete(Long[] ids) throws Exception {
+    public void delete(Long[] ids) {
         for (Long id : ids) {
             // Get the object
             KitComponent component = kitComponentDao.findOne(id);

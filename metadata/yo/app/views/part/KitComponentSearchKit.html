@@ -1,0 +1,86 @@
+<metanav>
+  <li>
+    <a data-ng-href="/part/{{ partId }}"
+       class="btn btn-primary">
+      <i class="fa fa-eye"></i>
+      View Part
+    </a>
+  </li>
+
+  <li>
+    <a data-ng-click="save()"
+       data-ng-disabled="pickedPart == null"
+       class="btn btn-success">
+      <i class="fa fa-save"></i>
+      Add Mapping
+    </a>
+  </li>
+</metanav>
+
+<h1 class="padding-top" part-name="part" part-name-suffix="Common Component Mapping Search"></h1>
+
+<div class="row">
+
+  <div class="col-xs-6">
+    <h3>Existing Common Component Mappings</h3>
+    <table data-ng-table="existingKitComponentsTableParams" class="table table-bordered table-striped table-hover table-responsive">
+    <tr data-ng-repeat="ccm in $data">
+      <td title="'Part#'" class="text-center text-nowrap" data-sortable="'kit.manufacturerPartNumber'">
+        <a data-ng-href="/part/{{ccm.kit.partId}}" target="_blank">{{ccm.kit.partNumber}}</a>
+      </td>
+      <td title="'Part Type'" class="text-center text-nowrap" data-sortable="'kit.partType.name'">
+        {{ccm.kit.partType.name}}
+      </td>
+      <td title="'Manufacturer'" class="text-center text-nowrap" data-sortable="'kit.manufacturer.name'">
+        {{ccm.kit.manufacturer.name}}
+      </td>
+      <td title="'Mapping'" class="text-center text-nowrap" data-sortable="'exclude'">
+        <span data-ng-if="ccm.exclude">Eclude</span>
+        <span data-ng-if="!ccm.exclude">Include</span>
+      </td>
+    </tr>
+    <tr data-ng-hide="existingMappings.total">
+      <td colspan="4">No parts to display.</td>
+    </tr>
+    </table>
+    <table-summary rowscount="existingMappings.total" />
+  </div>
+
+  <!-- Picked Part -->
+  <div class="col-xs-6">
+    <h3>
+      Picked Part
+      <button id="mapping-input" data-ng-model="mapping.exclude" class="btn btn-sm btn-info pull-right" data-ng-class="{'btn-info': !mapping.exclude, 'btn-warning': mapping.exclude}" uib-btn-checkbox>
+        <span data-ng-show="mapping.exclude">Exclude</span>
+        <span data-ng-hide="mapping.exclude">Include</span>
+      </button>
+    </h3>
+
+    <part-summary part="pickedPart" data-ng-show="pickedPart"></part-summary>
+
+    <div data-ng-hide="pickedPart" class="well well-sm">
+      Pick a part.
+    </div>
+  </div>
+</div>
+
+<hr/>
+
+<part-search class="well well-lg">
+
+  <a authorize="ROLE_READ"
+     data-ng-href="/part/{{$part._source.id}}"
+     class="btn btn-primary btn-xs">
+    <i class="fa fa-eye"></i>
+    View
+  </a>
+
+  <button authorize="ROLE_ALTER_PART"
+     data-ng-click="pick($part._source.id)"
+     data-ng-disabled="$part._source.partType.id !== 3 || cantBePicked($part._source.id)"
+     class="btn btn-success btn-xs">
+      <i class="fa fa-bullseye"></i>
+      Pick
+  </button>
+
+</part-search>

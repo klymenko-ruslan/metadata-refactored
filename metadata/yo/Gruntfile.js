@@ -215,7 +215,8 @@ module.exports = function (grunt) {
                 let entry = connect().use(url, indexHtml);
                 middlewares.push(entry);
                 // Kit components.
-                middlewares.push(connect().use('/part/Kit/' + partId.toString() + '/component/search', indexHtml));
+                middlewares.push(connect().use('/kitcomponent/' + partId.toString() + '/search/kit', indexHtml));
+                middlewares.push(connect().use('/kitcomponent/' + partId.toString() + '/search/part', indexHtml));
               }
             }
             middlewares.push(connect().use('/part/1/bom/4/alt/31726739', indexHtml));

@@ -108,6 +108,7 @@ angular.module('ngMetaCrudApp')
         if (createResponse.failure) {
           dialogs.error(
             'Creation of Common Component Mapping failed.',
+            'Error message from the storage:\n\n' +
             createResponse.errorMessage).result.then(
               function yes() {
                 // ignore
@@ -125,7 +126,10 @@ angular.module('ngMetaCrudApp')
           itm.id = mapId;
           itm.exclude = exclude;
           $scope.kitCommonComponentMapping.push(itm);
+
+          //$scope.kitCommonTurboTypesTableParams.settings({dataset: $scope.kitCommonTurboTypesMapping});
           $scope.kitCommonComponentMappingTableParams.settings({dataset: $scope.kitCommonComponentMapping});
+          //$scope.kitCommonComponentMappingTableParams.reload();
         }
       },
       function failure(errorResponse) {
@@ -140,6 +144,7 @@ angular.module('ngMetaCrudApp')
       function(r) { return r.id === mapId; }
     );
     itm.exclude = exclude;
+    //$scope.kitCommonTurboTypesTableParams.settings({dataset: $scope.kitCommonTurboTypesMapping});
   }
 
   function _updateKitCommonComponentRows(mapId, exclude) {
@@ -147,13 +152,28 @@ angular.module('ngMetaCrudApp')
       function(r) { return r.id === mapId; }
     );
     itm.exclude = exclude;
+    $scope.kitCommonComponentMappingTableParams.settings({dataset: $scope.kitCommonComponentMapping});
   }
 
   function _updateKitCommonComponentMapping(mapId, exclude) {
     restService.updateKitComponent(mapId, exclude).then(
-      function success() {
-        _updateKitCommonComponentRows(mapId, exclude);
-        _updateKitCommonTurboTypesRows(mapId, exclude);
+      function success(updateResponse) {
+        if (updateResponse.failure) {
+          dialogs.error(
+            'Update of Common Component Mapping failed.',
+            'Error message from the storage:\n\n' +
+            updateResponse.errorMessage).result.then(
+              function yes() {
+                // ignore
+              },
+              function no() {
+                // ignore
+              }
+            );
+        } else {
+          _updateKitCommonComponentRows(mapId, exclude);
+          _updateKitCommonTurboTypesRows(mapId, exclude);
+        }
       },
       function failure(errorResponse) {
         restService.error('Update of the kit component mapping [' + mapId +
@@ -168,10 +188,6 @@ angular.module('ngMetaCrudApp')
 
   $scope.kitCommonComponentMappingExclude = function(kccmId) {
     _updateKitCommonComponentMapping(kccmId, true);
-  };
-
-  $scope.kitCommonComponentAddMapping = function() {
-    alert('Under construction.');
   };
 
   $scope.kitCommonTurboTypesMappingInclude = function(kctt) {
@@ -240,20 +256,21 @@ angular.module('ngMetaCrudApp')
             // the tabe 'common turbo types' then updated
             // corresponding records.
             var mapId2recNum = _.chain($scope.kitCommonTurboTypesMapping)
-              .filter(function(e) {
-                return e.id; // filter out nulls
-              })
               .map(function(e, index) {
-                return [e.kit.id, index];
+                if (e.id !== null && e.id !== undefined) {
+                  return [e.id, index];
+                } else {
+                  return null;
+                }
+              })
+              .filter(function(e) {
+                return e !== null; // filter out nulls
               })
               .object().value();
-$log.log('mapId2recNum: ' + angular.toJson(mapId2recNum, 2));
             _.each(ids, function(mapId) {
               var recNum = mapId2recNum[mapId.toString()];
-$log.log('mapId: ' + mapId + ', recNum: ' + recNum);
               if (recNum !== undefined) {
                 var mapping = $scope.kitCommonTurboTypesMapping[recNum];
-$log.log('mapping: ' + mapping);
                 mapping.id = null;
                 mapping.exclude = null;
               }

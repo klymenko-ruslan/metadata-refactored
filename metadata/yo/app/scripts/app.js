@@ -157,15 +157,27 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
         }]
       }
     });
-    $routeProvider.when('/kitcomponent/:id/search', {
-      templateUrl: '../views/part/KitComponentSearch.html',
-      controller: 'KitComponentSearchCtrl',
+    $routeProvider.when('/kitcomponent/:id/search/part', {
+      templateUrl: '../views/part/KitComponentSearchPart.html',
+      controller: 'KitComponentSearchPartCtrl',
       resolve: {
         partTypes: ['cachedDictionaries', function(cachedDictionaries) {
           return cachedDictionaries.getPartTypes();
         }],
         existingMappings: ['$route', 'restService', function($route, restService) {
           return restService.listKitComponentsByKitId($route.current.pathParams.id, 'part.manufacturerPartNumber', 'asc');
+        }]
+      }
+    });
+    $routeProvider.when('/kitcomponent/:id/search/kit', {
+      templateUrl: '../views/part/KitComponentSearchKit.html',
+      controller: 'KitComponentSearchKitCtrl',
+      resolve: {
+        partTypes: ['cachedDictionaries', function(cachedDictionaries) {
+          return cachedDictionaries.getPartTypes();
+        }],
+        existingMappings: ['$route', 'restService', function($route, restService) {
+          return restService.listKitComponentsByPartId($route.current.pathParams.id, 'kit.manufacturerPartNumber', 'asc');
         }]
       }
     });

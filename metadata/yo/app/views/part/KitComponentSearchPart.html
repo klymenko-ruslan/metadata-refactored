@@ -39,7 +39,7 @@
         <span data-ng-if="!ccm.exclude">Include</span>
       </td>
     </tr>
-    <tr data-ng-hide="existingKitComponentsTotal">
+    <tr data-ng-hide="existingMappings">
       <td colspan="4">No parts to display.</td>
     </tr>
     </table>
@@ -80,7 +80,7 @@
      data-ng-disabled="cantBePicked($part._source.id)"
      class="btn btn-success btn-xs">
       <i class="fa fa-bullseye"></i>
-    Pick
+      Pick
   </button>
 
 </part-search>
