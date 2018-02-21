@@ -126,10 +126,8 @@ angular.module('ngMetaCrudApp')
           itm.id = mapId;
           itm.exclude = exclude;
           $scope.kitCommonComponentMapping.push(itm);
-
-          //$scope.kitCommonTurboTypesTableParams.settings({dataset: $scope.kitCommonTurboTypesMapping});
-          $scope.kitCommonComponentMappingTableParams.settings({dataset: $scope.kitCommonComponentMapping});
-          //$scope.kitCommonComponentMappingTableParams.reload();
+          _updateKitCommonTurboTypesRows(mapId, exclude);
+          _updateKitCommonComponentRows(mapId, exclude);
         }
       },
       function failure(errorResponse) {
@@ -144,7 +142,13 @@ angular.module('ngMetaCrudApp')
       function(r) { return r.id === mapId; }
     );
     itm.exclude = exclude;
-    //$scope.kitCommonTurboTypesTableParams.settings({dataset: $scope.kitCommonTurboTypesMapping});
+    // We forced to reload all table because it seem that NgTable has a bug
+    // and don't reflect changes in a dataset if it is displayed on a page
+    // other than first one.
+    var pg = $scope.kitCommonTurboTypesTableParams.page();
+    $scope.kitCommonTurboTypesTableParams.settings({dataset: $scope.kitCommonTurboTypesMapping});
+    $scope.kitCommonTurboTypesTableParams.page(pg);
+    return itm;
   }
 
   function _updateKitCommonComponentRows(mapId, exclude) {
@@ -152,7 +156,13 @@ angular.module('ngMetaCrudApp')
       function(r) { return r.id === mapId; }
     );
     itm.exclude = exclude;
+    // We forced to reload all table because it seem that NgTable has a bug
+    // and don't reflect changes in a dataset if it is displayed on a page
+    // other than first one.
+    var pg = $scope.kitCommonComponentMappingTableParams.page();
     $scope.kitCommonComponentMappingTableParams.settings({dataset: $scope.kitCommonComponentMapping});
+    $scope.kitCommonComponentMappingTableParams.page(pg);
+    return itm;
   }
 
   function _updateKitCommonComponentMapping(mapId, exclude) {
