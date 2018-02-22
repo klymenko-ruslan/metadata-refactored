@@ -22,6 +22,7 @@ import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.Changelog_;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.User_;
+import com.turbointernational.metadata.util.FilterUtils.DateRange;
 import com.turbointernational.metadata.web.dto.Page;
 
 /**
@@ -50,7 +51,7 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         return changelog;
     }
 
-    public Page<Changelog> filter(ServiceEnum service, Long userId, Date startDate, Date finishDate, String description,
+    public Page<Changelog> filter(List<ServiceEnum> services, List<Long> userIds, DateRange dateRange, Date startDate, Date finishDate, String description,
             String data, Long partId, String sortProperty, String sortOrder, Integer offset, Integer limit) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Changelog> ecq = cb.createQuery(Changelog.class);
@@ -60,13 +61,13 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         ecq.select(root);
         int numPredicates = 0;
         List<Predicate> lstPredicates = new ArrayList<>(5);
-        if (service != null) {
-            lstPredicates.add(cb.equal(root.get(Changelog_.service), service));
+        if (services != null && !services.isEmpty()) {
+            lstPredicates.add(root.get(Changelog_.service).in(services));
             numPredicates++;
         }
-        if (userId != null) {
+        if (userIds != null && !userIds.isEmpty()) {
             userJoin = root.join("user");
-            lstPredicates.add(cb.equal(userJoin.get(User_.id), userId));
+            lstPredicates.add(userJoin.get(User_.id).in(userIds));
             numPredicates++;
         }
         if (startDate != null) {
@@ -124,7 +125,7 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         List<Changelog> recs = q.getResultList();
         CriteriaQuery<Long> ccq = cb.createQuery(Long.class);
         Root<Changelog> changelogCountRoot = ccq.from(Changelog.class);
-        if (userId != null) {
+        if (userIds != null && !userIds.isEmpty()) {
             changelogCountRoot.join(Changelog_.user);
         }
         if (partId != null) {

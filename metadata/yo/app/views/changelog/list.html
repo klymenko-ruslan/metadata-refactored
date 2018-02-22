@@ -5,25 +5,25 @@
 <form name="frmFilter" class="row" style="margin-bottom:1em;" data-ng-submit="applyFilter()" novalidate>
   <div class="col-xs-12">
     <div class="row form-inline">
-      <div class="col-xs-7">
+      <div class="col-xs-8">
         <div class="form-group" style="white-space: nowrap;">
           <label style="width:6em;">Date</label>
           <p class="input-group">
             <input type="text" class="form-control" data-ng-model="search.startDate" uib-datepicker-popup="{{::dateFormat}}" is-open="opened.startDate" close-text="Close">
             <span class="input-group-btn">
-              <button type="button" class="btn btn-default" data-ng-click="openStartDateCalendar()"><i class="glyphicon glyphicon-calendar"></i></button>
+              <button type="button" class="btn btn-default" data-ng-click="openStartDateCalendar()"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></button>
             </span>
           </p>
           &#8230;
           <p class="input-group">
             <input type="text" class="form-control" data-ng-model="search.finishDate" uib-datepicker-popup="{{::dateFormat}}" is-open="opened.finishDate" close-text="Close">
             <span class="input-group-btn">
-              <button type="button" class="btn btn-default" data-ng-click="openFinishDateCalendar()"><i class="glyphicon glyphicon-calendar"></i></button>
+              <button type="button" class="btn btn-default" data-ng-click="openFinishDateCalendar()"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></button>
             </span>
           </p>
         </div>
       </div>
-      <div class="col-xs-4">
+      <div class="col-xs-3">
         <div class="form-group">
           <label for="ctrl-user">User</label>
           <select id="ctrl-user" class="form-control" data-ng-model="search.user" data-ng-options="u.name for u in users | orderBy:'name' track by u.id">
@@ -36,7 +36,7 @@
       </div>
     </div>
     <div class="row form-inline">
-      <div class="col-xs-4">
+      <div class="col-xs-3">
          <div class="form-group">
           <label for="ctrl-service" style="width:6em;">Service</label>
           <select id="ctrl-service" class="form-control" data-ng-model="search.service" data-ng-options="s for s in ['BOM', 'INTERCHANGE', 'MAS90SYNC', 'SALESNOTES', 'APPLICATIONS', 'KIT', 'PART', 'TURBOMODEL', 'TURBOTYPE', 'CRITICALDIM', 'IMAGE']">
@@ -44,7 +44,7 @@
           </select>
         </div>
       </div>
-      <div class="col-xs-4">
+      <div class="col-xs-5">
         <div class="form-group">
           <label for="ctrl-description" style="width:6em;">Description</label>
           <input id="ctrl-description" type="text" class="form-control" data-ng-model="search.description" />
@@ -59,24 +59,31 @@
     </div>
   </div>
 </form>
-<div class="row" style="margin-top:0.1em">
-  <div class="col-xs-12">
 
-    <table data-ng-table="changelogTableParams" class="table table-bordered table-striped table-hover table-expand">
-      <tr data-ng-repeat="rec in $data">
-        <td title="'Date'" data-sortable="'id'" width="5%" class="text-center text-nowrap">{{::rec.changeDate | date : "yyyy-MM-dd HH:mm.ss"}}</td>
-        <td title="'Service'" data-sortable="'service'" width="5%" class="text-nowrap">{{::rec.service}}</td>
-        <td title="'User'" data-sortable="'user.name'" width="5%" class="text-nowrap"><a data-ng-href="security/user/{{rec.user.id}}">{{rec.user.name}}</a></td>
-        <td title="'Description'" width="80%">{{::rec.description}}</td>
-        <td title="'Actions'" width="5%" class="actions text-center">
-          <button class="btn btn-primary btn-xs" data-ng-click="::onOpenViewDlg(rec)"><i class="fa fa-eye"></i> View </button>
-        </td>
-      </tr>
-      <tr data-ng-hide="$data.length > 0">
-        <td colspan="5">No records to display.</td>
-      </tr>
-    </table>
-    <table-summary rowscount="changelogTableParams.total()" />
+<hr>
 
-  </div>
-</div>
+<uib-tabset type="tabs">
+  <uib-tab index="0" select="onChangeTab('changelog_tab_facts')">
+    <uib-tab-heading>
+      <div class="tab-head">
+        <div class="tab-title">
+          <i class="fa fa-list-ol" aria-hidden="true"></i>
+          Facts
+        </div>
+      </div>
+    </uib-tab-heading>
+    <div role="tabpanel" class="tab-pane tab-part-detail">
+      <data-ng-include src="'/views/changelog/TabFacts.html'"></data-ng-include>
+    </div>
+  </uib-tab>
+  <uib-tab index="1" select="onChangeTab('changelog_tab_aggregation')">
+    <uib-tab-heading>
+      <i class="fa fa-user-o" aria-hidden="true"></i>
+      Aggregation
+    </uib-tab-heading>
+    <div role="tabpanel" class="tab-pane tab-part-detail">
+      <data-ng-include src="'/views/changelog/TabAggregation.html'"></data-ng-include>
+    </div>
+  </uib-tab>
+</uib-tabset>
+

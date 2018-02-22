@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.part.Part;
+import com.turbointernational.metadata.util.FilterUtils.DateRange;
 import com.turbointernational.metadata.web.dto.Page;
 
 /**
@@ -37,11 +39,9 @@ public class ChangelogService {
     private final static Logger logger = LoggerFactory.getLogger(ChangelogService.class);
 
     /**
-     * A part that participates in an operation that is being registered as a
-     * record in the changelog.
+     * A part that participates in an operation that is being registered as a record in the changelog.
      *
-     * On the Web UI you can see those records on the 'Part Details' view in the
-     * tab 'Audit log'.
+     * On the Web UI you can see those records on the 'Part Details' view in the tab 'Audit log'.
      */
     public static class RelatedPart {
 
@@ -134,9 +134,9 @@ public class ChangelogService {
         return log;
     }
 
-    public Page<Changelog> filter(ServiceEnum service, Long userId, Calendar startDate, Calendar finishDate,
-            String description, String data, Long partId, String sortProperty, String sortOrder, Integer offset,
-            Integer limit) {
+    public Page<Changelog> filter(List<ServiceEnum> services, List<Long> userIds, DateRange dateRange, Calendar startDate,
+            Calendar finishDate, String description, String data, Long partId, String sortProperty, String sortOrder,
+            Integer offset, Integer limit) {
         // Normalizaton of the time range.
         if (startDate != null && finishDate != null && startDate.compareTo(finishDate) > 0) {
             Calendar swap = finishDate;
@@ -160,8 +160,8 @@ public class ChangelogService {
             finishDate.set(MILLISECOND, 999);
             d1 = finishDate.getTime();
         }
-        return changelogDao.filter(service, userId, d0, d1, description, data, partId, sortProperty, sortOrder, offset,
-                limit);
+        return changelogDao.filter(services, userIds, dateRange, d0, d1, description, data, partId, sortProperty,
+                sortOrder, offset, limit);
     }
 
 }
