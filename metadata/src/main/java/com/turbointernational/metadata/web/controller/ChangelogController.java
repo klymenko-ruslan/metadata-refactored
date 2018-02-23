@@ -17,8 +17,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.service.ChangelogService;
-import com.turbointernational.metadata.util.FilterUtils.DateRange;
 import com.turbointernational.metadata.util.View;
+import com.turbointernational.metadata.web.dto.ChangelogAggregation;
 import com.turbointernational.metadata.web.dto.Page;
 
 /**
@@ -37,7 +37,6 @@ public class ChangelogController {
     @Secured("ROLE_READ")
     public Page<Changelog> filterChangelog(@RequestParam(name = "services", required = false) List<ServiceEnum> services,
             @RequestParam(name = "userIds", required = false) List<Long> userIds,
-            @RequestParam(name = "dateRange", required = false) DateRange dateRange,
             @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startDate,
             @RequestParam(name = "finishDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar finishDate,
             @RequestParam(name = "description", required = false) String description,
@@ -47,8 +46,19 @@ public class ChangelogController {
             @RequestParam(name = "sortOrder", required = false) String sortOrder,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit) {
-        return changelogService.filter(services, userIds, dateRange, startDate, finishDate, description, data, partId,
+        return changelogService.filter(services, userIds, startDate, finishDate, description, data, partId,
                 sortProperty, sortOrder, offset, limit);
     }
 
+    @RequestMapping(value = "/aggregation", method = GET)
+    @ResponseBody
+    @JsonView(View.Summary.class)
+    @Secured("ROLE_READ")
+    public List<ChangelogAggregation> filterAggragation(
+            @RequestParam(name = "services", required = false) List<ServiceEnum> services,
+            @RequestParam(name = "userIds", required = false) List<Long> userIds,
+            Calendar startDate,
+            Calendar finishDate, String description, String data) {
+        return changelogService.filterAggragation(services, userIds, startDate, finishDate, description, data);
+    }
 }

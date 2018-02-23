@@ -3,29 +3,73 @@
 /* globals jsondiffpatch:false */
 
 angular.module('ngMetaCrudApp')
-  .controller('ChangelogListCtrl', ['$scope', '$log', 'NgTableParams', '$uibModal', 'restService', 'users',
-    'DATE_FORMAT', function(
-    $scope, $log, NgTableParams, $uibModal, restService, users, DATE_FORMAT) {
+  .controller('ChangelogListCtrl', ['$scope', '$log', 'NgTableParams', '$uibModal', 'restService',
+  'users', function(
+    $scope, $log, NgTableParams, $uibModal, restService, users) {
 
-    $scope.dateFormat = DATE_FORMAT;
+    $scope.users = _.chain(users)
+        .map(function(u) {
+          return {
+            id: u.id,
+            label: u.name
+          };
+        })
+        .sortBy('label')
+        .value();
 
-    $scope.users = users;
+    $scope.services = _.sortBy([
+      {
+        id: 'BOM',
+        label: 'BOM'
+      }, {
+        id: 'INTERCHANGE',
+        label: 'INTERCHANGE'
+      }, {
+        id: 'MAS90SYNC',
+        label: 'MAS90SYNC'
+      }, {
+        id: 'SALESNOTES',
+        label: 'SALESNOTES'
+      }, {
+        id: 'APPLICATIONS',
+        label: 'APPLICATIONS'
+      }, {
+        id: 'KIT',
+        label: 'KIT'
+      }, {
+        id: 'PART',
+        label: 'PART'
+      }, {
+        id: 'TURBOMODEL',
+        label: 'TURBOMODEL'
+      }, {
+        id: 'TURBOTYPE',
+        label: 'TURBOTYPE'
+      }, {
+        id: 'CRITICALDIM',
+        label: 'CRITICALDIM'
+      }, {
+        id: 'IMAGE',
+        label: 'IMAGE'
+      }
+    ], 'label');
 
-    $scope.opened = {
-      startDate: false,
-      finishDate: false
-    };
-    $scope.openStartDateCalendar = function() {
-      $scope.opened.startDate = true;
-    };
-
-    $scope.openFinishDateCalendar = function() {
-      $scope.opened.finishDate = true;
-    };
+    var dateFormat = 'YYYY-MM-DD';
 
     $scope.datePickerOptions = {
-      dateDisabled: false,
-      startingDay: 1
+      locale: {
+        format: dateFormat
+      },
+      ranges: {
+        'Today': [moment(), moment()],
+        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        'This Week': [moment().startOf('week'), moment().endOf('week')],
+        'Last Week': [moment().subtract(1, 'week').startOf('week'), moment().subtract(1, 'week').endOf('week')],
+        'This Month': [moment().startOf('month'), moment().endOf('month')],
+        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+        'This Year': [moment().startOf('year'), moment().endOf('year')],
+        'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
+      }
     };
 
     $scope.changelogTableParams = new NgTableParams({
@@ -46,15 +90,21 @@ angular.module('ngMetaCrudApp')
         }
         var offset = params.count() * (params.page() - 1);
         var limit = params.count();
-        var userId = null;
-        if (angular.isObject($scope.search.user)) {
-          userId = $scope.search.user.id;
+        var startDate = null;
+        if ($scope.search.date.startDate != null) {
+          startDate = moment($scope.search.date.startDate).format(dateFormat);
         }
-        return restService.filterChangelog($scope.search.startDate, $scope.search.finishDate,
-          $scope.search.service, userId, $scope.search.description, $scope.search.data, null,
+        var endDate = null;
+        if ($scope.search.date.endDate != null) {
+          endDate = moment($scope.search.date.endDate).format(dateFormat);
+        }
+        var selectedServiceIds = _.map($scope.search.services, function(s) { return s.id; });
+        var userIds = _.map($scope.search.users, function(u) { return u.id; });
+        return restService.filterChangelog(startDate, endDate,
+          selectedServiceIds, userIds, $scope.search.description, $scope.search.data, null,
           sortProperty, sortOrder, offset, limit).then(
           function(result) {
-            // Update the total and slice the result
+            // Update the total and slice the result.
             params.total(result.total);
             return result.recs;
           },
@@ -66,10 +116,9 @@ angular.module('ngMetaCrudApp')
 
     // Query Parameters
     $scope.search = {
-      'startDate': null,
-      'finishDate': null,
-      'service': null,
-      'user': null,
+      'date': { startDate: null, endDate: null },
+      'services': [],
+      'users': [],
       'description': null,
       'data': null
     };

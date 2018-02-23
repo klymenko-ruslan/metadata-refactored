@@ -6,7 +6,8 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
     'ui.bootstrap', 'restangular', 'dialogs.main',
     'dialogs.default-translations', 'toastr', 'angucomplete-alt',
     'jsonFormatter', 'angular-loading-bar', 'hc.marked', 'hljs',
-    'angular-markdown-editor'
+    'angular-markdown-editor', 'angularjs-dropdown-multiselect',
+    'daterangepicker'
   ])
   .constant('METADATA_BASE', '/metadata/')
   .constant('VALID_IP_ADDRESS_REGEX', /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)

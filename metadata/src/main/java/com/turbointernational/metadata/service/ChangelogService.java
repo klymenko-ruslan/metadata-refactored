@@ -27,7 +27,7 @@ import com.turbointernational.metadata.entity.Changelog.ServiceEnum;
 import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.part.Part;
-import com.turbointernational.metadata.util.FilterUtils.DateRange;
+import com.turbointernational.metadata.web.dto.ChangelogAggregation;
 import com.turbointernational.metadata.web.dto.Page;
 
 /**
@@ -134,7 +134,7 @@ public class ChangelogService {
         return log;
     }
 
-    public Page<Changelog> filter(List<ServiceEnum> services, List<Long> userIds, DateRange dateRange, Calendar startDate,
+    public Page<Changelog> filter(List<ServiceEnum> services, List<Long> userIds, Calendar startDate,
             Calendar finishDate, String description, String data, Long partId, String sortProperty, String sortOrder,
             Integer offset, Integer limit) {
         // Normalizaton of the time range.
@@ -145,12 +145,12 @@ public class ChangelogService {
         }
         Date d0 = null;
         Date d1 = null;
-        // Set start of a day for the startDate and enf of a day for endDate.
+        // Set start of a day for the startDate and end of a day for endDate.
         if (startDate != null) {
-            startDate.clear(HOUR_OF_DAY);
-            startDate.clear(MINUTE);
-            startDate.clear(SECOND);
-            startDate.clear(MILLISECOND);
+            startDate.set(HOUR_OF_DAY, 0);
+            startDate.set(MINUTE, 0);
+            startDate.set(SECOND, 0);
+            startDate.set(MILLISECOND, 0);
             d0 = startDate.getTime();
         }
         if (finishDate != null) {
@@ -160,8 +160,29 @@ public class ChangelogService {
             finishDate.set(MILLISECOND, 999);
             d1 = finishDate.getTime();
         }
-        return changelogDao.filter(services, userIds, dateRange, d0, d1, description, data, partId, sortProperty,
-                sortOrder, offset, limit);
+        return changelogDao.filter(services, userIds, d0, d1, description, data, partId, sortProperty, sortOrder,
+                offset, limit);
     }
 
+    public List<ChangelogAggregation> filterAggragation(List<ServiceEnum> services, List<Long> userIds,
+            Calendar startDate, Calendar finishDate, String description, String data) {
+        Date d0 = null;
+        Date d1 = null;
+        // Set start of a day for the startDate and end of a day for endDate.
+        if (startDate != null) {
+            startDate.set(HOUR_OF_DAY, 0);
+            startDate.set(MINUTE, 0);
+            startDate.set(SECOND, 0);
+            startDate.set(MILLISECOND, 0);
+            d0 = startDate.getTime();
+        }
+        if (finishDate != null) {
+            finishDate.set(HOUR_OF_DAY, 23);
+            finishDate.set(MINUTE, 59);
+            finishDate.set(SECOND, 59);
+            finishDate.set(MILLISECOND, 999);
+            d1 = finishDate.getTime();
+        }
+        return changelogDao.filterAggragation(services, userIds, d0, d1, description, data);
+    }
 }

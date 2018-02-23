@@ -8,27 +8,14 @@
       <div class="col-xs-8">
         <div class="form-group" style="white-space: nowrap;">
           <label style="width:6em;">Date</label>
-          <p class="input-group">
-            <input type="text" class="form-control" data-ng-model="search.startDate" uib-datepicker-popup="{{::dateFormat}}" is-open="opened.startDate" close-text="Close">
-            <span class="input-group-btn">
-              <button type="button" class="btn btn-default" data-ng-click="openStartDateCalendar()"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></button>
-            </span>
-          </p>
-          &#8230;
-          <p class="input-group">
-            <input type="text" class="form-control" data-ng-model="search.finishDate" uib-datepicker-popup="{{::dateFormat}}" is-open="opened.finishDate" close-text="Close">
-            <span class="input-group-btn">
-              <button type="button" class="btn btn-default" data-ng-click="openFinishDateCalendar()"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></button>
-            </span>
-          </p>
+          <input date-range-picker class="form-control date-picker" type="text" ng-model="search.date" options="datePickerOptions" />
         </div>
       </div>
       <div class="col-xs-3">
         <div class="form-group">
           <label for="ctrl-user">User</label>
-          <select id="ctrl-user" class="form-control" data-ng-model="search.user" data-ng-options="u.name for u in users | orderBy:'name' track by u.id">
-            <option></option>
-          </select>
+          <div style="display:inline-block" ng-dropdown-multiselect="" options="users" selected-model="search.users" extra-settings="{keyboardControls: true, scrollable: true, scrollableHeight: '400px'}">
+          </div>
         </div>
       </div>
       <div class="col-xs-1">
@@ -39,9 +26,8 @@
       <div class="col-xs-3">
          <div class="form-group">
           <label for="ctrl-service" style="width:6em;">Service</label>
-          <select id="ctrl-service" class="form-control" data-ng-model="search.service" data-ng-options="s for s in ['BOM', 'INTERCHANGE', 'MAS90SYNC', 'SALESNOTES', 'APPLICATIONS', 'KIT', 'PART', 'TURBOMODEL', 'TURBOTYPE', 'CRITICALDIM', 'IMAGE']">
-            <option></option>
-          </select>
+          <div style="display:inline-block" ng-dropdown-multiselect="" options="services" selected-model="search.services" extra-settings="{keyboardControls: true}">
+          </div>
         </div>
       </div>
       <div class="col-xs-5">
