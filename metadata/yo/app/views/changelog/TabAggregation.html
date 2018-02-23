@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div data-ng-show="aggregationTableParamsLoading">
+      Loading...
+    </div>
+    <div data-ng-hide="aggregationTableParamsLoading">
+      <table data-ng-table="changelogAggregationTableParams" class="table table-bordered table-striped table-hover table-expand">
+        <tr data-ng-repeat="rec in $data">
+          <td title="'User'" data-sortable="'user.name'" width="5%" class="text-nowrap"><a target="_blank" data-ng-href="security/user/{{rec.user.id}}">{{rec.user.name}}</a></td>
+        </tr>
+        <tr data-ng-hide="$data.length > 0">
+          <td colspan="1">No records to display.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

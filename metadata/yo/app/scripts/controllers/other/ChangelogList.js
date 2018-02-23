@@ -7,6 +7,10 @@ angular.module('ngMetaCrudApp')
   'users', function(
     $scope, $log, NgTableParams, $uibModal, restService, users) {
 
+    $scope.tabs = {
+        activeIndex: 0
+    };
+
     $scope.users = _.chain(users)
         .map(function(u) {
           return {
@@ -72,46 +76,19 @@ angular.module('ngMetaCrudApp')
       }
     };
 
-    $scope.changelogTableParams = new NgTableParams({
+    $scope.changelogTableParamsLoading = true;
+    $scope.changelogTableParams = null;
+
+    $scope.aggregationTableParamsLoading = true;
+    var changelogAggregation = null;
+    $scope.changelogAggregationTableParams = new NgTableParams({
       page: 1,
-      count: 25,
+      count: 10,
       sorting: {
-        changeDate: 'desc'
+        'user.name': 'asc'
       }
     }, {
-      getData: function(params) {
-        var sortOrder;
-        var sorting = params.sorting();
-        for (var sortProperty in sorting) {
-            break;
-        }
-        if (sortProperty) {
-          sortOrder = sorting[sortProperty];
-        }
-        var offset = params.count() * (params.page() - 1);
-        var limit = params.count();
-        var startDate = null;
-        if ($scope.search.date.startDate != null) {
-          startDate = moment($scope.search.date.startDate).format(dateFormat);
-        }
-        var endDate = null;
-        if ($scope.search.date.endDate != null) {
-          endDate = moment($scope.search.date.endDate).format(dateFormat);
-        }
-        var selectedServiceIds = _.map($scope.search.services, function(s) { return s.id; });
-        var userIds = _.map($scope.search.users, function(u) { return u.id; });
-        return restService.filterChangelog(startDate, endDate,
-          selectedServiceIds, userIds, $scope.search.description, $scope.search.data, null,
-          sortProperty, sortOrder, offset, limit).then(
-          function(result) {
-            // Update the total and slice the result.
-            params.total(result.total);
-            return result.recs;
-          },
-          function(errorResponse) {
-            restService.error('Search in the changelog failed.', errorResponse);
-          });
-      }
+      dataset: changelogAggregation
     });
 
     // Query Parameters
@@ -123,8 +100,104 @@ angular.module('ngMetaCrudApp')
       'data': null
     };
 
+    $scope.onChangeTab = function(tabId) {
+      if (tabId === 'changelog_tab_facts') {
+        if ($scope.changelogTableParams === null) {
+          refreshTabFacts();
+        }
+      } else if (tabId === 'changelog_tab_aggregation') {
+        if ($scope.changelogAggregation === null) {
+          refreshTabAggregation();
+        }
+      }
+    };
+
+    function refreshTabFacts() {
+      $scope.changelogTableParamsLoading = true;
+      $scope.changelogTableParams = new NgTableParams({
+        page: 1,
+        count: 10,
+        sorting: {
+          changeDate: 'desc'
+        }
+      }, {
+        getData: function(params) {
+          var sortOrder;
+          var sorting = params.sorting();
+          for (var sortProperty in sorting) {
+              break;
+          }
+          if (sortProperty) {
+            sortOrder = sorting[sortProperty];
+          }
+          var offset = params.count() * (params.page() - 1);
+          var limit = params.count();
+          var startDate = null;
+          if ($scope.search.date.startDate != null) {
+            startDate = moment($scope.search.date.startDate).format(dateFormat);
+          }
+          var endDate = null;
+          if ($scope.search.date.endDate != null) {
+            endDate = moment($scope.search.date.endDate).format(dateFormat);
+          }
+          var selectedServiceIds = _.map($scope.search.services, function(s) { return s.id; });
+          var userIds = _.map($scope.search.users, function(u) { return u.id; });
+          return restService.filterChangelog(startDate, endDate,
+            selectedServiceIds, userIds, $scope.search.description, $scope.search.data, null,
+            sortProperty, sortOrder, offset, limit).then(
+              function success(result) {
+                // Update the total and slice the result.
+                params.total(result.total);
+                return result.recs;
+              },
+              function failure(errorResponse) {
+                restService.error('Search in the changelog failed.', errorResponse);
+              }
+            ).finally(function() {
+              $scope.changelogTableParamsLoading = false;
+            });
+        }
+      });
+    }
+
+    refreshTabFacts();
+
+    function refreshTabAggregation() {
+      $scope.aggregationTableParamsLoading = true;
+      var startDate = null;
+      if ($scope.search.date.startDate != null) {
+        startDate = moment($scope.search.date.startDate).format(dateFormat);
+      }
+      var endDate = null;
+      if ($scope.search.date.endDate != null) {
+        endDate = moment($scope.search.date.endDate).format(dateFormat);
+      }
+      var selectedServiceIds = _.map($scope.search.services, function(s) { return s.id; });
+      var userIds = _.map($scope.search.users, function(u) { return u.id; });
+      restService.filterChangelogAggregation(startDate, endDate, selectedServiceIds,
+          userIds, $scope.search.description, $scope.search.data)
+        .then(
+          function success(changelogAggregation) {
+            $scope.changelogAggregationTableParams.settings({dataset: changelogAggregation});
+          },
+          function failure(errorResponse) {
+            restService.error('Changelog aggregation failed.', errorResponse);
+          }
+        ).finally(function() {
+          $scope.aggregationTableParamsLoading = false;
+        });
+
+
+    }
+
     $scope.applyFilter = function() {
-      $scope.changelogTableParams.reload();
+      if ($scope.tabs.activeIndex === 0) {
+        $scope.changelogAggregation = null;
+        refreshTabFacts();
+      } else if ($scope.tabs.activeIndex === 1) {
+        $scope.changelogTableParams = null;
+        refreshTabAggregation();
+      }
     };
 
     $scope.onOpenViewDlg = function(changelogRecord) {
