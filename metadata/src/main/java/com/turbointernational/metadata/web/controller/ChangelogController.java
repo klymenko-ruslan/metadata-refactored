@@ -38,7 +38,7 @@ public class ChangelogController {
     public Page<Changelog> filterChangelog(@RequestParam(name = "services", required = false) List<ServiceEnum> services,
             @RequestParam(name = "userIds", required = false) List<Long> userIds,
             @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startDate,
-            @RequestParam(name = "finishDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar finishDate,
+            @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endDate,
             @RequestParam(name = "description", required = false) String description,
             @RequestParam(name = "data", required = false) String data,
             @RequestParam(name = "partId", required = false) Long partId,
@@ -46,7 +46,7 @@ public class ChangelogController {
             @RequestParam(name = "sortOrder", required = false) String sortOrder,
             @RequestParam(name = "offset", required = false) Integer offset,
             @RequestParam(name = "limit", required = false) Integer limit) {
-        return changelogService.filter(services, userIds, startDate, finishDate, description, data, partId,
+        return changelogService.filter(services, userIds, startDate, endDate, description, data, partId,
                 sortProperty, sortOrder, offset, limit);
     }
 
@@ -57,8 +57,8 @@ public class ChangelogController {
     public List<ChangelogAggregation> filterAggragation(
             @RequestParam(name = "services", required = false) List<ServiceEnum> services,
             @RequestParam(name = "userIds", required = false) List<Long> userIds,
-            Calendar startDate,
-            Calendar finishDate, String description, String data) {
-        return changelogService.filterAggragation(services, userIds, startDate, finishDate, description, data);
+            @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startDate,
+            @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endDate, String description, String data) {
+        return changelogService.filterAggragation(services, userIds, startDate, endDate, description, data);
     }
 }

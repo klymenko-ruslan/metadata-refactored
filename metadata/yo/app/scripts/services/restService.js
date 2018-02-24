@@ -953,17 +953,17 @@ angular.module('ngMetaCrudApp')
         });
       };
 
-      this.filterChangelog = function(startDate, finishDate, services, userIds, description, data, partId,
+      this.filterChangelog = function(startDate, endDate, services, userIds, description, data, partId,
         sortProperty, sortOrder, offset, limit) {
         if (startDate) {
           startDate = $filter('date')(startDate, DATE_FORMAT);
         }
-        if (finishDate) {
-          finishDate = $filter('date')(finishDate, DATE_FORMAT);
+        if (endDate) {
+          endDate = $filter('date')(endDate, DATE_FORMAT);
         }
         return Restangular.one('changelog/list').get({
           'startDate': startDate,
-          'finishDate': finishDate,
+          'endDate': endDate,
           'services': services,
           'userIds': userIds,
           'description': description,
@@ -976,16 +976,16 @@ angular.module('ngMetaCrudApp')
         });
       };
 
-      this.filterChangelogAggregation = function(startDate, finishDate, services, userIds, description, data) {
+      this.filterChangelogAggregation = function(startDate, endDate, services, userIds, description, data) {
         if (startDate) {
           startDate = $filter('date')(startDate, DATE_FORMAT);
         }
-        if (finishDate) {
-          finishDate = $filter('date')(finishDate, DATE_FORMAT);
+        if (endDate) {
+          endDate = $filter('date')(endDate, DATE_FORMAT);
         }
         return Restangular.one('changelog/aggregation').get({
           'startDate': startDate,
-          'finishDate': finishDate,
+          'endDate': endDate,
           'services': services,
           'userIds': userIds,
           'description': description,

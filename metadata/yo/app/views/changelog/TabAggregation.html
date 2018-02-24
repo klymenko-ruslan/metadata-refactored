@@ -5,11 +5,86 @@
     </div>
     <div data-ng-hide="aggregationTableParamsLoading">
       <table data-ng-table="changelogAggregationTableParams" class="table table-bordered table-striped table-hover table-expand">
-        <tr data-ng-repeat="rec in $data">
-          <td title="'User'" data-sortable="'user.name'" width="5%" class="text-nowrap"><a target="_blank" data-ng-href="security/user/{{rec.user.id}}">{{rec.user.name}}</a></td>
+        <tr data-ng-repeat="r in $data">
+          <td title="'User'" data-sortable="'user.name'" class="text-nowrap text-left">
+            <a target="_blank" data-ng-href="security/user/{{r.user.id}}">{{r.user.name}}</a>
+          </td>
+          <td title="'BOM'" data-sortable="'bom'" class="text-right">
+            {{r.bom | number}}
+          </td>
+          <td title="'INTERCHANGE'" data-sortable="'interchange'" class="text-right">
+            {{r.interchange | number}}
+          </td>
+          <td title="'MAS90SYNC'" data-sortable="'mas90sync'" class="text-right">
+            {{r.mas90sync | number}}
+          </td>
+          <td title="'SALESNOTES'" data-sortable="'salesnotes'" class="text-right">
+            {{r.salesnotes | number}}
+          </td>
+          <td title="'APPLICATIONS'" data-sortable="'applications'" class="text-right">
+            {{r.applications | number}}
+          </td>
+          <td title="'KIT'" data-sortable="'kit'" class="text-right">
+            {{r.kit | number}}
+          </td>
+          <td title="'PART'" data-sortable="'part'" class="text-right">
+            {{r.part | number}}
+          </td>
+          <td title="'TURBOMODEL'" data-sortable="'turbomodel'" class="text-right">
+            {{r.turbomodel | number}}
+          </td>
+          <td title="'TURBOTYPE'" data-sortable="'turbotype'" class="text-right">
+            {{r.turbotype | number}}
+          </td>
+          <td title="'CRITICALDIM'" data-sortable="'criticaldim'" class="text-right">
+            {{r.criticaldim | number}}
+          </td>
+          <td title="'IMAGE'" data-sortable="'image'" class="text-right">
+            {{r.image | number}}
+          </td>
+          <td title="'Total'" data-sortable="'total'" class="text-right bg-info">
+            <b>{{r.total | number}}</b>
+          </td>
         </tr>
         <tr data-ng-hide="$data.length > 0">
-          <td colspan="1">No records to display.</td>
+          <td colspan="13">No records to display.</td>
+        </tr>
+        <tr data-ng-show="$data.length > 0">
+          <td></td>
+          <td class="text-right bg-info">
+            <b>{{totalCols.bom | number}}</b>
+          </td>
+          <td class="text-right bg-info">
+            <b>{{totalCols.interchange | number}}</b>
+          </td>
+          <td class="text-right bg-info">
+            <b>{{totalCols.mas90sync | number}}</b>
+          </td>
+          <td class="text-right bg-info">
+            <b>{{totalCols.salesnotes | number}}</b>
+          </td>
+          <td class="text-right bg-info">
+            <b>{{totalCols.applications | number}}</b>
+          </td>
+          <td class="text-right bg-info">
+            <b>{{totalCols.kit | number}}</b>
+          </td>
+          <td class="text-right bg-info">
+            <b>{{totalCols.part | number}}</b>
+          </td>
+          <td class="text-right bg-info">
+            <b>{{totalCols.turbomodel | number}}</b>
+          </td>
+          <td class="text-right bg-info">
+            <b>{{totalCols.turbotype | number}}</b>
+          </td>
+          <td class="text-right bg-info">
+            <b>{{totalCols.criticaldim | number}}</b>
+          </td>
+          <td class="text-right bg-info">
+            <b>{{totalCols.image | number}}</b>
+          </td>
+          <td></td>
         </tr>
       </table>
     </div>

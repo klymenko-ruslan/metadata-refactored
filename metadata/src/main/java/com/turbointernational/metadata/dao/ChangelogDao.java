@@ -52,7 +52,7 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         return changelog;
     }
 
-    public Page<Changelog> filter(List<ServiceEnum> services, List<Long> userIds, Date startDate, Date finishDate,
+    public Page<Changelog> filter(List<ServiceEnum> services, List<Long> userIds, Date startDate, Date endDate,
             String description, String data, Long partId, String sortProperty, String sortOrder, Integer offset,
             Integer limit) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -76,8 +76,8 @@ public class ChangelogDao extends AbstractDao<Changelog> {
             lstPredicates.add(cb.greaterThanOrEqualTo(root.get(Changelog_.changeDate), startDate));
             numPredicates++;
         }
-        if (finishDate != null) {
-            lstPredicates.add(cb.lessThanOrEqualTo(root.get(Changelog_.changeDate), finishDate));
+        if (endDate != null) {
+            lstPredicates.add(cb.lessThanOrEqualTo(root.get(Changelog_.changeDate), endDate));
             numPredicates++;
         }
         if (description != null) {

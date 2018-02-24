@@ -1,6 +1,6 @@
 'use strict';
 
-/* globals jsondiffpatch:false */
+/* globals jsondiffpatch, moment */
 
 angular.module('ngMetaCrudApp')
   .controller('ChangelogListCtrl', ['$scope', '$log', 'NgTableParams', '$uibModal', 'restService',
@@ -91,6 +91,18 @@ angular.module('ngMetaCrudApp')
       dataset: changelogAggregation
     });
 
+    $scope.onChangeTab = function(tabId) {
+      if (tabId === 'changelog_tab_facts') {
+        if ($scope.changelogTableParams === null) {
+          refreshTabFacts();
+        }
+      } else if (tabId === 'changelog_tab_aggregation') {
+        if (changelogAggregation === null) {
+          refreshTabAggregation();
+        }
+      }
+    };
+
     // Query Parameters
     $scope.search = {
       'date': { startDate: null, endDate: null },
@@ -100,17 +112,30 @@ angular.module('ngMetaCrudApp')
       'data': null
     };
 
-    $scope.onChangeTab = function(tabId) {
-      if (tabId === 'changelog_tab_facts') {
-        if ($scope.changelogTableParams === null) {
-          refreshTabFacts();
-        }
-      } else if (tabId === 'changelog_tab_aggregation') {
-        if ($scope.changelogAggregation === null) {
-          refreshTabAggregation();
-        }
+    /**
+     * Function translates the '$scope.search' map to a map
+     * that contains values suitable to call a restful service.
+     */
+    function getFilterParamsMap() {
+      var startDate = null;
+      if ($scope.search.date.startDate !== null) {
+        startDate = moment($scope.search.date.startDate).format(dateFormat);
       }
-    };
+      var endDate = null;
+      if ($scope.search.date.endDate !== null) {
+        endDate = moment($scope.search.date.endDate).format(dateFormat);
+      }
+      var selectedServiceIds = _.map($scope.search.services, function(s) { return s.id; });
+      var userIds = _.map($scope.search.users, function(u) { return u.id; });
+      return {
+        'startDate': startDate,
+        'endDate': endDate,
+        'selectedServiceIds': selectedServiceIds,
+        'userIds': userIds,
+        'description': $scope.search.description,
+        'data': $scope.search.data
+      };
+    }
 
     function refreshTabFacts() {
       $scope.changelogTableParamsLoading = true;
@@ -132,19 +157,13 @@ angular.module('ngMetaCrudApp')
           }
           var offset = params.count() * (params.page() - 1);
           var limit = params.count();
-          var startDate = null;
-          if ($scope.search.date.startDate != null) {
-            startDate = moment($scope.search.date.startDate).format(dateFormat);
-          }
-          var endDate = null;
-          if ($scope.search.date.endDate != null) {
-            endDate = moment($scope.search.date.endDate).format(dateFormat);
-          }
-          var selectedServiceIds = _.map($scope.search.services, function(s) { return s.id; });
-          var userIds = _.map($scope.search.users, function(u) { return u.id; });
-          return restService.filterChangelog(startDate, endDate,
-            selectedServiceIds, userIds, $scope.search.description, $scope.search.data, null,
-            sortProperty, sortOrder, offset, limit).then(
+          var fiterParams = getFilterParamsMap();
+          return restService.filterChangelog(
+              fiterParams.startDate, fiterParams.endDate,
+              fiterParams.selectedServiceIds, fiterParams.userIds,
+              fiterParams.description, fiterParams.data, null,
+              sortProperty, sortOrder, offset, limit)
+            .then(
               function success(result) {
                 // Update the total and slice the result.
                 params.total(result.total);
@@ -153,7 +172,8 @@ angular.module('ngMetaCrudApp')
               function failure(errorResponse) {
                 restService.error('Search in the changelog failed.', errorResponse);
               }
-            ).finally(function() {
+            )
+            .finally(function() {
               $scope.changelogTableParamsLoading = false;
             });
         }
@@ -162,22 +182,35 @@ angular.module('ngMetaCrudApp')
 
     refreshTabFacts();
 
+    $scope.totalCols = null;
+
     function refreshTabAggregation() {
       $scope.aggregationTableParamsLoading = true;
-      var startDate = null;
-      if ($scope.search.date.startDate != null) {
-        startDate = moment($scope.search.date.startDate).format(dateFormat);
-      }
-      var endDate = null;
-      if ($scope.search.date.endDate != null) {
-        endDate = moment($scope.search.date.endDate).format(dateFormat);
-      }
-      var selectedServiceIds = _.map($scope.search.services, function(s) { return s.id; });
-      var userIds = _.map($scope.search.users, function(u) { return u.id; });
-      restService.filterChangelogAggregation(startDate, endDate, selectedServiceIds,
-          userIds, $scope.search.description, $scope.search.data)
+      var fiterParams = getFilterParamsMap();
+      restService.filterChangelogAggregation(
+          fiterParams.startDate, fiterParams.endDate,
+          fiterParams.selectedServiceIds, fiterParams.userIds,
+          fiterParams.description, fiterParams.data)
         .then(
-          function success(changelogAggregation) {
+          function success(result) {
+            changelogAggregation = result;
+            $scope.totalCols = _.reduce(changelogAggregation, function(memo, r) {
+              r.total = _.pairs(r).reduce(function(memo2, p) {
+                  var key = p[0];
+                  var val = p[1];
+                  if (typeof val === 'number') {
+                    var totalCol = memo[key];
+                    if (totalCol === undefined) {
+                        totalCol = 0;
+                    }
+                    memo[key] = totalCol + val;
+                    memo2 = memo2 + val;
+                  }
+                  return memo2;
+                },
+              0 /* initial counter's value */);
+              return memo;
+            }, {} /* initial result's value */);
             $scope.changelogAggregationTableParams.settings({dataset: changelogAggregation});
           },
           function failure(errorResponse) {
@@ -186,13 +219,11 @@ angular.module('ngMetaCrudApp')
         ).finally(function() {
           $scope.aggregationTableParamsLoading = false;
         });
-
-
     }
 
     $scope.applyFilter = function() {
       if ($scope.tabs.activeIndex === 0) {
-        $scope.changelogAggregation = null;
+        changelogAggregation = null;
         refreshTabFacts();
       } else if ($scope.tabs.activeIndex === 1) {
         $scope.changelogTableParams = null;

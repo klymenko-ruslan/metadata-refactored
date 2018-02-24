@@ -135,12 +135,12 @@ public class ChangelogService {
     }
 
     public Page<Changelog> filter(List<ServiceEnum> services, List<Long> userIds, Calendar startDate,
-            Calendar finishDate, String description, String data, Long partId, String sortProperty, String sortOrder,
+            Calendar endDate, String description, String data, Long partId, String sortProperty, String sortOrder,
             Integer offset, Integer limit) {
         // Normalizaton of the time range.
-        if (startDate != null && finishDate != null && startDate.compareTo(finishDate) > 0) {
-            Calendar swap = finishDate;
-            finishDate = startDate;
+        if (startDate != null && endDate != null && startDate.compareTo(endDate) > 0) {
+            Calendar swap = endDate;
+            endDate = startDate;
             startDate = swap;
         }
         Date d0 = null;
@@ -153,19 +153,19 @@ public class ChangelogService {
             startDate.set(MILLISECOND, 0);
             d0 = startDate.getTime();
         }
-        if (finishDate != null) {
-            finishDate.set(HOUR_OF_DAY, 23);
-            finishDate.set(MINUTE, 59);
-            finishDate.set(SECOND, 59);
-            finishDate.set(MILLISECOND, 999);
-            d1 = finishDate.getTime();
+        if (endDate != null) {
+            endDate.set(HOUR_OF_DAY, 23);
+            endDate.set(MINUTE, 59);
+            endDate.set(SECOND, 59);
+            endDate.set(MILLISECOND, 999);
+            d1 = endDate.getTime();
         }
         return changelogDao.filter(services, userIds, d0, d1, description, data, partId, sortProperty, sortOrder,
                 offset, limit);
     }
 
     public List<ChangelogAggregation> filterAggragation(List<ServiceEnum> services, List<Long> userIds,
-            Calendar startDate, Calendar finishDate, String description, String data) {
+            Calendar startDate, Calendar endDate, String description, String data) {
         Date d0 = null;
         Date d1 = null;
         // Set start of a day for the startDate and end of a day for endDate.
@@ -176,12 +176,12 @@ public class ChangelogService {
             startDate.set(MILLISECOND, 0);
             d0 = startDate.getTime();
         }
-        if (finishDate != null) {
-            finishDate.set(HOUR_OF_DAY, 23);
-            finishDate.set(MINUTE, 59);
-            finishDate.set(SECOND, 59);
-            finishDate.set(MILLISECOND, 999);
-            d1 = finishDate.getTime();
+        if (endDate != null) {
+            endDate.set(HOUR_OF_DAY, 23);
+            endDate.set(MINUTE, 59);
+            endDate.set(SECOND, 59);
+            endDate.set(MILLISECOND, 999);
+            d1 = endDate.getTime();
         }
         return changelogDao.filterAggragation(services, userIds, d0, d1, description, data);
     }
