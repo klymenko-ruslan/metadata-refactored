@@ -134,9 +134,9 @@ public class ChangelogService {
         return log;
     }
 
-    public Page<Changelog> filter(List<ServiceEnum> services, List<Long> userIds, Calendar startDate,
-            Calendar endDate, String description, String data, Long partId, String sortProperty, String sortOrder,
-            Integer offset, Integer limit) {
+    public Page<Changelog> filter(List<ServiceEnum> services, List<Long> userIds, Calendar startDate, Calendar endDate,
+            String description, String data, Long partId, String sortProperty, String sortOrder, Integer offset,
+            Integer limit) {
         // Normalizaton of the time range.
         if (startDate != null && endDate != null && startDate.compareTo(endDate) > 0) {
             Calendar swap = endDate;
@@ -164,8 +164,8 @@ public class ChangelogService {
                 offset, limit);
     }
 
-    public List<ChangelogAggregation> filterAggragation(List<ServiceEnum> services, List<Long> userIds,
-            Calendar startDate, Calendar endDate, String description, String data) {
+    public List<ChangelogAggregation> filterAggragation(List<Long> userIds, Calendar startDate, Calendar endDate,
+            String description, String data) {
         Date d0 = null;
         Date d1 = null;
         // Set start of a day for the startDate and end of a day for endDate.
@@ -183,6 +183,6 @@ public class ChangelogService {
             endDate.set(MILLISECOND, 999);
             d1 = endDate.getTime();
         }
-        return changelogDao.filterAggragation(services, userIds, d0, d1, description, data);
+        return changelogDao.filterAggragation(userIds, d0, d1, description, data);
     }
 }

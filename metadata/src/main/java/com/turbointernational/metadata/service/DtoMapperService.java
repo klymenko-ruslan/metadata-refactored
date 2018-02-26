@@ -25,6 +25,7 @@ import com.turbointernational.metadata.web.dto.KitType;
 import com.turbointernational.metadata.web.dto.Manufacturer;
 import com.turbointernational.metadata.web.dto.Part;
 import com.turbointernational.metadata.web.dto.PartType;
+import com.turbointernational.metadata.web.dto.User;
 
 /**
  * @author dmytro.trunykov@zorallabs.com
@@ -74,6 +75,10 @@ public class DtoMapperService {
         modelMapper.getConfiguration().setImplicitMappingEnabled(false);
         modelMapper.addConverter(partId2Part);
         // TODO: modelMapper.addConverter(partIds2Parts);
+        // DTO: User
+        modelMapper.createTypeMap(com.turbointernational.metadata.entity.User.class, User.class)
+                .addMapping(com.turbointernational.metadata.entity.User::getId, User::setId)
+                .addMapping(com.turbointernational.metadata.entity.User::getName, User::setName);
         // DTO: PartType
         modelMapper.createTypeMap(com.turbointernational.metadata.entity.PartType.class, PartType.class)
                 .addMapping(com.turbointernational.metadata.entity.PartType::getId, PartType::setId)

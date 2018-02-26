@@ -83,7 +83,7 @@ angular.module('ngMetaCrudApp')
     var changelogAggregation = null;
     $scope.changelogAggregationTableParams = new NgTableParams({
       page: 1,
-      count: 10,
+      count: 25,
       sorting: {
         'user.name': 'asc'
       }
@@ -141,7 +141,7 @@ angular.module('ngMetaCrudApp')
       $scope.changelogTableParamsLoading = true;
       $scope.changelogTableParams = new NgTableParams({
         page: 1,
-        count: 10,
+        count: 25,
         sorting: {
           changeDate: 'desc'
         }

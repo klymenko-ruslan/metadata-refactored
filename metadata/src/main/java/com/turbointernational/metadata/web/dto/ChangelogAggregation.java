@@ -11,45 +11,44 @@ public class ChangelogAggregation {
     private User user;
 
     @JsonView(View.Summary.class)
-    private Integer bom;
+    private Long bom;
 
     @JsonView(View.Summary.class)
-    private Integer interchange;
+    private Long interchange;
 
     @JsonView(View.Summary.class)
-    private Integer mas90sync;
+    private Long mas90sync;
 
     @JsonView(View.Summary.class)
-    private Integer salesnotes;
+    private Long salesnotes;
 
     @JsonView(View.Summary.class)
-    private Integer applications;
+    private Long applications;
 
     @JsonView(View.Summary.class)
-    private Integer kit;
+    private Long kit;
 
     @JsonView(View.Summary.class)
-    private Integer part;
+    private Long part;
 
     @JsonView(View.Summary.class)
-    private Integer turbomodel;
+    private Long turbomodel;
 
     @JsonView(View.Summary.class)
-    private Integer turbotype;
+    private Long turbotype;
 
     @JsonView(View.Summary.class)
-    private Integer criticaldim;
+    private Long criticaldim;
 
     @JsonView(View.Summary.class)
-    private Integer image;
+    private Long image;
 
     public ChangelogAggregation() {
         super();
     }
 
-    public ChangelogAggregation(User user, Integer bom, Integer interchange, Integer mas90sync, Integer salesnotes,
-            Integer applications, Integer kit, Integer part, Integer turbomodel, Integer turbotype, Integer criticaldim,
-            Integer image) {
+    public ChangelogAggregation(User user, Long bom, Long interchange, Long mas90sync, Long salesnotes,
+            Long applications, Long kit, Long part, Long turbomodel, Long turbotype, Long criticaldim, Long image) {
         this.setUser(user);
         this.setBom(bom);
         this.setInterchange(interchange);
@@ -72,91 +71,91 @@ public class ChangelogAggregation {
         this.user = user;
     }
 
-    public Integer getBom() {
+    public Long getBom() {
         return bom;
     }
 
-    public void setBom(Integer bom) {
+    public void setBom(Long bom) {
         this.bom = bom;
     }
 
-    public Integer getInterchange() {
+    public Long getInterchange() {
         return interchange;
     }
 
-    public void setInterchange(Integer interchange) {
+    public void setInterchange(Long interchange) {
         this.interchange = interchange;
     }
 
-    public Integer getMas90sync() {
+    public Long getMas90sync() {
         return mas90sync;
     }
 
-    public void setMas90sync(Integer mas90sync) {
+    public void setMas90sync(Long mas90sync) {
         this.mas90sync = mas90sync;
     }
 
-    public Integer getSalesnotes() {
+    public Long getSalesnotes() {
         return salesnotes;
     }
 
-    public void setSalesnotes(Integer salesnotes) {
+    public void setSalesnotes(Long salesnotes) {
         this.salesnotes = salesnotes;
     }
 
-    public Integer getApplications() {
+    public Long getApplications() {
         return applications;
     }
 
-    public void setApplications(Integer applications) {
+    public void setApplications(Long applications) {
         this.applications = applications;
     }
 
-    public Integer getKit() {
+    public Long getKit() {
         return kit;
     }
 
-    public void setKit(Integer kit) {
+    public void setKit(Long kit) {
         this.kit = kit;
     }
 
-    public Integer getPart() {
+    public Long getPart() {
         return part;
     }
 
-    public void setPart(Integer part) {
+    public void setPart(Long part) {
         this.part = part;
     }
 
-    public Integer getTurbomodel() {
+    public Long getTurbomodel() {
         return turbomodel;
     }
 
-    public void setTurbomodel(Integer turbomodel) {
+    public void setTurbomodel(Long turbomodel) {
         this.turbomodel = turbomodel;
     }
 
-    public Integer getTurbotype() {
+    public Long getTurbotype() {
         return turbotype;
     }
 
-    public void setTurbotype(Integer turbotype) {
+    public void setTurbotype(Long turbotype) {
         this.turbotype = turbotype;
     }
 
-    public Integer getCriticaldim() {
+    public Long getCriticaldim() {
         return criticaldim;
     }
 
-    public void setCriticaldim(Integer criticaldim) {
+    public void setCriticaldim(Long criticaldim) {
         this.criticaldim = criticaldim;
     }
 
-    public Integer getImage() {
+    public Long getImage() {
         return image;
     }
 
-    public void setImage(Integer image) {
+    public void setImage(Long image) {
         this.image = image;
     }
 

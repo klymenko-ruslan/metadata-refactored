@@ -1,9 +1,21 @@
 package com.turbointernational.metadata.dao;
 
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.APPLICATIONS;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.BOM;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.CRITICALDIM;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.IMAGE;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.INTERCHANGE;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.KIT;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.MAS90SYNC;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.PART;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.SALESNOTES;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.TURBOMODEL;
+import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.TURBOTYPE;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -13,7 +25,9 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +37,7 @@ import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.Changelog_;
 import com.turbointernational.metadata.entity.User;
 import com.turbointernational.metadata.entity.User_;
+import com.turbointernational.metadata.service.DtoMapperService;
 import com.turbointernational.metadata.web.dto.ChangelogAggregation;
 import com.turbointernational.metadata.web.dto.Page;
 
@@ -32,6 +47,9 @@ import com.turbointernational.metadata.web.dto.Page;
  */
 @Repository
 public class ChangelogDao extends AbstractDao<Changelog> {
+
+    @Autowired
+    private DtoMapperService dtoMapperService;
 
     public ChangelogDao() {
         super(Changelog.class);
@@ -139,102 +157,90 @@ public class ChangelogDao extends AbstractDao<Changelog> {
         return new Page<>(total, recs);
     }
 
-    //@format:off
-    public List<ChangelogAggregation> filterAggragation(List<ServiceEnum> services, List<Long> userIds, Date startDate,
-            Date finishDate, String description, String data) {
-        return Arrays.asList(
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(1L, "Jeff Rodriguez"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(2L, "Paul Thiry"),
-            10, 1, 1367, 1, 0, 0, 45, 1, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(3L, "Jeff Wesson"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(4L, "Brian Malewicz"),
-            169, 25, 0, 9, 21, 0, 12, 0, 1, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(5L, "pthiry"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(6L, "Seth Parks"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(7L, "Salman Malik"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(8L, "zoral"),
-            28, 2, 719, 37, 26, 322, 65, 0, 0, 1, 5),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(9L, "Paul Test"),
-            0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(10L, "test"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(11L, "test1"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(12L, "test2 msuen"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(13L, "Ryan Estrada"),
-            1899, 509, 2642, 105, 1320, 0, 481, 18, 6, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(14L, "Trent Kolb"),
-            1274, 455, 1354, 29, 60, 0, 654, 25, 4, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(15L, "Zane Fralick"),
-            336, 79, 0, 45, 398, 0, 174, 9, 1, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(16L, "LDAP"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(18L, "Paul TI LDAP"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(19L, "Alex Jimenez"),
-            80, 15, 0, 6, 57, 0, 58, 5, 1, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(20L, "Manny Moreno"),
-            17, 60, 0, 713, 0, 0, 72, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(21L, "Gail Gibson"),
-            264, 2, 0, 0, 0, 0, 4, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(22L, "Richard Franzwa"),
-            0, 2, 0, 0, 0, 0, 641, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(10000L, "Sync Agent"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(10001L, "Coby Reddick"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(10002L, "Mike Giordano"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(10003L, "Kevin Schultz"),
-            0, 0, 0, 0, 0, 0, 637, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(10004L, "Kyree Phillips"),
-            7066, 353, 0, 0, 101, 0, 1038, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(10005L, "Amy Wilson"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(10006L, "Sophia Cwiklinski"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(10007L, "Mart Robbenhaar"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-          new ChangelogAggregation(
-            new com.turbointernational.metadata.web.dto.User(10008L, "Carol Amos"),
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-        );
+    // @format:off
+    public List<ChangelogAggregation> filterAggragation(List<Long> userIds, Date startDate, Date endDate,
+            String description, String data) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Object[]> cqUser = cb.createQuery(Object[].class);
+        Root<User> cqRoot = cqUser.from(User.class);
+        Subquery<Long> scqBom = getServiceCounter(cb, cqUser, cqRoot, BOM, startDate, endDate, description, data);
+        Subquery<Long> scqInterchange = getServiceCounter(cb, cqUser, cqRoot, INTERCHANGE, startDate, endDate,
+                description, data);
+        Subquery<Long> scqMas90Sync = getServiceCounter(cb, cqUser, cqRoot, MAS90SYNC, startDate, endDate, description,
+                data);
+        Subquery<Long> scqSalesNotes = getServiceCounter(cb, cqUser, cqRoot, SALESNOTES, startDate, endDate,
+                description, data);
+        Subquery<Long> scqApplications = getServiceCounter(cb, cqUser, cqRoot, APPLICATIONS, startDate, endDate,
+                description, data);
+        Subquery<Long> scqKit = getServiceCounter(cb, cqUser, cqRoot, KIT, startDate, endDate, description, data);
+        Subquery<Long> scqPart = getServiceCounter(cb, cqUser, cqRoot, PART, startDate, endDate, description, data);
+        Subquery<Long> scqTurboModel = getServiceCounter(cb, cqUser, cqRoot, TURBOMODEL, startDate, endDate,
+                description, data);
+        Subquery<Long> scqTurboType = getServiceCounter(cb, cqUser, cqRoot, TURBOTYPE, startDate, endDate, description,
+                data);
+        Subquery<Long> scqCriticalDim = getServiceCounter(cb, cqUser, cqRoot, CRITICALDIM, startDate, endDate,
+                description, data);
+        Subquery<Long> scqImage = getServiceCounter(cb, cqUser, cqRoot, IMAGE, startDate, endDate, description, data);
+        cqUser.select(cb.array(cqRoot, scqBom.getSelection(), scqInterchange.getSelection(),
+                scqMas90Sync.getSelection(), scqSalesNotes.getSelection(), scqApplications.getSelection(),
+                scqKit.getSelection(), scqPart.getSelection(), scqTurboModel.getSelection(),
+                scqTurboType.getSelection(), scqCriticalDim.getSelection(), scqImage.getSelection()));
+        if (userIds != null && !userIds.isEmpty()) {
+            cqUser.where(cqRoot.get(User_.id).in(userIds));
+        }
+        TypedQuery<Object[]> tq = em.createQuery(cqUser);
+        List<Object[]> result = tq.getResultList();
+        return result.stream().map(rec -> {
+            User userEntity = (User) rec[0];
+            com.turbointernational.metadata.web.dto.User userDto = dtoMapperService.map(userEntity,
+                    com.turbointernational.metadata.web.dto.User.class);
+            Long bomCnt = (Long) rec[1];
+            Long interchangeCnt = (Long) rec[2];
+            Long mas90syncCnt = (Long) rec[3];
+            Long salesNoteCnt = (Long) rec[4];
+            Long applicationCnt = (Long) rec[5];
+            Long kitCnt = (Long) rec[6];
+            Long partCnt = (Long) rec[7];
+            Long turboModelCnt = (Long) rec[8];
+            Long turboTypeCnt = (Long) rec[9];
+            Long criticalDimCnt = (Long) rec[10];
+            Long imageCnt = (Long) rec[11];
+            ChangelogAggregation chla = new ChangelogAggregation(userDto, bomCnt, interchangeCnt, mas90syncCnt,
+                    salesNoteCnt, applicationCnt, kitCnt, partCnt, turboModelCnt, turboTypeCnt, criticalDimCnt,
+                    imageCnt);
+            return chla;
+        }).collect(Collectors.toList());
     }
-    //@format:on
+    // @format:on
+
+    private Subquery<Long> getServiceCounter(CriteriaBuilder cb, CriteriaQuery<Object[]> cqUser, Root<User> cqRoot,
+            ServiceEnum service, Date startDate, Date endDate, String description, String data) {
+        Subquery<Long> scqCount = cqUser.subquery(Long.class);
+        Root<Changelog> scqCountRoot = scqCount.from(Changelog.class);
+        scqCount.select(cb.count(scqCountRoot));
+        int numPredicates = 0;
+        List<Predicate> lstPredicates = new ArrayList<>(7);
+        if (startDate != null) {
+            lstPredicates.add(cb.greaterThanOrEqualTo(scqCountRoot.get(Changelog_.changeDate), startDate));
+            numPredicates++;
+        }
+        if (endDate != null) {
+            lstPredicates.add(cb.lessThanOrEqualTo(scqCountRoot.get(Changelog_.changeDate), endDate));
+            numPredicates++;
+        }
+        if (description != null) {
+            lstPredicates.add(cb.like(scqCountRoot.get(Changelog_.description), "%" + description + "%"));
+            numPredicates++;
+        }
+        if (data != null) {
+            lstPredicates.add(cb.like(scqCountRoot.get(Changelog_.data), "%" + data + "%"));
+            numPredicates++;
+        }
+        lstPredicates.add(cb.equal(scqCountRoot.get(Changelog_.user).get(User_.id), cqRoot.get(User_.id)));
+        lstPredicates.add(cb.equal(scqCountRoot.get(Changelog_.service), service));
+        Predicate[] arrPredicates = lstPredicates.toArray(new Predicate[numPredicates]);
+        scqCount.where(arrPredicates);
+        return scqCount;
+    }
 
 }
