@@ -58,65 +58,11 @@ angular.module('ngMetaCrudApp')
       }
     ], 'label');
 
-
+    // This member will be initialized by a directive 'ng-table-column-binding'
+    // on the TabAggregation.html.
     $scope.tblAggrMeta = {
       cols: []
     };
-//    [
-//      { /* User */
-//        field: 'user.id',
-//        title: 'User',
-//        show: true
-//      }, { /* APPLICATIONS */
-//        field: 'applications',
-//        title: 'APPLICATIONS',
-//        show: true
-//      }, { /* BOM */
-//        field: 'bom',
-//        title: 'BOM',
-//        show:  true
-//      }, { /* CRITICALDIM */
-//        field: 'criticaldim',
-//        title: 'CRITICALDIM',
-//        show:  true
-//      }, { /* IMAGE */
-//        field: 'image',
-//        title: 'IMAGE',
-//        show:  true
-//      }, { /* INTERCHANGE */
-//        field: 'interchange',
-//        title: 'INTERCHANGE',
-//        show: true
-//      }, { /* KIT */
-//        field: 'kit',
-//        title: 'KIT',
-//        show: true
-//      }, { /* MAS90SYNC */
-//        field: 'mas90sync',
-//        title: 'MAS90SYNC',
-//        show: true
-//      }, { /* PART */
-//        field: 'part',
-//        title: 'PART',
-//        show: true
-//      }, { /* SALESNOTES */
-//        field: 'salesnotes',
-//        title: 'SALESNOTES',
-//        show: true
-//      }, { /* TURBOMODEL */
-//        field: 'turbomodel',
-//        title: 'TURBOMODEL',
-//        show: true
-//      }, { /* TURBOTYPE */
-//        field: 'turbotype',
-//        title: 'TURBOTYPE',
-//        show: true
-//      }, { /* Grand Total */
-//        field: 'total',
-//        title: 'Grand Total',
-//        show: true
-//      }
-//    ];
 
     var dateFormat = 'YYYY-MM-DD';
 
@@ -173,9 +119,17 @@ angular.module('ngMetaCrudApp')
     };
 
     $scope.$watch('search.services', function(newVal) {
-      // $log.log('newVal: ' + angular.toJson(newVal, 2));
-      var idx = _.map($scope.search.services, function(e) {
-        return [e.id, true];
+      // Index: 'Sevice label' => true
+      var idx = _.reduce(newVal, function(memo, e) {
+        memo[e.label] = true;
+        return memo;
+      }, {/* initial 'memo' */});
+      var sericesNotSelected = $scope.search.services.length === 0;
+      _.each($scope.tblAggrMeta.cols, function(colBinding) {
+        var colTitle = colBinding.title();
+        var visible = sericesNotSelected || idx[colTitle] || colTitle === 'User' || colTitle === 'Grand Total';
+        visible = visible ? true : false;
+        colBinding.show(visible);
       });
     }, true);
 
@@ -265,14 +219,18 @@ angular.module('ngMetaCrudApp')
             changelogAggregation = result;
             $scope.totalCols = _.reduce(changelogAggregation, function(memo, r) {
               r.total = _.pairs(r).reduce(function(memo2, p) {
-                  var key = p[0];
+                  var key = p[0].toUpperCase();
                   var val = p[1];
                   if (typeof val === 'number') {
                     var totalCol = memo[key];
+                    var visible = true; // TODO
                     if (totalCol === undefined) {
-                        totalCol = 0;
+                        totalCol = {
+                          val: 0,
+                          show: visible
+                        };
                     }
-                    totalCol += val;
+                    totalCol.val += val;
                     memo[key] = totalCol;
                     memo2 += val;
                   }
