@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -164,7 +165,7 @@ public class ChangelogService {
                 offset, limit);
     }
 
-    public List<ChangelogAggregation> filterAggragation(List<Long> userIds, Calendar startDate, Calendar endDate,
+    public List<ChangelogAggregation> filterAggragation(Set<ServiceEnum> services, Set<Long> userIds, Calendar startDate, Calendar endDate,
             String description, String data) {
         Date d0 = null;
         Date d1 = null;
@@ -183,6 +184,6 @@ public class ChangelogService {
             endDate.set(MILLISECOND, 999);
             d1 = endDate.getTime();
         }
-        return changelogDao.filterAggragation(userIds, d0, d1, description, data);
+        return changelogDao.filterAggragation(services, userIds, d0, d1, description, data);
     }
 }

@@ -15,11 +15,13 @@ import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.TURBO
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ListJoin;
@@ -158,33 +160,35 @@ public class ChangelogDao extends AbstractDao<Changelog> {
     }
 
     // @format:off
-    public List<ChangelogAggregation> filterAggragation(List<Long> userIds, Date startDate, Date endDate,
-            String description, String data) {
+    public List<ChangelogAggregation> filterAggragation(Set<ServiceEnum> services, Set<Long> userIds, Date startDate,
+            Date endDate, String description, String data) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Object[]> cqUser = cb.createQuery(Object[].class);
         Root<User> cqRoot = cqUser.from(User.class);
-        Subquery<Long> scqBom = getServiceCounter(cb, cqUser, cqRoot, BOM, startDate, endDate, description, data);
-        Subquery<Long> scqInterchange = getServiceCounter(cb, cqUser, cqRoot, INTERCHANGE, startDate, endDate,
-                description, data);
-        Subquery<Long> scqMas90Sync = getServiceCounter(cb, cqUser, cqRoot, MAS90SYNC, startDate, endDate, description,
+        Expression<Long> expBom = getServiceCounter(cb, cqUser, cqRoot, services, BOM, startDate, endDate, description,
                 data);
-        Subquery<Long> scqSalesNotes = getServiceCounter(cb, cqUser, cqRoot, SALESNOTES, startDate, endDate,
+        Expression<Long> expInterchange = getServiceCounter(cb, cqUser, cqRoot, services, INTERCHANGE, startDate,
+                endDate, description, data);
+        Expression<Long> expMas90Sync = getServiceCounter(cb, cqUser, cqRoot, services, MAS90SYNC, startDate, endDate,
                 description, data);
-        Subquery<Long> scqApplications = getServiceCounter(cb, cqUser, cqRoot, APPLICATIONS, startDate, endDate,
+        Expression<Long> expSalesNotes = getServiceCounter(cb, cqUser, cqRoot, services, SALESNOTES, startDate, endDate,
                 description, data);
-        Subquery<Long> scqKit = getServiceCounter(cb, cqUser, cqRoot, KIT, startDate, endDate, description, data);
-        Subquery<Long> scqPart = getServiceCounter(cb, cqUser, cqRoot, PART, startDate, endDate, description, data);
-        Subquery<Long> scqTurboModel = getServiceCounter(cb, cqUser, cqRoot, TURBOMODEL, startDate, endDate,
-                description, data);
-        Subquery<Long> scqTurboType = getServiceCounter(cb, cqUser, cqRoot, TURBOTYPE, startDate, endDate, description,
+        Expression<Long> expApplications = getServiceCounter(cb, cqUser, cqRoot, services, APPLICATIONS, startDate,
+                endDate, description, data);
+        Expression<Long> expKit = getServiceCounter(cb, cqUser, cqRoot, services, KIT, startDate, endDate, description,
                 data);
-        Subquery<Long> scqCriticalDim = getServiceCounter(cb, cqUser, cqRoot, CRITICALDIM, startDate, endDate,
+        Expression<Long> expPart = getServiceCounter(cb, cqUser, cqRoot, services, PART, startDate, endDate,
                 description, data);
-        Subquery<Long> scqImage = getServiceCounter(cb, cqUser, cqRoot, IMAGE, startDate, endDate, description, data);
-        cqUser.select(cb.array(cqRoot, scqBom.getSelection(), scqInterchange.getSelection(),
-                scqMas90Sync.getSelection(), scqSalesNotes.getSelection(), scqApplications.getSelection(),
-                scqKit.getSelection(), scqPart.getSelection(), scqTurboModel.getSelection(),
-                scqTurboType.getSelection(), scqCriticalDim.getSelection(), scqImage.getSelection()));
+        Expression<Long> expTurboModel = getServiceCounter(cb, cqUser, cqRoot, services, TURBOMODEL, startDate, endDate,
+                description, data);
+        Expression<Long> expTurboType = getServiceCounter(cb, cqUser, cqRoot, services, TURBOTYPE, startDate, endDate,
+                description, data);
+        Expression<Long> expCriticalDim = getServiceCounter(cb, cqUser, cqRoot, services, CRITICALDIM, startDate,
+                endDate, description, data);
+        Expression<Long> expImage = getServiceCounter(cb, cqUser, cqRoot, services, IMAGE, startDate, endDate,
+                description, data);
+        cqUser.select(cb.array(cqRoot, expBom, expInterchange, expMas90Sync, expSalesNotes, expApplications, expKit,
+                expPart, expTurboModel, expTurboType, expCriticalDim, expImage));
         if (userIds != null && !userIds.isEmpty()) {
             cqUser.where(cqRoot.get(User_.id).in(userIds));
         }
@@ -213,34 +217,41 @@ public class ChangelogDao extends AbstractDao<Changelog> {
     }
     // @format:on
 
-    private Subquery<Long> getServiceCounter(CriteriaBuilder cb, CriteriaQuery<Object[]> cqUser, Root<User> cqRoot,
-            ServiceEnum service, Date startDate, Date endDate, String description, String data) {
-        Subquery<Long> scqCount = cqUser.subquery(Long.class);
-        Root<Changelog> scqCountRoot = scqCount.from(Changelog.class);
-        scqCount.select(cb.count(scqCountRoot));
-        int numPredicates = 0;
-        List<Predicate> lstPredicates = new ArrayList<>(7);
-        if (startDate != null) {
-            lstPredicates.add(cb.greaterThanOrEqualTo(scqCountRoot.get(Changelog_.changeDate), startDate));
-            numPredicates++;
+    private Expression<Long> getServiceCounter(CriteriaBuilder cb, CriteriaQuery<Object[]> cqUser, Root<User> cqRoot,
+            Set<ServiceEnum> services, ServiceEnum service, Date startDate, Date endDate, String description,
+            String data) {
+        Expression<Long> retVal = null;
+        if (services == null || services.contains(service)) {
+            Subquery<Long> scqCount = cqUser.subquery(Long.class);
+            Root<Changelog> scqCountRoot = scqCount.from(Changelog.class);
+            scqCount.select(cb.count(scqCountRoot));
+            int numPredicates = 0;
+            List<Predicate> lstPredicates = new ArrayList<>(7);
+            if (startDate != null) {
+                lstPredicates.add(cb.greaterThanOrEqualTo(scqCountRoot.get(Changelog_.changeDate), startDate));
+                numPredicates++;
+            }
+            if (endDate != null) {
+                lstPredicates.add(cb.lessThanOrEqualTo(scqCountRoot.get(Changelog_.changeDate), endDate));
+                numPredicates++;
+            }
+            if (description != null) {
+                lstPredicates.add(cb.like(scqCountRoot.get(Changelog_.description), "%" + description + "%"));
+                numPredicates++;
+            }
+            if (data != null) {
+                lstPredicates.add(cb.like(scqCountRoot.get(Changelog_.data), "%" + data + "%"));
+                numPredicates++;
+            }
+            lstPredicates.add(cb.equal(scqCountRoot.get(Changelog_.user).get(User_.id), cqRoot.get(User_.id)));
+            lstPredicates.add(cb.equal(scqCountRoot.get(Changelog_.service), service));
+            Predicate[] arrPredicates = lstPredicates.toArray(new Predicate[numPredicates]);
+            scqCount.where(arrPredicates);
+            retVal = scqCount.getSelection();
+        } else {
+            retVal = cb.nullLiteral(Long.class);
         }
-        if (endDate != null) {
-            lstPredicates.add(cb.lessThanOrEqualTo(scqCountRoot.get(Changelog_.changeDate), endDate));
-            numPredicates++;
-        }
-        if (description != null) {
-            lstPredicates.add(cb.like(scqCountRoot.get(Changelog_.description), "%" + description + "%"));
-            numPredicates++;
-        }
-        if (data != null) {
-            lstPredicates.add(cb.like(scqCountRoot.get(Changelog_.data), "%" + data + "%"));
-            numPredicates++;
-        }
-        lstPredicates.add(cb.equal(scqCountRoot.get(Changelog_.user).get(User_.id), cqRoot.get(User_.id)));
-        lstPredicates.add(cb.equal(scqCountRoot.get(Changelog_.service), service));
-        Predicate[] arrPredicates = lstPredicates.toArray(new Predicate[numPredicates]);
-        scqCount.where(arrPredicates);
-        return scqCount;
+        return retVal;
     }
 
 }

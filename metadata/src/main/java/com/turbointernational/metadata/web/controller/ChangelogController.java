@@ -4,6 +4,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -56,11 +57,12 @@ public class ChangelogController {
     @JsonView(View.Summary.class)
     @Secured("ROLE_READ")
     public List<ChangelogAggregation> filterAggragation(
-            @RequestParam(name = "services", required = false) List<ServiceEnum> services,
-            @RequestParam(name = "userIds", required = false) List<Long> userIds,
+            @RequestParam(name = "services", required = false) Set<ServiceEnum> services,
+            @RequestParam(name = "userIds", required = false) Set<Long> userIds,
             @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startDate,
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endDate,
             String description, String data) {
-        return changelogService.filterAggragation(userIds, startDate, endDate, description, data);
+        return changelogService.filterAggragation(services, userIds, startDate, endDate, description, data);
     }
+
 }

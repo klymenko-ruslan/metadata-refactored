@@ -3,46 +3,51 @@
     <div data-ng-show="aggregationTableParamsLoading">
       Loading...
     </div>
+    <div style="margin-bottom: 20px">
+        <label class="checkbox-inline" ng-repeat="col in tblAggrMeta.cols">
+          <input type="checkbox" ng-model-options="{ getterSetter: true }" ng-model="col.show"/> {{col.title()}}
+        </label>
+      </div>
     <div data-ng-hide="aggregationTableParamsLoading">
-      <table data-ng-table="changelogAggregationTableParams" class="table table-bordered table-striped table-hover table-expand">
+      <table data-ng-table="changelogAggregationTableParams" data-ng-table-columns-binding="tblAggrMeta.cols" class="table table-condensed table-bordered table-striped">
         <tr data-ng-repeat="r in $data">
-          <td title="'User'" data-sortable="'user.name'" class="text-nowrap text-left">
+          <td title="'User'" data-sortable="'user.name'" data-ng-if="true" class="text-nowrap text-left">
             <a target="_blank" data-ng-href="security/user/{{r.user.id}}">{{r.user.name}}</a>
           </td>
-          <td title="'BOM'" data-sortable="'bom'" class="text-right">
-            {{r.bom | number}}
-          </td>
-          <td title="'INTERCHANGE'" data-sortable="'interchange'" class="text-right">
-            {{r.interchange | number}}
-          </td>
-          <td title="'MAS90SYNC'" data-sortable="'mas90sync'" class="text-right">
-            {{r.mas90sync | number}}
-          </td>
-          <td title="'SALESNOTES'" data-sortable="'salesnotes'" class="text-right">
-            {{r.salesnotes | number}}
-          </td>
-          <td title="'APPLICATIONS'" data-sortable="'applications'" class="text-right">
+          <td title="'APPLICATIONS'" data-sortable="'applications'" data-ng-if="true" class="number">
             {{r.applications | number}}
           </td>
-          <td title="'KIT'" data-sortable="'kit'" class="text-right">
-            {{r.kit | number}}
+          <td title="'BOM'" data-sortable="'bom'" data-ng-if="true" class="number">
+            {{r.bom | number}}
           </td>
-          <td title="'PART'" data-sortable="'part'" class="text-right">
-            {{r.part | number}}
-          </td>
-          <td title="'TURBOMODEL'" data-sortable="'turbomodel'" class="text-right">
-            {{r.turbomodel | number}}
-          </td>
-          <td title="'TURBOTYPE'" data-sortable="'turbotype'" class="text-right">
-            {{r.turbotype | number}}
-          </td>
-          <td title="'CRITICALDIM'" data-sortable="'criticaldim'" class="text-right">
+          <td title="'CRITICALDIM'" data-sortable="'criticaldim'" data-ng-if="true" class="number">
             {{r.criticaldim | number}}
           </td>
-          <td title="'IMAGE'" data-sortable="'image'" class="text-right">
+          <td title="'IMAGE'" data-sortable="'image'" data-ng-if="true" class="number">
             {{r.image | number}}
           </td>
-          <td title="'Total'" data-sortable="'total'" class="text-right bg-info" style="border-left: 3px solid #999">
+          <td title="'INTERCHANGE'" data-sortable="'interchange'" data-ng-if="true" class="number">
+            {{r.interchange | number}}
+          </td>
+          <td title="'KIT'" data-sortable="'kit'" data-ng-if="true" class="number">
+            {{r.kit | number}}
+          </td>
+          <td title="'MAS90SYNC'" data-sortable="'mas90sync'" data-ng-if="true" class="number">
+            {{r.mas90sync | number}}
+          </td>
+          <td title="'PART'" data-sortable="'part'" data-ng-if="true" class="number">
+            {{r.part | number}}
+          </td>
+          <td title="'SALESNOTES'" data-sortable="'salesnotes'" data-ng-if="true" class="number">
+            {{r.salesnotes | number}}
+          </td>
+          <td title="'TURBOMODEL'" data-sortable="'turbomodel'" data-ng-if="true" class="number">
+            {{r.turbomodel | number}}
+          </td>
+          <td title="'TURBOTYPE'" data-sortable="'turbotype'" data-ng-if="true" class="number">
+            {{r.turbotype | number}}
+          </td>
+          <td title="'Grand Total'" data-sortable="'total'" data-ng-if="true" class="number bg-info" style="border-left: 3px solid #999">
             <b>{{r.total | number}}</b>
           </td>
         </tr>
@@ -50,41 +55,41 @@
           <td colspan="13">No records to display.</td>
         </tr>
         <tr data-ng-show="$data.length > 0">
-          <td class="bg-info" style="border-top: 3px solid #999"></td>
-          <td class="text-right bg-info" style="border-top: 3px solid #999">
+          <td class="bg-info" style="border-top: 3px solid #999"><b>Grand Total</b></td>
+          <td class="number bg-info" style="border-top: 3px solid #999">
             <b>{{totalCols.bom | number}}</b>
           </td>
-          <td class="text-right bg-info" style="border-top: 3px solid #999">
+          <td class="number bg-info" style="border-top: 3px solid #999">
             <b>{{totalCols.interchange | number}}</b>
           </td>
-          <td class="text-right bg-info" style="border-top: 3px solid #999">
+          <td class="number bg-info" style="border-top: 3px solid #999">
             <b>{{totalCols.mas90sync | number}}</b>
           </td>
-          <td class="text-right bg-info" style="border-top: 3px solid #999">
+          <td class="number bg-info" style="border-top: 3px solid #999">
             <b>{{totalCols.salesnotes | number}}</b>
           </td>
-          <td class="text-right bg-info" style="border-top: 3px solid #999">
+          <td class="number bg-info" style="border-top: 3px solid #999">
             <b>{{totalCols.applications | number}}</b>
           </td>
-          <td class="text-right bg-info" style="border-top: 3px solid #999">
+          <td class="number bg-info" style="border-top: 3px solid #999">
             <b>{{totalCols.kit | number}}</b>
           </td>
-          <td class="text-right bg-info" style="border-top: 3px solid #999">
+          <td class="number bg-info" style="border-top: 3px solid #999">
             <b>{{totalCols.part | number}}</b>
           </td>
-          <td class="text-right bg-info" style="border-top: 3px solid #999">
+          <td class="number bg-info" style="border-top: 3px solid #999">
             <b>{{totalCols.turbomodel | number}}</b>
           </td>
-          <td class="text-right bg-info" style="border-top: 3px solid #999">
+          <td class="number bg-info" style="border-top: 3px solid #999">
             <b>{{totalCols.turbotype | number}}</b>
           </td>
-          <td class="text-right bg-info" style="border-top: 3px solid #999">
+          <td class="number bg-info" style="border-top: 3px solid #999">
             <b>{{totalCols.criticaldim | number}}</b>
           </td>
-          <td class="text-right bg-info" style="border-top: 3px solid #999">
+          <td class="number bg-info" style="border-top: 3px solid #999">
             <b>{{totalCols.image | number}}</b>
           </td>
-          <td class="bg-info"></td>
+          <td class="number bg-info" style="border-left: 3px solid #999;border-top: 3px solid #999"><b>{{grandTotalRows | number}}</b></td>
         </tr>
       </table>
     </div>

@@ -58,6 +58,66 @@ angular.module('ngMetaCrudApp')
       }
     ], 'label');
 
+
+    $scope.tblAggrMeta = {
+      cols: []
+    };
+//    [
+//      { /* User */
+//        field: 'user.id',
+//        title: 'User',
+//        show: true
+//      }, { /* APPLICATIONS */
+//        field: 'applications',
+//        title: 'APPLICATIONS',
+//        show: true
+//      }, { /* BOM */
+//        field: 'bom',
+//        title: 'BOM',
+//        show:  true
+//      }, { /* CRITICALDIM */
+//        field: 'criticaldim',
+//        title: 'CRITICALDIM',
+//        show:  true
+//      }, { /* IMAGE */
+//        field: 'image',
+//        title: 'IMAGE',
+//        show:  true
+//      }, { /* INTERCHANGE */
+//        field: 'interchange',
+//        title: 'INTERCHANGE',
+//        show: true
+//      }, { /* KIT */
+//        field: 'kit',
+//        title: 'KIT',
+//        show: true
+//      }, { /* MAS90SYNC */
+//        field: 'mas90sync',
+//        title: 'MAS90SYNC',
+//        show: true
+//      }, { /* PART */
+//        field: 'part',
+//        title: 'PART',
+//        show: true
+//      }, { /* SALESNOTES */
+//        field: 'salesnotes',
+//        title: 'SALESNOTES',
+//        show: true
+//      }, { /* TURBOMODEL */
+//        field: 'turbomodel',
+//        title: 'TURBOMODEL',
+//        show: true
+//      }, { /* TURBOTYPE */
+//        field: 'turbotype',
+//        title: 'TURBOTYPE',
+//        show: true
+//      }, { /* Grand Total */
+//        field: 'total',
+//        title: 'Grand Total',
+//        show: true
+//      }
+//    ];
+
     var dateFormat = 'YYYY-MM-DD';
 
     $scope.datePickerOptions = {
@@ -111,6 +171,13 @@ angular.module('ngMetaCrudApp')
       'description': null,
       'data': null
     };
+
+    $scope.$watch('search.services', function(newVal) {
+      // $log.log('newVal: ' + angular.toJson(newVal, 2));
+      var idx = _.map($scope.search.services, function(e) {
+        return [e.id, true];
+      });
+    }, true);
 
     /**
      * Function translates the '$scope.search' map to a map
@@ -183,6 +250,7 @@ angular.module('ngMetaCrudApp')
     refreshTabFacts();
 
     $scope.totalCols = null;
+    $scope.grandTotalRows = 0;
 
     function refreshTabAggregation() {
       $scope.aggregationTableParamsLoading = true;
@@ -193,6 +261,7 @@ angular.module('ngMetaCrudApp')
           fiterParams.description, fiterParams.data)
         .then(
           function success(result) {
+            $scope.grandTotalRows = 0;
             changelogAggregation = result;
             $scope.totalCols = _.reduce(changelogAggregation, function(memo, r) {
               r.total = _.pairs(r).reduce(function(memo2, p) {
@@ -203,12 +272,14 @@ angular.module('ngMetaCrudApp')
                     if (totalCol === undefined) {
                         totalCol = 0;
                     }
-                    memo[key] = totalCol + val;
-                    memo2 = memo2 + val;
+                    totalCol += val;
+                    memo[key] = totalCol;
+                    memo2 += val;
                   }
                   return memo2;
                 },
               0 /* initial counter's value */);
+              $scope.grandTotalRows += r.total;
               return memo;
             }, {} /* initial result's value */);
             $scope.changelogAggregationTableParams.settings({dataset: changelogAggregation});
