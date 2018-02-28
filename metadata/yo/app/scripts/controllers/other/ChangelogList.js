@@ -118,21 +118,6 @@ angular.module('ngMetaCrudApp')
       'data': null
     };
 
-    $scope.$watch('search.services', function(newVal) {
-      // Index: 'Sevice label' => true
-      var idx = _.reduce(newVal, function(memo, e) {
-        memo[e.label] = true;
-        return memo;
-      }, {/* initial 'memo' */});
-      var sericesNotSelected = $scope.search.services.length === 0;
-      _.each($scope.tblAggrMeta.cols, function(colBinding) {
-        var colTitle = colBinding.title();
-        var visible = sericesNotSelected || idx[colTitle] || colTitle === 'User' || colTitle === 'Grand Total';
-        visible = visible ? true : false;
-        colBinding.show(visible);
-      });
-    }, true);
-
     /**
      * Function translates the '$scope.search' map to a map
      * that contains values suitable to call a restful service.
@@ -223,11 +208,10 @@ angular.module('ngMetaCrudApp')
                   var val = p[1];
                   if (typeof val === 'number') {
                     var totalCol = memo[key];
-                    var visible = true; // TODO
                     if (totalCol === undefined) {
                         totalCol = {
                           val: 0,
-                          show: visible
+                          show: true
                         };
                     }
                     totalCol.val += val;
@@ -240,6 +224,18 @@ angular.module('ngMetaCrudApp')
               $scope.grandTotalRows += r.total;
               return memo;
             }, {} /* initial result's value */);
+            // Index: 'Sevice label' => true
+            var idx = _.reduce($scope.search.services, function(memo, e) {
+                memo[e.label] = true;
+                return memo;
+              }, {/* initial 'memo' */});
+            var sericesNotSelected = $scope.search.services.length === 0;
+            _.each($scope.tblAggrMeta.cols, function(colBinding) {
+              var colTitle = colBinding.title();
+              var visible = sericesNotSelected || idx[colTitle] || colTitle === 'User' || colTitle === 'Grand Total';
+              visible = visible ? true : false;
+              colBinding.show(visible);
+            });
             $scope.changelogAggregationTableParams.settings({dataset: changelogAggregation});
           },
           function failure(errorResponse) {
