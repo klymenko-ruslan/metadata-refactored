@@ -19,6 +19,7 @@ angular.module('ngMetaCrudApp')
             })
             .value();
           User.roles = _.sortBy(roles);
+          //$log.log('User roles: ' + angular.toJson(User.roles, 2));
         },
         function() {
           $log.error('Could not fetch your account info.');

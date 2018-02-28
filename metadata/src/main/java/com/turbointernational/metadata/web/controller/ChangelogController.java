@@ -35,7 +35,7 @@ public class ChangelogController {
     @RequestMapping(value = "/list", method = GET)
     @ResponseBody
     @JsonView(View.Summary.class)
-    @Secured("ROLE_READ")
+    @Secured("ROLE_AUDIT_READ")
     public Page<Changelog> filterChangelog(
             @RequestParam(name = "services", required = false) List<ServiceEnum> services,
             @RequestParam(name = "userIds", required = false) List<Long> userIds,
@@ -55,7 +55,7 @@ public class ChangelogController {
     @RequestMapping(value = "/aggregation", method = GET)
     @ResponseBody
     @JsonView(View.Summary.class)
-    @Secured("ROLE_READ")
+    @Secured("ROLE_AUDIT_READ")
     public List<ChangelogAggregation> filterAggragation(
             @RequestParam(name = "services", required = false) Set<ServiceEnum> services,
             @RequestParam(name = "userIds", required = false) Set<Long> userIds,

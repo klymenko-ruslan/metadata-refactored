@@ -121,7 +121,7 @@ public class UserController {
     @JsonView(View.SummaryWithGroups.class)
     @RequestMapping(method = GET)
     @ResponseBody
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_READ")
     public List<User> findActiveUsers() {
         return userDao.findActiveUsers();
     }
@@ -129,7 +129,7 @@ public class UserController {
     @JsonView(View.SummaryWithGroups.class)
     @RequestMapping(value = "list", method = GET)
     @ResponseBody
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_READ")
     public List<User> findAllUsers() {
         return userDao.findAll();
     }
@@ -137,7 +137,7 @@ public class UserController {
     @JsonView(View.SummaryWithGroups.class)
     @RequestMapping(value = "/filter", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_READ")
     public Page<User> filterUsers(@RequestParam(name = "displayName", required = false) String displayName,
             @RequestParam(name = "userName", required = false) String userName,
             @RequestParam(name = "email", required = false) String email,
@@ -154,7 +154,7 @@ public class UserController {
     @JsonView(View.DetailWithGroups.class)
     @RequestMapping(value = "/{id}", method = GET)
     @ResponseBody
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_READ")
     public User get(@PathVariable("id") Long id) {
         return userDao.findOne(id);
     }
