@@ -42,7 +42,7 @@
           <td title="'TURBOTYPE'" data-sortable="'turbotype'" ng-if="true" class="number">
             {{r.turbotype | number}}
           </td>
-          <td title="'Grand Total'" data-sortable="'total'" ng-if="true" class="number bg-info" style="border-left: 3px solid #999">
+          <td title="'Grand Total'" data-sortable="'total'" ng-if="true" class="number bg-info" style="border-left: 3px solid #999;font-size:large;"">
             <b>{{r.total | number}}</b>
           </td>
         </tr>
@@ -50,41 +50,41 @@
           <td colspan="13">No records to display.</td>
         </tr>
         <tr data-ng-show="$data.length > 0">
-          <td class="bg-info" style="border-top: 3px solid #999"><b>Grand Total</b></td>
-          <td data-ng-if="totalCols.APPLICATIONS.show" class="number bg-info" style="border-top: 3px solid #999">
+          <td style="border-top: 3px solid #999"><b>Grand Total</b></td>
+          <td data-ng-if="totalCols.APPLICATIONS.show" class="number bg-info" style="border-top: 3px solid #999;font-size:large;"">
             <b>{{totalCols.APPLICATIONS.val | number}}</b>
           </td>
-          <td data-ng-if="totalCols.BOM.show" class="number bg-info" style="border-top: 3px solid #999">
+          <td data-ng-if="totalCols.BOM.show" class="number bg-info" style="border-top: 3px solid #999;font-size:large;"">
             <b>{{totalCols.BOM.val | number}}</b>
           </td>
-          <td data-ng-if="totalCols.CRITICALDIM.show" class="number bg-info" style="border-top: 3px solid #999">
+          <td data-ng-if="totalCols.CRITICALDIM.show" class="number bg-info" style="border-top: 3px solid #999;font-size:large;"">
             <b>{{totalCols.CRITICALDIM.val | number}}</b>
           </td>
-          <td data-ng-if="totalCols.IMAGE.show" class="number bg-info" style="border-top: 3px solid #999">
+          <td data-ng-if="totalCols.IMAGE.show" class="number bg-info" style="border-top: 3px solid #999;font-size:large;"">
             <b>{{totalCols.IMAGE.val | number}}</b>
           </td>
-          <td data-ng-if="totalCols.INTERCHANGE.show" class="number bg-info" style="border-top: 3px solid #999">
+          <td data-ng-if="totalCols.INTERCHANGE.show" class="number bg-info" style="border-top: 3px solid #999;font-size:large;"">
             <b>{{totalCols.INTERCHANGE.val | number}}</b>
           </td>
-          <td data-ng-if="totalCols.KIT.show" class="number bg-info" style="border-top: 3px solid #999">
+          <td data-ng-if="totalCols.KIT.show" class="number bg-info" style="border-top: 3px solid #999;font-size:large;"">
             <b>{{totalCols.KIT.val | number}}</b>
           </td>
-          <td data-ng-if="totalCols.MAS90SYNC.show" class="number bg-info" style="border-top: 3px solid #999">
+          <td data-ng-if="totalCols.MAS90SYNC.show" class="number bg-info" style="border-top: 3px solid #999;font-size:large;"">
             <b>{{totalCols.MAS90SYNC.val | number}}</b>
           </td>
-          <td data-ng-if="totalCols.PART.show" class="number bg-info" style="border-top: 3px solid #999">
+          <td data-ng-if="totalCols.PART.show" class="number bg-info" style="border-top: 3px solid #999;font-size:large;"">
             <b>{{totalCols.PART.val | number}}</b>
           </td>
-          <td data-ng-if="totalCols.SALESNOTES.show" class="number bg-info" style="border-top: 3px solid #999">
+          <td data-ng-if="totalCols.SALESNOTES.show" class="number bg-info" style="border-top: 3px solid #999;font-size:large;"">
             <b>{{totalCols.SALESNOTES.val | number}}</b>
           </td>
-          <td data-ng-if="totalCols.TURBOMODEL.show" class="number bg-info" style="border-top: 3px solid #999">
+          <td data-ng-if="totalCols.TURBOMODEL.show" class="number bg-info" style="border-top: 3px solid #999;font-size:large;"">
             <b>{{totalCols.TURBOMODEL.val | number}}</b>
           </td>
-          <td data-ng-if="totalCols.TURBOTYPE.show" class="number bg-info" style="border-top: 3px solid #999">
+          <td data-ng-if="totalCols.TURBOTYPE.show" class="number bg-info" style="border-top: 3px solid #999;font-size:large;"">
             <b>{{totalCols.TURBOTYPE.val | number}}</b>
           </td>
-          <td class="number bg-info" style="border-left: 3px solid #999;border-top: 3px solid #999"><b>{{grandTotalRows | number}}</b></td>
+          <td class="number bg-warning" style="border-left: 3px solid #999;border-top: 3px solid #999;font-size:large;"><b>{{grandTotalRows | number}}</b></td>
         </tr>
       </table>
     </div>
