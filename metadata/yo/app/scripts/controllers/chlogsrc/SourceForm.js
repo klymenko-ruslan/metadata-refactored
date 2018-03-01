@@ -93,8 +93,10 @@ angular.module('ngMetaCrudApp')
     };
 
     $scope.changedAttachment = function(files) {
-      file = files[0];
-      formData.append('file', files[0]);
+      $scope.$apply(function() {
+        file = files[0];
+        formData.append('file', files[0]);
+      });
     };
 
     function _updateAttachmentsTable(updatedAttachments) {
