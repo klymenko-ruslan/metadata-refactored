@@ -17,6 +17,16 @@
           <td class="label">Manufacturer P/N</td>
           <td class="val">{{part.manufacturerPartNumber}}</td>
         </tr>
+        <tr class="odd">
+          <td class="label">Part Type</td>
+          <td class="val">
+            {{part.partType.name}}
+            <button authorize="ROLE_ALTER_PART" data-ng-click="onChangePartType()" class="btn btn-xs btn-primary">
+              <i class="fa fa-superpowers" aria-hidden="true"></i>
+              Change
+            </button>
+          </td>
+        </tr>
         <tr class="even">
           <td class="label">State</td>
           <td class="val">

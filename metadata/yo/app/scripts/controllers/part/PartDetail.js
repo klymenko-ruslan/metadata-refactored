@@ -1002,6 +1002,19 @@ angular.module('ngMetaCrudApp')
     });
   };
 
+  $scope.onChangePartType = function() {
+    $uibModal.open({
+      templateUrl: '/views/part/dialog/PartTypeChangeWizard.html',
+      animation: false,
+      controller: 'partTypeChangeWizardCtrl',
+      resolve: {
+        part: function() {
+          return $scope.part;
+        }
+      }
+    });
+  };
+
   // Images
 
   $scope.deleteImage = function(image) {
