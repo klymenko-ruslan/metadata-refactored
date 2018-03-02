@@ -1010,7 +1010,10 @@ angular.module('ngMetaCrudApp')
       resolve: {
         part: function() {
           return $scope.part;
-        }
+        },
+        partTypes: function() {
+          return partTypes;
+        },
       }
     });
   };

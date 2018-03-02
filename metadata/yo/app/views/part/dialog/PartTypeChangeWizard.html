@@ -1,13 +1,20 @@
 <div class="modal-header">
   <h4 class="modal-title">
-    <i class="fa fa-superpowers" aria-hidden="true"></i> Part type changing wizard
+    <i class="fa fa-superpowers" aria-hidden="true"></i> Part type changing wizard &mdash; Step {{stepIndicator()}}
   </h4>
 </div>
 <div class="modal-body">
-    Hello world!
+  <h2 class="padding-top" part-name="part"></h2>
+  <hr>
+  <div class="form-group">
+    <label for="partType" class="control-label">New Part Type</label>
+    <select id="partType" name="partType" class="form-control input-sm" data-ng-options="pt.name for pt in partTypes track by pt.id" data-ng-model="wzData.partType">
+    </select>
+  </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-default" data-ng-click="cancel()">Cancel</button>
-  <button type="button" class="btn btn-primary" data-ng-click="doIt()">Back</button>
-  <button type="button" class="btn btn-primary" data-ng-click="doIt()">Next</button>
+  <button type="button" class="btn btn-default pull-left" data-ng-click="onCancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" data-ng-disabled="isBttnBackDisabled()" data-ng-click="onBack()">Back</button>
+  <button type="button" class="btn btn-primary" data-ng-disabled="isBttnNextDisabled()" data-ng-show="isBttnNextVisible()" data-ng-click="onNext()">Next</button>
+  <button type="button" class="btn btn-success" data-ng-disabled="isBttnDoItDisabled()" data-ng-show="isBttnDoItVisible()" data-ng-click="onDoIt()">Do It!</button>
 </div>

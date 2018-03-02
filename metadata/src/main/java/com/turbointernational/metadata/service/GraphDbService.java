@@ -28,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriTemplate;
 
@@ -504,7 +505,7 @@ public class GraphDbService {
      * @return
      * @throws DataAccessResourceFailureException
      */
-    private <T> T get(URI uri, Class<T> responseClazz) throws DataAccessException {
+    private <T> T get(URI uri, Class<T> responseClazz) throws DataAccessException, RestClientException {
         try {
             T response = restArangoDbService.getForObject(uri, responseClazz);
             return response;
@@ -513,6 +514,10 @@ public class GraphDbService {
                     e.getRawStatusCode(), e.getStatusText());
             log.error(msg);
             throw new DataRetrievalFailureException(msg);
+        } catch(RestClientException e) {
+            log.error("Restful GET request failed: {}. Expected response class: {}. URL: {}", e.getMessage(),
+                    responseClazz, uri);
+            throw e;
         }
     }
 
@@ -523,9 +528,14 @@ public class GraphDbService {
             String s = jsonSerializer.writeValueAsString(body);
             requestEntity = new HttpEntity<>(s, headers);
         }
-        ResponseEntity<T> responseEntity = restArangoDbService.exchange(uri, method, requestEntity, responseClazz);
-        T response = responseEntity.getBody();
-        return response;
+        try {
+            ResponseEntity<T> responseEntity = restArangoDbService.exchange(uri, method, requestEntity, responseClazz);
+            return responseEntity.getBody();
+        } catch(RestClientException e) {
+            log.error("Restful {} request failed: {}. Expected response class: {}. URL: {}", method, e.getMessage(),
+                    responseClazz, uri);
+            throw e;
+        }
     }
 
     private <T extends Response> T post(URI uri, Class<T> responseClazz) throws JsonProcessingException {
