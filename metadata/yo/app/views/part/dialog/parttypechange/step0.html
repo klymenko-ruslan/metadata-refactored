@@ -1,0 +1,5 @@
+<div class="form-group">
+  <label for="partType" class="control-label">New Part Type</label>
+  <select id="partType" name="partType" class="form-control input-sm" data-ng-options="pt.name for pt in partTypes track by pt.id" data-ng-model="wzData.partType" data-ng-change="onChangePartType()">
+  </select>
+</div>

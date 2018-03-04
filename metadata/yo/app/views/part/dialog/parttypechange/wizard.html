@@ -1,0 +1,45 @@
+<div class="modal-header">
+  <h4 class="modal-title">
+    <i class="fa fa-superpowers" aria-hidden="true"></i> Part type changing wizard &mdash; Step {{stepIndicator()}}
+  </h4>
+</div>
+<div class="modal-body">
+  <h2 class="padding-top" part-name="part"></h2>
+  <hr>
+  <div data-ng-switch="getWzStep()">
+    <!-- *** Page: 0 *** -->
+    <div data-ng-switch-when="0">
+      <data-ng-include src="'/views/part/dialog/parttypechange/step0.html'" />
+    </div>
+    <!-- *** Page: 1 *** -->
+    <div data-ng-switch-when="1">
+      <data-ng-include src="'/views/part/dialog/parttypechange/step1.html'" />
+    </div>
+    <!-- *** Page: 2 *** -->
+    <div data-ng-switch-when="2">
+      <data-ng-include src="'/views/part/dialog/parttypechange/step2.html'" />
+    </div>
+    <!-- *** Page: 3 *** -->
+    <div data-ng-switch-when="3">
+      <data-ng-include src="'/views/part/dialog/parttypechange/step3.html'" />
+    </div>
+    <div data-ng-switch-default class="form-group">
+        <span class="bg-danger">This wizard step ({{getWzStep()}}) is not implemented.</span>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default pull-left" data-ng-click="onCancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" data-ng-hide="isBttnBackDisabled()" data-ng-click="onBack()">
+    <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
+    Back
+  </button>
+  <button type="button" class="btn btn-primary" data-ng-disabled="isBttnNextDisabled()" data-ng-show="isBttnNextVisible()" data-ng-click="onNext()">
+    Next
+    <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
+  </button>
+  <button type="button" class="btn btn-success" data-ng-disabled="isBttnDoItDisabled()" data-ng-show="isBttnDoItVisible()" data-ng-click="onDoIt()">
+      <b>DO IT</b>
+    <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+  </button>
+</div>

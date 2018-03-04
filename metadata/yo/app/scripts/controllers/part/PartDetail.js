@@ -1004,7 +1004,7 @@ angular.module('ngMetaCrudApp')
 
   $scope.onChangePartType = function() {
     $uibModal.open({
-      templateUrl: '/views/part/dialog/PartTypeChangeWizard.html',
+      templateUrl: '/views/part/dialog/parttypechange/wizard.html',
       animation: false,
       controller: 'partTypeChangeWizardCtrl',
       resolve: {
@@ -1013,7 +1013,7 @@ angular.module('ngMetaCrudApp')
         },
         partTypes: function() {
           return partTypes;
-        },
+        }
       }
     });
   };

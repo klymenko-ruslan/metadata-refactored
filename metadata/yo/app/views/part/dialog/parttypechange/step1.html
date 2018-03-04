@@ -1,0 +1,66 @@
+<div class="form-horizontal">
+  <div class="form-group">
+    <label for="partType" class="control-label col-sm-3">New Part Type</label>
+    <div class="col-sm-9">
+      <input id="partType" type="text" class="form-control" value="{{wzData.partType.name}}" readonly />
+    </div>
+  </div>
+</div>
+<div>
+  <h4><u>Required extra attributes</u></h4>
+  <p data-ng-if="::!isRequiredExtraAttributes()" class="help-block">
+    No extra attributes required.
+  </p>
+  <form name="forms.extraAttrsForm" novalidate data-ng-show="::isRequiredExtraAttributes()">
+
+    <div data-ng-if="wzData.partType.value === 'turbo'" class="row">
+      <div class="col-xs-6 form-group">
+        <label for="filterTurboType" class="control-label">Turbo Type</label>
+        <input id="filterTurboType" data-ng-model="filters.turboType" data-ng-init="filters.turboType = ''" class="form-control" placeholder="Turbo type filter..."/>
+        <select id="turboType" name="turboType" class="form-control"
+                data-ng-model="wzData.turbo.tt"
+                data-ng-options="tt as tt.name for tt in turboTypes | filter:{name:filters.turboType} track by tt.id"
+                data-ng-change="onChangeTurboType()"
+                size="6"
+                required>
+        </select>
+        <div data-ng-show="forms.extraAttrsForm.turboType && forms.extraAttrsForm.turboType.$invalid" class="alert alert-danger" role="alert">
+          <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
+          <span data-ng-show="forms.extraAttrsForm.turboType.$error.required">Required!</span>
+        </div>
+      </div>
+
+      <div class="col-xs-6">
+        <label for="filterTurboModel" class="control-label">Turbo Model</label>
+        <input id="filterTurboModel" data-ng-model="filters.turboModel" data-ng-init="filters.turboModel = ''" class="form-control" placeholder="Turbo model filter..."/>
+        <select name="turboModel"
+                data-ng-model="wzData.turbo.tm"
+                data-ng-options="tm as tm.name for tm in turboModels | filter:{name:filters.turboModel} track by tm.id"
+            size="6" class="select-large form-control"
+            required>
+        </select>
+        <div data-ng-show="forms.extraAttrsForm.turboModel && forms.extraAttrsForm.turboModel.$invalid" class="alert alert-danger" role="alert">
+          <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
+          <span data-ng-show="forms.extraAttrsForm.turboModel.$error.required">Required!</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div data-ng-if="wzData.partType.value === 'kit'" class="row">
+      <div class="col-xs-12">
+        <label for="kitType" class="control-label">Kit Type</label>
+        <select id="kitType" name="kitType"
+                data-ng-model="wzData.kitType"
+                data-ng-options="kt as kt.name for kt in kitTypes track by kt.id"
+                class="select-large form-control" required>
+        </select>
+        <div data-ng-show="forms.extraAttrsForm.kitType && forms.extraAttrsForm.kitType.$invalid" class="alert alert-danger" role="alert">
+          <span class="fa fa-exclamation-circle" aria-hidden="true"></span>
+          <span data-ng-show="forms.extraAttrsForm.kitType.$error.required">Required!</span>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
