@@ -82,15 +82,13 @@ public class PartController {
         private List<String> partNumbers;
 
         /**
-         * Changelog source IDs which should be linked to the changelog. See
-         * ticket #891 for details.
+         * Changelog source IDs which should be linked to the changelog. See ticket #891 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] sourcesIds;
 
         /**
-         * IDs of uploaded files which should be attached to this changelog. See
-         * ticket #933 for details.
+         * IDs of uploaded files which should be attached to this changelog. See ticket #933 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] attachIds;
@@ -333,7 +331,91 @@ public class PartController {
 
     }
 
-    //@PreAuthorize("hasRole('ROLE_READ') or hasIpAddress('127.0.0.1/32')")
+    static class PartTypeChangeRequest {
+
+        private long oldPartTypeId;
+
+        private long newPartTypeId;
+
+        private long turboModelId;
+
+        private long kitTypeId;
+
+        private boolean clearBoms;
+
+        private boolean clearInterchanges;
+
+        private boolean copyCritDims;
+
+        public PartTypeChangeRequest() {
+        }
+
+        public long getOldPartTypeId() {
+            return oldPartTypeId;
+        }
+
+        public void setOldPartTypeId(long oldPartTypeId) {
+            this.oldPartTypeId = oldPartTypeId;
+        }
+
+        public long getNewPartTypeId() {
+            return newPartTypeId;
+        }
+
+        public void setNewPartTypeId(long newPartTypeId) {
+            this.newPartTypeId = newPartTypeId;
+        }
+
+        public long getTurboModelId() {
+            return turboModelId;
+        }
+
+        public void setTurboModelId(long turboModelId) {
+            this.turboModelId = turboModelId;
+        }
+
+        public long getKitTypeId() {
+            return kitTypeId;
+        }
+
+        public void setKitTypeId(long kitTypeId) {
+            this.kitTypeId = kitTypeId;
+        }
+
+        public boolean isClearBoms() {
+            return clearBoms;
+        }
+
+        public void setClearBoms(boolean clearBoms) {
+            this.clearBoms = clearBoms;
+        }
+
+        public boolean isClearInterchanges() {
+            return clearInterchanges;
+        }
+
+        public void setClearInterchanges(boolean clearInterchanges) {
+            this.clearInterchanges = clearInterchanges;
+        }
+
+        public boolean isCopyCritDims() {
+            return copyCritDims;
+        }
+
+        public void setCopyCritDims(boolean copyCritDims) {
+            this.copyCritDims = copyCritDims;
+        }
+
+        @Override
+        public String toString() {
+            return "PartTypeChangeRequest [oldPartTypeId=" + oldPartTypeId + ", newPartTypeId=" + newPartTypeId
+                    + ", turboModelId=" + turboModelId + ", kitTypeId=" + kitTypeId + ", clearBoms=" + clearBoms
+                    + ", clearInterchanges=" + clearInterchanges + ", copyCritDims=" + copyCritDims + "]";
+        }
+
+    }
+
+    // @PreAuthorize("hasRole('ROLE_READ') or hasIpAddress('127.0.0.1/32')")
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody Part getPart(@PathVariable("id") Long id) {
@@ -450,12 +532,12 @@ public class PartController {
         if (relationDistance != null) {
             try {
                 numRelationDistance = Integer.valueOf(relationDistance);
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 numRelationDistance = Integer.MIN_VALUE; // invalid input value
             }
         }
-        AncestorsResult retVal = partService.filterAncestors(partId, partNumber, partTypeId, manufacturerName,
-                name, numRelationDistance, relationType, interchangeParts, description, inactive, turboTypeName,
+        AncestorsResult retVal = partService.filterAncestors(partId, partNumber, partTypeId, manufacturerName, name,
+                numRelationDistance, relationType, interchangeParts, description, inactive, turboTypeName,
                 turboModelName, year, make, model, engine, fuelType, sortProperty, sortOrder, offset, limit);
         return retVal;
     }
@@ -488,8 +570,16 @@ public class PartController {
     @Transactional
     @Secured("ROLE_ALTER_PART")
     @JsonView(View.Detail.class)
-    @RequestMapping(value = "/part/{id}/details", method = PUT, produces = APPLICATION_JSON_VALUE,
-        consumes = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/part/{id}/parttype", method = PUT, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    public Part changePartType(@PathVariable("id") Long id, @RequestBody PartTypeChangeRequest request) {
+        System.out.println("Request: " + request);
+        return null;
+    }
+
+    @Transactional
+    @Secured("ROLE_ALTER_PART")
+    @JsonView(View.Detail.class)
+    @RequestMapping(value = "/part/{id}/details", method = PUT, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public @ResponseBody Part updatePartDetails(HttpServletRequest request, HttpServletResponse response,
             @RequestBody Part part, @PathVariable("id") Long id) throws IOException {
         try {
@@ -560,7 +650,7 @@ public class PartController {
     @RequestMapping(value = "/part/{id}/cdlegend/image", method = POST, produces = APPLICATION_JSON_VALUE)
     @JsonView(View.Summary.class)
     @Secured("ROLE_PART_IMAGES")
-    @ResponseBody 
+    @ResponseBody
     public Part addCriticalDimensionLegendImage(@PathVariable Long id,
             @RequestPart("file") @Valid @NotNull @NotBlank MultipartFile mpf) throws Exception {
         byte[] imageData = mpf.getBytes();
@@ -572,8 +662,9 @@ public class PartController {
     @RequestMapping(value = "/part/{partId}/turboType/{turboTypeId}", method = POST)
     @JsonView(View.Summary.class)
     @Secured("ROLE_ALTER_PART")
-    @ResponseBody 
-    public Collection<TurboType> addTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
+    @ResponseBody
+    public Collection<TurboType> addTurboType(@PathVariable("partId") Long partId,
+            @PathVariable("turboTypeId") Long turboTypeId) {
         return partService.addTurboType(partId, turboTypeId, false);
     }
 
@@ -581,8 +672,9 @@ public class PartController {
     @RequestMapping(value = "/part/{partId}/turboType/{turboTypeId}", method = DELETE)
     @JsonView(View.Summary.class)
     @Secured("ROLE_ALTER_PART")
-    @ResponseBody 
-    public Collection<TurboType> deleteTurboType(@PathVariable("partId") Long partId, @PathVariable("turboTypeId") Long turboTypeId) {
+    @ResponseBody
+    public Collection<TurboType> deleteTurboType(@PathVariable("partId") Long partId,
+            @PathVariable("turboTypeId") Long turboTypeId) {
         return partService.deleteTurboType(partId, turboTypeId, false);
     }
 
@@ -651,7 +743,7 @@ public class PartController {
     public List<Turbo> unlinkTurboInGasketKit(@PathVariable("partId") Long partId) {
         return partService.unlinkTurboInGasketKit(partId, true);
     }
-    
+
     @Transactional(noRollbackFor = AssertionError.class)
     @Secured("ROLE_ALTER_PART")
     @JsonView(View.Detail.class)

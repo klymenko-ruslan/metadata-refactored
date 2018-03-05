@@ -396,6 +396,21 @@ angular.module('ngMetaCrudApp')
         return Restangular.one('part', part.id).one('details').customPUT(part);
       };
 
+      this.changePartType = function(partId, oldPartTypeId, newPartTypeId, turboModelId,
+        kitTypeId, clearBoms, clearInterchanges, copyCritDims) {
+        Restangular.setParentless(false);
+        var req = {
+          oldPartTypeId: oldPartTypeId,
+          newPartTypeId: newPartTypeId,
+          turboModelId: turboModelId,
+          kitTypeId: kitTypeId,
+          clearBoms: clearBoms,
+          clearInterchanges: clearInterchanges,
+          copyCritDims: copyCritDims
+        };
+        return Restangular.one('part', partId).one('parttype').customPUT(req);
+      };
+
       this.addProductImage = function(file, partId, publishImage) {
         Restangular.setParentless(false);
         return Restangular.one('part', partId).all('image')

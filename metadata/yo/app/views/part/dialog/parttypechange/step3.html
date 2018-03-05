@@ -31,3 +31,13 @@
   <li data-ng-if="wzData.options.clearInterchanges">Clear list of Interchanges</li>
   <li data-ng-if="wzData.options.copyCritDims">Copy compatible critical dimensions values</li>
 </ul>
+<div data-ng-if="part.partType.value === 'kit' || part.partType.value === 'journal_bearing' || part.partType.value === 'piston_ring' || part.partType.value === 'turbo'">
+  <h4><u>Data which may be lost</u></h4>
+  <ul>
+    <li data-ng-if="part.partType.value === 'kit'">Common Components</li>
+    <li data-ng-if="part.partType.value === 'journal_bearing' && part.partType.value === 'piston_ring'">Non Standard Parts</li>
+    <li data-ng-if="part.partType.value === 'turbo'">Turbo Model and Type</li>
+    <li data-ng-if="part.partType.value === 'turbo'">Coolant</li>
+    <li data-ng-if="part.partType.value === 'turbo'">Gasket Kit</li>
+  </ul>
+</div>

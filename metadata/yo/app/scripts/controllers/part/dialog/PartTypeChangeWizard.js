@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ngMetaCrudApp')
-.controller('partTypeChangeWizardCtrl', ['$scope', '$log', '$uibModalInstance', 'restService', 'partTypes', 'part', function($scope, $log, $uibModalInstance, restService, partTypes, part) {
+.controller('partTypeChangeWizardCtrl', ['$scope', '$log', '$window', '$uibModalInstance', 'toastr', 'restService', 'partTypes', 'part', function($scope, $log, $window, $uibModalInstance, toastr, restService, partTypes, part) {
 
   $scope.part = part;
   $scope.partTypes = _.filter(partTypes, function(pt) {
@@ -126,7 +126,7 @@ angular.module('ngMetaCrudApp')
   };
 
   $scope.isBttnDoItDisabled = function() {
-    return true;
+    return false;
   };
 
   $scope.isBttnNextVisible = function() {
@@ -150,27 +150,20 @@ angular.module('ngMetaCrudApp')
   };
 
   $scope.onDoIt = function() {
-    $scope.onCancel(); // TODO
-  };
-
-  /*
-    var mergeDialog = dialogs.create('/views/dialog/PartTypeChangeWizard.html', 'mergeInterchangeablesCtrl',
-      {
-        'mergeChoice': MERGE_OPTIONS.PICKED_ALL_TO_PART
-      }, {
-        'size': 'lg',
-        'keyboard': true,
-        'backdrop': false
+    var turboModelId = $scope.$eval('wzData.turbo.tm.id');
+    var kitTypeId = $scope.$eval('wzData.kitType.id');
+    restService.changePartType($scope.part.id, $scope.part.partType.id, $scope.wzData.partType.id,
+        turboModelId, kitTypeId, $scope.wzData.options.clearBoms,
+        $scope.wzData.options.clearInterchanges, $scope.wzData.options.copyCritDims).then(
+      function success() {
+        $uibModalInstance.close();
+        toastr.success('The part type has successfully been changed.');
+        $window.location.reload();
+      },
+      function failure(errorResponse) {
+        restService.error('Update of the part type failed.', errorResponse);
       }
     );
-
-  mergeDialog.result.then(
-    function(bttn) {
-    },
-    function cancel() {
-    }
-  );
-
-  */
+  };
 
 }]);
