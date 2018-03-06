@@ -296,8 +296,8 @@ public class PartService {
         if (details) {
             interchangeService.initInterchange(updatedPart);
         }
-        String modifiedPartJson = updatedPart.toJson(criticalDimensionService
-                .getCriticalDimensionForPartType(part.getPartType().getId()));
+        String modifiedPartJson = updatedPart
+                .toJson(criticalDimensionService.getCriticalDimensionForPartType(part.getPartType().getId()));
         // Update the changelog.
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(id, PART0));
@@ -369,7 +369,7 @@ public class PartService {
                 originTurbo.setTurboModel(turboModel);
             }
             CoolType originCoolType = originTurbo.getCoolType();
-            boolean coolTypeChanged = coolTypeId == null && originCoolType != null 
+            boolean coolTypeChanged = coolTypeId == null && originCoolType != null
                     || coolTypeId != null && (originCoolType == null || !coolTypeId.equals(originCoolType.getId()));
             if (coolTypeChanged) {
                 if (coolTypeId == null) {
@@ -583,11 +583,11 @@ public class PartService {
             if (id == null) {
                 // It is possible that ElasticSearch stores absent interchange as:
                 // "interchange": {
-                //   "parts": [],
-                //   "id": null
-                //  }
+                // "parts": [],
+                // "id": null
+                // }
                 // instead of:
-                //  "interchange": null
+                // "interchange": null
                 // So this 'if' condition handle this case.
                 // See (Redmine) #298
                 // http://redmine.turbointernational.com/issues/298
@@ -678,12 +678,12 @@ public class PartService {
         // a 'set' instead of a 'list'.
         Set<Long> subsetPartIds = new HashSet<>();
         if (rows != null) {
-            for(int i = 0; i < rows.length; i++) {
+            for (int i = 0; i < rows.length; i++) {
                 subsetPartIds.add(rows[i].getPartId());
             }
         }
         Long[] lstSubsetPartIds = new Long[subsetPartIds.size()];
-        lstSubsetPartIds  = subsetPartIds.toArray(lstSubsetPartIds);
+        lstSubsetPartIds = subsetPartIds.toArray(lstSubsetPartIds);
         SearchResponse sr = (SearchResponse) searchService.rawFilterParts(lstSubsetPartIds, partNumber, partTypeId,
                 manufacturerName, name, interchangeParts, description, inactive, turboTypeName, turboModelName,
                 cmeyYear, cmeyMake, cmeyModel, cmeyEngine, cmeyFuelType, null, null, null, 0,
@@ -804,8 +804,8 @@ public class PartService {
         Collection<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(gasketKitId, PART0));
         relatedParts.add(new RelatedPart(turboId, PART1));
-        String logMsg = String.format("Gasket Kit %s and Turbo %s have been linked.",
-                formatPart(part2), formatPart(part));
+        String logMsg = String.format("Gasket Kit %s and Turbo %s have been linked.", formatPart(part2),
+                formatPart(part));
         changelogService.log(PART, logMsg, relatedParts);
     }
 
@@ -837,8 +837,8 @@ public class PartService {
         Collection<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(gasketKit.getId(), PART0));
         relatedParts.add(new RelatedPart(partId, PART1));
-        String logMsg = String.format("Gasket Kit %s and Turbo %s have been unlinked.",
-                formatPart(gasketKit), formatPart(turbo));
+        String logMsg = String.format("Gasket Kit %s and Turbo %s have been unlinked.", formatPart(gasketKit),
+                formatPart(turbo));
         changelogService.log(PART, logMsg, relatedParts);
         // Prepare a response.
         List<Turbo> retVal = partDao.listTurbosLinkedToGasketKit(gasketKit.getId());
@@ -897,6 +897,34 @@ public class PartService {
             });
         }
         return retVal;
+    }
+
+    public Part changePartType(long partId, long oldPartTypeId, long newPartTypeId, long kitTypeId, long turboModelId) {
+        Part originalPart = partDao.findOne(partId);
+        String originalPartStr = formatPart(originalPart);
+        if (originalPart.getPartType().getId() != oldPartTypeId) {
+            throw new AssertionError("Invalid input arg 'oldPartTypeId' = " + oldPartTypeId + ". Actual part type is "
+                    + originalPart.getPartType().getId() + ". Part " + originalPartStr + ".");
+        }
+        List<CriticalDimension> cdfpt = criticalDimensionService.getCriticalDimensionForPartType(oldPartTypeId);
+        String originalPartJson = originalPart.toJson(cdfpt);
+        if (newPartTypeId == PTID_KIT) {
+            partDao.changePartTypeOnKit(partId, oldPartTypeId, kitTypeId);
+        } else if (newPartTypeId == PTID_TURBO) {
+            partDao.changePartTypeOnTurbo(partId, oldPartTypeId, turboModelId);
+        } else {
+            partDao.changePartType(partId, oldPartTypeId, newPartTypeId, false);
+        }
+        // Clear cache of the entity manager and load the part again.
+        em.getEntityManagerFactory().getCache().evictAll();
+        Part updated = partDao.findOne(partId);
+        List<CriticalDimension> cdfpt2 = criticalDimensionService.getCriticalDimensionForPartType(newPartTypeId);
+        String updatedPartJson = updated.toJson(cdfpt2);
+        List<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(partId, PART0));
+        changelogService.log(PART, "Updated part " + originalPartStr + ".",
+                "{original: " + originalPartJson + ",updated: " + updatedPartJson + "}", relatedParts);
+        return updated;
     }
 
 }
