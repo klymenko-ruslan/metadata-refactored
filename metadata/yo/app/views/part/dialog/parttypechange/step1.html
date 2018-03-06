@@ -1,11 +1,7 @@
-<div class="form-horizontal">
-  <div class="form-group">
-    <label for="partType" class="control-label col-sm-3">New Part Type</label>
-    <div class="col-sm-9">
-      <input id="partType" type="text" class="form-control" value="{{wzData.partType.name}}" readonly />
-    </div>
-  </div>
-</div>
+<ul>
+  <li>New Part Type &mdash; <mark>{{wzData.partType.name}}</mark></li>
+</ul>
+
 <div>
   <h4><u>Required extra attributes</u></h4>
   <p data-ng-if="::!isRequiredExtraAttributes()" class="help-block">

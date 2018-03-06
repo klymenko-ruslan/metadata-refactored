@@ -1,38 +1,17 @@
-<h3><u>Summary</u></h3>
+<h3>Summary</h3>
 
-<div class="form-horizontal">
-  <div class="form-group">
-    <label for="partType" class="control-label col-sm-3">New Part Type</label>
-    <div class="col-sm-9">
-      <input id="partType" type="text" class="form-control" value="{{wzData.partType.name}}" readonly />
-    </div>
-  </div>
-  <div data-ng-if="wzData.partType.value === 'turbo'" class="form-group">
-    <label for="turboModel" class="control-label col-sm-3">Turbo Model</label>
-    <div class="col-sm-9">
-      <input id="turboModel" type="text" class="form-control" value="{{wzData.turbo.tm.name}}" readonly />
-    </div>
-  </div>
-  <div data-ng-if="wzData.partType.value === 'turbo'" class="form-group">
-    <label for="turboType" class="control-label col-sm-3">Turbo Type</label>
-    <div class="col-sm-9">
-      <input id="turboType" type="text" class="form-control" value="{{wzData.turbo.tt.name}}" readonly />
-    </div>
-  </div>
-  <div data-ng-if="wzData.partType.value === 'kit'" class="form-group">
-    <label for="kit" class="control-label col-sm-3">Kit</label>
-    <div class="col-sm-9">
-      <input id="kit" type="text" class="form-control" value="{{wzData.kitType.name}}" readonly />
-    </div>
-  </div>
-</div>
 <ul>
+  <li>New Part Type &mdash; <mark>{{wzData.partType.name}}</mark></li>
+  <li data-ng-if="wzData.partType.value === 'turbo'">Turbo Model &mdash; <mark>{{wzData.turbo.tm.name}}</mark></li>
+  <li data-ng-if="wzData.partType.value === 'turbo'">Turbo Type &mdash; <mark>{{wzData.turbo.tt.name}}</mark></li>
+  <li data-ng-if="wzData.partType.value === 'kit'">Kit &mdash; <mark>{{wzData.kitType.name}}</mark></li>
   <li data-ng-if="wzData.options.clearBoms">Clear BOM list</li>
   <li data-ng-if="wzData.options.clearInterchanges">Clear list of Interchanges</li>
   <li data-ng-if="wzData.options.copyCritDims">Copy compatible critical dimensions values</li>
 </ul>
-<div data-ng-if="part.partType.value === 'kit' || part.partType.value === 'journal_bearing' || part.partType.value === 'piston_ring' || part.partType.value === 'turbo'">
-  <h4><u>Data which may be lost</u></h4>
+
+<div data-ng-if="part.partType.value === 'kit' || part.partType.value === 'journal_bearing' || part.partType.value === 'piston_ring' || part.partType.value === 'turbo'" style="margin-top:1.5em;margin-bottom:3em;">
+  <h5>Data which may be lost</h5>
   <ul>
     <li data-ng-if="part.partType.value === 'kit'">Common Components</li>
     <li data-ng-if="part.partType.value === 'journal_bearing' && part.partType.value === 'piston_ring'">Non Standard Parts</li>
@@ -40,4 +19,11 @@
     <li data-ng-if="part.partType.value === 'turbo'">Coolant</li>
     <li data-ng-if="part.partType.value === 'turbo'">Gasket Kit</li>
   </ul>
+</div>
+<hr>
+<div class="checkbox">
+  <label>
+    <input type="checkbox" data-ng-model="wzData.confirmation" />
+    <b>Check this box to confirm the action.</b>
+  </label>
 </div>

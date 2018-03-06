@@ -24,7 +24,8 @@ angular.module('ngMetaCrudApp')
       clearBoms: false,
       clearInterchanges: true,
       copyCritDims: true
-    }
+    },
+    confirmation: false
   };
 
   // We use a special object to store a reference on the form(s)
@@ -126,7 +127,7 @@ angular.module('ngMetaCrudApp')
   };
 
   $scope.isBttnDoItDisabled = function() {
-    return false;
+    return !$scope.wzData.confirmation;
   };
 
   $scope.isBttnNextVisible = function() {

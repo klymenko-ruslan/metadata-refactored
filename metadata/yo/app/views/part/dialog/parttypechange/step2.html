@@ -1,29 +1,9 @@
-<div class="form-horizontal">
-  <div class="form-group">
-    <label for="partType" class="control-label col-sm-3">New Part Type</label>
-    <div class="col-sm-9">
-      <input id="partType" type="text" class="form-control" value="{{wzData.partType.name}}" readonly />
-    </div>
-  </div>
-  <div data-ng-if="wzData.partType.value === 'turbo'" class="form-group">
-    <label for="turboModel" class="control-label col-sm-3">Turbo Model</label>
-    <div class="col-sm-9">
-      <input id="turboModel" type="text" class="form-control" value="{{wzData.turbo.tm.name}}" readonly />
-    </div>
-  </div>
-  <div data-ng-if="wzData.partType.value === 'turbo'" class="form-group">
-    <label for="turboType" class="control-label col-sm-3">Turbo Type</label>
-    <div class="col-sm-9">
-      <input id="turboType" type="text" class="form-control" value="{{wzData.turbo.tt.name}}" readonly />
-    </div>
-  </div>
-  <div data-ng-if="wzData.partType.value === 'kit'" class="form-group">
-    <label for="kit" class="control-label col-sm-3">Kit</label>
-    <div class="col-sm-9">
-      <input id="kit" type="text" class="form-control" value="{{wzData.kitType.name}}" readonly />
-    </div>
-  </div>
-</div>
+<ul>
+  <li>New Part Type &mdash; <mark>{{wzData.partType.name}}</mark></li>
+  <li data-ng-if="wzData.partType.value === 'turbo'">Turbo Model &mdash; <mark>{{wzData.turbo.tm.name}}</mark></li>
+  <li data-ng-if="wzData.partType.value === 'turbo'">Turbo Type &mdash; <mark>{{wzData.turbo.tt.name}}</mark></li>
+  <li data-ng-if="wzData.partType.value === 'kit'">Kit &mdash; <mark>{{wzData.kitType.name}}</mark></li>
+</ul>
 
 <div class="form-group">
   <h4><u>Options for the migration</u></h4>
