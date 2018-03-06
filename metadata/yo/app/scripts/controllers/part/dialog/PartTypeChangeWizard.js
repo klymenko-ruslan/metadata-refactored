@@ -80,12 +80,6 @@ angular.module('ngMetaCrudApp')
     if (ttId !== undefined) {
       restService.listTurboModelsForTurboTypeId(ttId).then(
         function success(turboModels) {
-          /*
-          $scope.turboModels.splice(0, $scope.turboModels.length);
-          _.each(turboModels, function(tm) {
-            $scope.turboModels.push(tm);
-          });
-          */
           $scope.turboModels = turboModels;
         },
         function failure(response) {
@@ -147,6 +141,9 @@ angular.module('ngMetaCrudApp')
   };
 
   $scope.onNext = function() {
+    // Reset the confirmation checkbox on the last page
+    // in order to force user to do confirmation again (if any).
+    $scope.wzData.confirmation = false;
     wzStep++;
   };
 
