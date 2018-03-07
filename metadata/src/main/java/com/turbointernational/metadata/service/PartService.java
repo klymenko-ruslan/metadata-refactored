@@ -125,6 +125,9 @@ public class PartService {
 
     @Autowired
     private KitTypeDao kitTypeDao;
+    
+    @Autowired
+    private BOMService bomService;
 
     @Autowired
     private ChangelogService changelogService;
@@ -899,12 +902,25 @@ public class PartService {
         return retVal;
     }
 
-    public Part changePartType(long partId, long oldPartTypeId, long newPartTypeId, long kitTypeId, long turboModelId) {
+    public Part changePartType(long partId, long oldPartTypeId, long newPartTypeId, long kitTypeId, long turboModelId,
+            boolean clearBoms, boolean removeFromParentBoms, boolean clearInterchanges, boolean copyCritDims) throws IOException {
         Part originalPart = partDao.findOne(partId);
         String originalPartStr = formatPart(originalPart);
         if (originalPart.getPartType().getId() != oldPartTypeId) {
             throw new AssertionError("Invalid input arg 'oldPartTypeId' = " + oldPartTypeId + ". Actual part type is "
                     + originalPart.getPartType().getId() + ". Part " + originalPartStr + ".");
+        }
+        if (clearBoms) {
+            bomService.deleteAll(partId);
+        }
+        if (removeFromParentBoms) {
+            bomService.removeFromAllParents(partId);
+        }
+        if (clearInterchanges) {
+            Interchange interchange = interchangeService.findForPart(partId);
+            if (!interchange.isAlone()) {
+                interchangeService.leaveInterchangeableGroup(partId);
+            }
         }
         List<CriticalDimension> cdfpt = criticalDimensionService.getCriticalDimensionForPartType(oldPartTypeId);
         String originalPartJson = originalPart.toJson(cdfpt);

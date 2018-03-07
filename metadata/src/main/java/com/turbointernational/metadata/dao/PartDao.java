@@ -506,6 +506,7 @@ public class PartDao extends AbstractDao<Part> {
     }
 
     public void changePartTypeOnKit(long partId, long oldPartTypeId, long kitTypeId) {
+        jdbcTemplate.update("delete from kit_part_common_component where kit_id=?", partId);
         changePartType(partId, oldPartTypeId, PTID_KIT, true);
         jdbcTemplate.update("insert into kit(part_id, kit_type_id) values(?, ?)", partId, kitTypeId);
     }

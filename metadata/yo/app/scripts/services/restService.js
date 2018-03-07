@@ -397,7 +397,7 @@ angular.module('ngMetaCrudApp')
       };
 
       this.changePartType = function(partId, oldPartTypeId, newPartTypeId, turboModelId,
-        kitTypeId, clearBoms, clearInterchanges, copyCritDims) {
+        kitTypeId, clearBoms, removeFromParentBoms, clearInterchanges, copyCritDims) {
         Restangular.setParentless(false);
         var req = {
           oldPartTypeId: oldPartTypeId,
@@ -405,6 +405,7 @@ angular.module('ngMetaCrudApp')
           turboModelId: turboModelId,
           kitTypeId: kitTypeId,
           clearBoms: clearBoms,
+          removeFromParentBoms: removeFromParentBoms,
           clearInterchanges: clearInterchanges,
           copyCritDims: copyCritDims
         };

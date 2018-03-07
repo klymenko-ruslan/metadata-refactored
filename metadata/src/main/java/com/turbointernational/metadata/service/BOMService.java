@@ -111,8 +111,7 @@ public class BOMService {
         private Long parentPartId;
 
         /**
-         * Changelog source IDs which should be linked to the changelog. See
-         * ticket #891 for details.
+         * Changelog source IDs which should be linked to the changelog. See ticket #891 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] sourcesIds;
@@ -124,8 +123,7 @@ public class BOMService {
         private String chlogSrcLnkDescription;
 
         /**
-         * IDs of uploaded files which should be attached to this changelog. See
-         * ticket #933 for details.
+         * IDs of uploaded files which should be attached to this changelog. See ticket #933 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] attachIds;
@@ -330,15 +328,13 @@ public class BOMService {
         }
 
         /**
-         * Changelog source IDs which should be linked to the changelog. See
-         * ticket #891 for details.
+         * Changelog source IDs which should be linked to the changelog. See ticket #891 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] sourcesIds;
 
         /**
-         * IDs of uploaded files which should be attached to this changelog. See
-         * ticket #933 for details.
+         * IDs of uploaded files which should be attached to this changelog. See ticket #933 for details.
          */
         @JsonView(View.Summary.class)
         private Long[] attachIds;
@@ -448,7 +444,7 @@ public class BOMService {
         return new CreateBOMsResponse(failures, boms);
     }
 
-    public Bom[] getByParentId(Long partId) throws Exception {
+    public Bom[] getByParentId(Long partId) {
         GetBomsResponse response = graphDbService.getBoms(partId);
         Bom[] boms = dtoMapperService.map(response.getRows(), Bom[].class);
         for (Bom b : boms) {
@@ -457,13 +453,13 @@ public class BOMService {
         return boms;
     }
 
-    public Bom[] getParentsForBom(Long partId) throws Exception {
+    public Bom[] getParentsForBom(Long partId) throws IOException {
         GetBomsResponse response = graphDbService.getParentsBoms(partId);
         return dtoMapperService.map(response.getRows(), Bom[].class);
     }
 
     public Bom[] getByParentAndTypeIds(Long partId, Long partTypeId) throws Exception {
-        Bom[] parents = getByParentId(partId);  // TODO: batch?
+        Bom[] parents = getByParentId(partId); // TODO: batch?
         Bom[] retVal = Arrays.stream(parents).filter(b -> b.getPart().getPartType().getId().equals(partTypeId))
                 .toArray(size -> new Bom[size]);
         return retVal;
@@ -570,10 +566,24 @@ public class BOMService {
         // return Bom.from(partDao, bomsResponse.getRows());
     }
 
-    public Bom[] removeFromParent(Long parentPartId, Long childId) throws Exception {
+    public Bom[] deleteAll(Long parentPartId) throws IOException {
+        Bom[] boms = getByParentId(parentPartId);
+        Long[] childrenIds = Arrays.stream(boms).map((Bom b) -> b.getPart().getPartId()).toArray(Long[]::new);
+        Bom[] retVal = delete(parentPartId, childrenIds);
+        return retVal;
+    }
+
+    public Bom[] removeFromParent(Long parentPartId, Long childId) throws IOException {
         deleteBomItem(childId, parentPartId);
         // Return list of BOMs after this delete operation.
         return getParentsForBom(parentPartId);
+    }
+
+    public void removeFromAllParents(Long partId) throws IOException {
+        Bom[] parentBoms = getParentsForBom(partId);
+        for (Bom b : parentBoms) {
+            removeFromParent(partId, b.getPart().getPartId());
+        }
     }
 
     public PartGroup[] getAlternatives(Long parentPartId, Long childPartId) {

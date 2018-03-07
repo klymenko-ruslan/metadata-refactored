@@ -342,6 +342,8 @@ public class PartController {
         private long kitTypeId;
 
         private boolean clearBoms;
+        
+        private boolean removeFromParentBoms;
 
         private boolean clearInterchanges;
 
@@ -390,6 +392,14 @@ public class PartController {
             this.clearBoms = clearBoms;
         }
 
+        public boolean isRemoveFromParentBoms() {
+            return removeFromParentBoms;
+        }
+
+        public void setRemoveFromParentBoms(boolean removeFromParentBoms) {
+            this.removeFromParentBoms = removeFromParentBoms;
+        }
+
         public boolean isClearInterchanges() {
             return clearInterchanges;
         }
@@ -410,7 +420,8 @@ public class PartController {
         public String toString() {
             return "PartTypeChangeRequest [oldPartTypeId=" + oldPartTypeId + ", newPartTypeId=" + newPartTypeId
                     + ", turboModelId=" + turboModelId + ", kitTypeId=" + kitTypeId + ", clearBoms=" + clearBoms
-                    + ", clearInterchanges=" + clearInterchanges + ", copyCritDims=" + copyCritDims + "]";
+                    + ", removeFromParentBoms=" + removeFromParentBoms + ", clearInterchanges=" + clearInterchanges
+                    + ", copyCritDims=" + copyCritDims + "]";
         }
 
     }
@@ -571,13 +582,18 @@ public class PartController {
     @Secured("ROLE_ALTER_PART")
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/{id}/parttype", method = PUT, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
-    public Part changePartType(@PathVariable("id") Long partId, @RequestBody PartTypeChangeRequest request) {
+    public Part changePartType(@PathVariable("id") Long partId, @RequestBody PartTypeChangeRequest request) throws IOException {
         // System.out.println("Request: " + request);
         long oldPartTypeId = request.getOldPartTypeId();
         long newPartTypeId = request.getNewPartTypeId();
         long kitTypeId = request.getKitTypeId();
         long turboModelId = request.getTurboModelId();
-        Part part = partService.changePartType(partId, oldPartTypeId, newPartTypeId, kitTypeId, turboModelId);
+        boolean clearBoms = request.isClearBoms();
+        boolean removeFromParentBoms = request.isRemoveFromParentBoms();
+        boolean clearInterchanges = request.isClearInterchanges();
+        boolean copyCritDims = request.isCopyCritDims();
+        Part part = partService.changePartType(partId, oldPartTypeId, newPartTypeId, kitTypeId, turboModelId,
+                clearBoms, removeFromParentBoms, clearInterchanges, copyCritDims);
         return part;
     }
 

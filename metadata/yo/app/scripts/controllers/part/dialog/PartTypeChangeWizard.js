@@ -22,6 +22,7 @@ angular.module('ngMetaCrudApp')
     kitType: null,
     options: {
       clearBoms: false,
+      removeFromParentBoms: false,
       clearInterchanges: true,
       copyCritDims: true
     },
@@ -150,9 +151,13 @@ angular.module('ngMetaCrudApp')
   $scope.onDoIt = function() {
     var turboModelId = $scope.$eval('wzData.turbo.tm.id');
     var kitTypeId = $scope.$eval('wzData.kitType.id');
-    restService.changePartType($scope.part.id, $scope.part.partType.id, $scope.wzData.partType.id,
-        turboModelId, kitTypeId, $scope.wzData.options.clearBoms,
-        $scope.wzData.options.clearInterchanges, $scope.wzData.options.copyCritDims).then(
+    restService.changePartType($scope.part.id, $scope.part.partType.id,
+      $scope.wzData.partType.id, turboModelId, kitTypeId,
+      $scope.wzData.options.clearBoms,
+      $scope.wzData.options.removeFromParentBoms,
+      $scope.wzData.options.clearInterchanges,
+      $scope.wzData.options.copyCritDims)
+    .then(
       function success() {
         $uibModalInstance.close();
         toastr.success('The part type has successfully been changed.');
