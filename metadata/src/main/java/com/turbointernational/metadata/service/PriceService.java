@@ -1,7 +1,5 @@
 package com.turbointernational.metadata.service;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,8 +22,8 @@ import org.springframework.stereotype.Service;
 
 import com.turbointernational.metadata.exception.PartNotFound;
 import com.turbointernational.metadata.service.mas90.pricing.CalculatedPrice;
-import com.turbointernational.metadata.service.mas90.pricing.Pricing;
 import com.turbointernational.metadata.service.mas90.pricing.Prices;
+import com.turbointernational.metadata.service.mas90.pricing.Pricing;
 import com.turbointernational.metadata.web.dto.ProductPrices;
 
 /**
@@ -144,14 +142,10 @@ public class PriceService {
                     + "p.discountmarkup2 as DiscountMarkupPriceRate2, "
                     + "p.discountmarkup3 as DiscountMarkupPriceRate3, "
                     + "p.discountmarkup4 as DiscountMarkupPriceRate4, "
-                    + "p.discountmarkup5 as DiscountMarkupPriceRate5 from im_pricecode as p "
+                    + "p.discountmarkup5 as DiscountMarkupPriceRate5 "
+                    + "from im_pricecode as p "
                     + "where p.pricecoderecord in ('', ' ', '0')", (rs, rowNum) -> {
                         String priceLevel = rs.getString("price_level");
-                        // Mas90 bug handling:
-                        // https://github.com/pthiry/TurboInternational/issues/5#issuecomment-29331951
-                        if (isBlank(priceLevel)) {
-                            priceLevel = "2";
-                        }
                         Pricing pricing = Pricing.fromResultSet(rs);
                         return new PriceRow(priceLevel, pricing);
                     });
