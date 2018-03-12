@@ -74,7 +74,6 @@ import org.springframework.stereotype.Repository;
 
 import com.turbointernational.mas90.entity.ArInvoiceHistoryDetail;
 import com.turbointernational.mas90.entity.ArInvoiceHistoryDetail_;
-import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.Turbo;
