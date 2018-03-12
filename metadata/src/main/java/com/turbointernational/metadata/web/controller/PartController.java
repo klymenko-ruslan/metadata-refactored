@@ -579,7 +579,7 @@ public class PartController {
     }
 
     @Transactional
-    @Secured("ROLE_ALTER_PART")
+    @Secured("ROLE_ALTER_PART_TYPE")
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/{id}/parttype", method = PUT, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public Part changePartType(@PathVariable("id") Long partId, @RequestBody PartTypeChangeRequest request) throws IOException {
