@@ -125,7 +125,7 @@ public class PartService {
 
     @Autowired
     private KitTypeDao kitTypeDao;
-    
+
     @Autowired
     private BOMService bomService;
 
@@ -903,13 +903,18 @@ public class PartService {
     }
 
     public Part changePartType(long partId, long oldPartTypeId, long newPartTypeId, long kitTypeId, long turboModelId,
-            boolean clearBoms, boolean removeFromParentBoms, boolean clearInterchanges, boolean copyCritDims) throws IOException {
+            boolean clearBoms, boolean removeFromParentBoms, boolean clearInterchanges, boolean copyCritDims)
+            throws IOException {
         Part originalPart = partDao.findOne(partId);
+        String originalPartTypeName = originalPart.getPartType().getName();
         String originalPartStr = formatPart(originalPart);
         if (originalPart.getPartType().getId() != oldPartTypeId) {
             throw new AssertionError("Invalid input arg 'oldPartTypeId' = " + oldPartTypeId + ". Actual part type is "
                     + originalPart.getPartType().getId() + ". Part " + originalPartStr + ".");
         }
+        List<CriticalDimension> cdfpt = criticalDimensionService.getCriticalDimensionForPartType(oldPartTypeId);
+        String originalPartJson = originalPart.toJson(cdfpt);
+        em.detach(originalPart); // Remove from the persistence context to reload to reflect changes.
         if (clearBoms) {
             bomService.deleteAll(partId);
         }
@@ -922,8 +927,6 @@ public class PartService {
                 interchangeService.leaveInterchangeableGroup(partId);
             }
         }
-        List<CriticalDimension> cdfpt = criticalDimensionService.getCriticalDimensionForPartType(oldPartTypeId);
-        String originalPartJson = originalPart.toJson(cdfpt);
         if (newPartTypeId == PTID_KIT) {
             partDao.changePartTypeOnKit(partId, oldPartTypeId, kitTypeId);
         } else if (newPartTypeId == PTID_TURBO) {
@@ -931,14 +934,15 @@ public class PartService {
         } else {
             partDao.changePartType(partId, oldPartTypeId, newPartTypeId, false);
         }
-        // Clear cache of the entity manager and load the part again.
-        em.getEntityManagerFactory().getCache().evictAll();
         Part updated = partDao.findOne(partId);
+        String newPartTypeName = updated.getPartType().getName();
         List<CriticalDimension> cdfpt2 = criticalDimensionService.getCriticalDimensionForPartType(newPartTypeId);
         String updatedPartJson = updated.toJson(cdfpt2);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
-        changelogService.log(PART, "Updated part " + originalPartStr + ".",
+        changelogService.log(PART,
+                "Changed part type: [" + oldPartTypeId + "] - " + originalPartTypeName + " => [" + newPartTypeId
+                        + "] - " + newPartTypeName + ".",
                 "{original: " + originalPartJson + ",updated: " + updatedPartJson + "}", relatedParts);
         return updated;
     }
