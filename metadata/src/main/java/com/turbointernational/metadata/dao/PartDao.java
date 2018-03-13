@@ -1,48 +1,5 @@
 package com.turbointernational.metadata.dao;
 
-import static com.turbointernational.metadata.entity.PartType.PTID_ACTUATOR;
-import static com.turbointernational.metadata.entity.PartType.PTID_BACKPLATE;
-import static com.turbointernational.metadata.entity.PartType.PTID_BACKPLATE_SEALPLATE;
-import static com.turbointernational.metadata.entity.PartType.PTID_BEARING_HOUSING;
-import static com.turbointernational.metadata.entity.PartType.PTID_BOLT_SCREW;
-import static com.turbointernational.metadata.entity.PartType.PTID_CARBON_SEAL;
-import static com.turbointernational.metadata.entity.PartType.PTID_CARTRIDGE;
-import static com.turbointernational.metadata.entity.PartType.PTID_CLAMP;
-import static com.turbointernational.metadata.entity.PartType.PTID_COMPRESSOR_COVER;
-import static com.turbointernational.metadata.entity.PartType.PTID_COMPRESSOR_WHEEL;
-import static com.turbointernational.metadata.entity.PartType.PTID_FAST_WEARING_COMPONENT;
-import static com.turbointernational.metadata.entity.PartType.PTID_FITTING;
-import static com.turbointernational.metadata.entity.PartType.PTID_GASKET;
-import static com.turbointernational.metadata.entity.PartType.PTID_GASKET_KIT;
-import static com.turbointernational.metadata.entity.PartType.PTID_HEATSHIELD_SHROUD;
-import static com.turbointernational.metadata.entity.PartType.PTID_JOURNAL_BEARING;
-import static com.turbointernational.metadata.entity.PartType.PTID_JOURNAL_BEARING_SPACER;
-import static com.turbointernational.metadata.entity.PartType.PTID_KIT;
-import static com.turbointernational.metadata.entity.PartType.PTID_MAJOR_COMPONENT;
-import static com.turbointernational.metadata.entity.PartType.PTID_MINOR_COMPONENT;
-import static com.turbointernational.metadata.entity.PartType.PTID_MISC;
-import static com.turbointernational.metadata.entity.PartType.PTID_MISCELLANEOUS_MINOR_COMPONENTS;
-import static com.turbointernational.metadata.entity.PartType.PTID_NOZZLE_RING;
-import static com.turbointernational.metadata.entity.PartType.PTID_NUT;
-import static com.turbointernational.metadata.entity.PartType.PTID_OIL_DEFLECTOR;
-import static com.turbointernational.metadata.entity.PartType.PTID_O_RING;
-import static com.turbointernational.metadata.entity.PartType.PTID_PART;
-import static com.turbointernational.metadata.entity.PartType.PTID_PIN;
-import static com.turbointernational.metadata.entity.PartType.PTID_PISTON_RING;
-import static com.turbointernational.metadata.entity.PartType.PTID_PLUG;
-import static com.turbointernational.metadata.entity.PartType.PTID_RETAINING_RING;
-import static com.turbointernational.metadata.entity.PartType.PTID_SEAL_PLATE;
-import static com.turbointernational.metadata.entity.PartType.PTID_SHROUD;
-import static com.turbointernational.metadata.entity.PartType.PTID_SPRING;
-import static com.turbointernational.metadata.entity.PartType.PTID_THRUST_BEARING;
-import static com.turbointernational.metadata.entity.PartType.PTID_THRUST_COLLAR;
-import static com.turbointernational.metadata.entity.PartType.PTID_THRUST_PARTS;
-import static com.turbointernational.metadata.entity.PartType.PTID_THRUST_SPACER;
-import static com.turbointernational.metadata.entity.PartType.PTID_THRUST_WASHER;
-import static com.turbointernational.metadata.entity.PartType.PTID_TURBINE_HOUSING;
-import static com.turbointernational.metadata.entity.PartType.PTID_TURBINE_WHEEL;
-import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
-import static com.turbointernational.metadata.entity.PartType.PTID_WASHER;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.math.BigDecimal;
@@ -74,6 +31,7 @@ import org.springframework.stereotype.Repository;
 
 import com.turbointernational.mas90.entity.ArInvoiceHistoryDetail;
 import com.turbointernational.mas90.entity.ArInvoiceHistoryDetail_;
+import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
 import com.turbointernational.metadata.entity.part.types.Turbo;
@@ -288,7 +246,8 @@ public class PartDao extends AbstractDao<Part> {
     public List<Turbo> listTurbosLinkedToGasketKit(Long id) {
         try {
             return em.createQuery(
-                    "FROM Turbo AS t WHERE t.partType.id=" + PTID_TURBO + " AND t.gasketKit.id=:gasketKitId",
+                    "FROM Turbo AS t WHERE t.partType.id=" + PartType.PartTypeEnum.TURBO.id +
+                    " AND t.gasketKit.id=:gasketKitId",
                     Turbo.class).setParameter("gasketKitId", id).getResultList();
         } catch (NoResultException e) {
             return new ArrayList<>();
@@ -301,217 +260,41 @@ public class PartDao extends AbstractDao<Part> {
      * The child table depends on the specified part type (e.g. kit, turbo, catridge, etc.).
      * 
      * @param partId
-     * @param partTypeId
+     * @param oldPartTypeId
      */
-    public void deletePartExt(long partId, long partTypeId) {
-        String sql;
-        if (partTypeId == PTID_ACTUATOR) {
-            sql = "delete from actuator where part_id=?";
-        } else if (partTypeId == PTID_BACKPLATE) {
-            sql = "delete from backplate where part_id=?";
-        } else if (partTypeId == PTID_BACKPLATE_SEALPLATE) {
-            sql = "delete from backplate_sealplate where part_id=?";
-        } else if (partTypeId == PTID_BEARING_HOUSING) {
-            sql = "delete from bearing_housing where part_id=?";
-        } else if (partTypeId == PTID_BOLT_SCREW) {
-            sql = "delete from bolt_screw where part_id=?";
-        } else if (partTypeId == PTID_CARBON_SEAL) {
-            sql = "delete from carbon_seal where part_id=?";
-        } else if (partTypeId == PTID_CARTRIDGE) {
-            sql = "delete from cartridge where part_id=?";
-        } else if (partTypeId == PTID_CLAMP) {
-            sql = "delete from clamp where part_id=?";
-        } else if (partTypeId == PTID_COMPRESSOR_COVER) {
-            sql = "delete from compressor_cover where part_id=?";
-        } else if (partTypeId == PTID_COMPRESSOR_WHEEL) {
-            sql = "delete from compressor_wheel where part_id=?";
-        } else if (partTypeId == PTID_FAST_WEARING_COMPONENT) {
-            sql = "delete from fast_wearing_component where part_id=?";
-        } else if (partTypeId == PTID_FITTING) {
-            sql = "delete from fitting where part_id=?";
-        } else if (partTypeId == PTID_GASKET) {
-            sql = "delete from gasket where part_id=?";
-        } else if (partTypeId == PTID_GASKET_KIT) {
-            sql = "delete from gasket_kit where part_id=?";
-        } else if (partTypeId == PTID_HEATSHIELD_SHROUD) {
-            sql = "delete from heatshield where part_id=?";
-        } else if (partTypeId == PTID_JOURNAL_BEARING) {
-            sql = "delete from journal_bearing where part_id=?";
-        } else if (partTypeId == PTID_JOURNAL_BEARING_SPACER) {
-            sql = "delete from journal_bearing_spacer where part_id=?";
-        } else if (partTypeId == PTID_KIT) {
-            sql = "delete from kit where part_id=?";
-        } else if (partTypeId == PTID_MAJOR_COMPONENT) {
-            sql = "delete from major_component where part_id=?";
-        } else if (partTypeId == PTID_MINOR_COMPONENT) {
-            sql = "delete from minor_component where part_id=?";
-        } else if (partTypeId == PTID_MISC) {
-            sql = "delete from misc where part_id=?";
-        } else if (partTypeId == PTID_MISCELLANEOUS_MINOR_COMPONENTS) {
-            sql = "delete from misc_minor_component where part_id=?";
-        } else if (partTypeId == PTID_NOZZLE_RING) {
-            sql = "delete from nozzle_ring where part_id=?";
-        } else if (partTypeId == PTID_NUT) {
-            sql = "delete from nut where part_id=?";
-        } else if (partTypeId == PTID_O_RING) {
-            sql = "delete from o_ring where part_id=?";
-        } else if (partTypeId == PTID_OIL_DEFLECTOR) {
-            sql = "delete from oil_deflector where part_id=?";
-        } else if (partTypeId == PTID_PART) {
-            sql = "delete from p where part_id=?";
-        } else if (partTypeId == PTID_PIN) {
-            sql = "delete from pin where part_id=?";
-        } else if (partTypeId == PTID_PISTON_RING) {
-            sql = "delete from piston_ring where part_id=?";
-        } else if (partTypeId == PTID_PLUG) {
-            sql = "delete from plug where part_id=?";
-        } else if (partTypeId == PTID_RETAINING_RING) {
-            sql = "delete from retaining_ring where part_id=?";
-        } else if (partTypeId == PTID_SEAL_PLATE) {
-            sql = "delete from seal_plate where part_id=?";
-        } else if (partTypeId == PTID_SHROUD) {
-            sql = "delete from shroud where part_id=?";
-        } else if (partTypeId == PTID_SPRING) {
-            sql = "delete from spring where part_id=?";
-        } else if (partTypeId == PTID_THRUST_BEARING) {
-            sql = "delete from thrust_bearing where part_id=?";
-        } else if (partTypeId == PTID_THRUST_COLLAR) {
-            sql = "delete from thrust_collar where part_id=?";
-        } else if (partTypeId == PTID_THRUST_PARTS) {
-            sql = "delete from thrust_part where part_id=?";
-        } else if (partTypeId == PTID_THRUST_SPACER) {
-            sql = "delete from thrust_spacer where part_id=?";
-        } else if (partTypeId == PTID_THRUST_WASHER) {
-            sql = "delete from thrust_washer where part_id=?";
-        } else if (partTypeId == PTID_TURBINE_HOUSING) {
-            sql = "delete from turbine_housing where part_id=?";
-        } else if (partTypeId == PTID_TURBINE_WHEEL) {
-            sql = "delete from turbine_wheel where part_id=?";
-        } else if (partTypeId == PTID_TURBO) {
-            sql = "delete from turbo where part_id=?";
-        } else if (partTypeId == PTID_WASHER) {
-            sql = "delete from washer where part_id=?";
-        } else {
-            throw new AssertionError("Unsupported part type: " + partTypeId);
-        }
+    public void deletePartExt(long partId, PartType.PartTypeEnum oldPartType, PartType.PartTypeEnum newPartType) {
+        String sql = "delete from " + oldPartType.table + " where part_id=?";
         jdbcTemplate.update(sql, partId);
     }
 
-    public void insertPartExt(long partId, long partTypeId) {
-        String sql;
-        if (partTypeId == PTID_ACTUATOR) {
-            sql = "insert into actuator(part_id) values(?)";
-        } else if (partTypeId == PTID_BACKPLATE) {
-            sql = "insert into backplate(part_id) values(?)";
-        } else if (partTypeId == PTID_BACKPLATE_SEALPLATE) {
-            sql = "insert into backplate_sealplate(part_id) values(?)";
-        } else if (partTypeId == PTID_BEARING_HOUSING) {
-            sql = "insert into bearing_housing(part_id) values(?)";
-        } else if (partTypeId == PTID_BOLT_SCREW) {
-            sql = "insert into bolt_screw(part_id) values(?)";
-        } else if (partTypeId == PTID_CARBON_SEAL) {
-            sql = "insert into carbon_seal(part_id) values(?)";
-        } else if (partTypeId == PTID_CARTRIDGE) {
-            sql = "insert into cartridge(part_id) values(?)";
-        } else if (partTypeId == PTID_CLAMP) {
-            sql = "insert into clamp(part_id) values(?)";
-        } else if (partTypeId == PTID_COMPRESSOR_COVER) {
-            sql = "insert into compressor_cover(part_id) values(?)";
-        } else if (partTypeId == PTID_COMPRESSOR_WHEEL) {
-            sql = "insert into compressor_wheel(part_id) values(?)";
-        } else if (partTypeId == PTID_FAST_WEARING_COMPONENT) {
-            sql = "insert into fast_wearing_component(part_id) values(?)";
-        } else if (partTypeId == PTID_FITTING) {
-            sql = "insert into fitting(part_id) values(?)";
-        } else if (partTypeId == PTID_GASKET) {
-            sql = "insert into gasket(part_id) values(?)";
-        } else if (partTypeId == PTID_GASKET_KIT) {
-            sql = "insert into gasket_kit(part_id) values(?)";
-        } else if (partTypeId == PTID_HEATSHIELD_SHROUD) {
-            sql = "insert into heatshield(part_id) values(?)";
-        } else if (partTypeId == PTID_JOURNAL_BEARING) {
-            sql = "insert into journal_bearing(part_id) values(?)";
-        } else if (partTypeId == PTID_JOURNAL_BEARING_SPACER) {
-            sql = "insert into journal_bearing_spacer(part_id) values(?)";
-        } else if (partTypeId == PTID_KIT) {
-            throw new AssertionError("Internal error. This is a special case for the part type KIT [" + partId + "].");
-        } else if (partTypeId == PTID_MAJOR_COMPONENT) {
-            sql = "insert into major_component(part_id) values(?)";
-        } else if (partTypeId == PTID_MINOR_COMPONENT) {
-            sql = "insert into minor_component(part_id) values(?)";
-        } else if (partTypeId == PTID_MISC) {
-            sql = "insert into misc(part_id) values(?)";
-        } else if (partTypeId == PTID_MISCELLANEOUS_MINOR_COMPONENTS) {
-            sql = "insert into misc_minor_component(part_id) values(?)";
-        } else if (partTypeId == PTID_NOZZLE_RING) {
-            sql = "insert into nozzle_ring(part_id) values(?)";
-        } else if (partTypeId == PTID_NUT) {
-            sql = "insert into nut(part_id) values(?)";
-        } else if (partTypeId == PTID_O_RING) {
-            sql = "insert into o_ring(part_id) values(?)";
-        } else if (partTypeId == PTID_OIL_DEFLECTOR) {
-            sql = "insert into oil_deflector(part_id) values(?)";
-        } else if (partTypeId == PTID_PART) {
-            sql = "insert into p(part_id) values(?)";
-        } else if (partTypeId == PTID_PIN) {
-            sql = "insert into pin(part_id) values(?)";
-        } else if (partTypeId == PTID_PISTON_RING) {
-            sql = "insert into piston_ring(part_id) values(?)";
-        } else if (partTypeId == PTID_PLUG) {
-            sql = "insert into plug(part_id) values(?)";
-        } else if (partTypeId == PTID_RETAINING_RING) {
-            sql = "insert into retaining_ring(part_id) values(?)";
-        } else if (partTypeId == PTID_SEAL_PLATE) {
-            sql = "insert into seal_plate(part_id) values(?)";
-        } else if (partTypeId == PTID_SHROUD) {
-            sql = "insert into shroud(part_id) values(?)";
-        } else if (partTypeId == PTID_SPRING) {
-            sql = "insert into spring(part_id) values(?)";
-        } else if (partTypeId == PTID_THRUST_BEARING) {
-            sql = "insert into thrust_bearing(part_id) values(?)";
-        } else if (partTypeId == PTID_THRUST_COLLAR) {
-            sql = "insert into thrust_collar(part_id) values(?)";
-        } else if (partTypeId == PTID_THRUST_PARTS) {
-            sql = "insert into thrust_part(part_id) values(?)";
-        } else if (partTypeId == PTID_THRUST_SPACER) {
-            sql = "insert into thrust_spacer(part_id) values(?)";
-        } else if (partTypeId == PTID_THRUST_WASHER) {
-            sql = "insert into thrust_washer(part_id) values(?)";
-        } else if (partTypeId == PTID_TURBINE_HOUSING) {
-            sql = "insert into turbine_housing(part_id) values(?)";
-        } else if (partTypeId == PTID_TURBINE_WHEEL) {
-            sql = "insert into turbine_wheel(part_id) values(?)";
-        } else if (partTypeId == PTID_TURBO) {
-            throw new AssertionError(
-                    "Internal error. This is a special case for the part type TURBO [" + partId + "].");
-        } else if (partTypeId == PTID_WASHER) {
-            sql = "insert into washer(part_id) values(?)";
-        } else {
-            throw new AssertionError("Unsupported part type: " + partTypeId);
+    public void insertPartExt(long partId, PartType.PartTypeEnum partType) {
+        if (partType == PartType.PartTypeEnum.KIT || partType == PartType.PartTypeEnum.TURBO) {
+            throw new AssertionError("Internal error. This is a special case for the part type " + partType + ".");
         }
+        String sql= "insert into " + partType.table + "(part_id) values(?)";
         jdbcTemplate.update(sql, partId);
     }
 
-    public void changePartType(long partId, long oldPartTypeId, long newPartTypeId, boolean specialCase) {
-        if (oldPartTypeId == PTID_TURBO) {
+    public void changePartType(long partId, PartType.PartTypeEnum oldPartType, PartType.PartTypeEnum newPartType, boolean specialCase) {
+        if (oldPartType == PartType.PartTypeEnum.TURBO) {
             // Delete references on Applications.
             jdbcTemplate.update("delete from turbo_car_model_engine_year where part_id=?", partId);
         }
         jdbcTemplate.update("delete from kit_part_common_component where kit_id=? or part_id=?", partId, partId);
-        deletePartExt(partId, oldPartTypeId);
-        jdbcTemplate.update("update part set part_type_id=? where id=?", newPartTypeId, partId);
+        deletePartExt(partId, oldPartType, newPartType);
+        jdbcTemplate.update("update part set part_type_id=? where id=?", newPartType.id, partId);
         if (!specialCase) {
-            insertPartExt(partId, newPartTypeId);
+            insertPartExt(partId, newPartType);
         }
     }
 
-    public void changePartTypeOnKit(long partId, long oldPartTypeId, long kitTypeId) {
-        changePartType(partId, oldPartTypeId, PTID_KIT, true);
+    public void changePartTypeOnKit(long partId, PartType.PartTypeEnum oldPartType, long kitTypeId) {
+        changePartType(partId, oldPartType, PartType.PartTypeEnum.KIT, true);
         jdbcTemplate.update("insert into kit(part_id, kit_type_id) values(?, ?)", partId, kitTypeId);
     }
 
-    public void changePartTypeOnTurbo(long partId, long oldPartTypeId, long turboModelId) {
-        changePartType(partId, oldPartTypeId, PTID_TURBO, true);
+    public void changePartTypeOnTurbo(long partId, PartType.PartTypeEnum oldPartType, long turboModelId) {
+        changePartType(partId, oldPartType, PartType.PartTypeEnum.TURBO, true);
         jdbcTemplate.update("insert into turbo(part_id, turbo_model_id) values(?, ?)", partId, turboModelId);
     }
 

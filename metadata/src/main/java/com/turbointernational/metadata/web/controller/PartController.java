@@ -1,8 +1,6 @@
 package com.turbointernational.metadata.web.controller;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS;
-import static com.turbointernational.metadata.entity.PartType.PTID_KIT;
-import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
 import static com.turbointernational.metadata.web.controller.PartController.GasketKitResultStatus.ASSERTION_ERROR;
 import static com.turbointernational.metadata.web.controller.PartController.GasketKitResultStatus.OK;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
@@ -40,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.turbointernational.metadata.entity.CoolType;
+import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.ProductImage;
@@ -585,14 +584,16 @@ public class PartController {
     public Part changePartType(@PathVariable("id") Long partId, @RequestBody PartTypeChangeRequest request) throws IOException {
         // System.out.println("Request: " + request);
         long oldPartTypeId = request.getOldPartTypeId();
+        PartType.PartTypeEnum oldPartType = PartType.PartTypeEnum.fromId(oldPartTypeId);
         long newPartTypeId = request.getNewPartTypeId();
+        PartType.PartTypeEnum newPartType = PartType.PartTypeEnum.fromId(newPartTypeId);
         long kitTypeId = request.getKitTypeId();
         long turboModelId = request.getTurboModelId();
         boolean clearBoms = request.isClearBoms();
         boolean removeFromParentBoms = request.isRemoveFromParentBoms();
         boolean clearInterchanges = request.isClearInterchanges();
         boolean copyCritDims = request.isCopyCritDims();
-        Part part = partService.changePartType(partId, oldPartTypeId, newPartTypeId, kitTypeId, turboModelId,
+        Part part = partService.changePartType(partId, oldPartType, newPartType, kitTypeId, turboModelId,
                 clearBoms, removeFromParentBoms, clearInterchanges, copyCritDims);
         return part;
     }
@@ -615,10 +616,10 @@ public class PartController {
             Double weight = part.getWeight();
             Long partTypeId = part.getPartType().getId();
             Long kitTypeId = null, coolTypeId = null, turboModelId = null;
-            if (partTypeId == PTID_KIT) {
+            if (partTypeId == PartType.PartTypeEnum.KIT.id) {
                 Kit kit = (Kit) part;
                 kitTypeId = kit.getKitType().getId();
-            } else if (partTypeId == PTID_TURBO) {
+            } else if (partTypeId == PartType.PartTypeEnum.TURBO.id) {
                 Turbo turbo = (Turbo) part;
                 CoolType coolType = turbo.getCoolType();
                 if (coolType != null) {

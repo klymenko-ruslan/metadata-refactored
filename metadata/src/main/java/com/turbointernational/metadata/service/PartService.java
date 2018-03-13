@@ -7,9 +7,8 @@ import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.PART;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
 import static com.turbointernational.metadata.entity.Manufacturer.TI_ID;
-import static com.turbointernational.metadata.entity.PartType.PTID_GASKET_KIT;
-import static com.turbointernational.metadata.entity.PartType.PTID_KIT;
-import static com.turbointernational.metadata.entity.PartType.PTID_TURBO;
+import static com.turbointernational.metadata.entity.PartType.PartTypeEnum.KIT;
+import static com.turbointernational.metadata.entity.PartType.PartTypeEnum.TURBO;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_WIDTH;
 import static com.turbointernational.metadata.service.ImageService.SIZES;
@@ -72,6 +71,7 @@ import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.CoolType;
 import com.turbointernational.metadata.entity.CriticalDimension;
 import com.turbointernational.metadata.entity.Manufacturer;
+import com.turbointernational.metadata.entity.PartType.PartTypeEnum;
 import com.turbointernational.metadata.entity.TurboModel;
 import com.turbointernational.metadata.entity.TurboType;
 import com.turbointernational.metadata.entity.User;
@@ -359,13 +359,13 @@ public class PartService {
         originalPart.setDimWidth(dimWidth);
         originalPart.setDimHeight(dimHeight);
         originalPart.setWeight(weight);
-        if (partTypeId == PTID_KIT) {
+        if (partTypeId == PartTypeEnum.KIT.id) {
             Kit originKit = (Kit) originalPart;
             if (!originKit.getKitType().getId().equals(kitTypeId)) {
                 KitType kitType = kitTypeDao.getReference(kitTypeId);
                 originKit.setKitType(kitType);
             }
-        } else if (partTypeId == PTID_TURBO) {
+        } else if (partTypeId == PartTypeEnum.TURBO.id) {
             Turbo originTurbo = (Turbo) originalPart;
             if (!originTurbo.getTurboModel().getId().equals(turboModelId)) {
                 TurboModel turboModel = turboModelDao.getReference(turboModelId);
@@ -757,14 +757,14 @@ public class PartService {
         Part part = partDao.findOne(turboId);
         Long partTypeId = part.getPartType().getId();
         // Validation: Check part type of the "Turbo" part.
-        if (partTypeId.longValue() != PTID_TURBO) {
+        if (partTypeId.longValue() != PartTypeEnum.TURBO.id) {
             throw new AssertionError(String.format("Part %s has unexpected part type: %d. Expected a Turbo.",
                     formatPart(part), partTypeId));
         }
         // Validation: Check part type of the "Gasket Kit" part.
         Part part2 = partDao.findOne(gasketKitId);
         partTypeId = part2.getPartType().getId();
-        if (partTypeId.longValue() != PTID_GASKET_KIT) {
+        if (partTypeId.longValue() != PartTypeEnum.GASKET_KIT.id) {
             throw new AssertionError(String.format("Part %s has unexpected part type: %d. Expected a Gasket Kit.",
                     formatPart(part2), partTypeId));
         }
@@ -902,19 +902,19 @@ public class PartService {
         return retVal;
     }
 
-    public Part changePartType(long partId, long oldPartTypeId, long newPartTypeId, long kitTypeId, long turboModelId,
-            boolean clearBoms, boolean removeFromParentBoms, boolean clearInterchanges, boolean copyCritDims)
-            throws IOException {
+    public Part changePartType(long partId, PartTypeEnum oldPartType, PartTypeEnum newPartType, long kitTypeId,
+            long turboModelId, boolean clearBoms, boolean removeFromParentBoms, boolean clearInterchanges,
+            boolean copyCritDims) throws IOException {
         Part originalPart = partDao.findOne(partId);
         String originalPartTypeName = originalPart.getPartType().getName();
         String originalPartStr = formatPart(originalPart);
-        if (originalPart.getPartType().getId() != oldPartTypeId) {
-            throw new AssertionError("Invalid input arg 'oldPartTypeId' = " + oldPartTypeId + ". Actual part type is "
+        if (originalPart.getPartType().getId() != oldPartType.id) {
+            throw new AssertionError("Invalid input arg 'oldPartType' = " + oldPartType + ". Actual part type is "
                     + originalPart.getPartType().getId() + ". Part " + originalPartStr + ".");
         }
-        List<CriticalDimension> cdfpt = criticalDimensionService.getCriticalDimensionForPartType(oldPartTypeId);
+        List<CriticalDimension> cdfpt = criticalDimensionService.getCriticalDimensionForPartType(Long.valueOf(oldPartType.id));
         String originalPartJson = originalPart.toJson(cdfpt);
-        em.detach(originalPart); // Remove from the persistence context to reload to reflect changes.
+        em.detach(originalPart); // Remove from the persistence context to reload later as a part with new part type.
         if (clearBoms) {
             bomService.deleteAll(partId);
         }
@@ -927,21 +927,21 @@ public class PartService {
                 interchangeService.leaveInterchangeableGroup(partId);
             }
         }
-        if (newPartTypeId == PTID_KIT) {
-            partDao.changePartTypeOnKit(partId, oldPartTypeId, kitTypeId);
-        } else if (newPartTypeId == PTID_TURBO) {
-            partDao.changePartTypeOnTurbo(partId, oldPartTypeId, turboModelId);
+        if (newPartType == KIT) {
+            partDao.changePartTypeOnKit(partId, oldPartType, kitTypeId);
+        } else if (newPartType == TURBO) {
+            partDao.changePartTypeOnTurbo(partId, oldPartType, turboModelId);
         } else {
-            partDao.changePartType(partId, oldPartTypeId, newPartTypeId, false);
+            partDao.changePartType(partId, oldPartType, newPartType, false);
         }
         Part updated = partDao.findOne(partId);
         String newPartTypeName = updated.getPartType().getName();
-        List<CriticalDimension> cdfpt2 = criticalDimensionService.getCriticalDimensionForPartType(newPartTypeId);
+        List<CriticalDimension> cdfpt2 = criticalDimensionService.getCriticalDimensionForPartType(Long.valueOf(newPartType.id));
         String updatedPartJson = updated.toJson(cdfpt2);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
         changelogService.log(PART,
-                "Changed part type: [" + oldPartTypeId + "] - " + originalPartTypeName + " => [" + newPartTypeId
+                "Changed part type: [" + oldPartType.id + "] - " + originalPartTypeName + " => [" + newPartType.id
                         + "] - " + newPartTypeName + ".",
                 "{original: " + originalPartJson + ",updated: " + updatedPartJson + "}", relatedParts);
         return updated;

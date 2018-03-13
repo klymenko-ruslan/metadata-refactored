@@ -1,7 +1,5 @@
 package com.turbointernational.metadata.dao;
 
-import static com.turbointernational.metadata.entity.PartType.PTID_KIT;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +18,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.turbointernational.metadata.entity.Manufacturer_;
+import com.turbointernational.metadata.entity.PartType;
 import com.turbointernational.metadata.entity.PartType_;
 import com.turbointernational.metadata.entity.part.Part;
 import com.turbointernational.metadata.entity.part.Part_;
@@ -161,7 +160,7 @@ public class KitComponentDao extends AbstractDao<KitComponent> {
                 "    join kit_type as kt on k.kit_type_id = kt.id " + 
                 "    left outer join kit_part_common_component as kpcc on p.id = kpcc.kit_id " + 
                 "where " + 
-                "    p.part_type_id = " + PTID_KIT + " " + 
+                "    p.part_type_id = " + PartType.PartTypeEnum.KIT.id + " " + 
                 "    and ptt.turbo_type_id in(" + 
                 "      select tm.turbo_type_id" + 
                 "      from turbo as t join turbo_model as tm on t.turbo_model_id = tm.id" + 
