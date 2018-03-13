@@ -7,8 +7,6 @@ import static com.turbointernational.metadata.entity.Changelog.ServiceEnum.PART;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART0;
 import static com.turbointernational.metadata.entity.ChangelogPart.Role.PART1;
 import static com.turbointernational.metadata.entity.Manufacturer.TI_ID;
-import static com.turbointernational.metadata.entity.PartType.PartTypeEnum.KIT;
-import static com.turbointernational.metadata.entity.PartType.PartTypeEnum.TURBO;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_HEIGHT;
 import static com.turbointernational.metadata.service.ImageService.PART_CRIT_DIM_LEGEND_WIDTH;
 import static com.turbointernational.metadata.service.ImageService.SIZES;
@@ -912,7 +910,7 @@ public class PartService {
             throw new AssertionError("Invalid input arg 'oldPartType' = " + oldPartType + ". Actual part type is "
                     + originalPart.getPartType().getId() + ". Part " + originalPartStr + ".");
         }
-        List<CriticalDimension> cdfpt = criticalDimensionService.getCriticalDimensionForPartType(Long.valueOf(oldPartType.id));
+        List<CriticalDimension> cdfpt = criticalDimensionService.getCriticalDimensionForPartType(oldPartType);
         String originalPartJson = originalPart.toJson(cdfpt);
         em.detach(originalPart); // Remove from the persistence context to reload later as a part with new part type.
         if (clearBoms) {
@@ -927,16 +925,12 @@ public class PartService {
                 interchangeService.leaveInterchangeableGroup(partId);
             }
         }
-        if (newPartType == KIT) {
-            partDao.changePartTypeOnKit(partId, oldPartType, kitTypeId);
-        } else if (newPartType == TURBO) {
-            partDao.changePartTypeOnTurbo(partId, oldPartType, turboModelId);
-        } else {
-            partDao.changePartType(partId, oldPartType, newPartType, false);
-        }
+        partDao.changePartType(partId, oldPartType, newPartType, turboModelId, kitTypeId, copyCritDims);
+        // Reload the part as a part of the new type.
         Part updated = partDao.findOne(partId);
+        // Save the operation to an audit log.
         String newPartTypeName = updated.getPartType().getName();
-        List<CriticalDimension> cdfpt2 = criticalDimensionService.getCriticalDimensionForPartType(Long.valueOf(newPartType.id));
+        List<CriticalDimension> cdfpt2 = criticalDimensionService.getCriticalDimensionForPartType(newPartType);
         String updatedPartJson = updated.toJson(cdfpt2);
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));

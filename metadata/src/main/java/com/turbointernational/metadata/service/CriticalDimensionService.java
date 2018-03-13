@@ -149,6 +149,11 @@ public class CriticalDimensionService {
         }
 
     }
+    
+    public List<CriticalDimension> getCriticalDimensionForPartType(PartType.PartTypeEnum partType) {
+        long partTypeId = Long.valueOf(partType.id);
+        return getCriticalDimensionForPartType(partTypeId);
+    }
 
     public List<CriticalDimension> getCriticalDimensionForPartType(Long partTypeId) {
         Map<Long, List<CriticalDimension>> cache = getCriticalDimensionsCacheById();

@@ -1,8 +1,11 @@
 package com.turbointernational.metadata.dao;
 
+import static com.turbointernational.metadata.entity.PartType.PartTypeEnum.KIT;
+import static com.turbointernational.metadata.entity.PartType.PartTypeEnum.TURBO;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -245,57 +248,158 @@ public class PartDao extends AbstractDao<Part> {
 
     public List<Turbo> listTurbosLinkedToGasketKit(Long id) {
         try {
-            return em.createQuery(
-                    "FROM Turbo AS t WHERE t.partType.id=" + PartType.PartTypeEnum.TURBO.id +
-                    " AND t.gasketKit.id=:gasketKitId",
-                    Turbo.class).setParameter("gasketKitId", id).getResultList();
+            return em
+                    .createQuery("FROM Turbo AS t WHERE t.partType.id=" + TURBO.id + " AND t.gasketKit.id=:gasketKitId",
+                            Turbo.class)
+                    .setParameter("gasketKitId", id).getResultList();
         } catch (NoResultException e) {
             return new ArrayList<>();
         }
     }
 
-    /**
-     * Delete a record in a child table of the part.
-     * 
-     * The child table depends on the specified part type (e.g. kit, turbo, catridge, etc.).
-     * 
-     * @param partId
-     * @param oldPartTypeId
-     */
-    public void deletePartExt(long partId, PartType.PartTypeEnum oldPartType, PartType.PartTypeEnum newPartType) {
-        String sql = "delete from " + oldPartType.table + " where part_id=?";
-        jdbcTemplate.update(sql, partId);
-    }
-
-    public void insertPartExt(long partId, PartType.PartTypeEnum partType) {
-        if (partType == PartType.PartTypeEnum.KIT || partType == PartType.PartTypeEnum.TURBO) {
-            throw new AssertionError("Internal error. This is a special case for the part type " + partType + ".");
-        }
-        String sql= "insert into " + partType.table + "(part_id) values(?)";
-        jdbcTemplate.update(sql, partId);
-    }
-
-    public void changePartType(long partId, PartType.PartTypeEnum oldPartType, PartType.PartTypeEnum newPartType, boolean specialCase) {
-        if (oldPartType == PartType.PartTypeEnum.TURBO) {
-            // Delete references on Applications.
+    public void changePartType(long partId, PartType.PartTypeEnum oldPartType, PartType.PartTypeEnum newPartType,
+            long turboModelId, long kitTypeId, boolean copyCritDims) {
+        if (oldPartType == TURBO) {
+            // Delete in the Turbo references on Applications.
             jdbcTemplate.update("delete from turbo_car_model_engine_year where part_id=?", partId);
         }
+        // Delete any references on the part in the table 'kit_part_common_component'.
         jdbcTemplate.update("delete from kit_part_common_component where kit_id=? or part_id=?", partId, partId);
-        deletePartExt(partId, oldPartType, newPartType);
+        List<CritDimVal> cdv = null;
+        if (copyCritDims) {
+            cdv = readCritDimVals(partId, oldPartType, newPartType);
+        }
+        // Delete a record in a child table of the part.
+        jdbcTemplate.update("delete from " + oldPartType.table + " where part_id=?", partId);
+        // Change part_type_id in the part.
         jdbcTemplate.update("update part set part_type_id=? where id=?", newPartType.id, partId);
-        if (!specialCase) {
-            insertPartExt(partId, newPartType);
+        // Insert a record in a new child table of the part.
+        if (newPartType == TURBO) {
+            jdbcTemplate.update("insert into turbo(part_id, turbo_model_id) values(?, ?)", partId, turboModelId);
+        } else if (newPartType == KIT) {
+            jdbcTemplate.update("insert into kit(part_id, kit_type_id) values(?, ?)", partId, kitTypeId);
+        } else {
+            jdbcTemplate.update("insert into " + newPartType.table + "(part_id) values(?)", partId);
+        }
+        if (copyCritDims) {
+            writeCritDimVals(partId, newPartType, cdv);
         }
     }
 
-    public void changePartTypeOnKit(long partId, PartType.PartTypeEnum oldPartType, long kitTypeId) {
-        changePartType(partId, oldPartType, PartType.PartTypeEnum.KIT, true);
-        jdbcTemplate.update("insert into kit(part_id, kit_type_id) values(?, ?)", partId, kitTypeId);
+    class CritDimVal {
+
+        private final String colName;
+
+        private final String dataType;
+
+        private final Integer enumId;
+
+        private Object val;
+
+        public CritDimVal(String colName, String dataType, Integer enumId) {
+            super();
+            this.colName = colName;
+            this.dataType = dataType;
+            this.enumId = enumId;
+        }
+
+        public String getColName() {
+            return colName;
+        }
+
+        public String getDataType() {
+            return dataType;
+        }
+
+        public Integer getEnumId() {
+            return enumId;
+        }
+
+        public Object getVal() {
+            return val;
+        }
+
+        public void setVal(Object val) {
+            this.val = val;
+        }
+
     }
 
-    public void changePartTypeOnTurbo(long partId, PartType.PartTypeEnum oldPartType, long turboModelId) {
-        changePartType(partId, oldPartType, PartType.PartTypeEnum.TURBO, true);
-        jdbcTemplate.update("insert into turbo(part_id, turbo_model_id) values(?, ?)", partId, turboModelId);
+    /**
+     * Select list of critical dimensions columns common for both types.
+     * 
+     * @param partId
+     * @param oldPartType
+     * @param newPartType
+     * @return
+     */
+    private List<CritDimVal> readCritDimVals(long partId, PartType.PartTypeEnum oldPartType,
+            PartType.PartTypeEnum newPartType) {
+        List<CritDimVal> retVal = jdbcTemplate.query(
+                "select cd0.json_name, cd0.data_type, cd0.enum_id "
+                        + "from crit_dim cd0 join crit_dim cd1 on cd0.json_name = cd1.json_name "
+                        + "where cd0.data_type = cd1.data_type and cd0.enum_id <=> cd1.enum_id "
+                        + "and cd0.part_type_id=? and cd1.part_type_id=?",
+                new Object[] { oldPartType.id, newPartType.id }, (rs, rownum) -> {
+                    String colName = rs.getString(1);
+                    String dataType = rs.getString(2);
+                    Integer enumId = null;
+                    int enid = rs.getInt(3);
+                    if (!rs.wasNull()) {
+                        enumId = Integer.valueOf(enid);
+                    }
+                    return new CritDimVal(colName, dataType, enumId);
+                });
+        String cols = critDimMeta2ColsQuery(retVal);
+        String sql = "select " + cols + " from " + oldPartType.table + " where part_id=?";
+        jdbcTemplate.query(sql, new Object[] { partId }, rs -> {
+            retVal.forEach(cdv -> {
+                String colName = cdv.getColName();
+                try {
+                    Object val = rs.getObject(colName);
+                    cdv.setVal(val);
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            });
+        });
+        return retVal;
+    }
+
+    private String critDimMeta2ColsQuery(List<CritDimVal> cdm) {
+        StringBuilder sb = new StringBuilder();
+        cdm.forEach(cdv -> {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append(cdv.getColName());
+        });
+        return sb.toString();
+    }
+
+    private void writeCritDimVals(long partId, PartType.PartTypeEnum newPartType, List<CritDimVal> cdm) {
+        String cols = critDimMeta2ColsUpdate(cdm);
+        String sql = "update " + newPartType.table + " " + cols + " where part_id=?";
+        jdbcTemplate.update(sql, ps -> {
+            int i = 1;
+            for (CritDimVal cdv : cdm) {
+                ps.setObject(i++, cdv.getVal());
+            }
+            ps.setLong(i, partId);
+        });
+    }
+
+    private String critDimMeta2ColsUpdate(List<CritDimVal> cdm) {
+        StringBuilder sb = new StringBuilder();
+        cdm.forEach(cdv -> {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append(cdv.getColName());
+            sb.append("=?");
+        });
+        return sb.toString();
     }
 
 }
