@@ -5,7 +5,6 @@ import static com.turbointernational.metadata.entity.PartType.PartTypeEnum.TURBO
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -290,29 +289,15 @@ public class PartDao extends AbstractDao<Part> {
 
         private final String colName;
 
-        private final String dataType;
-
-        private final Integer enumId;
-
         private Object val;
 
-        public CritDimVal(String colName, String dataType, Integer enumId) {
+        public CritDimVal(String colName) {
             super();
             this.colName = colName;
-            this.dataType = dataType;
-            this.enumId = enumId;
         }
 
         public String getColName() {
             return colName;
-        }
-
-        public String getDataType() {
-            return dataType;
-        }
-
-        public Integer getEnumId() {
-            return enumId;
         }
 
         public Object getVal() {
@@ -335,36 +320,24 @@ public class PartDao extends AbstractDao<Part> {
      */
     private List<CritDimVal> readCritDimVals(long partId, PartType.PartTypeEnum oldPartType,
             PartType.PartTypeEnum newPartType) {
-        List<CritDimVal> retVal = jdbcTemplate.query(
-                "select cd0.json_name, cd0.data_type, cd0.enum_id "
-                        + "from crit_dim cd0 join crit_dim cd1 on cd0.json_name = cd1.json_name "
+        List<CritDimVal> cdm = jdbcTemplate.query(
+                "select cd0.json_name " + "from crit_dim cd0 join crit_dim cd1 on cd0.json_name = cd1.json_name "
                         + "where cd0.data_type = cd1.data_type and cd0.enum_id <=> cd1.enum_id "
                         + "and cd0.part_type_id=? and cd1.part_type_id=?",
                 new Object[] { oldPartType.id, newPartType.id }, (rs, rownum) -> {
                     String colName = rs.getString(1);
-                    String dataType = rs.getString(2);
-                    Integer enumId = null;
-                    int enid = rs.getInt(3);
-                    if (!rs.wasNull()) {
-                        enumId = Integer.valueOf(enid);
-                    }
-                    return new CritDimVal(colName, dataType, enumId);
+                    return new CritDimVal(colName);
                 });
-        String cols = critDimMeta2ColsQuery(retVal);
+        String cols = critDimMeta2ColsQuery(cdm);
         String sql = "select " + cols + " from " + oldPartType.table + " where part_id=?";
         jdbcTemplate.query(sql, new Object[] { partId }, rs -> {
-            retVal.forEach(cdv -> {
+            for (CritDimVal cdv : cdm) {
                 String colName = cdv.getColName();
-                try {
-                    Object val = rs.getObject(colName);
-                    cdv.setVal(val);
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            });
+                Object val = rs.getObject(colName);
+                cdv.setVal(val);
+            }
         });
-        return retVal;
+        return cdm;
     }
 
     private String critDimMeta2ColsQuery(List<CritDimVal> cdm) {
