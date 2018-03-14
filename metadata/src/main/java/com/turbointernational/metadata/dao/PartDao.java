@@ -380,7 +380,7 @@ public class PartDao extends AbstractDao<Part> {
 
     private void writeCritDimVals(long partId, PartType.PartTypeEnum newPartType, List<CritDimVal> cdm) {
         String cols = critDimMeta2ColsUpdate(cdm);
-        String sql = "update " + newPartType.table + " " + cols + " where part_id=?";
+        String sql = "update " + newPartType.table + " set " + cols + " where part_id=?";
         jdbcTemplate.update(sql, ps -> {
             int i = 1;
             for (CritDimVal cdv : cdm) {
