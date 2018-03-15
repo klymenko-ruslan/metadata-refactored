@@ -51,7 +51,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.transaction.support.TransactionCallback;
@@ -913,15 +912,17 @@ public class PartService {
     public Part changePartType(long partId, PartTypeEnum oldPartType, PartTypeEnum newPartType, long kitTypeId,
             long turboModelId, boolean clearBoms, boolean removeFromParentBoms, boolean clearInterchanges,
             boolean copyCritDims) throws IOException {
-        Part originalPart = getPart(partId, true);
-        String originalPartTypeName = originalPart.getPartType().getName();
-        String originalPartStr = formatPart(originalPart);
-        if (originalPart.getPartType().getId() != oldPartType.id) {
-            throw new AssertionError("Invalid input arg 'oldPartType' = " + oldPartType + ". Actual part type is "
-                    + originalPart.getPartType().getId() + ". Part " + originalPartStr + ".");
-        }
-        List<CriticalDimension> cdfpt = criticalDimensionService.getCriticalDimensionForPartType(oldPartType);
-        String originalPartJson = originalPart.toJson(cdfpt);
+        TransactionTemplate tt = new TransactionTemplate(txManager);
+        tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
+        String[] history = tt.execute((TransactionCallback<String[]>) transactionStatus -> {
+            Part originalPart = getPart(partId, true);
+            String partTypeName = originalPart.getPartType().getName();
+            List<CriticalDimension> cdfpt = criticalDimensionService.getCriticalDimensionForPartType(oldPartType);
+            String json = originalPart.toJson(cdfpt);
+            return new String[] {json, partTypeName};
+        });
+        String originalPartJson = history[0];
+        String originalPartTypeName = history[1];
         if (clearBoms) {
             bomService.deleteAll(partId);
         }
@@ -934,27 +935,27 @@ public class PartService {
                 interchangeService.leaveInterchangeableGroup(partId);
             }
         }
-        partDao.changePartType(partId, oldPartType, newPartType, turboModelId, kitTypeId, copyCritDims);
 
-        TransactionTemplate transaction2 = new TransactionTemplate(txManager);
-        transaction2.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
-        Part retVal = transaction2.execute((TransactionCallback<Part>) transactionStatus -> {
-            // Reload the part as a part of the new type.
-            Part updated = getPart(partId, true);
-            searchService.indexPart(updated);
-            // Save the operation to an audit log.
-            String newPartTypeName = updated.getPartType().getName();
-            List<CriticalDimension> cdfpt2 = criticalDimensionService.getCriticalDimensionForPartType(newPartType);
-            String updatedPartJson = updated.toJson(cdfpt2);
-            List<RelatedPart> relatedParts = new ArrayList<>(1);
-            relatedParts.add(new RelatedPart(partId, PART0));
-            changelogService.log(PART,
-                    "Changed part type: [" + oldPartType.id + "] - " + originalPartTypeName + " => [" + newPartType.id
-                            + "] - " + newPartTypeName + ".",
-                    "{original: " + originalPartJson + ",updated: " + updatedPartJson + "}", relatedParts);
-            return updated;
-        });
-        return retVal;
+        em.clear();
+        partDao.changePartType(partId, oldPartType, newPartType, turboModelId, kitTypeId, copyCritDims);
+        em.clear();
+
+        // Reload the part as a part of the new type.
+        //Part updated = getPart(partId, true);
+        Part updated = em.find(Part.class, partId);
+        interchangeService.initInterchange(updated);
+        searchService.indexPart(updated);
+        // Save the operation to an audit log.
+        String newPartTypeName = updated.getPartType().getName();
+        List<CriticalDimension> cdfpt2 = criticalDimensionService.getCriticalDimensionForPartType(newPartType);
+        String updatedPartJson = updated.toJson(cdfpt2);
+        List<RelatedPart> relatedParts = new ArrayList<>(1);
+        relatedParts.add(new RelatedPart(partId, PART0));
+        changelogService.log(PART,
+                "Changed part type: [" + oldPartType.id + "] - " + originalPartTypeName + " => [" + newPartType.id
+                        + "] - " + newPartTypeName + ".",
+                "{original: " + originalPartJson + ",updated: " + updatedPartJson + "}", relatedParts);
+        return updated;
     }
 
 }

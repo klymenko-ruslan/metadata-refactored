@@ -3,6 +3,7 @@ package com.turbointernational.metadata.dao;
 import static com.turbointernational.metadata.entity.PartType.PartTypeEnum.KIT;
 import static com.turbointernational.metadata.entity.PartType.PartTypeEnum.TURBO;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.turbointernational.mas90.entity.ArInvoiceHistoryDetail;
 import com.turbointernational.mas90.entity.ArInvoiceHistoryDetail_;
@@ -256,6 +258,7 @@ public class PartDao extends AbstractDao<Part> {
         }
     }
 
+    @Transactional(propagation = REQUIRES_NEW)
     public void changePartType(long partId, PartType.PartTypeEnum oldPartType, PartType.PartTypeEnum newPartType,
             long turboModelId, long kitTypeId, boolean copyCritDims) {
         if (oldPartType == TURBO) {
