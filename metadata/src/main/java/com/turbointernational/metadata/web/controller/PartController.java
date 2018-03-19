@@ -579,9 +579,8 @@ public class PartController {
 
     @Transactional
     @Secured("ROLE_ALTER_PART_TYPE")
-    @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/{id}/parttype", method = PUT, produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
-    public Part changePartType(@PathVariable("id") Long partId, @RequestBody PartTypeChangeRequest request) throws IOException {
+    public void changePartType(@PathVariable("id") Long partId, @RequestBody PartTypeChangeRequest request) throws IOException {
         // System.out.println("Request: " + request);
         long oldPartTypeId = request.getOldPartTypeId();
         PartType.PartTypeEnum oldPartType = PartType.PartTypeEnum.fromId(oldPartTypeId);
@@ -593,9 +592,8 @@ public class PartController {
         boolean removeFromParentBoms = request.isRemoveFromParentBoms();
         boolean clearInterchanges = request.isClearInterchanges();
         boolean copyCritDims = request.isCopyCritDims();
-        Part part = partService.changePartType(partId, oldPartType, newPartType, kitTypeId, turboModelId,
+        partService.changePartType(partId, oldPartType, newPartType, kitTypeId, turboModelId,
                 clearBoms, removeFromParentBoms, clearInterchanges, copyCritDims);
-        return part;
     }
 
     @Transactional

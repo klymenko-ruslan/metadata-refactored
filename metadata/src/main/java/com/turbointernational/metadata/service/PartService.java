@@ -13,6 +13,7 @@ import static com.turbointernational.metadata.service.ImageService.SIZES;
 import static com.turbointernational.metadata.util.FormatUtils.formatPart;
 import static com.turbointernational.metadata.util.FormatUtils.formatProductImage;
 import static java.util.stream.Collectors.toSet;
+import static org.springframework.transaction.TransactionDefinition.ISOLATION_READ_COMMITTED;
 import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 import java.io.File;
@@ -32,7 +33,9 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -48,9 +51,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.orm.jpa.EntityManagerFactoryUtils;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.transaction.support.TransactionCallback;
@@ -909,53 +915,64 @@ public class PartService {
         return retVal;
     }
 
-    public Part changePartType(long partId, PartTypeEnum oldPartType, PartTypeEnum newPartType, long kitTypeId,
+    public void changePartType(long partId, PartTypeEnum oldPartType, PartTypeEnum newPartType, long kitTypeId,
             long turboModelId, boolean clearBoms, boolean removeFromParentBoms, boolean clearInterchanges,
             boolean copyCritDims) throws IOException {
         TransactionTemplate tt = new TransactionTemplate(txManager);
         tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
-        String[] history = tt.execute((TransactionCallback<String[]>) transactionStatus -> {
+        Object[] history = tt.execute((TransactionCallback<Object[]>) transactionStatus -> {
             Part originalPart = getPart(partId, true);
             String partTypeName = originalPart.getPartType().getName();
             List<CriticalDimension> cdfpt = criticalDimensionService.getCriticalDimensionForPartType(oldPartType);
             String json = originalPart.toJson(cdfpt);
-            return new String[] {json, partTypeName};
+            return new Object[] {originalPart, json, partTypeName};
         });
-        String originalPartJson = history[0];
-        String originalPartTypeName = history[1];
-        if (clearBoms) {
-            bomService.deleteAll(partId);
-        }
-        if (removeFromParentBoms) {
-            bomService.removeFromAllParents(partId);
-        }
-        if (clearInterchanges) {
-            Interchange interchange = interchangeService.findForPart(partId);
-            if (!interchange.isAlone()) {
-                interchangeService.leaveInterchangeableGroup(partId);
+        Part originalPart = (Part) history[0];
+        String originalPartJson = (String) history[1];
+        String originalPartTypeName = (String) history[2];
+        
+        TransactionTemplate tt1 = new TransactionTemplate(txManager);
+        tt1.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
+        tt1.execute((TransactionCallback<Void>) transactionStatus -> {
+            try {
+                if (clearBoms) {
+                    bomService.deleteAll(partId);
+                }
+                if (removeFromParentBoms) {
+                    bomService.removeFromAllParents(partId);
+                }
+                if (clearInterchanges) {
+                    interchangeService.leaveInterchangeableGroup(originalPart);
+                }
+            } catch(Exception e) {
+                log.error("Changing of a part type failed.", e);
             }
-        }
+            return null;
+        });
+        
 
-        em.clear();
         partDao.changePartType(partId, oldPartType, newPartType, turboModelId, kitTypeId, copyCritDims);
-        em.clear();
 
-        // Reload the part as a part of the new type.
-        //Part updated = getPart(partId, true);
-        Part updated = em.find(Part.class, partId);
-        interchangeService.initInterchange(updated);
-        searchService.indexPart(updated);
-        // Save the operation to an audit log.
-        String newPartTypeName = updated.getPartType().getName();
-        List<CriticalDimension> cdfpt2 = criticalDimensionService.getCriticalDimensionForPartType(newPartType);
-        String updatedPartJson = updated.toJson(cdfpt2);
+        TransactionTemplate tt2 = new TransactionTemplate(txManager);
+        tt2.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
+        String[] history2 = tt2.execute((TransactionCallback<String[]>) transactionStatus -> {
+            // Reload the part as a part of the new type.
+            Part updated = getPart(partId, true);
+            searchService.indexPart(updated);
+            // Save the operation to an audit log.
+            String partTypeName = updated.getPartType().getName();
+            List<CriticalDimension> cdfpt2 = criticalDimensionService.getCriticalDimensionForPartType(newPartType);
+            String json = updated.toJson(cdfpt2);
+            return new String[] { json, partTypeName };
+        });
+        String updatedPartJson = history2[0];
+        String newPartTypeName = history2[1];
         List<RelatedPart> relatedParts = new ArrayList<>(1);
         relatedParts.add(new RelatedPart(partId, PART0));
         changelogService.log(PART,
                 "Changed part type: [" + oldPartType.id + "] - " + originalPartTypeName + " => [" + newPartType.id
                         + "] - " + newPartTypeName + ".",
                 "{original: " + originalPartJson + ",updated: " + updatedPartJson + "}", relatedParts);
-        return updated;
     }
 
 }

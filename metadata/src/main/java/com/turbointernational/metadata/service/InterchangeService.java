@@ -145,6 +145,16 @@ public class InterchangeService {
     public void leaveInterchangeableGroup(Long partId) throws IOException {
         Part part = partDao.findOne(partId);
         Interchange interchange = findForPart(partId);
+        part.setInterchange(interchange);
+        leaveInterchangeableGroup(part);
+    }
+
+    public void leaveInterchangeableGroup(Part part) throws IOException {
+        Long partId = part.getId();
+        Interchange interchange = part.getInterchange();
+        if (interchange == null) {
+            throw new NullPointerException("Member 'interchange' must be initialized in the part.");
+        }
         MigrateInterchangeResponse response = graphDbService.leaveInterchangeableGroup(partId);
         checkSuccess(response);
         // Update 'part.interchange' in an ElasticSearch index.
