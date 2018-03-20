@@ -909,9 +909,28 @@ public class PartService {
         return retVal;
     }
 
+    /**
+     * Change type of a part.
+     * 
+     * The operation is doing in 4 steps in separate transactions.
+     * The separate transactions are needed because JPA cache for
+     * some reason uses old version of the changed part after type is changed.
+     * As a consequence updated object can't be serialized correctly.
+     * 
+     * @param partId                    ID of a part to change
+     * @param oldPartType               current part type ID of the part
+     * @param newPartType               new part type ID of the part
+     * @param kitTypeId                 kit type ID if the new part type is Kit
+     * @param turboModelId              turbo model ID if the new part type is Turbo
+     * @param clearBoms                 clear current BOM's during this operation
+     * @param removeFromParentBoms      clear membership in the current parent BOMs
+     * @param clearInterchanges         clear current interchanges
+     * @param copyCritDims              copy compatible critical dimensions
+     */
     public void changePartType(long partId, PartTypeEnum oldPartType, PartTypeEnum newPartType, long kitTypeId,
             long turboModelId, boolean clearBoms, boolean removeFromParentBoms, boolean clearInterchanges,
-            boolean copyCritDims) throws IOException {
+            boolean copyCritDims) {
+        // Step 1. Serialize to JSON of the original part.
         TransactionTemplate tt = new TransactionTemplate(txManager);
         tt.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
         Object[] history = tt.execute((TransactionCallback<Object[]>) transactionStatus -> {
@@ -926,6 +945,7 @@ public class PartService {
         String originalPartJson = (String) history[1];
         String originalPartTypeName = (String) history[2];
 
+        // Step 2. Process the operation options.
         TransactionTemplate tt1 = new TransactionTemplate(txManager);
         tt1.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
         tt1.execute((TransactionCallback<Void>) transactionStatus -> {
@@ -946,8 +966,10 @@ public class PartService {
             return null;
         });
 
+        // Step 3. Change type.
         partDao.changePartType(partId, oldPartType, newPartType, turboModelId, kitTypeId, copyCritDims);
 
+        // Step 4. Re-read the changed part and serialize it to JSON.
         TransactionTemplate tt2 = new TransactionTemplate(txManager);
         tt2.setPropagationBehavior(PROPAGATION_REQUIRES_NEW); // new transaction
         String[] history2 = tt2.execute((TransactionCallback<String[]>) transactionStatus -> {
