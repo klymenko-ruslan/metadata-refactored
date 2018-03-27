@@ -1,7 +1,7 @@
 package com.turbointernational.metadata.service;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PartChangeServiceTest {
@@ -35,7 +35,7 @@ public class PartChangeServiceTest {
     @Test
     public void testAddedBom() throws IOException {
         service.addedBom(123L, 456L);
-        verify(messagingService).bomChanged(isNull(),
+        verify(messagingService).bomChanged(isNull(String.class),
                 eq("{\"chtyp\":\"INS\",\"ppid\":123,\"chpid\":456}".getBytes("UTF-8")));
     }
 
@@ -64,21 +64,21 @@ public class PartChangeServiceTest {
     @Test
     public void testUpdatedBom() throws IOException {
         service.updatedBom(123L);
-        verify(messagingService).bomChanged(isNull(),
+        verify(messagingService).bomChanged(isNull(String.class),
                 eq("{\"chtyp\":\"UPD\",\"ppid\":123,\"chpid\":null}".getBytes("UTF-8")));
     }
 
     @Test
     public void testDeletedBom() throws IOException {
         service.deletedBom(123L, 456L);
-        verify(messagingService).bomChanged(isNull(),
+        verify(messagingService).bomChanged(isNull(String.class),
                 eq("{\"chtyp\":\"DEL\",\"ppid\":123,\"chpid\":456}".getBytes("UTF-8")));
     }
 
     @Test
     public void testChangedInterchange() throws IOException {
         service.changedInterchange(123L, 456L);
-        verify(messagingService).interchangeChanged(isNull(),
+        verify(messagingService).interchangeChanged(isNull(String.class),
                 eq("{\"intchid0\":123,\"intchid1\":456}".getBytes("UTF-8")));
     }
 

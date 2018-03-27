@@ -37,8 +37,11 @@ public class Schedulers {
    * stored on a filesystem. In case when user cancels the linking process these attachments
    * still be saved in the database and file storage (but not associated with any changelog source link).
    * Such records are called 'orphan'. This periodical process removes such 'orphan' records (and files).
+   * 
+   * Parameter 'initialDelay' below is introduced to avoid immediate run of this job during 
+   * run of integration tests.
    */
-  @Scheduled(fixedRate = 24 * 3600 * 1000)
+  @Scheduled(initialDelay = 3600000, fixedRate = 24 * 3600 * 1000)
   @Transactional
   public void changelogSourceLinkDescriptionAttachmentsCleanup() {
     List<ChangelogSourceLinkDescriptionAttachment> orphanAttachments = em

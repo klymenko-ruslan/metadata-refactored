@@ -1,7 +1,7 @@
 package com.turbointernational.metadata.service;
 
 import static com.turbointernational.metadata.service.RabbitMessagingService.HEADER_GROUP;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.springframework.amqp.core.MessageProperties.CONTENT_TYPE_JSON;
 
@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

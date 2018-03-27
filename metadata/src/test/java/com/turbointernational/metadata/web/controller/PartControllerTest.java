@@ -87,22 +87,49 @@ public class PartControllerTest extends AbstractFunctionalWebTest {
     @Sql(executionPhase = AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
     @WithUserDetails("Admin")
     public void testCreateActuator() throws Exception {
-        String requestBody = "{" + "   \"origin\":{" + "       \"turboModel\":{" + "           \"turboType\":{}"
-                + "       }," + "       \"partType\":{" + "           \"id\":30," + "           \"name\":\"Actuator\","
-                + "           \"value\":\"actuator\"," + "           \"magentoAttributeSet\":\"Actuator\","
-                + "           \"route\":\"parttype/json\"," + "           \"reqParams\":null,"
-                + "           \"restangularized\":true," + "           \"fromServer\":true,"
-                + "           \"parentResource\":null," + "           \"restangularCollection\":false" + "       },"
-                + "       \"name\":\"fff\"," + "       \"description\":\"dddd\"," + "       \"manufacturer\":{"
-                + "           \"id\":11," + "           \"name\":\"Turbo International\","
-                + "           \"route\":\"other/manufacturer/list\"," + "           \"reqParams\":null,"
-                + "           \"restangularized\":true," + "           \"fromServer\":true,"
-                + "           \"parentResource\":null," + "           \"restangularCollection\":false" + "       },"
-                + "       \"class\":\"com.turbointernational.metadata.entity.part.types.Actuator\"" + "    },"
+        //@formatter:off
+        String requestBody = "{"
+                + "   \"origin\":{" 
+                + "       \"turboModel\":{" 
+                + "           \"turboType\":{}"
+                + "       }," 
+                + "       \"partType\":{" 
+                + "           \"id\":30," 
+                + "           \"name\":\"Actuator\","
+                + "           \"value\":\"actuator\"," 
+                + "           \"magentoAttributeSet\":\"Actuator\","
+                + "           \"route\":\"parttype/json\"," 
+                + "           \"reqParams\":null,"
+                + "           \"restangularized\":true," 
+                + "           \"fromServer\":true,"
+                + "           \"parentResource\":null," 
+                + "           \"restangularCollection\":false" 
+                + "       },"
+                + "       \"name\":\"fff\"," 
+                + "       \"description\":\"dddd\"," 
+                + "       \"manufacturer\":{"
+                + "           \"id\":11," 
+                + "           \"name\":\"Turbo International\","
+                + "           \"route\":\"other/manufacturer/list\"," 
+                + "           \"reqParams\":null,"
+                + "           \"restangularized\":true," 
+                + "           \"fromServer\":true,"
+                + "           \"parentResource\":null," 
+                + "           \"restangularCollection\":false" 
+                + "       },"
+                + "       \"class\":\"com.turbointernational.metadata.entity.part.types.Actuator\"" 
+                + "    },"
                 + "    \"partNumbers\":[\"409043-0033\"]}";
-        String responseBody = "{" + "    \"results\":[{" + "       \"partId\":1,"
-                + "       \"manufacturerPartNumber\":\"409043-0033\"," + "       \"success\":true,"
-                + "       \"errorMessage\":null" + "    }]}";
+        //@formatter:on
+        //@formatter:off
+        String responseBody = "{" 
+                + "    \"results\":[{" 
+                + "       \"partId\":1,"
+                + "       \"manufacturerPartNumber\":\"409043-0033\"," 
+                + "       \"success\":true,"
+                + "       \"errorMessage\":null" 
+                + "    }]}";
+        //@formatter:on
         mockMvc.perform(post("/metadata/part").content(requestBody).contentType(contentType)).andExpect(status().isOk())
                 .andExpect(content().json(responseBody));
         Part part = partDao.findOne(1L);
@@ -1277,8 +1304,7 @@ public class PartControllerTest extends AbstractFunctionalWebTest {
     }
 
     /**
-     * Test link a Gasket Kit with a Turbo when 'Gasket Kit' has wrong a part
-     * type.
+     * Test link a Gasket Kit with a Turbo when 'Gasket Kit' has wrong a part type.
      */
     @Test
     @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
@@ -1294,8 +1320,7 @@ public class PartControllerTest extends AbstractFunctionalWebTest {
     }
 
     /**
-     * Test link a Gasket Kit with a Turbo when they have different
-     * manufacturers.
+     * Test link a Gasket Kit with a Turbo when they have different manufacturers.
      */
     @Test
     @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
@@ -1361,10 +1386,10 @@ public class PartControllerTest extends AbstractFunctionalWebTest {
         String requestBody = "{\"originalPartId\":14510,\"part\":{\"partType\":{\"id\":1,\"name\":\"Turbo\",\"value\":\"turbo\",\"magentoAttributeSet\":\"Turbo\"},\"name\":\"nnn\",\"manufacturer\":{\"id\":2,\"name\":\"Holset\",\"route\":\"other/manufacturer/list\",\"reqParams\":null,\"restangularized\":true,\"fromServer\":true,\"parentResource\":null,\"restangularCollection\":false},\"manufacturerPartNumber\":\"3534378-test\",\"description\":\"ddd\",\"turboModel\":{\"id\":339,\"name\":\"H1E\",\"turboType\":{\"id\":260,\"manufacturer\":{\"id\":2,\"name\":\"Holset\",\"type\":{\"id\":1,\"name\":\"turbo\"},\"importPK\":3},\"name\":\"H1E\"},\"route\":\"turboModel\",\"reqParams\":null,\"restangularized\":true,\"fromServer\":true,\"parentResource\":{\"route\":\"other\",\"parentResource\":null},\"restangularCollection\":false},\"turboType\":{\"id\":260,\"manufacturer\":{\"id\":2,\"name\":\"Holset\",\"type\":{\"id\":1,\"name\":\"turbo\"},\"importPK\":3},\"name\":\"H1E\",\"route\":\"list\",\"reqParams\":null,\"restangularized\":true,\"fromServer\":true,\"parentResource\":{\"route\":\"other/turboType\",\"parentResource\":null},\"restangularCollection\":false},\"class\":\"com.turbointernational.metadata.entity.part.types.Turbo\"}}";
         String responseBody = "{\"class\":\"com.turbointernational.metadata.entity.part.types.Turbo\",\"id\":14511,\"manufacturer\":{\"id\":2,\"name\":\"Holset\"},\"manufacturerPartNumber\":\"3534378-test\",\"name\":\"nnn\",\"description\":\"ddd\",\"dimLength\":null,\"dimWidth\":null,\"dimHeight\":null,\"weight\":null,\"partType\":{\"id\":1,\"name\":\"Turbo\",\"value\":\"turbo\",\"magentoAttributeSet\":\"Turbo\"},\"inactive\":false,\"turboTypes\":[],\"interchange\":{\"id\":1,\"alone\":true},\"productImages\":[],\"version\":0,\"legendImgFilename\":null,\"turboModel\":{\"id\":339,\"name\":\"H1E\",\"turboType\":{\"id\":260,\"manufacturer\":{\"id\":2,\"name\":\"Holset\",\"type\":{\"id\":1,\"name\":\"turbo\"}},\"name\":\"H1E\"}},\"coolType\":null,\"gasketKit\":null}";
         mockMvc.perform(post("/metadata/xrefpart").content(requestBody).contentType(contentType))
-                .andExpect(status().isOk())
-                .andExpect(content().json(responseBody));
-                //.andDo(MockMvcResultHandlers.print());
-        List<Part> resultList = em.createQuery("from Part p where p.manufacturerPartNumber=?", Part.class).setParameter(1, "3534378").getResultList();
+                .andExpect(status().isOk()).andExpect(content().json(responseBody));
+        // .andDo(MockMvcResultHandlers.print());
+        List<Part> resultList = em.createQuery("from Part p where p.manufacturerPartNumber=?", Part.class)
+                .setParameter(1, "3534378").getResultList();
         assertEquals(1, resultList.size());
         Part p = resultList.get(0);
         assertNotNull(p);
