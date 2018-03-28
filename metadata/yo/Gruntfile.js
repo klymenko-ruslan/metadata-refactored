@@ -353,7 +353,7 @@ module.exports = function (grunt) {
             'bower_components/lodash/lodash.js',
             'bower_components/bootstrap-sass/assets/javascripts/bootstrap.js'
         ],
-        //ignorePath:  /\.\.\//
+        ignorePath:  /\.\.\//
       },
       test: {
         devDependencies: true,
@@ -362,7 +362,7 @@ module.exports = function (grunt) {
             'bower_components/lodash/lodash.js',
             'bower_components/bootstrap-sass/assets/javascripts/bootstrap.js'
         ],
-        ignorePath:  /\.\.\//,
+        ignorePath:  /\.\.\/\.\.\//,
         fileTypes:{
           js: {
             block: /(([\s\t]*)\/{2}\s*?bower:\s*?(\S*))(\n|\r|.)*?(\/{2}\s*endbower)/gi,
@@ -370,7 +370,7 @@ module.exports = function (grunt) {
                 js: /'(.*\.js)'/gi
               },
               replace: {
-                js: '\'yo/{{filePath}}\','
+                js: '\'{{filePath}}\','
               }
             }
           }
