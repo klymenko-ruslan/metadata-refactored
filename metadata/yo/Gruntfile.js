@@ -353,11 +353,11 @@ module.exports = function (grunt) {
             'bower_components/lodash/lodash.js',
             'bower_components/bootstrap-sass/assets/javascripts/bootstrap.js'
         ],
-        ignorePath:  /\.\.\//
+        //ignorePath:  /\.\.\//
       },
       test: {
         devDependencies: true,
-        src: '<%= karma.unit.configFile %>',
+        src: '<%= karma.options.configFile %>',
         exclude: [
             'bower_components/lodash/lodash.js',
             'bower_components/bootstrap-sass/assets/javascripts/bootstrap.js'
@@ -370,7 +370,7 @@ module.exports = function (grunt) {
                 js: /'(.*\.js)'/gi
               },
               replace: {
-                js: '\'{{filePath}}\','
+                js: '\'yo/{{filePath}}\','
               }
             }
           }
