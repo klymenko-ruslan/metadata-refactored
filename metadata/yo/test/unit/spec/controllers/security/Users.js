@@ -45,16 +45,15 @@ describe('Controller: UsersCtrl', function () {
         ]
       }
     });
-    $scope.$apply(); // resolve promise(s)
+    //$scope.$apply(); // resolve promise(s)
   }));
 
   it('should attach a list of authentication providers to the scope',
       function ()
   {
     expect($scope.authProviders).toBeTruthy();
-    expect($scope.authProviders.length).toBe(4);
-    expect($scope.authProviders).toContain({id : -1, title: ''});
-    expect($scope.authProviders).toContain({id : null, title: 'Local DB'});
+    expect($scope.authProviders.length).toBe(3);
+    expect($scope.authProviders).toContain({id : -2, title: 'Local DB'});
     expect($scope.authProviders).toContain({id : 1,
       title: 'TurboInternational AD (LDAP)'});
     expect($scope.authProviders).toContain({id : 2,

@@ -24,8 +24,32 @@ describe('Controller: LoginCtrl', function () {
     scope = $rootScope.$new();
     toastr = _toastr_;
     LoginCtrl = $controller('LoginCtrl', {
-      $scope: scope
+      $scope: scope,
+      $location: $location
     });
+    $httpBackend.whenGET('views/security/login.html').respond();
+    $httpBackend.whenGET('/metadata/security/user/me').respond(
+        '{' +
+          '"id": 1,' +
+          '"name": "foo",' +
+          '"email": "foo@bar.com",' +
+          '"username": "foo@bar.com",' +
+          '"enabled": true,' +
+          '"authProvider": null,' +
+          '"groups": [' +
+          '  {' +
+          '    "id": 1,' +
+          '    "name": "Reader",' +
+          '    "roles": [' +
+          '      {' +
+          '        "id": 22,' +
+          '        "name": "ROLE_CHLOGSRC_READ",' +
+          '        "display": "Read a changelog source."' +
+          '      }' +
+          '    ]' +
+          '  }' +
+          ']' +
+        '}');
   }));
 
   afterEach(function() {
@@ -34,14 +58,17 @@ describe('Controller: LoginCtrl', function () {
   });
 
   describe('login()', function() {
+
     it('should issue a POST request', function() {
       scope.username = 'admin@turbointernational.com';
       scope.password = 'adminpw';
       $httpBackend.expectPOST('/metadata/security/login', 'username=admin%40turbointernational.com&password=adminpw').respond();
+      spyOn($location, 'path').and.stub();
       scope.login();
       $httpBackend.flush();
-      expect($location.path()).toBe('/part/list');
+      expect($location.path).toHaveBeenCalledWith('/part/list');
     });
+
   });
 
   describe('resetPassword()', function() {

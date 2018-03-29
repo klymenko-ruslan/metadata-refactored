@@ -68,6 +68,7 @@ describe('Controller: GroupCtrl', function () {
     $httpBackend.whenGET('/metadata/security/user/myroles').respond([]);
     $httpBackend.whenGET('/metadata/security/group/roles').respond(roles);
     $httpBackend.whenGET('/metadata/security/user').respond(users);
+    $httpBackend.whenGET('views/security/login.html').respond();
   }));
 
   afterEach(function() {
@@ -80,7 +81,8 @@ describe('Controller: GroupCtrl', function () {
       $routeParams.id = 'create';
 
       GroupCtrl = $controller('GroupCtrl', {
-        $scope: scope
+        $scope: scope,
+        $routeParams: $routeParams
       });
 
       $httpBackend.flush();
@@ -111,7 +113,7 @@ describe('Controller: GroupCtrl', function () {
     });
 
     describe('isNewGroup()', function() {
-      it('should return false', function() {
+      fit('should return false', function() {
         expect(scope.isNewGroup()).toBeTruthy();
       });
     });
