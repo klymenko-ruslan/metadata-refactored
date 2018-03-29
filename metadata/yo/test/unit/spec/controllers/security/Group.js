@@ -23,14 +23,14 @@ describe('Controller: GroupCtrl', function () {
       groupOne;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function (_$controller_, _dialogs_, _$q_, _$routeParams_,
-    $rootScope, _$httpBackend_, _$location_, _toastr_) {
+  beforeEach(inject(function (_$controller_, _dialogs_, _$q_, $rootScope,
+      _$httpBackend_, _$location_, _toastr_) {
     $controller = _$controller_;
     dialogs = _dialogs_;
     $httpBackend = _$httpBackend_;
     $location    = _$location_;
     $q = _$q_;
-    $routeParams = _$routeParams_;
+    $routeParams = {};
     scope = $rootScope.$new();
     toastr = _toastr_;
     spyOn(toastr, 'success');
@@ -69,6 +69,7 @@ describe('Controller: GroupCtrl', function () {
     $httpBackend.whenGET('/metadata/security/group/roles').respond(roles);
     $httpBackend.whenGET('/metadata/security/user').respond(users);
     $httpBackend.whenGET('views/security/login.html').respond();
+    $httpBackend.whenGET('views/security/groups.html').respond();
   }));
 
   afterEach(function() {
@@ -77,7 +78,9 @@ describe('Controller: GroupCtrl', function () {
   });
 
   describe('Create Mode', function() {
+
     beforeEach(function() {
+
       $routeParams.id = 'create';
 
       GroupCtrl = $controller('GroupCtrl', {
@@ -86,6 +89,7 @@ describe('Controller: GroupCtrl', function () {
       });
 
       $httpBackend.flush();
+
     });
 
     describe('initialization', function() {
@@ -113,7 +117,7 @@ describe('Controller: GroupCtrl', function () {
     });
 
     describe('isNewGroup()', function() {
-      fit('should return false', function() {
+      it('should return true', function() {
         expect(scope.isNewGroup()).toBeTruthy();
       });
     });
@@ -144,7 +148,7 @@ describe('Controller: GroupCtrl', function () {
     });
 
     describe('initialization', function() {
-      it('should attach the group to the scope', function() {
+      fit('should attach the group to the scope', function() {
         expect(scope.group.name).toEqual(groupOne.name);
         expect(scope.group.roles).toEqual(groupOne.roles);
         expect(scope.group.users).toEqual(groupOne.users);
