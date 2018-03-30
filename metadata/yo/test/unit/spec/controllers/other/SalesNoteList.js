@@ -5,55 +5,81 @@ describe('Controller: SalesNoteListCtrl', function () {
   // load the controller's module
   beforeEach(module('ngMetaCrudApp'));
 
-  var ctrl, $scope, $q, restService;
+  var $scope, $controller, $routeParams, $q, NgTableParams, restService;
 
-  beforeEach(inject(function (_$q_, $rootScope, $controller, _restService_) {
+  beforeEach(inject(function (_$q_, $rootScope, _$controller_, _restService_,
+        _NgTableParams_)
+  {
     $q = _$q_;
+    NgTableParams = _NgTableParams_;
+    $controller = _$controller_;
     restService = _restService_;
     $scope = $rootScope.$new();
-    ctrl = $controller('SalesNoteListCtrl', {
-      $scope: $scope,
-      primaryPartId: null
-    });
+    $routeParams = {};
   }));
 
-  it('should initialize \'states\'', function() {
-    expect($scope.states).toBeDefined();
-    expect($scope.states).not.toBeNull();
-  });
+  describe('test initial state', function() {
 
-  it('should initialize \'search\'', function() {
-    expect($scope.search).toBeDefined();
-    expect($scope.search).not.toBeNull();
-    expect($scope.search.partNumber).toBeNull();
-    expect($scope.search.includePrimary).toBe(true);
-    expect($scope.search.includeRelated).toBe(true);
-    expect($scope.search.states).toEqual([]);
-    expect($scope.search.comment).toBeNull();
-  });
+    beforeEach(function () {
+      $controller('SalesNoteListCtrl', {
+        $scope: $scope,
+        primaryPartId: null,
+        $routeParams: $routeParams,
+        restService: restService
+      });
+    });
 
-  it('should not initialize \'part\'', function() {
-    expect($scope.partId).not.toBeNull();
-    expect($scope.partPromise).not.toBeDefined();
-    expect($scope.part).toBeNull();
-  });
+    it('should initialize \'states\'', function() {
+      expect($scope.states).toBeDefined();
+      expect($scope.states).not.toBeNull();
+    });
 
-  it('should initialize \'notesTableParams\'', function() {
-    expect($scope.notesTableParams).toBeDefined();
-    expect($scope.notesTableParams).not.toBeNull();
-    var parameters = $scope.notesTableParams.parameters();
-    expect(parameters.page).toBe(1);
-    expect(parameters.count).toBe(10);
-    expect(true).toBe($scope.notesTableParams.isSortBy('createDate', 'desc'));
+    it('should initialize \'search\'', function() {
+      expect($scope.search).toBeDefined();
+      expect($scope.search).not.toBeNull();
+      expect($scope.search.partNumber).toBeNull();
+      expect($scope.search.includePrimary).toBe(true);
+      expect($scope.search.includeRelated).toBe(true);
+      expect($scope.search.states).toEqual([]);
+      expect($scope.search.comment).toBeNull();
+    });
+
+    it('should not initialize \'part\'', function() {
+      expect($scope.partId).not.toBeNull();
+      expect($scope.partPromise).not.toBeDefined();
+      expect($scope.part).toBeNull();
+    });
+
+    it('should initialize \'notesTableParams\'', function() {
+      expect($scope.notesTableParams).toBeDefined();
+      expect($scope.notesTableParams).not.toBeNull();
+      var parameters = $scope.notesTableParams.parameters();
+      expect(parameters.page).toBe(1);
+      expect(parameters.count).toBe(10);
+      expect(true).toBe($scope.notesTableParams.isSortBy('createDate', 'desc'));
+    });
+
   });
 
   describe('testing search filter functionality', function() {
+
+    beforeEach(function() {
+      $controller('SalesNoteListCtrl', {
+        $scope: $scope,
+        primaryPartId: null,
+        $routeParams: $routeParams,
+        restService: restService,
+        SalesNotes: {},
+        NgTableParams: NgTableParams
+      });
+    });
 
     it('changing \'partNumber\' triggers table reload', function() {
       spyOn($scope.notesTableParams, 'reload').and.callThrough();
       spyOn(restService, 'filterSalesNotes').and.returnValue($q.resolve({
         hits: 0
       }));
+
       $scope.$apply();
       $scope.search.partNumber = '1-A-0001';
       $scope.$apply();
@@ -128,6 +154,18 @@ describe('Controller: SalesNoteListCtrl', function () {
 
   describe('testing states update functionality', function() {
 
+    beforeEach(function() {
+      $controller('SalesNoteListCtrl', {
+        $scope: $scope,
+        primaryPartId: null,
+        $routeParams: $routeParams,
+        restService: restService,
+        SalesNotes: {},
+        NgTableParams: NgTableParams
+      });
+      spyOn($scope.notesTableParams, 'reload').and.stub();
+    });
+
     it('should update \'search.states\' when \'states.current.draft\' changed',
       function() {
         $scope.states.current.draft = true;
@@ -201,10 +239,8 @@ describe('Controller: SalesNoteListCtrl', function () {
 
   describe('when partId defined', function() {
 
-    var ctrl, $scope;
-
-    beforeEach(inject(function ($rootScope, $controller, _$routeParams_) {
-      _$routeParams_.id = 1001;
+    beforeEach(inject(function ($rootScope, $controller) {
+      $routeParams.id = 1001;
       $scope = $rootScope.$new();
       spyOn(restService, 'findPart').and.returnValue($q.resolve(
         {
@@ -214,10 +250,13 @@ describe('Controller: SalesNoteListCtrl', function () {
           }
         }
       ));
-      ctrl = $controller('SalesNoteListCtrl', {
+      $controller('SalesNoteListCtrl', {
         $scope: $scope,
+        $routeParams: $routeParams,
         restService: restService,
-        primaryPartId: null
+        primaryPartId: null,
+        SalesNotes: {},
+        NgTableParams: NgTableParams
       });
       $scope.$apply();
     }));

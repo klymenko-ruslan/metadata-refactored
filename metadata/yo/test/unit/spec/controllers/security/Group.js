@@ -66,8 +66,9 @@ describe('Controller: GroupCtrl', function () {
 
     $httpBackend.whenGET('/metadata/security/user/me').respond(users[0]);
     $httpBackend.whenGET('/metadata/security/user/myroles').respond([]);
+    $httpBackend.whenGET('/metadata/security/group').respond(groupOne);
     $httpBackend.whenGET('/metadata/security/group/roles').respond(roles);
-    $httpBackend.whenGET('/metadata/security/user').respond(users);
+    $httpBackend.whenGET('/metadata/security/user').respond(users); // TODO
     $httpBackend.whenGET('views/security/login.html').respond();
     $httpBackend.whenGET('views/security/groups.html').respond();
   }));
@@ -137,18 +138,18 @@ describe('Controller: GroupCtrl', function () {
   describe('Edit Mode', function() {
     beforeEach(function() {
       $routeParams.id = groupOne.id;
-
       $httpBackend.whenGET('/metadata/security/group/' + groupOne.id).respond(groupOne);
 
       GroupCtrl = $controller('GroupCtrl', {
-        $scope: scope
+        $scope: scope,
+        $routeParams: $routeParams
       });
 
       $httpBackend.flush();
     });
 
     describe('initialization', function() {
-      fit('should attach the group to the scope', function() {
+      it('should attach the group to the scope', function() {
         expect(scope.group.name).toEqual(groupOne.name);
         expect(scope.group.roles).toEqual(groupOne.roles);
         expect(scope.group.users).toEqual(groupOne.users);
@@ -179,7 +180,6 @@ describe('Controller: GroupCtrl', function () {
         var deferred = $q.defer();
         deferred.resolve();
         spyOn(dialogs, 'confirm').and.returnValue({result: deferred.promise});
-
         $httpBackend.expectDELETE('/metadata/security/group/' + groupOne.id).respond();
         scope.delete();
         $httpBackend.flush();

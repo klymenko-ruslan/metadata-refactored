@@ -7,13 +7,14 @@ describe('CarModelFormCtrl: ', function() {
   var $controller, $q, $scope, $location, toastr;
 
   beforeEach(inject(function(_$controller_, _$q_, $rootScope, _$location_,
-    _toastr_)
+    $httpBackend, _toastr_)
   {
     $controller = _$controller_;
     $q = _$q_;
     $scope = $rootScope.$new();
     $location = _$location_;
     toastr = _toastr_;
+    $httpBackend.whenGET('views/application/carmodel/list.html').respond();
   }));
 
   describe('mode -- create:', function() {

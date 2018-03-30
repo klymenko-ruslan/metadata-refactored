@@ -6,14 +6,15 @@ describe('CarEngineFormCtrl: ', function() {
 
   var $controller, $q, $scope, $location, toastr;
 
-  beforeEach(inject(function(_$controller_, _$q_, $rootScope, _$location_,
-    _toastr_)
+  beforeEach(inject(function(_$controller_, _$q_, $httpBackend, $rootScope,
+    _$location_, _toastr_)
   {
     $controller = _$controller_;
     $q = _$q_;
     $scope = $rootScope.$new();
     $location = _$location_;
     toastr = _toastr_;
+    $httpBackend.whenGET('views/application/carengine/list.html').respond();
   }));
 
   describe('mode -- create:', function() {

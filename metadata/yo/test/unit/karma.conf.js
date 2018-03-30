@@ -56,8 +56,8 @@ module.exports = function(config) {
       // endbower
       'node_modules/ng-table/bundles/ng-table.min.js',
       'app/scripts/**/*.js',
-      //'test/unit/spec/**/*.js',
-      'test/unit/spec/controllers/security/Group.js',
+      'test/unit/spec/**/*.js',
+      //'test/unit/spec/controllers/other/SalesNoteList.js',
       //'test/unit/spec/controllers/application/carengine/form.js',
       //'test/unit/spec/controllers/chlogsrc/*.js'
     ],

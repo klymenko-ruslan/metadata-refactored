@@ -7,7 +7,7 @@ describe('CarMakeFormCtrl: ', function() {
   var $controller, $scope, $q, $location, toastr, restService;
 
   beforeEach(inject(function(_$controller_, _$q_, $rootScope, _$location_,
-    _toastr_, _restService_)
+    $httpBackend, _toastr_, _restService_)
   {
     $controller = _$controller_;
     $q = _$q_;
@@ -20,6 +20,7 @@ describe('CarMakeFormCtrl: ', function() {
       $location: $location,
       toastr: toastr
     });
+    $httpBackend.whenGET('views/application/carmake/list.html').respond();
   }));
 
   it('should react on save a carMake', function () {

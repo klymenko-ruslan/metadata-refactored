@@ -6,8 +6,8 @@ describe('CarFuelTypeFormCtrl: ', function() {
 
   var $controller, $scope, $q, $location, toastr, restService;
 
-  beforeEach(inject(function(_$controller_, _$q_, $rootScope, _$location_,
-    _toastr_, _restService_)
+  beforeEach(inject(function(_$controller_, _$q_, $httpBackend,
+    $rootScope, _$location_, _toastr_, _restService_)
   {
     $controller = _$controller_;
     $q = _$q_;
@@ -15,6 +15,7 @@ describe('CarFuelTypeFormCtrl: ', function() {
     $location = _$location_;
     toastr = _toastr_;
     restService = _restService_;
+    $httpBackend.whenGET('views/application/carfueltype/list.html').respond();
   }));
 
   describe('mode -- create:', function() {
