@@ -6,6 +6,7 @@ angular.module('ngMetaCrudApp')
     $scope.cmeyId = $routeParams.id;
     restService.findCarmodelengineyear($scope.cmeyId).then(
       function success(carmodelengineyear) {
+console.log('xxxxxxxxxxxxxx');
         $scope.carmodelengineyear = carmodelengineyear;
       },
       function failure(errorResponse) {

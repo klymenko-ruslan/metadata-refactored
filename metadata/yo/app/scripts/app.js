@@ -727,15 +727,14 @@ angular.module('ngMetaCrudApp', ['ngCookies', 'ngRoute', 'ngTable',
     });
 
     // Default / Login
-    $routeProvider.when('/login', {
+    $routeProvider.when('/', {
       templateUrl: 'views/security/login.html',
       controller: 'LoginCtrl'
     });
-/*
+
     $routeProvider.otherwise({
       redirectTo: '/login'
     });
-    */
 
   }])
   .run(['$rootScope', '$log', function($rootScope, $log) {
