@@ -8,7 +8,7 @@ describe('Controller: SalesNoteListCtrl', function () {
   var $scope, $controller, $routeParams, $q, NgTableParams, restService;
 
   beforeEach(inject(function (_$q_, $rootScope, _$controller_, _restService_,
-        _NgTableParams_)
+        _NgTableParams_, $httpBackend)
   {
     $q = _$q_;
     NgTableParams = _NgTableParams_;
@@ -16,6 +16,7 @@ describe('Controller: SalesNoteListCtrl', function () {
     restService = _restService_;
     $scope = $rootScope.$new();
     $routeParams = {};
+    $httpBackend.whenGET('views/security/login.html').respond();
   }));
 
   describe('test initial state', function() {
