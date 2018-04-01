@@ -6,19 +6,15 @@ xdescribe('Service: loginRequiredInterceptor', function () {
   beforeEach(module('ngMetaCrudApp'));
 
   // instantiate service
-  var loginRequiredInterceptor,
-      $location,
-      $httpBackend,
-      Restangular;
+  var loginRequiredInterceptor, $location, $q, $httpBackend, Restangular;
 
-  beforeEach(inject(function (_loginRequiredInterceptor_, _$location_,
+  beforeEach(inject(function (_loginRequiredInterceptor_, _$location_, _$q_,
     _$httpBackend_, _Restangular_) {
-
     loginRequiredInterceptor = _loginRequiredInterceptor_;
     $location = _$location_;
+    $q = _$q_;
     $httpBackend = _$httpBackend_;
     Restangular = _Restangular_;
-
     $location.path('/foo');
   }));
 
@@ -26,6 +22,7 @@ xdescribe('Service: loginRequiredInterceptor', function () {
     expect($location.path()).toEqual('/foo'); // check initial state
     $httpBackend.expectGET('/metadata/security/user/me').respond(401);
     Restangular.one('security/user/me').get();
+    $q.apply();
     $httpBackend.flush();
     expect($location.path()).toEqual('/');
   });
