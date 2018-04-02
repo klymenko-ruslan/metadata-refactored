@@ -1,19 +1,19 @@
-drop procedure if exists rebuildbomdescendancy;
-drop procedure if exists rebuildbomdescendancyforpart;
-drop table if exists rebuildbomdescendancy_tbl;
+-- drop procedure if exists rebuildbomdescendancy;
+-- drop procedure if exists rebuildbomdescendancyforpart;
+-- drop table if exists rebuildbomdescendancy_tbl;
 
-create table rebuildbomdescendancy_tbl(
-    id  integer
-);
+-- create table rebuildbomdescendancy_tbl(
+--     id  integer
+-- );
 
 -- Mocked stored procedure.
-create procedure rebuildbomdescendancy()
-    modifies sql data
-    insert into rebuildbomdescendancy_tbl(id) values(1);
+-- create procedure rebuildbomdescendancy()
+--     modifies sql data
+--     insert into rebuildbomdescendancy_tbl(id) values(1);
 
-create procedure rebuildbomdescendancyforpart(part_id bigint, clean tinyint)
-    modifies sql data
-    insert into rebuildbomdescendancy_tbl(id) values(1);
+-- create procedure rebuildbomdescendancyforpart(part_id bigint, clean tinyint)
+--     modifies sql data
+--     insert into rebuildbomdescendancy_tbl(id) values(1);
 
 insert into part_type(id, name, parent_part_type_id, magento_attribute_set, value)
 values

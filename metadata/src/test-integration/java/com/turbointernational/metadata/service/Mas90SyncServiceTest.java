@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +27,7 @@ import com.turbointernational.metadata.entity.part.Part;
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2016-03-06.
  */
+@Ignore // TODO: migrate to ArangoDB
 public class Mas90SyncServiceTest extends AbstractFunctionalTest {
 
     @Autowired

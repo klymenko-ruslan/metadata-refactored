@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 */
 
-@Ignore
+//@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ActiveProfiles("integration")
@@ -92,12 +92,13 @@ public class MetadataAuthenticationProviderTest {
      * </ol>
      */
     //@formatter:on
+    @Ignore
     @Test(expected = BadCredentialsException.class)
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/auth_provider/db_user.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_tables.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:integration_tests/clear_dictionaries.sql")
-    //@Transactional(noRollbackFor = BadCredentialsException.class, transactionManager = "transactionManagerMetadata")
+    @Transactional(noRollbackFor = BadCredentialsException.class, transactionManager = "transactionManagerMetadata")
     public void testAuthenticateLocalDBFailure() throws Exception {
         Authentication authentication = new UsernamePasswordAuthenticationToken(DB_USER, DB_PASSWORD + "1"); // invalid password
         metadataAuthenticationProvider.authenticate(authentication);

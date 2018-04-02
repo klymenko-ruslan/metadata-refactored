@@ -1,9 +1,9 @@
 -- Clear tables, exclude dictionaries, when test finished.
 
-delete from rebuildbomdescendancy_tbl;
-delete from bom;
-delete from interchange_item;
-delete from interchange_header;
+-- delete from rebuildbomdescendancy_tbl;
+-- delete from bom;
+-- delete from interchange_item;
+-- delete from interchange_header;
 delete from cartridge;
 delete from kit;
 delete from bearing_housing;
@@ -64,6 +64,13 @@ delete from gasket_kit;
 delete from turbo_model;
 delete from turbo_type;
 
+delete from group_role;
+delete from role;
+delete from user_group;
+delete from user;
+delete from auth_provider_ldap;
+delete from auth_provider;
+
 delete from washer;
 delete from standard_oversize_part;
 delete from product_image;
@@ -72,7 +79,7 @@ alter table part alter column id restart with 1;
 alter table source alter column id restart with 1;
 alter table source_attachment alter column id restart with 1;
 alter table changelog_source_link alter column id restart with 1;
-alter table bom alter column id restart with 1;
+-- alter table bom alter column id restart with 1;
 
 -- turbo_car_model_engine_year
 

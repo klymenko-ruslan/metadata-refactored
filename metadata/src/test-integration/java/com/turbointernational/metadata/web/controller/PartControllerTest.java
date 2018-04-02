@@ -73,6 +73,7 @@ import com.turbointernational.metadata.entity.part.types.Washer;
 /**
  * Created by dmytro.trunykov@zorallabs.com on 12/19/16.
  */
+@Ignore // TODO: migrate to ArangoDB
 public class PartControllerTest extends AbstractFunctionalWebTest {
 
     @Autowired
