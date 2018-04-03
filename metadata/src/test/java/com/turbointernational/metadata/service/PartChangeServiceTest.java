@@ -9,12 +9,15 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+// TODO: remove when PartChangeService will bee removed
+@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class PartChangeServiceTest {
 

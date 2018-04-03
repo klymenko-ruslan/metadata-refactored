@@ -70,8 +70,9 @@ public class BOMService {
     @Autowired
     private ChangelogService changelogService;
 
-    @Autowired
-    private PartChangeService partChangeService;
+    // TODO: remove when PartChangeService will bee removed
+    // @Autowired
+    // private PartChangeService partChangeService;
 
     @Autowired
     private GraphDbService graphDbService;
@@ -439,7 +440,8 @@ public class BOMService {
             }
         }
         GetBomsResponse bomsResponse = graphDbService.getBoms(parentPartId);
-        partChangeService.addedBoms(parentPartId, relatedPartIds);
+        // TODO: remove when PartChangeService will bee removed
+        // partChangeService.addedBoms(parentPartId, relatedPartIds);
         Bom[] boms = dtoMapperService.map(bomsResponse.getRows(), Bom[].class);
         return new CreateBOMsResponse(failures, boms);
     }
@@ -514,7 +516,8 @@ public class BOMService {
         Bom[] boms = getParentsForBom(primaryPartId);
         // In the call below primaryPartId is actually childPartId from point of
         // view partChangeService.
-        partChangeService.addedToParentBoms(primaryPartId, relatedPartIds);
+        // TODO: remove when PartChangeService will bee removed
+        // partChangeService.addedToParentBoms(primaryPartId, relatedPartIds);
         return new BOMService.CreateBOMsResponse(failures, boms);
     }
 
@@ -530,7 +533,8 @@ public class BOMService {
         // Update
         Response response = graphDbService.modifyPartInBom(parentPartId, childPartId, quantity);
         checkSuccess(response);
-        partChangeService.updatedBom(parent.getId());
+        // TODO: remove when PartChangeService will bee removed
+        // partChangeService.updatedBom(parent.getId());
     }
 
     private void deleteBomItem(Long parentPartId, Long childPartId) throws IOException {
@@ -540,7 +544,8 @@ public class BOMService {
         Response response = graphDbService.removePartFromBom(parentPartId, childPartId);
         checkSuccess(response);
         // Notify about changes.
-        partChangeService.deletedBom(parentPartId, childPartId);
+        // TODO: remove when PartChangeService will bee removed
+        // partChangeService.deletedBom(parentPartId, childPartId);
         // Update the changelog.
         List<RelatedPart> relatedParts = new ArrayList<>(2);
         relatedParts.add(new RelatedPart(parentPartId, ChangelogPart.Role.BOM_PARENT));

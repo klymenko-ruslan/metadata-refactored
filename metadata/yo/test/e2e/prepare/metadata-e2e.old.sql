@@ -353,6 +353,94 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
+-- Table structure for table `bom`
+--
+
+DROP TABLE IF EXISTS `bom`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `bom` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `parent_part_id` bigint(20) NOT NULL,
+  `child_part_id` bigint(20) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `parent_part_id` (`parent_part_id`,`child_part_id`),
+  KEY `child_part_id` (`child_part_id`),
+  CONSTRAINT `bom_ibfk_1` FOREIGN KEY (`parent_part_id`) REFERENCES `part` (`id`),
+  CONSTRAINT `bom_ibfk_2` FOREIGN KEY (`child_part_id`) REFERENCES `part` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=64703 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+INSERT INTO `bom` VALUES (22317,14510,5801,1);
+
+--
+-- Table structure for table `bom_alt_header`
+--
+
+DROP TABLE IF EXISTS `bom_alt_header`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `bom_alt_header` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1544 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `bom_alt_item`
+--
+
+DROP TABLE IF EXISTS `bom_alt_item`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `bom_alt_item` (
+  `bom_alt_header_id` bigint(20) NOT NULL,
+  `bom_id` bigint(20) NOT NULL,
+  `part_id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `bom_alt_header_id` (`bom_alt_header_id`,`bom_id`),
+  KEY `bom_id` (`bom_id`),
+  KEY `part_id` (`part_id`),
+  CONSTRAINT `bom_alt_item_ibfk_1` FOREIGN KEY (`bom_alt_header_id`) REFERENCES `bom_alt_header` (`id`),
+  CONSTRAINT `bom_alt_item_ibfk_2` FOREIGN KEY (`bom_id`) REFERENCES `bom` (`id`),
+  CONSTRAINT `bom_alt_item_ibfk_3` FOREIGN KEY (`part_id`) REFERENCES `part` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1544 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `bom_descendant`
+--
+
+DROP TABLE IF EXISTS `bom_descendant`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `bom_descendant` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `part_bom_id` bigint(20) NOT NULL,
+  `descendant_bom_id` bigint(20) NOT NULL,
+  `distance` int(11) NOT NULL,
+  `type` varchar(20) DEFAULT NULL,
+  `qty` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `part_bom_id` (`part_bom_id`,`descendant_bom_id`,`distance`,`type`,`qty`),
+  KEY `distance` (`distance`),
+  KEY `part_bom_id_2` (`part_bom_id`,`type`,`distance`,`descendant_bom_id`),
+  KEY `descendant_bom_id` (`descendant_bom_id`),
+  CONSTRAINT `bom_descendant_ibfk_3` FOREIGN KEY (`part_bom_id`) REFERENCES `bom` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `bom_descendant_ibfk_4` FOREIGN KEY (`descendant_bom_id`) REFERENCES `bom` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=735100711 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+INSERT INTO `bom_descendant` VALUES (734844489,14510,14510,1,'direct',1);
+INSERT INTO `bom_descendant` VALUES (734897782,17645,14510,2,'Interchange',1);
+INSERT INTO `bom_descendant` VALUES (734915594,20533,14510,2,'direct',1);
+INSERT INTO `bom_descendant` VALUES (734918489,20959,14510,2,'Interchange',1);
+
+--
 -- Table structure for table `car_engine`
 --
 
@@ -19232,6 +19320,80 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
+-- Temporary view structure for view `vbom`
+--
+
+DROP TABLE IF EXISTS `vbom`;
+/*!50001 DROP VIEW IF EXISTS `vbom`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `vbom` AS SELECT 
+ 1 AS `bom_id`,
+ 1 AS `p_part_id`,
+ 1 AS `p_part_type`,
+ 1 AS `p_part_number`,
+ 1 AS `p_manufacturer`,
+ 1 AS `c_part_id`,
+ 1 AS `c_part_type`,
+ 1 AS `c_part_number`,
+ 1 AS `c_manufacturer`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `vbom_ancestor`
+--
+
+DROP TABLE IF EXISTS `vbom_ancestor`;
+/*!50001 DROP VIEW IF EXISTS `vbom_ancestor`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `vbom_ancestor` AS SELECT 
+ 1 AS `id`,
+ 1 AS `part_id`,
+ 1 AS `ancestor_part_id`,
+ 1 AS `distance`,
+ 1 AS `type`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `vbom_descendant`
+--
+
+DROP TABLE IF EXISTS `vbom_descendant`;
+/*!50001 DROP VIEW IF EXISTS `vbom_descendant`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `vbom_descendant` AS SELECT 
+ 1 AS `id`,
+ 1 AS `part_bom_id`,
+ 1 AS `descendant_bom_id`,
+ 1 AS `distance`,
+ 1 AS `type`,
+ 1 AS `qty`,
+ 1 AS `part_id_ancestor`,
+ 1 AS `part_id_descendant`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `vbom_descendant_direct`
+--
+
+DROP TABLE IF EXISTS `vbom_descendant_direct`;
+/*!50001 DROP VIEW IF EXISTS `vbom_descendant_direct`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `vbom_descendant_direct` AS SELECT 
+ 1 AS `id`,
+ 1 AS `part_bom_id`,
+ 1 AS `descendant_bom_id`,
+ 1 AS `distance`,
+ 1 AS `type`,
+ 1 AS `qty`,
+ 1 AS `part_id_ancestor`,
+ 1 AS `part_id_descendant`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Temporary view structure for view `vint`
 --
 
@@ -19277,6 +19439,27 @@ SET character_set_client = utf8;
  1 AS `kit_id`,
  1 AS `part_id`,
  1 AS `exclude`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `vmagmi_bom`
+--
+
+DROP TABLE IF EXISTS `vmagmi_bom`;
+/*!50001 DROP VIEW IF EXISTS `vmagmi_bom`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `vmagmi_bom` AS SELECT 
+ 1 AS `ancestor_sku`,
+ 1 AS `descendant_sku`,
+ 1 AS `quantity`,
+ 1 AS `distance`,
+ 1 AS `type`,
+ 1 AS `part_type_parent`,
+ 1 AS `has_bom`,
+ 1 AS `alt_sku`,
+ 1 AS `alt_mfr_id`,
+ 1 AS `int_sku`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -19483,6 +19666,241 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `RebuildBomDescendancy` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `RebuildBomDescendancy`()
+    SQL SECURITY INVOKER
+BEGIN
+
+    DELETE FROM bom_descendant;
+
+    INSERT IGNORE INTO bom_descendant(
+        part_bom_id, descendant_bom_id, distance, type, qty
+    ) SELECT b.id, b.id, 1, 'direct', b.quantity FROM bom b;
+
+    SET @distance = 1;
+    REPEAT
+        SET @distance = @distance + 1;
+        INSERT IGNORE INTO bom_descendant (
+            `part_bom_id`,
+            `descendant_bom_id`,
+            `distance`,
+            `type`,
+            `qty`
+        )
+        SELECT
+            bd.part_bom_id,
+            bc.id,
+            @distance,
+            IF (bd.`type` = 'Interchange' OR (ii2.part_id <> b.child_part_id), 'Interchange', 'direct'),
+            bc.quantity * bd.qty 
+        FROM
+            bom_descendant bd
+            inner join bom as b on bd.descendant_bom_id = b.id
+ 
+            left join interchange_item ii1 on b.child_part_id = ii1.part_id
+            left join interchange_item ii2 on ii1.interchange_header_id = ii2.interchange_header_id
+
+            inner join bom as bc on coalesce(ii2.part_id, b.child_part_id) = bc.parent_part_id
+
+        WHERE bd.distance = @distance - 1;
+
+    UNTIL ROW_COUNT() = 0 END REPEAT;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `RebuildBomDescendancyAll` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `RebuildBomDescendancyAll`()
+    SQL SECURITY INVOKER
+BEGIN
+    DECLARE done BOOLEAN DEFAULT FALSE;
+    DECLARE part_id BIGINT UNSIGNED;
+    DECLARE cur CURSOR FOR SELECT id FROM part ORDER BY id;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    DELETE FROM bom_descendant;
+
+    OPEN cur;
+
+    partsLoop: LOOP
+        FETCH cur INTO part_id;
+        IF done THEN
+            LEAVE partsLoop;
+        END IF;
+        CALL RebuildBomDescendancyForPart(part_id, 0);
+    END LOOP partsLoop;
+
+    CLOSE cur;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `RebuildBomDescendancyForPart` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `RebuildBomDescendancyForPart`(IN part_id BIGINT, IN clean TINYINT)
+    SQL SECURITY INVOKER
+BEGIN  
+    IF clean != 0 THEN
+        DELETE FROM bom_descendant
+        WHERE part_bom_id IN (SELECT id FROM bom WHERE parent_part_id = part_id OR child_part_id = part_id);
+    END IF;
+    INSERT IGNORE INTO bom_descendant(
+        part_bom_id, descendant_bom_id, distance, type, qty
+    )
+    SELECT
+        b.id, b.id, 1, 'direct', b.quantity
+    FROM bom b
+    WHERE parent_part_id = part_id OR child_part_id = part_id;
+    SET @distance = 1;
+    REPEAT
+        SET @distance = @distance + 1;
+        INSERT IGNORE INTO bom_descendant (
+            `part_bom_id`,
+            `descendant_bom_id`,
+            `distance`,
+            `type`,
+            `qty`
+        )
+        SELECT
+            bd.part_bom_id,
+            bc.id,
+            @distance,
+            IF (bd.`type` = 'Interchange' OR (ii2.part_id <> b.child_part_id), 'Interchange', 'direct'),
+            bc.quantity * bd.qty 
+        FROM
+            bom_descendant bd
+            inner join bom as b on bd.descendant_bom_id = b.id
+ 
+            left join interchange_item ii1 on b.child_part_id = ii1.part_id
+            left join interchange_item ii2 on ii1.interchange_header_id = ii2.interchange_header_id
+
+            inner join bom as bc on coalesce(ii2.part_id, b.child_part_id) = bc.parent_part_id
+
+        WHERE bd.distance = @distance - 1;
+    UNTIL ROW_COUNT() = 0 END REPEAT;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `test1` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `test1`()
+BEGIN
+
+    START TRANSACTION;
+
+    
+    TRUNCATE bom_ancestor;
+
+    
+    INSERT IGNORE INTO bom_ancestor (
+      `part_id`,
+      `ancestor_part_id`,
+      `distance`,
+      `type`
+    )
+    SELECT DISTINCT
+      id     AS part_id,
+      id     AS ancestor_part_id,
+      0      AS distance,
+      'Self' AS `type`
+    FROM
+      part;
+
+    REPEAT
+        SET @distance = (SELECT MAX(distance) FROM bom_ancestor);
+
+        
+        INSERT IGNORE INTO bom_ancestor (
+          `part_id`,
+          `ancestor_part_id`,
+          `distance`,
+          `type`
+        )
+        SELECT DISTINCT
+          ba.part_id          AS part_id,          
+          bom.parent_part_id  AS ancestor_part_id, 
+          @distance + 1       AS distance,
+          IF (@distance = 0, 'InterchangeDirect', 'InterchangeIndirect') AS `type`
+        FROM
+          bom_ancestor ba
+          JOIN interchange_item ii ON ii.part_id = ba.ancestor_part_id
+          JOIN interchange_item ii2 ON
+            ii2.interchange_header_id = ii.interchange_header_id
+            AND ii2.part_id <> ii.part_id
+          JOIN bom ON bom.child_part_id = ii2.part_id
+        WHERE ba.distance = @distance;
+
+        
+        INSERT IGNORE INTO bom_ancestor (
+          `part_id`,
+          `ancestor_part_id`,
+          `distance`,
+          `type`
+        )
+        SELECT DISTINCT
+          ba.part_id           AS part_id,
+          bom.parent_part_id   AS ancestor_part_id,
+          @distance + 1      AS distance,
+          IF (@distance = 0, 'Direct', IF(ba.`type` LIKE 'Interchange%', 'InterchangeIndirect', 'Indirect')) AS `type`
+        FROM
+          bom_ancestor ba
+          JOIN bom ON bom.child_part_id = ba.ancestor_part_id
+        WHERE ba.distance = @distance;
+
+    UNTIL ROW_COUNT() = 0
+    END REPEAT;
+
+    COMMIT;
+    
+  END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Final view structure for view `test_ii`
@@ -19521,6 +19939,24 @@ DELIMITER ;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
+-- Final view structure for view `test_vmagmi_service_kits`
+--
+
+/*!50001 DROP VIEW IF EXISTS `test_vmagmi_service_kits`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+
+/*!50001 VIEW `test_vmagmi_service_kits` AS select `p`.`id` AS `sku`,`pk`.`id` AS `kitSku`,`pk`.`manfr_part_num` AS `kitPartNumber`,`pk`.`description` AS `description`,`kti`.`id` AS `tiKitSku`,`kti`.`manfr_part_num` AS `tiKitPartNumber` from ((((((((((((((`part` `p` left join ((((((`bom_descendant` `bd` join `bom` `b` on((`bd`.`part_bom_id` = `b`.`id`))) join `interchange_item` `ii1` on((`b`.`parent_part_id` = `ii1`.`part_id`))) join `interchange_item` `ii2` on((`ii2`.`interchange_header_id` = `ii1`.`interchange_header_id`))) join `bom` `bc` on((`bd`.`descendant_bom_id` = `bc`.`id`))) join `interchange_item` `ii3` on((`bc`.`child_part_id` = `ii3`.`part_id`))) join `interchange_item` `ii4` on((`ii3`.`interchange_header_id` = `ii4`.`interchange_header_id`))) on((`p`.`id` = `ii4`.`part_id`))) left join `kit_part_common_component` `kc1` on(((`kc1`.`part_id` = `p`.`id`) and (`kc1`.`exclude` = 0)))) left join `kit_part_common_component` `kc1a` on(((`kc1a`.`part_id` = `ii2`.`part_id`) and (`kc1a`.`exclude` = 0)))) left join ((`part_turbo_type` `ptt` join `part_turbo_type` `ptt2` on((`ptt2`.`turbo_type_id` = `ptt`.`turbo_type_id`))) join `kit` `k2` on(((`k2`.`part_id` = `ptt2`.`part_id`) and (`ptt`.`part_id` <> `k2`.`part_id`)))) on((`ptt`.`part_id` = `p`.`id`))) left join `kit_part_common_component` `kc2` on(((`kc2`.`kit_id` = `k2`.`part_id`) and (`kc2`.`part_id` = `ptt`.`part_id`) and (`kc2`.`exclude` = 1)))) left join ((`part_turbo_type` `ptta` join `part_turbo_type` `ptt2a` on((`ptt2a`.`turbo_type_id` = `ptta`.`turbo_type_id`))) join `kit` `k2a` on(((`k2a`.`part_id` = `ptt2a`.`part_id`) and (`ptta`.`part_id` <> `k2a`.`part_id`)))) on((`ptta`.`part_id` = `ii2`.`part_id`))) left join `kit_part_common_component` `kc2a` on(((`kc2a`.`kit_id` = `k2a`.`part_id`) and (`kc2a`.`part_id` = `ptta`.`part_id`) and (`kc2a`.`exclude` = 1)))) left join (((`turbo` `t1` join `turbo_model` `tm1` on((`tm1`.`id` = `t1`.`turbo_model_id`))) join `part_turbo_type` `ptt3` on(((`ptt3`.`turbo_type_id` = `tm1`.`turbo_type_id`) and (`ptt3`.`part_id` <> `t1`.`part_id`)))) join `kit` `k3` on(((`k3`.`part_id` = `ptt3`.`part_id`) and (`t1`.`part_id` <> `k3`.`part_id`)))) on((`t1`.`part_id` = `p`.`id`))) left join `kit_part_common_component` `kc3` on(((`kc3`.`kit_id` = `k3`.`part_id`) and (`kc3`.`part_id` = `t1`.`part_id`) and (`kc3`.`exclude` = 1)))) left join (((`turbo` `t1a` join `turbo_model` `tm1a` on((`tm1a`.`id` = `t1a`.`turbo_model_id`))) join `part_turbo_type` `ptt3a` on(((`ptt3a`.`turbo_type_id` = `tm1a`.`turbo_type_id`) and (`ptt3a`.`part_id` <> `t1a`.`part_id`)))) join `kit` `k3a` on(((`k3a`.`part_id` = `ptt3a`.`part_id`) and (`t1a`.`part_id` <> `k3a`.`part_id`)))) on((`t1a`.`part_id` = `ii2`.`part_id`))) left join `kit_part_common_component` `kc3a` on(((`kc3a`.`kit_id` = `k3a`.`part_id`) and (`kc3a`.`part_id` = `t1a`.`part_id`) and (`kc3a`.`exclude` = 1)))) join `part` `pk` on((`pk`.`id` in (`kc1`.`kit_id`,`kc1a`.`kit_id`,`k2`.`part_id`,`k2a`.`part_id`,`k3`.`part_id`,`k3a`.`part_id`)))) left join `vint_ti` `iti` on((`iti`.`part_id` = `pk`.`id`))) left join `part` `kti` on((`kti`.`id` = `iti`.`ti_part_id`))) where (isnull(`kc2`.`exclude`) and isnull(`kc2a`.`exclude`) and isnull(`kc3`.`exclude`) and isnull(`kc3a`.`exclude`)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `vapp`
 --
 
@@ -19534,6 +19970,96 @@ DELIMITER ;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 
 /*!50001 VIEW `vapp` AS select distinct `p`.`id` AS `part_id`,`cmake`.`name` AS `car_make`,`cyear`.`name` AS `car_year`,`cmodel`.`name` AS `car_model` from ((((((`part` `p` join `vpart_turbo` `pt` on((`pt`.`part_id` = `p`.`id`))) join `turbo_car_model_engine_year` `c` on((`c`.`part_id` = `pt`.`turbo_id`))) left join `car_model_engine_year` `cmey` on((`cmey`.`id` = `c`.`car_model_engine_year_id`))) left join `car_model` `cmodel` on((`cmodel`.`id` = `cmey`.`car_model_id`))) left join `car_make` `cmake` on((`cmake`.`id` = `cmodel`.`car_make_id`))) left join `car_year` `cyear` on((`cyear`.`id` = `cmey`.`car_year_id`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vbalt`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vbalt`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+
+/*!50001 VIEW `vbalt` AS select `bai`.`bom_id` AS `bom_id`,`b`.`child_part_id` AS `child_part_id`,`bai`.`bom_alt_header_id` AS `bom_alt_header_id`,`bah`.`name` AS `alt_header_name`,`bah`.`description` AS `alt_header_desc`,`bai`.`part_id` AS `alt_part_id`,`pt`.`name` AS `alt_part_type`,`p`.`manfr_part_num` AS `alt_part_number`,`m`.`name` AS `alt_manufacturer`,`m`.`id` AS `alt_manufacturer_id` from (((((`bom_alt_item` `bai` join `bom` `b` on((`b`.`id` = `bai`.`bom_id`))) join `bom_alt_header` `bah` on((`bah`.`id` = `bai`.`bom_alt_header_id`))) join `part` `p` on((`p`.`id` = `bai`.`part_id`))) join `part_type` `pt` on((`pt`.`id` = `p`.`part_type_id`))) join `manfr` `m` on((`m`.`id` = `p`.`manfr_id`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vbom`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vbom`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+
+/*!50001 VIEW `vbom` AS select `b`.`id` AS `bom_id`,`pp`.`id` AS `p_part_id`,`ppt`.`name` AS `p_part_type`,`pp`.`manfr_part_num` AS `p_part_number`,`ppm`.`name` AS `p_manufacturer`,`cp`.`id` AS `c_part_id`,`cpt`.`name` AS `c_part_type`,`cp`.`manfr_part_num` AS `c_part_number`,`cpm`.`name` AS `c_manufacturer` from ((((((`bom` `b` join `part` `pp` on((`pp`.`id` = `b`.`parent_part_id`))) join `part_type` `ppt` on((`ppt`.`id` = `pp`.`part_type_id`))) join `manfr` `ppm` on((`ppm`.`id` = `pp`.`manfr_id`))) join `part` `cp` on((`cp`.`id` = `b`.`child_part_id`))) join `part_type` `cpt` on((`cpt`.`id` = `cp`.`part_type_id`))) join `manfr` `cpm` on((`cpm`.`id` = `cp`.`manfr_id`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vbom_ancestor`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vbom_ancestor`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+
+/*!50001 VIEW `vbom_ancestor` AS select `bd`.`id` AS `id`,`ii`.`part_id` AS `part_id`,`ii2`.`part_id` AS `ancestor_part_id`,`bd`.`distance` AS `distance`,if(((`ii2`.`part_id` <> `b`.`parent_part_id`) or (`ii`.`part_id` <> `bc`.`child_part_id`)),'Interchange',`bd`.`type`) AS `type` from ((((((`bom_descendant` `bd` join `bom` `b` on((`bd`.`part_bom_id` = `b`.`id`))) join `interchange_item` `ii1` on((`b`.`parent_part_id` = `ii1`.`part_id`))) join `interchange_item` `ii2` on((`ii2`.`interchange_header_id` = `ii1`.`interchange_header_id`))) join `bom` `bc` on((`bd`.`descendant_bom_id` = `bc`.`id`))) join `interchange_item` `ii3` on((`bc`.`child_part_id` = `ii3`.`part_id`))) join `interchange_item` `ii` on((`ii3`.`interchange_header_id` = `ii`.`interchange_header_id`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vbom_descendant`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vbom_descendant`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+
+/*!50001 VIEW `vbom_descendant` AS select `bd`.`id` AS `id`,`bd`.`part_bom_id` AS `part_bom_id`,`bd`.`descendant_bom_id` AS `descendant_bom_id`,`bd`.`distance` AS `distance`,if(((`ii2`.`part_id` <> `b`.`parent_part_id`) or (`ii`.`part_id` <> `bc`.`child_part_id`)),'Interchange',`bd`.`type`) AS `type`,`bd`.`qty` AS `qty`,`ii2`.`part_id` AS `part_id_ancestor`,`ii`.`part_id` AS `part_id_descendant` from ((((((`bom_descendant` `bd` join `bom` `b` on((`bd`.`part_bom_id` = `b`.`id`))) join `interchange_item` `ii1` on((`b`.`parent_part_id` = `ii1`.`part_id`))) join `interchange_item` `ii2` on((`ii2`.`interchange_header_id` = `ii1`.`interchange_header_id`))) join `bom` `bc` on((`bd`.`descendant_bom_id` = `bc`.`id`))) join `interchange_item` `ii3` on((`bc`.`child_part_id` = `ii3`.`part_id`))) join `interchange_item` `ii` on((`ii3`.`interchange_header_id` = `ii`.`interchange_header_id`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vbom_descendant_direct`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vbom_descendant_direct`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+
+/*!50001 VIEW `vbom_descendant_direct` AS select `bd`.`id` AS `id`,`bd`.`part_bom_id` AS `part_bom_id`,`bd`.`descendant_bom_id` AS `descendant_bom_id`,`bd`.`distance` AS `distance`,`bd`.`type` AS `type`,`bd`.`qty` AS `qty`,`b`.`parent_part_id` AS `part_id_ancestor`,`bc`.`child_part_id` AS `part_id_descendant` from ((`bom_descendant` `bd` join `bom` `b` on((`bd`.`part_bom_id` = `b`.`id`))) join `bom` `bc` on((`bd`.`descendant_bom_id` = `bc`.`id`))) where (`bd`.`type` = 'direct') */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -19593,6 +20119,42 @@ DELIMITER ;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
+-- Final view structure for view `vmagmi_bom`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vmagmi_bom`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+
+/*!50001 VIEW `vmagmi_bom` AS select distinct `bd`.`part_id_ancestor` AS `ancestor_sku`,`bd`.`part_id_descendant` AS `descendant_sku`,`bd`.`qty` AS `quantity`,`bd`.`distance` AS `distance`,`bd`.`type` AS `type`,`dppt`.`value` AS `part_type_parent`,if((`db`.`id` is not null),1,0) AS `has_bom`,`alt`.`child_part_id` AS `alt_sku`,`alt`.`alt_manufacturer_id` AS `alt_mfr_id`,`vit`.`ti_part_id` AS `int_sku` from (((((((`vbom_descendant` `bd` join `part` `dp` on((`dp`.`id` = `bd`.`part_id_descendant`))) join `part_type` `dpt` on((`dpt`.`id` = `dp`.`part_type_id`))) left join `part_type` `dppt` on((`dppt`.`id` = `dpt`.`parent_part_type_id`))) left join `vbalt` `alt` on((`alt`.`bom_id` = `bd`.`part_bom_id`))) left join `vint_ti` `vit` on((`vit`.`part_id` = `bd`.`part_id_descendant`))) left join `bom` `db` on((`db`.`parent_part_id` = `bd`.`part_id_descendant`))) left join `vbom_descendant_direct` `bdd` on(((`bd`.`part_id_ancestor` = `bdd`.`part_id_ancestor`) and (`bd`.`part_id_descendant` = `bdd`.`part_id_descendant`) and (`bd`.`type` = 'Interchange')))) where isnull(`bdd`.`id`) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vmagmi_service_kits`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vmagmi_service_kits`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+
+/*!50001 VIEW `vmagmi_service_kits` AS select `p`.`id` AS `sku`,`pk`.`id` AS `kitSku`,`pk`.`manfr_part_num` AS `kitPartNumber`,`pk`.`description` AS `description`,`kti`.`id` AS `tiKitSku`,`kti`.`manfr_part_num` AS `tiKitPartNumber` from ((((((((((((((`part` `p` left join ((((((`bom_descendant` `bd` join `bom` `b` on((`bd`.`part_bom_id` = `b`.`id`))) join `interchange_item` `ii1` on((`b`.`parent_part_id` = `ii1`.`part_id`))) join `interchange_item` `ii2` on((`ii2`.`interchange_header_id` = `ii1`.`interchange_header_id`))) join `bom` `bc` on((`bd`.`descendant_bom_id` = `bc`.`id`))) join `interchange_item` `ii3` on((`bc`.`child_part_id` = `ii3`.`part_id`))) join `interchange_item` `ii4` on((`ii3`.`interchange_header_id` = `ii4`.`interchange_header_id`))) on((`p`.`id` = `ii4`.`part_id`))) left join `kit_part_common_component` `kc1` on(((`kc1`.`part_id` = `p`.`id`) and (`kc1`.`exclude` = 0)))) left join `kit_part_common_component` `kc1a` on(((`kc1a`.`part_id` = `ii2`.`part_id`) and (`kc1a`.`exclude` = 0)))) left join ((`part_turbo_type` `ptt` join `part_turbo_type` `ptt2` on((`ptt2`.`turbo_type_id` = `ptt`.`turbo_type_id`))) join `kit` `k2` on(((`k2`.`part_id` = `ptt2`.`part_id`) and (`ptt`.`part_id` <> `k2`.`part_id`)))) on((`ptt`.`part_id` = `p`.`id`))) left join `kit_part_common_component` `kc2` on(((`kc2`.`kit_id` = `k2`.`part_id`) and (`kc2`.`part_id` = `ptt`.`part_id`) and (`kc2`.`exclude` = 1)))) left join ((`part_turbo_type` `ptta` join `part_turbo_type` `ptt2a` on((`ptt2a`.`turbo_type_id` = `ptta`.`turbo_type_id`))) join `kit` `k2a` on(((`k2a`.`part_id` = `ptt2a`.`part_id`) and (`ptta`.`part_id` <> `k2a`.`part_id`)))) on((`ptta`.`part_id` = `ii2`.`part_id`))) left join `kit_part_common_component` `kc2a` on(((`kc2a`.`kit_id` = `k2a`.`part_id`) and (`kc2a`.`part_id` = `ptta`.`part_id`) and (`kc2a`.`exclude` = 1)))) left join (((`turbo` `t1` join `turbo_model` `tm1` on((`tm1`.`id` = `t1`.`turbo_model_id`))) join `part_turbo_type` `ptt3` on(((`ptt3`.`turbo_type_id` = `tm1`.`turbo_type_id`) and (`ptt3`.`part_id` <> `t1`.`part_id`)))) join `kit` `k3` on(((`k3`.`part_id` = `ptt3`.`part_id`) and (`t1`.`part_id` <> `k3`.`part_id`)))) on((`t1`.`part_id` = `p`.`id`))) left join `kit_part_common_component` `kc3` on(((`kc3`.`kit_id` = `k3`.`part_id`) and (`kc3`.`part_id` = `t1`.`part_id`) and (`kc3`.`exclude` = 1)))) left join (((`turbo` `t1a` join `turbo_model` `tm1a` on((`tm1a`.`id` = `t1a`.`turbo_model_id`))) join `part_turbo_type` `ptt3a` on(((`ptt3a`.`turbo_type_id` = `tm1a`.`turbo_type_id`) and (`ptt3a`.`part_id` <> `t1a`.`part_id`)))) join `kit` `k3a` on(((`k3a`.`part_id` = `ptt3a`.`part_id`) and (`t1a`.`part_id` <> `k3a`.`part_id`)))) on((`t1a`.`part_id` = `ii2`.`part_id`))) left join `kit_part_common_component` `kc3a` on(((`kc3a`.`kit_id` = `k3a`.`part_id`) and (`kc3a`.`part_id` = `t1a`.`part_id`) and (`kc3a`.`exclude` = 1)))) join `part` `pk` on((`pk`.`id` in (`kc1`.`kit_id`,`kc1a`.`kit_id`,`k2`.`part_id`,`k2a`.`part_id`,`k3`.`part_id`,`k3a`.`part_id`)))) left join `vint_ti` `iti` on((`iti`.`part_id` = `pk`.`id`))) left join `part` `kti` on((`kti`.`id` = `iti`.`ti_part_id`))) where (isnull(`kc2`.`exclude`) and isnull(`kc2a`.`exclude`) and isnull(`kc3`.`exclude`) and isnull(`kc3a`.`exclude`) and (`p`.`part_type_id` in (1,2,3))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `vmagmi_sop`
 --
 
@@ -19606,6 +20168,42 @@ DELIMITER ;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 
 /*!50001 VIEW `vmagmi_sop` AS select `ssop`.`oversize_part_id` AS `part_id`,`ssop`.`standard_part_id` AS `standard_part_sku`,group_concat(distinct `ii2`.`part_id` order by `ii2`.`part_id` ASC separator ',') AS `oversize_part_skus` from ((((`standard_oversize_part` `ssop` join `standard_oversize_part` `osop` on((`osop`.`standard_part_id` = `ssop`.`standard_part_id`))) left join `part` `op` on(((`op`.`id` = `osop`.`oversize_part_id`) and (`op`.`manfr_id` = 11)))) left join `interchange_item` `ii` on((`ii`.`part_id` = `op`.`id`))) left join `interchange_item` `ii2` on((`ii2`.`interchange_header_id` = `ii`.`interchange_header_id`))) group by `ssop`.`oversize_part_id`,`ssop`.`standard_part_id` union select `ssop`.`standard_part_id` AS `part_id`,`ssop`.`standard_part_id` AS `standard_part_sku`,group_concat(distinct `ii2`.`part_id` order by `ii2`.`part_id` ASC separator ',') AS `oversize_part_skus` from (((`standard_oversize_part` `ssop` left join `part` `op` on(((`op`.`id` = `ssop`.`oversize_part_id`) and (`op`.`manfr_id` = 11)))) left join `interchange_item` `ii` on((`ii`.`part_id` = `op`.`id`))) left join `interchange_item` `ii2` on((`ii2`.`interchange_header_id` = `ii`.`interchange_header_id`))) group by `ssop`.`standard_part_id` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vmagmi_ti_chra`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vmagmi_ti_chra`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+
+/*!50001 VIEW `vmagmi_ti_chra` AS select `p`.`id` AS `id`,(case when (`pt`.`manfr_part_num` is not null) then 'yes' else 'no' end) AS `has_ti_chra` from (`part` `p` left join (`vbom_descendant` `bd` join `part` `pt` on(((`bd`.`part_id_descendant` = `pt`.`id`) and (`pt`.`manfr_id` = 11) and (`pt`.`part_type_id` = 2)))) on((`p`.`id` = `bd`.`part_id_ancestor`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vpart_turbo`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vpart_turbo`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+
+/*!50001 VIEW `vpart_turbo` AS (select distinct `ba`.`part_id` AS `part_id`,`ba`.`ancestor_part_id` AS `turbo_id` from (`vbom_ancestor` `ba` join `turbo` `t` on((`t`.`part_id` = `ba`.`ancestor_part_id`)))) union (select `turbo`.`part_id` AS `part_id`,`turbo`.`part_id` AS `turbo_id` from `turbo`) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -19663,5 +20261,32 @@ DELIMITER ;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vwhere_used`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vwhere_used`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+
+/*!50001 VIEW `vwhere_used` AS select `p`.`id` AS `principal_id`,`pt`.`name` AS `principal_type`,`ap`.`id` AS `sku`,`apm`.`name` AS `manufacturer`,`ap`.`manfr_part_num` AS `part_number`,`aptii`.`ti_part_id` AS `ti_sku`,`aptiip`.`manfr_part_num` AS `ti_part_number`,`aptype`.`name` AS `part_type`,`apt2t`.`name` AS `turbo_type`,`apcatp`.`manfr_part_num` AS `turbo_part_number` from ((((((((((((((`vbom_ancestor` `ba` join `part` `p` on((`p`.`id` = `ba`.`part_id`))) join `part_type` `pt` on((`pt`.`id` = `p`.`part_type_id`))) join `part` `ap` on((`ap`.`id` = `ba`.`ancestor_part_id`))) join `part_type` `aptype` on((`aptype`.`id` = `ap`.`part_type_id`))) join `manfr` `apm` on((`apm`.`id` = `ap`.`manfr_id`))) left join `turbo` `apt2` on((`apt2`.`part_id` = `ap`.`id`))) left join `turbo_model` `apt2m` on((`apt2m`.`id` = `apt2`.`turbo_model_id`))) left join `turbo_type` `apt2t` on((`apt2t`.`id` = `apt2m`.`turbo_type_id`))) left join `cartridge` `apc` on((`apc`.`part_id` = `ba`.`ancestor_part_id`))) left join `vint_ti` `aptii` on((`aptii`.`part_id` = `ba`.`ancestor_part_id`))) left join `part` `aptiip` on((`aptiip`.`id` = `aptii`.`ti_part_id`))) left join `vbom_ancestor` `apcba` on(((`apcba`.`part_id` = `apc`.`part_id`) and (`apcba`.`distance` <> 0)))) left join `turbo` `apcat` on((`apcat`.`part_id` = `apcba`.`ancestor_part_id`))) left join `part` `apcatp` on((`apcatp`.`id` = `apcat`.`part_id`))) where ((`ba`.`distance` <> 0) and (case `pt`.`magento_attribute_set` when 'Turbo' then 1 when 'Cartridge' then (`aptype`.`name` = 'Turbo') else (`aptype`.`name` = 'Cartridge') end)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2017-05-22  4:52:45

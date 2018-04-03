@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Profile("!integration")
+@Deprecated // Interchanges and BOMs migrated to ArangoDb
 public class RabbitMessagingService implements MessagingService {
 
     private final static Logger log = LoggerFactory.getLogger(RabbitMessagingService.class);

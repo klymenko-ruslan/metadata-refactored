@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * @author dmytro.trunykov@zorallabs.com
  */
+@Deprecated // Interchanges and BOMs migrated to ArangoDb
 @Service
 public class PartChangeService {
 
