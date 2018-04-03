@@ -13,7 +13,7 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
-import com.turbointernational.metadata.AbstractFunctionalTest;
+import com.turbointernational.metadata.AbstractFunctionalIT;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.part.Part;
 
@@ -23,7 +23,7 @@ import com.turbointernational.metadata.entity.part.Part;
 // The test is not actual after migration to ArangoDb.
 // Broken after migration code snippets are commented out with label 'ARANGODB'.
 @Ignore
-public class InterchangeServiceTest extends AbstractFunctionalTest {
+public class InterchangeServiceIT extends AbstractFunctionalIT {
 
     @Autowired
     private InterchangeService interchangeService;

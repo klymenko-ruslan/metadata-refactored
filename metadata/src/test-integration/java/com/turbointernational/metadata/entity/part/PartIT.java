@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @ActiveProfiles("integration")
 @Transactional
-public class PartTest {
+public class PartIT {
 
     @Autowired
     private PartDao partDao;

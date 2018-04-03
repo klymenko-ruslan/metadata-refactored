@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.jdbc.Sql;
 
-import com.turbointernational.metadata.AbstractFunctionalWebTest;
+import com.turbointernational.metadata.AbstractFunctionalWebIT;
 import com.turbointernational.metadata.dao.CarModelEngineYearDao;
 import com.turbointernational.metadata.entity.CarEngine;
 import com.turbointernational.metadata.entity.CarModel;
@@ -21,7 +21,7 @@ import com.turbointernational.metadata.entity.CarYear;
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2016-12-22.
  */
-public class ApplicationControllerTest extends AbstractFunctionalWebTest {
+public class ApplicationControllerIT extends AbstractFunctionalWebIT {
 
     @Autowired
     private CarModelEngineYearDao carModelEngineYearDao;

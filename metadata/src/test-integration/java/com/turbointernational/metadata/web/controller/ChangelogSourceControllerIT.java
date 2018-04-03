@@ -16,7 +16,7 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import com.turbointernational.metadata.AbstractFunctionalWebTest;
+import com.turbointernational.metadata.AbstractFunctionalWebIT;
 import com.turbointernational.metadata.entity.Changelog;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceId;
@@ -27,7 +27,7 @@ import com.turbointernational.metadata.entity.chlogsrc.SourceAttachment;
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-01-24 12:59.
  */
-public class ChangelogSourceControllerTest extends AbstractFunctionalWebTest {
+public class ChangelogSourceControllerIT extends AbstractFunctionalWebIT {
 
     /**
      * Test that source which is unlinked and without attachment(s) can be

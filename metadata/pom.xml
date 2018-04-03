@@ -30,6 +30,41 @@
         $ mvn install:install-file -Dfile=../bits/libs/sqljdbc_4.2/enu/sqljdbc42.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.2 -Dpackaging=jar
 
 
+    TEST THE PROJECT
+    ==================
+
+    The projects has following kind of tests:
+     * Java unit tests
+     * Java integration tests
+     * JavaScript unit tests
+     * E2E test suite to test the running application and other components by a robot
+     
+    The Java and JavaScript unit tests can be run by following command:
+
+    $ mvn clean test
+
+    Java unit tests can be skipped by an option '-DskipTests' in the command line.
+    JavaScript unit tests can be skipped by an option 'yo.test.skip=true' in the command line.
+    Also JavaScript unit tests can be run separately by a Grunt task runner by following command:
+    
+    $ cd ./yo
+    $ grunt test:unit
+
+    Also it is possible to run JavaScript unit tests in a mode when the unit tests run again
+    when any JS source file is changed. To run the tests in this mode use option 'test-dev:unit'
+    instead of 'test:unit'.
+    
+    Integration Java tests can be run by following command:
+    
+    $ mvn clean verify
+    
+    This command runs JavaScript unit tests, Java unit tests, build project JAR, and run integration
+    tests at the end to make sure that built package is ready for deploy.
+    
+    E2E test stuff is located in a folder './yo/test/e2e/'. There are README in that folder with
+    purpose and details about that test suite and how it can be runned.
+
+
     BUILD THE PROJECT
     ==================
 
@@ -549,11 +584,11 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>com/turbointernational/metadata/AbstractFunctionalTest.java</exclude>
-                        <exclude>com/turbointernational/metadata/AbstractFunctionalWebTest.java</exclude>
+                        <exclude>com/turbointernational/metadata/AbstractFunctionalIT.java</exclude>
+                        <exclude>com/turbointernational/metadata/AbstractFunctionalWebIT.java</exclude>
                     </excludes>
                     <includes>
-                        <include>com/turbointernational/metadata/**/*Test.java</include>
+                        <include>com/turbointernational/metadata/**/*IT.java</include>
                     </includes>
                 </configuration>
             </plugin>

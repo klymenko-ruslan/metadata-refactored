@@ -17,7 +17,7 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.turbointernational.metadata.AbstractFunctionalTest;
+import com.turbointernational.metadata.AbstractFunctionalIT;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.dao.UserDao;
 import com.turbointernational.metadata.entity.Mas90Sync;
@@ -28,7 +28,7 @@ import com.turbointernational.metadata.entity.part.Part;
  * Created by dmytro.trunykov@zorallabs.com on 2016-03-06.
  */
 @Ignore // TODO: migrate to ArangoDB
-public class Mas90SyncServiceTest extends AbstractFunctionalTest {
+public class Mas90SyncServiceIT extends AbstractFunctionalIT {
 
     @Autowired
     @Qualifier("dataSourceMas90")

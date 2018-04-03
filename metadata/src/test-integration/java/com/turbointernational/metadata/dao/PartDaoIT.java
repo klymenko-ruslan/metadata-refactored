@@ -5,14 +5,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.turbointernational.metadata.AbstractFunctionalTest;
+import com.turbointernational.metadata.AbstractFunctionalIT;
 import com.turbointernational.metadata.web.dto.AlsoBought;
 import com.turbointernational.metadata.web.dto.Page;
 
 /**
  * @author dmytro.trunykov@zorallabs.com
  */
-public class PartDaoTest extends AbstractFunctionalTest {
+public class PartDaoIT extends AbstractFunctionalIT {
 
     @Autowired
     private PartDao partDao;

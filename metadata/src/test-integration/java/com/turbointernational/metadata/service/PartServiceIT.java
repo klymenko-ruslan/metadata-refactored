@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.jdbc.Sql;
 
-import com.turbointernational.metadata.AbstractFunctionalTest;
+import com.turbointernational.metadata.AbstractFunctionalIT;
 import com.turbointernational.metadata.entity.part.ProductImage;
 
-public class PartServiceTest extends AbstractFunctionalTest {
+public class PartServiceIT extends AbstractFunctionalIT {
 
     @Autowired
     private PartService partService;

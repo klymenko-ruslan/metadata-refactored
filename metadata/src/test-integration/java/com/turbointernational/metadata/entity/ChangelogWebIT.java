@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.entity;
 
-import com.turbointernational.metadata.AbstractFunctionalTest;
+import com.turbointernational.metadata.AbstractFunctionalIT;
 import com.turbointernational.metadata.dao.ChangelogDao;
 import com.turbointernational.metadata.dao.ChangelogPartDao;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-02-10.
  */
-public class ChangelogWebTest extends AbstractFunctionalTest {
+public class ChangelogWebIT extends AbstractFunctionalIT {
 
     @Autowired
     private ChangelogDao changelogDao;

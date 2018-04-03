@@ -7,7 +7,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.turbointernational.metadata.AbstractFunctionalTest;
+import com.turbointernational.metadata.AbstractFunctionalIT;
 
 /**
  * These are not real integration tests. It is rather code snippets for testing
@@ -15,7 +15,7 @@ import com.turbointernational.metadata.AbstractFunctionalTest;
  *
  * Created by dmytro.trunykov@zorallabs.com on 2016-11-05.
  */
-public class SearchServiceEsImplTest extends AbstractFunctionalTest {
+public class SearchServiceEsImplIT extends AbstractFunctionalIT {
 
     @Autowired
     private SearchService searchService;

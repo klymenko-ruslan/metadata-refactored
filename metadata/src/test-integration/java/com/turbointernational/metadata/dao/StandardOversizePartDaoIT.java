@@ -1,6 +1,6 @@
 package com.turbointernational.metadata.dao;
 
-import com.turbointernational.metadata.AbstractFunctionalTest;
+import com.turbointernational.metadata.AbstractFunctionalIT;
 import com.turbointernational.metadata.entity.part.Part;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-02-17.
  */
-public class StandardOversizePartDaoTest extends AbstractFunctionalTest {
+public class StandardOversizePartDaoIT extends AbstractFunctionalIT {
 
     @Autowired
     private StandardOversizePartDao standardOversizePartDao;

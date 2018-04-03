@@ -11,13 +11,13 @@ import org.junit.Test;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.jdbc.Sql;
 
-import com.turbointernational.metadata.AbstractFunctionalWebTest;
+import com.turbointernational.metadata.AbstractFunctionalWebIT;
 
 /**
  * Created by dmytro.trunykov@zorallabs.com on 2017-02-03.
  */
 @Ignore // TODO: migrate to ArangoDB
-public class ChangelogControllerTest extends AbstractFunctionalWebTest {
+public class ChangelogControllerIT extends AbstractFunctionalWebIT {
 
     @Test
     @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")

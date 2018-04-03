@@ -17,7 +17,7 @@ import java.util.Hashtable;
 /**
  * Created by trunikov on 3/20/16.
  */
-public class TestAD {
+public class AdIT {
 
     private final static String SERVER_HOST = "ldap.turbointernational.com";
 

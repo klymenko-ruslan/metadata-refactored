@@ -19,7 +19,7 @@ import org.springframework.web.context.WebApplicationContext;
  * Created by trunikov on 2/10/17.
  */
 
-public abstract class AbstractFunctionalWebTest extends AbstractFunctionalTest {
+public abstract class AbstractFunctionalWebIT extends AbstractFunctionalIT {
 
     @Autowired
     private WebApplicationContext webApplicationContext;

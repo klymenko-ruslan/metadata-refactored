@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.jdbc.Sql;
 
-import com.turbointernational.metadata.AbstractFunctionalWebTest;
+import com.turbointernational.metadata.AbstractFunctionalWebIT;
 import com.turbointernational.metadata.entity.ChangelogPart;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSource;
 import com.turbointernational.metadata.entity.chlogsrc.ChangelogSourceLink;
@@ -28,7 +28,7 @@ import com.turbointernational.metadata.entity.chlogsrc.Source;
 /**
  * Created by dmytro.trunykov@zorallabs.com on 22-01-2017.
  */
-public class BOMControllerTest extends AbstractFunctionalWebTest {
+public class BOMControllerIT extends AbstractFunctionalWebIT {
 
     @Test
     @Sql(executionPhase = BEFORE_TEST_METHOD, scripts = "classpath:integration_tests/feed_dictionaries.sql")

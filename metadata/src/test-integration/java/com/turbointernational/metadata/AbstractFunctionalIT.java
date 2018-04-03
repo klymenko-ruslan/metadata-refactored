@@ -27,7 +27,7 @@ import javax.sql.DataSource;
         dataSource = "dataSource",
         transactionManager = "transactionManagerMetadata"
 )
-public class AbstractFunctionalTest {
+public class AbstractFunctionalIT {
 
     @Qualifier("dataSource")
     @Autowired

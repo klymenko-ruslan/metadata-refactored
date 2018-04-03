@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.jdbc.Sql;
 
-import com.turbointernational.metadata.AbstractFunctionalWebTest;
+import com.turbointernational.metadata.AbstractFunctionalWebIT;
 import com.turbointernational.metadata.dao.ChangelogDao;
 import com.turbointernational.metadata.dao.PartDao;
 import com.turbointernational.metadata.entity.Manufacturer;
@@ -74,7 +74,7 @@ import com.turbointernational.metadata.entity.part.types.Washer;
  * Created by dmytro.trunykov@zorallabs.com on 12/19/16.
  */
 @Ignore // TODO: migrate to ArangoDB
-public class PartControllerTest extends AbstractFunctionalWebTest {
+public class PartControllerIT extends AbstractFunctionalWebIT {
 
     @Autowired
     private PartDao partDao;

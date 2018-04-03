@@ -24,10 +24,10 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-import com.turbointernational.metadata.AbstractFunctionalTest;
+import com.turbointernational.metadata.AbstractFunctionalIT;
 import com.turbointernational.metadata.web.dto.Page;
 
-public class GroupDaoTest extends AbstractFunctionalTest {
+public class GroupDaoIT extends AbstractFunctionalIT {
 
     @Autowired
     private GroupDao groupDao;

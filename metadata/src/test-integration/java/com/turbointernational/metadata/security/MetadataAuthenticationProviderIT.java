@@ -36,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
         dataSource = "dataSource",
         transactionManager = "transactionManagerMetadata"
 )
-public class MetadataAuthenticationProviderTest {
+public class MetadataAuthenticationProviderIT {
 
     private final static String DB_USER = "dbtest";
     private final static String DB_PASSWORD = "zoraltemp";
