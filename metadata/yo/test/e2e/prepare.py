@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.5
 # -*- coding: utf-8 -*-
 # vim: set fileencoding=utf-8 :
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
@@ -76,6 +76,7 @@ def main(dbaCnx):
     #  prepareDb()
     #  prepareFileStorage()
     prepareGraphDb()
+    sys.exit(0)  #  TODO: remove when new functionality will be created
 
 
 def prepareDb():
@@ -118,13 +119,14 @@ def prepareGraphDb():
     """Import test data into an ArangoDB."""
     try:
         httpconn = http.client.HTTPConnection(args.graphdb_host,
-                                              args.graphdb_port, timeout=3)
+                                              args.graphdb_port, timeout=5)
         jwt = _loginGraphDb(httpconn)
         #  print('jwt: {}'.format(jwt))
         _createGraphDb(httpconn, jwt)
     except http.client.HTTPException as e:
         print('HTTP request to the ArangoDB service failed: {}'
               .format(e))
+        #  print(e.__class__)
         sys.exit(1)
     finally:
         httpconn.close()
@@ -146,7 +148,11 @@ def _createGraphDb(httpconn, jwt):
     createDb = dict(name=args.graphdb_name)
     createDbJson = json.dumps(createDb)
     headers = _prepareGraphDbHeaders(jwt, createDbJson)
+    print('DBG: 1')
+    httpconn = http.client.HTTPConnection(args.graphdb_host,
+                                          args.graphdb_port, timeout=5)
     httpconn.request('POST', '/_api/database', createDbJson, headers)
+    print('DBG: 2')
     response = httpconn.getresponse()
     print('response.status: {}'.format(response.status))
     _readGraphDbResponse(response)
@@ -161,6 +167,7 @@ def _loginGraphDb(httpconn):
     headers = _prepareGraphDbHeaders(None, auth_body)
     httpconn.request('POST', '/_open/auth', auth_body, headers)
     response = httpconn.getresponse()
+    print('status: {}'.format(response.status));
     if response.status != http.HTTPStatus.OK:
         print('Authentication in the ArangoDb service failed: {}'
               .format(response.status))
