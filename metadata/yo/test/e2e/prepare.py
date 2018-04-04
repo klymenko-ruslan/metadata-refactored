@@ -6,6 +6,7 @@
 """Prepare test environment for e2e testing.
 
 This script does following:
+    * TODO: write about GraphDb
     * registers an user 'metaserver_e2e' in a MySql instance
     * drops if exists a database 'metadata_e2e'
     * creates the database 'metadata_e2e'
@@ -16,8 +17,10 @@ This script does following:
 """
 
 import argparse
+import http.client
 import mysql.connector
 import subprocess
+import json
 import time
 import sys
 import shutil
@@ -45,6 +48,22 @@ parser.add_argument('--db-password', default='metaserver_e2e',
 parser.add_argument('--db-name', default='metadata_e2e',
                     help='Database name (\'metaserver_e2e\') for use during '
                     'running of e2e tests.')
+parser.add_argument('--graphdb-host', default='localhost',
+                    help='Host with a running instance of ArangoDb 3.x '
+                    'service.')
+parser.add_argument('--graphdb-port', default=8529, type=int,
+                    help='A port for the instntance of the ArangoDb service.')
+parser.add_argument('--graphdba-username', default='root', help='DBA name for '
+                    'the ArangoDb service.')
+parser.add_argument('--graphdba-password', default='root', help='DBA password '
+                    'for the ArangoDb service.')
+parser.add_argument('--graphdb-username', default='GraphDbE2E',
+                    help='Username for the database \'GraphDbE2E\'.')
+parser.add_argument('--graphdb-password', default='GraphDbE2E',
+                    help='Password for the user \'GraphDbE2E\'')
+parser.add_argument('--graphdb-name', default='GraphDbE2E',
+                    help='Database name (\'GraphDbE2E\') for use during '
+                    'running of e2e tests.')
 parser.add_argument('--files-storage-dir', default='/tmp/metadata',
                     help='A path to a directory where file storage for'
                     'testing \'metadata\' instance is located.')
@@ -54,6 +73,13 @@ args = parser.parse_args()
 
 def main(dbaCnx):
     """Main function."""
+    #  prepareDb()
+    #  prepareFileStorage()
+    prepareGraphDb()
+
+
+def prepareDb():
+    """Import test data into a MySQL."""
     print('Drop database (if exists) \'{}\'.'.format(args.db_name))
     dropDatabaseIfExists(dbaCnx, args.db_name)
     dbUserExists = ifDbUserExists(dbaCnx, args.db_username)
@@ -73,15 +99,104 @@ def main(dbaCnx):
     print('Grant permission on the database to the user.')
     grantPermission(dbaCnx, args.db_host, args.db_name,
                     args.db_username, args.db_password)
+    print('Import a dump to the database.')
+    importDb(DB_DUMP_FILENAME, args.db_host, args.db_port, args.db_name,
+             args.dba_username, args.dba_password)
+
+
+def prepareFileStorage():
+    """Prepare images and attachments."""
     print('Prepare file storage.')
     filesStorageDir = prepareFileStorage()
     print('Copy images to the storage.')
     copyProductImages(filesStorageDir)
     print('Copy attachments to the storage.')
     copyAttachments(filesStorageDir)
-    print('Import a dump to the database.')
-    importDb(DB_DUMP_FILENAME, args.db_host, args.db_port, args.db_name,
-             args.dba_username, args.dba_password)
+
+
+def prepareGraphDb():
+    """Import test data into an ArangoDB."""
+    try:
+        httpconn = http.client.HTTPConnection(args.graphdb_host,
+                                              args.graphdb_port, timeout=3)
+        jwt = _loginGraphDb(httpconn)
+        #  print('jwt: {}'.format(jwt))
+        _createGraphDb(httpconn, jwt)
+    except http.client.HTTPException as e:
+        print('HTTP request to the ArangoDB service failed: {}'
+              .format(e))
+        sys.exit(1)
+    finally:
+        httpconn.close()
+
+
+def _createGraphDb(httpconn, jwt):
+    headers = _prepareGraphDbHeaders(jwt, None)
+    httpconn.request('GET', '/_api/database', None, headers)
+    response = httpconn.getresponse()
+    obj = _readGraphDbResponse(response)
+    databases = obj['result']
+    if args.graphdb_name in databases:
+        print('DELETE')
+        httpconn.request('DELETE',
+                         '/_api/database/{}'.format(args.graphdb_name),
+                         None, headers)
+        obj = _readGraphDbResponse(response)
+    print('CREATE')
+    createDb = dict(name=args.graphdb_name)
+    createDbJson = json.dumps(createDb)
+    headers = _prepareGraphDbHeaders(jwt, createDbJson)
+    httpconn.request('POST', '/_api/database', createDbJson, headers)
+    response = httpconn.getresponse()
+    print('response.status: {}'.format(response.status))
+    _readGraphDbResponse(response)
+
+
+def _loginGraphDb(httpconn):
+    http_auth = dict(
+        username=args.graphdba_username,
+        password=args.graphdba_password
+    )
+    auth_body = json.dumps(http_auth)
+    headers = _prepareGraphDbHeaders(None, auth_body)
+    httpconn.request('POST', '/_open/auth', auth_body, headers)
+    response = httpconn.getresponse()
+    if response.status != http.HTTPStatus.OK:
+        print('Authentication in the ArangoDb service failed: {}'
+              .format(response.status))
+        sys.exit(1)
+    bts = response.read()
+    body = str(bts, 'utf-8')
+    obj = json.loads(body)
+    jwt = obj['jwt']
+    return jwt
+
+
+def _prepareGraphDbHeaders(jwt, body):
+    headers = dict(Connection='Keep-Alive')
+    if jwt is None:
+        headers['X-Omit-WWW-Authenticate'] = True
+    else:
+        headers['Authorization'] = 'bearer {}'.format(jwt)
+    if body is not None:
+        headers['Content-Length'] = len(body)
+    return headers
+
+
+def _readGraphDbResponse(response):
+    if response.status not in [http.HTTPStatus.OK, http.HTTPStatus.CREATED]:
+        raise IOError('HTTP error during request of the GraphDb storage: '
+                      '{} {}'.format(response.status, response.reason))
+    bts = response.read()
+    body = str(bts, 'utf-8')
+    if len(body) == 0:
+        retval = dict()
+    else:
+        retval = json.loads(body)
+        if retval['error'] == True:
+            raise IOError('The GraphDb storage returns API error. '
+                          'Response body: {}'.format(body))
+    return retval
 
 
 def importDb(filename, dbhost, dbport, dbname, dbausername, dbapassword):
