@@ -25,6 +25,26 @@ import time
 import sys
 import shutil
 import os
+import pprint
+from enum import Enum
+
+
+GRAPHDB_COLLECTION_PARTS = 'parts'
+GRAPHDB_COLLECTION_BOMEDGES = 'bom_edges'
+GRAPHDB_COLLECTION_INTERCHANGEHEADERS = 'interchange_headers'
+GRAPHDB_COLLECTION_INTERCHANGEEDGES = 'interchange_edges'
+GRAPHDB_COLLECTION_ALTINTERCHANGEHEADERS = 'alt_interchange_headers'
+GRAPHDB_COLLECTION_ALTINTERCHANGEEDGES = 'alt_interchange_edges'
+GRAPHDB_GRAPH_BOM = 'BomGraph'
+
+
+class GraphDbCollectionType(Enum):
+
+    """Type of a collention in the GraphDb."""
+
+    document = 1
+    edge = 2
+
 
 SELF_DIR = os.path.dirname(os.path.realpath(__file__))
 DB_DUMP_FILENAME = os.path.join(SELF_DIR, 'prepare', 'metadata-e2e.sql')
@@ -73,67 +93,73 @@ args = parser.parse_args()
 
 def main(dbaCnx):
     """Main function."""
-    #  prepareDb()
-    #  prepareFileStorage()
-    prepareGraphDb()
-    sys.exit(0)  #  TODO: remove when new functionality will be created
+    prepareDb(dbaCnx)
+    prepareFileStorage()
+    prepareGraphDb(dbaCnx)
+    sys.exit(0)  # TODO: remove when new functionality will be created
 
 
-def prepareDb():
+def prepareDb(dbconn):
     """Import test data into a MySQL."""
     print('Drop database (if exists) \'{}\'.'.format(args.db_name))
-    dropDatabaseIfExists(dbaCnx, args.db_name)
-    dbUserExists = ifDbUserExists(dbaCnx, args.db_username)
+    _dropDatabaseIfExists(dbconn, args.db_name)
+    dbUserExists = _ifDbUserExists(dbconn, args.db_username)
     if dbUserExists:
         print('Found registered user \'{}\' in the database. '
               'It will be deleted and registered again.'
               .format(args.db_username))
         print('Delete user \'{}\'.'.format(args.db_username))
-        dropDbUser(dbaCnx, args.db_host, args.db_username)
+        _dropDbUser(dbconn, args.db_host, args.db_username)
     else:
         print('User \'{}\' is not registered in the database. '
               .format(args.db_username))
     print('Register user \'{}\'.'.format(args.db_username))
-    registerDbUser(dbaCnx, args.db_host, args.db_username, args.db_password)
+    _registerDbUser(dbconn, args.db_host, args.db_username, args.db_password)
     print('A database \'{}\' is being creted.'.format(args.db_name))
-    createDatabase(dbaCnx, args.db_name)
+    _createDatabase(dbconn, args.db_name)
     print('Grant permission on the database to the user.')
-    grantPermission(dbaCnx, args.db_host, args.db_name,
-                    args.db_username, args.db_password)
+    _grantPermission(dbconn, args.db_host, args.db_name,
+                     args.db_username, args.db_password)
     print('Import a dump to the database.')
     importDb(DB_DUMP_FILENAME, args.db_host, args.db_port, args.db_name,
              args.dba_username, args.dba_password)
 
 
-def prepareFileStorage():
+def _prepareFileStorage():
     """Prepare images and attachments."""
     print('Prepare file storage.')
-    filesStorageDir = prepareFileStorage()
+    filesStorageDir = _prepareFileStorage()
     print('Copy images to the storage.')
-    copyProductImages(filesStorageDir)
+    _copyProductImages(filesStorageDir)
     print('Copy attachments to the storage.')
     copyAttachments(filesStorageDir)
 
 
-def prepareGraphDb():
+def prepareGraphDb(dbconn):
     """Import test data into an ArangoDB."""
+    httpconn = http.client.HTTPConnection(args.graphdb_host,
+                                          args.graphdb_port, timeout=5)
     try:
-        httpconn = http.client.HTTPConnection(args.graphdb_host,
-                                              args.graphdb_port, timeout=5)
-        jwt = _loginGraphDb(httpconn)
-        #  print('jwt: {}'.format(jwt))
-        _createGraphDbInstance(httpconn, jwt)
-        _createGraphDbUser(httpconn, jwt)
+        jwtDba = _loginGraphDb(httpconn, args.graphdba_username,
+                               args.graphdba_password)
+        _deleteGraphDbUser(httpconn, jwtDba)
+        _createGraphDbInstance(httpconn, jwtDba, args.graphdb_name,
+                               args.graphdb_username, args.graphdb_password)
+        jwtUsr = _loginGraphDb(httpconn, args.graphdb_username,
+                               args.graphdb_password)
+        dbname = args.graphdb_name
+        _createCollections(httpconn, jwtUsr, dbname)
+        _loadCollections(httpconn, jwtUsr, dbconn, dbname)
     except http.client.HTTPException as e:
-        print('HTTP request to the ArangoDB service failed: {}'
-              .format(e))
-        print(e.__class__)
+        print('HTTP request to the ArangoDB service failed ({}): {}'
+              .format(e.__class__, e))
         sys.exit(1)
     finally:
         httpconn.close()
 
 
-def _createGraphDbInstance(httpconn, jwt):
+def _createGraphDbInstance(httpconn, jwt, dbname, username, password):
+    print('GraphDb: a database "{}" is beign created.'.format(dbname))
     headers = _prepareGraphDbHeaders(jwt, None)
     httpconn.request('GET', '/_api/database', None, headers)
     response = httpconn.getresponse()
@@ -144,7 +170,15 @@ def _createGraphDbInstance(httpconn, jwt):
                          '/_api/database/{}'.format(args.graphdb_name),
                          None, headers)
         obj = _readGraphDbResponse(httpconn.getresponse())
-    createDbObj = dict(name=args.graphdb_name)
+    createDbObj = {
+        'name': dbname,
+        'users': [
+            {
+                'username': username,
+                'password': password
+            }
+        ]
+    }
     createDbJson = json.dumps(createDbObj)
     headers = _prepareGraphDbHeaders(jwt, createDbJson)
     httpconn.request('POST', '/_api/database', createDbJson, headers)
@@ -152,7 +186,7 @@ def _createGraphDbInstance(httpconn, jwt):
     _readGraphDbResponse(response)
 
 
-def _createGraphDbUser(httpconn, jwt):
+def _deleteGraphDbUser(httpconn, jwt):
     headers = _prepareGraphDbHeaders(jwt, None)
     httpconn.request('GET', '/_api/user', None, headers)
     response = httpconn.getresponse()
@@ -164,16 +198,122 @@ def _createGraphDbUser(httpconn, jwt):
                          '/_api/user/{}'.format(args.graphdb_username),
                          None, headers)
         obj = _readGraphDbResponse(httpconn.getresponse())
-    createUserObj = dict(user=args.graphdb_username,
-                          passwd=args.graphdb_password, active=True)
-    createUserJson = json.dumps(createUserObj)
-    headers = _prepareGraphDbHeaders(jwt, createUserJson)
-    httpconn.request('POST', '/_api/user', createUserJson, headers)
+    # createUserObj = dict(user=args.graphdb_username,
+    #                      passwd=args.graphdb_password, active=True)
+    # createUserJson = json.dumps(createUserObj)
+    # headers = _prepareGraphDbHeaders(jwt, createUserJson)
+    # httpconn.request('POST', '/_api/user', createUserJson, headers)
+    # response = httpconn.getresponse()
+    # _readGraphDbResponse(response)
+
+
+def _createCollections(httpconn, jwt, dbname):
+    _createCollection(httpconn, jwt, dbname,
+                      GRAPHDB_COLLECTION_ALTINTERCHANGEEDGES,
+                      GraphDbCollectionType.edge)
+    _createCollection(httpconn, jwt, dbname,
+                      GRAPHDB_COLLECTION_ALTINTERCHANGEHEADERS,
+                      GraphDbCollectionType.document)
+    _createCollection(httpconn, jwt, dbname, GRAPHDB_COLLECTION_BOMEDGES,
+                      GraphDbCollectionType.edge)
+    _createCollection(httpconn, jwt, dbname,
+                      GRAPHDB_COLLECTION_INTERCHANGEEDGES,
+                      GraphDbCollectionType.edge)
+    _createCollection(httpconn, jwt, dbname,
+                      GRAPHDB_COLLECTION_INTERCHANGEHEADERS,
+                      GraphDbCollectionType.document)
+    _createCollection(httpconn, jwt, dbname, GRAPHDB_COLLECTION_PARTS,
+                      GraphDbCollectionType.document)
+    _createGraph(httpconn, jwt, dbname, GRAPHDB_GRAPH_BOM,
+                 GRAPHDB_COLLECTION_PARTS, GRAPHDB_COLLECTION_BOMEDGES,
+                 GRAPHDB_COLLECTION_INTERCHANGEHEADERS,
+                 GRAPHDB_COLLECTION_INTERCHANGEEDGES,
+                 GRAPHDB_COLLECTION_ALTINTERCHANGEHEADERS,
+                 GRAPHDB_COLLECTION_ALTINTERCHANGEEDGES)
+
+
+def _loadCollections(httpconn, jwt, dbconn, dbname):
+    _loadGraphDbCollectionParts(httpconn, jwt, dbconn, dbname)
+
+
+def _createCollection(httpconn, jwt, dbname, collectionName, collectionType):
+    print('GraphDb: a collection ({}) "{}" is beign created.'
+          .format(collectionType.name, collectionName))
+    url = _preparGraphDbUrl(dbname, '/_api/collection')
+    createCollectionObj = {
+        'name': collectionName,
+        'type': collectionType.name,
+        'isSystem': False
+    }
+    createCollectionJson = json.dumps(createCollectionObj)
+    headers = _prepareGraphDbHeaders(jwt, createCollectionJson)
+    httpconn.request('POST', url, createCollectionJson, headers)
     response = httpconn.getresponse()
     _readGraphDbResponse(response)
 
 
-def _loginGraphDb(httpconn):
+def _createGraph(httpconn, jwt, dbname, graphName, parts, bomEdges,
+                 interchangeHeaders, interchangeEdges,
+                 altInterchangeHeaders, altInterchangeEdges):
+    print('GraphDb: a graph "{}" is beign created.'.format(graphName))
+    createGraphObj = {
+        'name': graphName,
+        'edgeDefinitions': [
+            {
+                'collection': bomEdges,
+                'from': [parts],
+                'to': [parts]
+            },
+            {
+                'collection': interchangeEdges,
+                'from': [interchangeHeaders],
+                'to': [parts]
+            },
+            {
+                'collection': altInterchangeEdges,
+                'from': [altInterchangeHeaders],
+                'to': [parts]
+            }
+
+        ]
+    }
+    url = _preparGraphDbUrl(dbname, '/_api/gharial')
+    createGraphJson = json.dumps(createGraphObj)
+    headers = _prepareGraphDbHeaders(jwt, createGraphJson)
+    httpconn.request('POST', url, createGraphJson, headers)
+    response = httpconn.getresponse()
+    _readGraphDbResponse(response)
+
+
+def _loadGraphDbCollectionParts(httpconn, jwt, dbconn, dbname):
+    print('GraphDb: loading a collection "{}".'
+          .format(GRAPHDB_COLLECTION_PARTS))
+    cursor = dbconn.cursor()
+    try:
+        cursor.execute('select id, part_type_id, manfr_id from part')
+        for (part_id, part_type_id, manfr_id) in cursor:
+            partObj = {
+                '_key': str(part_id),
+                'partId': part_id,
+                'partTypeId': part_type_id,
+                'manufacturerId': manfr_id
+            }
+            _loadGraphDbDoc(httpconn, jwt, dbname, GRAPHDB_COLLECTION_PARTS,
+                            partObj)
+    finally:
+        cursor.close()
+
+
+def _loadGraphDbDoc(httpconn, jwt, dbname, collectionName, docObj):
+    url = _preparGraphDbUrl(dbname, '/_api/document/{}'.format(collectionName))
+    docJson = json.dumps(docObj)
+    headers = _prepareGraphDbHeaders(jwt, docJson)
+    httpconn.request('POST', url, docJson, headers)
+    response = httpconn.getresponse()
+    _readGraphDbResponse(response)
+
+
+def _loginGraphDb(httpconn, username, password):
     http_auth = dict(
         username=args.graphdba_username,
         password=args.graphdba_password
@@ -211,7 +351,7 @@ def _prepareGraphDbHeaders(jwt, body):
 def _readGraphDbResponse(response):
     if response.status not in [http.HTTPStatus.OK, http.HTTPStatus.CREATED,
                                http.HTTPStatus.ACCEPTED]:
-        raise IOError('HTTP error during request of the GraphDb storage: '
+        raise IOError('HTTP error during request to the GraphDb storage: '
                       '{} {}'.format(response.status, response.reason))
     bts = response.read()
     body = str(bts, 'utf-8')
@@ -223,6 +363,14 @@ def _readGraphDbResponse(response):
             raise IOError('The GraphDb storage returns API error. '
                           'Response body: {}'.format(body))
     return retval
+
+
+def _preparGraphDbUrl(dbname, serviceUrl):
+    if dbname is None:
+        return serviceUrl
+    else:
+        url = '/_db/{dbname}{url}'.format(dbname=dbname, url=serviceUrl)
+        return url
 
 
 def importDb(filename, dbhost, dbport, dbname, dbausername, dbapassword):
@@ -237,9 +385,9 @@ def importDb(filename, dbhost, dbport, dbname, dbausername, dbapassword):
         sys.exit(1)
 
 
-def grantPermission(dbaCnx, dbhost, dbname, username, password):
+def _grantPermission(dbconn, dbhost, dbname, username, password):
     """Grant permissions to a database to an user."""
-    cursor = dbaCnx.cursor()
+    cursor = dbconn.cursor()
     try:
         query = ('grant all privileges on {dbname}.* '
                  'to \'{username}\'@\'{dbhost}\' '
@@ -252,27 +400,27 @@ def grantPermission(dbaCnx, dbhost, dbname, username, password):
         cursor.close()
 
 
-def createDatabase(dbaCnx, dbname):
+def _createDatabase(dbconn, dbname):
     """Create a database."""
-    cursor = dbaCnx.cursor(prepared=True)
+    cursor = dbconn.cursor(prepared=True)
     try:
         cursor.execute('create database ' + dbname)
     finally:
         cursor.close()
 
 
-def dropDatabaseIfExists(dbaCnx, dbname):
+def _dropDatabaseIfExists(dbconn, dbname):
     """Drop database if it exists."""
-    cursor = dbaCnx.cursor()
+    cursor = dbconn.cursor()
     try:
         cursor.execute('drop database if exists ' + dbname)
     finally:
         cursor.close()
 
 
-def registerDbUser(dbaCnx, dbhost, username, password):
+def _registerDbUser(dbconn, dbhost, username, password):
     """Register user in a database server."""
-    cursor = dbaCnx.cursor()
+    cursor = dbconn.cursor()
     try:
         query = ('create user %(username)s@%(dbhost)s '
                  'identified by %(password)s')
@@ -285,9 +433,9 @@ def registerDbUser(dbaCnx, dbhost, username, password):
         cursor.close()
 
 
-def dropDbUser(dbaCnx, dbhost, username):
+def _dropDbUser(dbconn, dbhost, username):
     """Drop user in a database server."""
-    cursor = dbaCnx.cursor()
+    cursor = dbconn.cursor()
     try:
         query = 'drop user %(username)s@%(dbhost)s'
         cursor.execute(query, {'dbhost': dbhost, 'username': username})
@@ -296,9 +444,9 @@ def dropDbUser(dbaCnx, dbhost, username):
         cursor.close()
 
 
-def ifDbUserExists(dbaCnx, username):
+def _ifDbUserExists(dbconn, username):
     """Check if user registered in MySql instance or not."""
-    cursor = dbaCnx.cursor()
+    cursor = dbconn.cursor()
     try:
         query = (
             'select exists('
@@ -316,7 +464,7 @@ def ifDbUserExists(dbaCnx, username):
         cursor.close()
 
 
-def prepareFileStorage():
+def _prepareFileStorage():
     """
     Create a directory for a filestorage and required subdirs.
 
@@ -330,7 +478,7 @@ def prepareFileStorage():
     return rootDir
 
 
-def copyProductImages(filesStorageDir):
+def _copyProductImages(filesStorageDir):
     """Copy products images to a filestorage."""
     productImagesDir = os.path.join(filesStorageDir, 'product_images')
     originalImagesDir = os.path.join(productImagesDir, 'originals')
@@ -339,7 +487,7 @@ def copyProductImages(filesStorageDir):
     shutil.copytree(PRODUCT_IMG_RESIZED_DIR, resizedImagesDir)
 
 
-def copyAttachments(filesStorageDir):
+def _copyAttachments(filesStorageDir):
     """Copy attachments to a filestorage."""
     otherDir = os.path.join(filesStorageDir, 'other')
     attachmentsSalesnotesDir = os.path.join(otherDir, 'salesNote',
@@ -354,13 +502,13 @@ def copyAttachments(filesStorageDir):
     os.makedirs(changelogSourceLnkDscrAttchDir)
 
 
-dbaCnx = mysql.connector.connect(host=args.db_host, port=args.db_port,
+dbconn = mysql.connector.connect(host=args.db_host, port=args.db_port,
                                  user=args.dba_username,
                                  password=args.dba_password)
 
 try:
     t0 = time.time()
-    main(dbaCnx)
+    main(dbconn)
     t1 = time.time()
     print('The script has been finished in {} second(s).'.format(int(t1 - t0)))
     print
@@ -374,4 +522,4 @@ try:
     print('\t$ ./metadata.py\n')
     print('4. Run in this window the e2e test suites:\n\n\t$ ./runtests.py\n')
 finally:
-    dbaCnx.close()
+    dbconn.close()
