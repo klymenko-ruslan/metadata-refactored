@@ -96,7 +96,6 @@ def main(dbaCnx):
     prepareDb(dbaCnx)
     prepareFileStorage()
     prepareGraphDb(dbaCnx)
-    sys.exit(0)  # TODO: remove when new functionality will be created
 
 
 def prepareDb(dbconn):
@@ -132,7 +131,7 @@ def prepareFileStorage():
     print('Copy images to the storage.')
     _copyProductImages(filesStorageDir)
     print('Copy attachments to the storage.')
-    copyAttachments(filesStorageDir)
+    _copyAttachments(filesStorageDir)
 
 
 def prepareGraphDb(dbconn):
@@ -147,9 +146,10 @@ def prepareGraphDb(dbconn):
                                args.graphdb_username, args.graphdb_password)
         jwtUsr = _loginGraphDb(httpconn, args.graphdb_username,
                                args.graphdb_password)
-        dbname = args.graphdb_name
-        _createCollections(httpconn, jwtUsr, dbname)
-        _loadCollections(httpconn, jwtUsr, dbconn, dbname)
+        graphdbname = args.graphdb_name
+        dbname = args.db_name
+        _createCollections(httpconn, jwtUsr, graphdbname)
+        _loadCollections(httpconn, jwtUsr, dbconn, graphdbname, dbname)
     except http.client.HTTPException as e:
         print('HTTP request to the ArangoDB service failed ({}): {}'
               .format(e.__class__, e))
@@ -207,24 +207,24 @@ def _deleteGraphDbUser(httpconn, jwt):
     # _readGraphDbResponse(response)
 
 
-def _createCollections(httpconn, jwt, dbname):
-    _createCollection(httpconn, jwt, dbname,
+def _createCollections(httpconn, jwt, graphdbname):
+    _createCollection(httpconn, jwt, graphdbname,
                       GRAPHDB_COLLECTION_ALTINTERCHANGEEDGES,
                       GraphDbCollectionType.edge)
-    _createCollection(httpconn, jwt, dbname,
+    _createCollection(httpconn, jwt, graphdbname,
                       GRAPHDB_COLLECTION_ALTINTERCHANGEHEADERS,
                       GraphDbCollectionType.document)
-    _createCollection(httpconn, jwt, dbname, GRAPHDB_COLLECTION_BOMEDGES,
+    _createCollection(httpconn, jwt, graphdbname, GRAPHDB_COLLECTION_BOMEDGES,
                       GraphDbCollectionType.edge)
-    _createCollection(httpconn, jwt, dbname,
+    _createCollection(httpconn, jwt, graphdbname,
                       GRAPHDB_COLLECTION_INTERCHANGEEDGES,
                       GraphDbCollectionType.edge)
-    _createCollection(httpconn, jwt, dbname,
+    _createCollection(httpconn, jwt, graphdbname,
                       GRAPHDB_COLLECTION_INTERCHANGEHEADERS,
                       GraphDbCollectionType.document)
-    _createCollection(httpconn, jwt, dbname, GRAPHDB_COLLECTION_PARTS,
+    _createCollection(httpconn, jwt, graphdbname, GRAPHDB_COLLECTION_PARTS,
                       GraphDbCollectionType.document)
-    _createGraph(httpconn, jwt, dbname, GRAPHDB_GRAPH_BOM,
+    _createGraph(httpconn, jwt, graphdbname, GRAPHDB_GRAPH_BOM,
                  GRAPHDB_COLLECTION_PARTS, GRAPHDB_COLLECTION_BOMEDGES,
                  GRAPHDB_COLLECTION_INTERCHANGEHEADERS,
                  GRAPHDB_COLLECTION_INTERCHANGEEDGES,
@@ -232,14 +232,10 @@ def _createCollections(httpconn, jwt, dbname):
                  GRAPHDB_COLLECTION_ALTINTERCHANGEEDGES)
 
 
-def _loadCollections(httpconn, jwt, dbconn, dbname):
-    _loadGraphDbCollectionParts(httpconn, jwt, dbconn, dbname)
-
-
-def _createCollection(httpconn, jwt, dbname, collectionName, collectionType):
+def _createCollection(httpconn, jwt, graphdbname, collectionName, collectionType):
     print('GraphDb: a collection ({}) "{}" is beign created.'
           .format(collectionType.name, collectionName))
-    url = _preparGraphDbUrl(dbname, '/_api/collection')
+    url = _preparGraphDbUrl(graphdbname, '/_api/collection')
     createCollectionObj = {
         'name': collectionName,
         'type': collectionType.name,
@@ -252,7 +248,7 @@ def _createCollection(httpconn, jwt, dbname, collectionName, collectionType):
     _readGraphDbResponse(response)
 
 
-def _createGraph(httpconn, jwt, dbname, graphName, parts, bomEdges,
+def _createGraph(httpconn, jwt, graphdbname, graphName, parts, bomEdges,
                  interchangeHeaders, interchangeEdges,
                  altInterchangeHeaders, altInterchangeEdges):
     print('GraphDb: a graph "{}" is beign created.'.format(graphName))
@@ -277,7 +273,7 @@ def _createGraph(httpconn, jwt, dbname, graphName, parts, bomEdges,
 
         ]
     }
-    url = _preparGraphDbUrl(dbname, '/_api/gharial')
+    url = _preparGraphDbUrl(graphdbname, '/_api/gharial')
     createGraphJson = json.dumps(createGraphObj)
     headers = _prepareGraphDbHeaders(jwt, createGraphJson)
     httpconn.request('POST', url, createGraphJson, headers)
@@ -285,7 +281,12 @@ def _createGraph(httpconn, jwt, dbname, graphName, parts, bomEdges,
     _readGraphDbResponse(response)
 
 
-def _loadGraphDbCollectionParts(httpconn, jwt, dbconn, dbname):
+def _loadCollections(httpconn, jwt, dbconn, graphdbname, dbname):
+    dbconn.database = dbname
+    _loadGraphDbCollectionParts(httpconn, jwt, dbconn, graphdbname)
+
+
+def _loadGraphDbCollectionParts(httpconn, jwt, dbconn, graphdbname):
     print('GraphDb: loading a collection "{}".'
           .format(GRAPHDB_COLLECTION_PARTS))
     cursor = dbconn.cursor()
@@ -298,14 +299,14 @@ def _loadGraphDbCollectionParts(httpconn, jwt, dbconn, dbname):
                 'partTypeId': part_type_id,
                 'manufacturerId': manfr_id
             }
-            _loadGraphDbDoc(httpconn, jwt, dbname, GRAPHDB_COLLECTION_PARTS,
+            _loadGraphDbDoc(httpconn, jwt, graphdbname, GRAPHDB_COLLECTION_PARTS,
                             partObj)
     finally:
         cursor.close()
 
 
-def _loadGraphDbDoc(httpconn, jwt, dbname, collectionName, docObj):
-    url = _preparGraphDbUrl(dbname, '/_api/document/{}'.format(collectionName))
+def _loadGraphDbDoc(httpconn, jwt, graphdbname, collectionName, docObj):
+    url = _preparGraphDbUrl(graphdbname, '/_api/document/{}'.format(collectionName))
     docJson = json.dumps(docObj)
     headers = _prepareGraphDbHeaders(jwt, docJson)
     httpconn.request('POST', url, docJson, headers)
@@ -359,17 +360,18 @@ def _readGraphDbResponse(response):
         retval = dict()
     else:
         retval = json.loads(body)
-        if retval['error'] == True:
+        if 'error' in retval and retval['error'] == True:
             raise IOError('The GraphDb storage returns API error. '
                           'Response body: {}'.format(body))
     return retval
 
 
-def _preparGraphDbUrl(dbname, serviceUrl):
-    if dbname is None:
+def _preparGraphDbUrl(graphdbname, serviceUrl):
+    if graphdbname is None:
         return serviceUrl
     else:
-        url = '/_db/{dbname}{url}'.format(dbname=dbname, url=serviceUrl)
+        url = '/_db/{graphdbname}{url}'.format(graphdbname=graphdbname,
+                                               url=serviceUrl)
         return url
 
 
@@ -510,7 +512,7 @@ try:
     t0 = time.time()
     main(dbconn)
     t1 = time.time()
-    print('The script has been finished in {} second(s).'.format(int(t1 - t0)))
+    print('The script has been finished in {:.2f} second(s).'.format(t1 - t0))
     print
     print('The database is ready for tests. Now you have to do following:\n')
     print('1. Start in a separate window a \'webdriver\':\n'
