@@ -122,39 +122,54 @@ def prepareGraphDb():
                                               args.graphdb_port, timeout=5)
         jwt = _loginGraphDb(httpconn)
         #  print('jwt: {}'.format(jwt))
-        _createGraphDb(httpconn, jwt)
+        _createGraphDbInstance(httpconn, jwt)
+        _createGraphDbUser(httpconn, jwt)
     except http.client.HTTPException as e:
         print('HTTP request to the ArangoDB service failed: {}'
               .format(e))
-        #  print(e.__class__)
+        print(e.__class__)
         sys.exit(1)
     finally:
         httpconn.close()
 
 
-def _createGraphDb(httpconn, jwt):
+def _createGraphDbInstance(httpconn, jwt):
     headers = _prepareGraphDbHeaders(jwt, None)
     httpconn.request('GET', '/_api/database', None, headers)
     response = httpconn.getresponse()
     obj = _readGraphDbResponse(response)
     databases = obj['result']
     if args.graphdb_name in databases:
-        print('DELETE')
         httpconn.request('DELETE',
                          '/_api/database/{}'.format(args.graphdb_name),
                          None, headers)
-        obj = _readGraphDbResponse(response)
-    print('CREATE')
-    createDb = dict(name=args.graphdb_name)
-    createDbJson = json.dumps(createDb)
+        obj = _readGraphDbResponse(httpconn.getresponse())
+    createDbObj = dict(name=args.graphdb_name)
+    createDbJson = json.dumps(createDbObj)
     headers = _prepareGraphDbHeaders(jwt, createDbJson)
-    print('DBG: 1')
-    httpconn = http.client.HTTPConnection(args.graphdb_host,
-                                          args.graphdb_port, timeout=5)
     httpconn.request('POST', '/_api/database', createDbJson, headers)
-    print('DBG: 2')
     response = httpconn.getresponse()
-    print('response.status: {}'.format(response.status))
+    _readGraphDbResponse(response)
+
+
+def _createGraphDbUser(httpconn, jwt):
+    headers = _prepareGraphDbHeaders(jwt, None)
+    httpconn.request('GET', '/_api/user', None, headers)
+    response = httpconn.getresponse()
+    obj = _readGraphDbResponse(response)
+    users = obj['result']
+    usr = list(filter(lambda u: u['user'] == args.graphdb_username, users))
+    if len(usr) > 0:
+        httpconn.request('DELETE',
+                         '/_api/user/{}'.format(args.graphdb_username),
+                         None, headers)
+        obj = _readGraphDbResponse(httpconn.getresponse())
+    createUserObj = dict(user=args.graphdb_username,
+                          passwd=args.graphdb_password, active=True)
+    createUserJson = json.dumps(createUserObj)
+    headers = _prepareGraphDbHeaders(jwt, createUserJson)
+    httpconn.request('POST', '/_api/user', createUserJson, headers)
+    response = httpconn.getresponse()
     _readGraphDbResponse(response)
 
 
@@ -167,7 +182,6 @@ def _loginGraphDb(httpconn):
     headers = _prepareGraphDbHeaders(None, auth_body)
     httpconn.request('POST', '/_open/auth', auth_body, headers)
     response = httpconn.getresponse()
-    print('status: {}'.format(response.status));
     if response.status != http.HTTPStatus.OK:
         print('Authentication in the ArangoDb service failed: {}'
               .format(response.status))
@@ -180,7 +194,11 @@ def _loginGraphDb(httpconn):
 
 
 def _prepareGraphDbHeaders(jwt, body):
-    headers = dict(Connection='Keep-Alive')
+    headers = {
+        'Connection': 'Keep-Alive',
+        'Content-Type': 'application/json',
+        'x-arango-async': 'false'
+    }
     if jwt is None:
         headers['X-Omit-WWW-Authenticate'] = True
     else:
@@ -191,7 +209,8 @@ def _prepareGraphDbHeaders(jwt, body):
 
 
 def _readGraphDbResponse(response):
-    if response.status not in [http.HTTPStatus.OK, http.HTTPStatus.CREATED]:
+    if response.status not in [http.HTTPStatus.OK, http.HTTPStatus.CREATED,
+                               http.HTTPStatus.ACCEPTED]:
         raise IOError('HTTP error during request of the GraphDb storage: '
                       '{} {}'.format(response.status, response.reason))
     bts = response.read()
