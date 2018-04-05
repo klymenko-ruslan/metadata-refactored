@@ -125,7 +125,7 @@ def prepareDb(dbconn):
              args.dba_username, args.dba_password)
 
 
-def _prepareFileStorage():
+def prepareFileStorage():
     """Prepare images and attachments."""
     print('Prepare file storage.')
     filesStorageDir = _prepareFileStorage()
