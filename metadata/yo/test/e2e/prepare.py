@@ -26,7 +26,9 @@ import sys
 import shutil
 import os
 import pprint
+import csv
 from enum import Enum
+from functools import lru_cache
 
 
 GRAPHDB_COLLECTION_PARTS = 'parts'
@@ -48,6 +50,11 @@ class GraphDbCollectionType(Enum):
 
 SELF_DIR = os.path.dirname(os.path.realpath(__file__))
 DB_DUMP_FILENAME = os.path.join(SELF_DIR, 'prepare', 'metadata-e2e.sql')
+BOMEDGES_DUMP_FILENAME = os.path.join(SELF_DIR, 'prepare', 'bom_edges.csv')
+INTERCHANGEHEADERS_DUMP_FILENAME = os.path.join(SELF_DIR, 'prepare',
+                                                'interchange_headers.csv')
+INTERCHANGEEDGES_DUMP_FILENAME = os.path.join(SELF_DIR, 'prepare',
+                                              'interchange_edges.csv')
 PRODUCT_IMG_ORIGINALS_DIR = os.path.join(SELF_DIR, 'prepare', 'img',
                                          'product', 'originals')
 PRODUCT_IMG_RESIZED_DIR = os.path.join(SELF_DIR, 'prepare', 'img', 'product',
@@ -93,8 +100,8 @@ args = parser.parse_args()
 
 def main(dbaCnx):
     """Main function."""
-    prepareDb(dbaCnx)
-    prepareFileStorage()
+#    prepareDb(dbaCnx)
+#    prepareFileStorage()
     prepareGraphDb(dbaCnx)
 
 
@@ -138,6 +145,7 @@ def prepareGraphDb(dbconn):
     """Import test data into an ArangoDB."""
     httpconn = http.client.HTTPConnection(args.graphdb_host,
                                           args.graphdb_port, timeout=5)
+    # httpconn.set_debuglevel(3)
     try:
         jwtDba = _loginGraphDb(httpconn, args.graphdba_username,
                                args.graphdba_password)
@@ -232,10 +240,11 @@ def _createCollections(httpconn, jwt, graphdbname):
                  GRAPHDB_COLLECTION_ALTINTERCHANGEEDGES)
 
 
-def _createCollection(httpconn, jwt, graphdbname, collectionName, collectionType):
+def _createCollection(httpconn, jwt, graphdbname, collectionName,
+                      collectionType):
     print('GraphDb: a collection ({}) "{}" is beign created.'
           .format(collectionType.name, collectionName))
-    url = _preparGraphDbUrl(graphdbname, '/_api/collection')
+    url = _prepareGraphDbUrl(graphdbname, '/_api/collection')
     createCollectionObj = {
         'name': collectionName,
         'type': collectionType.name,
@@ -273,7 +282,7 @@ def _createGraph(httpconn, jwt, graphdbname, graphName, parts, bomEdges,
 
         ]
     }
-    url = _preparGraphDbUrl(graphdbname, '/_api/gharial')
+    url = _prepareGraphDbUrl(graphdbname, '/_api/gharial')
     createGraphJson = json.dumps(createGraphObj)
     headers = _prepareGraphDbHeaders(jwt, createGraphJson)
     httpconn.request('POST', url, createGraphJson, headers)
@@ -284,6 +293,9 @@ def _createGraph(httpconn, jwt, graphdbname, graphName, parts, bomEdges,
 def _loadCollections(httpconn, jwt, dbconn, graphdbname, dbname):
     dbconn.database = dbname
     _loadGraphDbCollectionParts(httpconn, jwt, dbconn, graphdbname)
+    _loadGraphDbCollectionBomEdges(httpconn, jwt, graphdbname)
+    _loadGraphDbCollectionInterchangeHeaders(httpconn, jwt, graphdbname)
+    _loadGraphDbCollectionInterchangeEdges(httpconn, jwt, graphdbname)
 
 
 def _loadGraphDbCollectionParts(httpconn, jwt, dbconn, graphdbname):
@@ -299,14 +311,69 @@ def _loadGraphDbCollectionParts(httpconn, jwt, dbconn, graphdbname):
                 'partTypeId': part_type_id,
                 'manufacturerId': manfr_id
             }
-            _loadGraphDbDoc(httpconn, jwt, graphdbname, GRAPHDB_COLLECTION_PARTS,
-                            partObj)
+            _loadGraphDbDoc(httpconn, jwt, graphdbname,
+                            GRAPHDB_COLLECTION_PARTS, partObj)
     finally:
         cursor.close()
 
 
+def _loadGraphDbCollectionBomEdges(httpconn, jwt, graphdbname):
+    print('GraphDb: loading a collection "{}".'
+          .format(GRAPHDB_COLLECTION_BOMEDGES))
+    with open(BOMEDGES_DUMP_FILENAME) as csvfile:
+        csvreader = csv.reader(csvfile)
+        for row in csvreader:
+            _from = row[0]
+            _to = row[1]
+            qty = int(row[2])
+            typ = row[3]
+            docObj = {
+                '_from': _getGraphDbPartKey(_from),
+                '_to': _getGraphDbPartKey(_to),
+                'quantity': qty,
+                'type': typ
+            }
+            _loadGraphDbDoc(httpconn, jwt, graphdbname,
+                            GRAPHDB_COLLECTION_BOMEDGES, docObj)
+
+
+def _loadGraphDbCollectionInterchangeHeaders(httpconn, jwt, graphdbname):
+    print('GraphDb: loading a collection "{}".'
+          .format(GRAPHDB_COLLECTION_INTERCHANGEHEADERS))
+    with open(INTERCHANGEHEADERS_DUMP_FILENAME) as csvfile:
+        csvreader = csv.reader(csvfile)
+        for row in csvreader:
+            header = int(row[0])
+            typ = row[1]
+            docObj = {
+                'header': header,
+                'type': typ
+            }
+            _loadGraphDbDoc(httpconn, jwt, graphdbname,
+                            GRAPHDB_COLLECTION_INTERCHANGEHEADERS, docObj)
+
+
+def _loadGraphDbCollectionInterchangeEdges(httpconn, jwt, graphdbname):
+    print('GraphDb: loading a collection "{}".'
+          .format(GRAPHDB_COLLECTION_INTERCHANGEEDGES))
+    with open(INTERCHANGEEDGES_DUMP_FILENAME) as csvfile:
+        csvreader = csv.reader(csvfile)
+        for row in csvreader:
+            _from = row[0]
+            _to = row[1]
+            typ = row[2]
+            docObj = {
+                '_from': _getGraphDbInterchangeHeaderKey(_from),
+                '_to': _getGraphDbPartKey(_to),
+                'type': typ
+            }
+            _loadGraphDbDoc(httpconn, jwt, graphdbname,
+                            GRAPHDB_COLLECTION_INTERCHANGEEDGES, docObj)
+
+
 def _loadGraphDbDoc(httpconn, jwt, graphdbname, collectionName, docObj):
-    url = _preparGraphDbUrl(graphdbname, '/_api/document/{}'.format(collectionName))
+    url = _prepareGraphDbUrl(graphdbname, '/_api/document/{}'
+                             .format(collectionName))
     docJson = json.dumps(docObj)
     headers = _prepareGraphDbHeaders(jwt, docJson)
     httpconn.request('POST', url, docJson, headers)
@@ -334,21 +401,6 @@ def _loginGraphDb(httpconn, username, password):
     return jwt
 
 
-def _prepareGraphDbHeaders(jwt, body):
-    headers = {
-        'Connection': 'Keep-Alive',
-        'Content-Type': 'application/json',
-        'x-arango-async': 'false'
-    }
-    if jwt is None:
-        headers['X-Omit-WWW-Authenticate'] = True
-    else:
-        headers['Authorization'] = 'bearer {}'.format(jwt)
-    if body is not None:
-        headers['Content-Length'] = len(body)
-    return headers
-
-
 def _readGraphDbResponse(response):
     if response.status not in [http.HTTPStatus.OK, http.HTTPStatus.CREATED,
                                http.HTTPStatus.ACCEPTED]:
@@ -366,7 +418,37 @@ def _readGraphDbResponse(response):
     return retval
 
 
-def _preparGraphDbUrl(graphdbname, serviceUrl):
+def _getGraphDbPartKey(id_):
+    return _getGraphDbDocKey(GRAPHDB_COLLECTION_PARTS, id_)
+
+
+def _getGraphDbInterchangeHeaderKey(id_):
+    return _getGraphDbDocKey(GRAPHDB_COLLECTION_INTERCHANGEHEADERS, id_)
+
+
+@lru_cache(64)
+def _getGraphDbDocKey(collectionName, id_):
+    return '{}/{}'.format(collectionName, id_)
+
+
+@lru_cache(32)
+def _prepareGraphDbHeaders(jwt, body):
+    headers = {
+        'Connection': 'Keep-Alive',
+        'Content-Type': 'application/json',
+        'x-arango-async': 'false'
+    }
+    if jwt is None:
+        headers['X-Omit-WWW-Authenticate'] = True
+    else:
+        headers['Authorization'] = 'bearer {}'.format(jwt)
+    if body is not None:
+        headers['Content-Length'] = len(body)
+    return headers
+
+
+@lru_cache(8)
+def _prepareGraphDbUrl(graphdbname, serviceUrl):
     if graphdbname is None:
         return serviceUrl
     else:
@@ -512,6 +594,10 @@ try:
     t0 = time.time()
     main(dbconn)
     t1 = time.time()
+    print('prepare_headers cache info: {}'
+          .format(_prepareGraphDbHeaders.cache_info()))
+    print('prepare_url cache info: {}'
+          .format(_prepareGraphDbUrl.cache_info()))
     print('The script has been finished in {:.2f} second(s).'.format(t1 - t0))
     print
     print('The database is ready for tests. Now you have to do following:\n')
@@ -519,9 +605,13 @@ try:
           '\n\t$ webdriver-manager start\n')
     print('2. Start in a separate window an \'elasticsearch\':\n'
           '\n\t$ elasticsearch -v -Ecluster.name=es-metadata-e2e\n')
-    print('3. Start in a separate window the \'metadata\' webapp with '
-          'profile \'e2e\':')
-    print('\t$ ./metadata.py\n')
-    print('4. Run in this window the e2e test suites:\n\n\t$ ./runtests.py\n')
+    print('3. Start in a separate window a GraphDb REST service (TurboBom):\n'
+          '\n\t$ cd TurboBom'
+          '\n\t$ export NODE_ENV=test_e2e'
+          '\n\t$ grunt workon')
+    print('4. Start in a separate window the \'metadata\' webapp with '
+          'profile \'e2e\':\n'
+          '\n\t$ ./metadata.py\n')
+    print('5. Run in this window the e2e test suites:\n\n\t$ ./runtests.py\n')
 finally:
     dbconn.close()
