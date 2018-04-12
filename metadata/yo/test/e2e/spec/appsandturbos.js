@@ -61,7 +61,7 @@ describe('Applications & Turbos:', function() {
     var bttnClear, fltrPartNumber, fltrState, fltrManufacturer, fltrName;
 
     beforeAll(function() {
-      bttnClear = tabTurbos.element(by.tiButton('Clear'));
+      bttnClear = tabTurbos.element(by.tiButton('RESET FILTER'));
       fltrPartNumber = tabTurbos.element(by.id('fltrPartNumber'));
       fltrState = tabTurbos.element(by.id('fltrState'));
       fltrManufacturer = tabTurbos.element(by.id('fltrManufacturer'));
@@ -88,7 +88,7 @@ describe('Applications & Turbos:', function() {
       expect(fltrPartType.isPresent()).toBeTruthy();
       expect(fltrPartType.isDisplayed()).toBeTruthy();
       expect(fltrPartType.isEnabled()).toBeTruthy();
-      expect(rowsTurbos.count()).toBe(10);
+      expect(rowsTurbos.count()).toBe(20);
     });
 
     describe('Filter:', function() {
@@ -134,7 +134,7 @@ describe('Applications & Turbos:', function() {
 
         it('Active', function() {
           browser._selectDropdownbyNum(fltrState, 1);
-          expect(rowsTurbos.count()).toBe(10);
+          expect(rowsTurbos.count()).toBe(19);
         });
 
         it('Inactive', function() {

@@ -77,7 +77,7 @@ if not args.skip_indexing:
               .format(e))
         sys.exit(1)
     if response.status != http.HTTPStatus.OK:
-        print('The indexing job failed: {}'.format(resopnse.status))
+        print('The indexing job failed: {}'.format(response.status))
         sys.exit(1)
     print('The indexing has been finished.')
 

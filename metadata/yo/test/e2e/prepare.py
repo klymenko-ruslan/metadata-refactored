@@ -100,8 +100,8 @@ args = parser.parse_args()
 
 def main(dbaCnx):
     """Main function."""
-#    prepareDb(dbaCnx)
-#    prepareFileStorage()
+    prepareDb(dbaCnx)
+    prepareFileStorage()
     prepareGraphDb(dbaCnx)
 
 

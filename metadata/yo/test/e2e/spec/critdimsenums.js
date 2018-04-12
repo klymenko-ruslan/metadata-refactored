@@ -3,7 +3,7 @@
 
 'use strict';
 
-describe('Critical dimensions enumerations:', function() {
+fdescribe('Critical dimensions enumerations:', function() {
 
   var bttnAddEnum, bttnAddEnumItem, rowsEnums, firstRowEnums,
     rowsEnumItems, firstRowEnumItems, bttnModifyEnum, bttnDeleteEnum,
@@ -58,11 +58,11 @@ describe('Critical dimensions enumerations:', function() {
       expect(bttnUndoEnum.isDisplayed()).toBeFalsy();
     });
 
-    it('should display items for the selected emum', function() {
+    it('should display items for the selected enum', function() {
       expect(rowsEnumItems.count()).toBe(2);
       var secondRowEnum = rowsEnums.get(1);
       secondRowEnum.click();
-      expect(rowsEnumItems.count()).toBe(2);
+      expect(rowsEnumItems.count()).toBe(10);
       firstRowEnums.click();
       expect(rowsEnumItems.count()).toBe(2);
     });
@@ -121,14 +121,14 @@ describe('Critical dimensions enumerations:', function() {
         bttnCreate.click();
         expect(dlgNewEnum.isDisplayed()).toBeFalsy();
         // Check that enum is displayed in the table.
-        var secondRowEnum = rowsEnums.get(1);
-        var firstCell = secondRowEnum.all(by.tagName('td'))
+        var fooRowEnum = rowsEnums.get(7);
+        var firstCell = fooRowEnum.all(by.tagName('td'))
           .first().all(by.tagName('span')).first();
         expect(firstCell.isPresent());
         expect(firstCell.isDisplayed());
         expect(firstCell.getText()).toBe('foo');
         // Delete the enum.
-        var bttnDeleteFoo = secondRowEnum.all(by.tagName('td')).last()
+        var bttnDeleteFoo = fooRowEnum.all(by.tagName('td')).last()
           .element(by.tiButton('Delete'));
         expect(bttnDeleteFoo.isPresent()).toBeTruthy();
         expect(bttnDeleteFoo.isDisplayed()).toBeTruthy();

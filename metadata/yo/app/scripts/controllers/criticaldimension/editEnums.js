@@ -26,7 +26,8 @@ angular.module('ngMetaCrudApp')
 
         $scope.critDimEnumsTableParams = new NgTableParams({
           page: 1,
-          count: 10
+          count: 10,
+          sorting: {'name': 'asc'}
         }, {
           dataset: critDimEnums
         });

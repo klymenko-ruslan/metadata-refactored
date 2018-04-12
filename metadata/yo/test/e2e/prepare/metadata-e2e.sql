@@ -4159,6 +4159,8 @@ INSERT INTO `group_role` VALUES (2,31);
 INSERT INTO `group_role` VALUES (3,31);
 INSERT INTO `group_role` VALUES (8,31);
 INSERT INTO `group_role` VALUES (3,32);
+INSERT INTO `group_role` VALUES (3,33);
+INSERT INTO `group_role` VALUES (3,34);
 /*!40000 ALTER TABLE `group_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -4970,24 +4972,6 @@ INSERT INTO `part` VALUES (64956,'9-A-6397',11,21,'APEXi Full Auto Turbo Timer',
 
 /*!40000 ALTER TABLE `part` ENABLE KEYS */;
 UNLOCK TABLES;
-
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
-/*!50003 SET collation_connection  = utf8_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_ALL_TABLES' */ ;
-DELIMITER ;;
-/*!50003 CREATE*/  /*!50003 TRIGGER `part_AFTER_INSERT` AFTER INSERT ON `part`
-      FOR EACH ROW BEGIN
-        insert into interchange_header (new_part_id) value (new.id);
-        set @i_header_id_new = (select id from interchange_header where new_part_id = new.id);
-        insert into interchange_item (part_id, interchange_header_id) values (new.id, @i_header_id_new);
-        INSERT INTO part_audits Set action = 'insert', part_id = NEW.id, created_at = NOW(), updated_at= NOW();
-      END */;;
-DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
@@ -5512,6 +5496,8 @@ INSERT INTO `role` VALUES (29,'ROLE_CHLOGSRCNAME_DELETE','Delete a changelog sou
 INSERT INTO `role` VALUES (30,'ROLE_SERVICE','Manage services (e.g. map changelog source functionality on services).');
 INSERT INTO `role` VALUES (31,'ROLE_PRICE_READ','Read prices for a part.');
 INSERT INTO `role` VALUES (32,'ROLE_MANUFACTURER_CRUD','CRUD operations on manufacturers.');
+INSERT INTO `role` VALUES (33,'ROLE_AUDIT_READ','Read audit log.');
+INSERT INTO `role` VALUES (34,'ROLE_ALTER_PART_TYPE','Change part type.');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -19335,42 +19321,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
--- Final view structure for view `test_ii`
---
-
-/*!50001 DROP VIEW IF EXISTS `test_ii`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-
-/*!50001 VIEW `test_ii` AS select `p`.`id` AS `p_id`,`ii1`.`interchange_header_id` AS `interchange_header_id`,`pi`.`id` AS `pi_id`,coalesce(`pi`.`id`,`p`.`id`) AS `part_id` from (((`part` `p` left join `interchange_item` `ii1` on((`p`.`id` = `ii1`.`part_id`))) left join `interchange_item` `ii2` on((`ii2`.`interchange_header_id` = `ii1`.`interchange_header_id`))) left join `part` `pi` on((`ii2`.`part_id` = `pi`.`id`))) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `test_pi`
---
-
-/*!50001 DROP VIEW IF EXISTS `test_pi`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-
-/*!50001 VIEW `test_pi` AS select `p`.`id` AS `id`,`ii`.`interchange_header_id` AS `interchange_header_id`,`ii`.`part_id` AS `part_id`,coalesce(`ii`.`part_id`,`p`.`id`) AS `part_id_comb` from (`part` `p` left join `interchange_item` `ii` on((`p`.`id` = `ii`.`part_id`))) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
 -- Final view structure for view `vapp`
 --
 
@@ -19384,78 +19334,6 @@ DELIMITER ;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 
 /*!50001 VIEW `vapp` AS select distinct `p`.`id` AS `part_id`,`cmake`.`name` AS `car_make`,`cyear`.`name` AS `car_year`,`cmodel`.`name` AS `car_model` from ((((((`part` `p` join `vpart_turbo` `pt` on((`pt`.`part_id` = `p`.`id`))) join `turbo_car_model_engine_year` `c` on((`c`.`part_id` = `pt`.`turbo_id`))) left join `car_model_engine_year` `cmey` on((`cmey`.`id` = `c`.`car_model_engine_year_id`))) left join `car_model` `cmodel` on((`cmodel`.`id` = `cmey`.`car_model_id`))) left join `car_make` `cmake` on((`cmake`.`id` = `cmodel`.`car_make_id`))) left join `car_year` `cyear` on((`cyear`.`id` = `cmey`.`car_year_id`))) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `vint`
---
-
-/*!50001 DROP VIEW IF EXISTS `vint`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-
-/*!50001 VIEW `vint` AS select `ii1`.`interchange_header_id` AS `interchange_header_id`,`p`.`id` AS `part_id`,`pt`.`name` AS `part_type`,`p`.`manfr_part_num` AS `part_number`,`pm`.`name` AS `manufacturer`,`ip`.`id` AS `i_part_id`,`ipt`.`name` AS `i_part_type`,`ip`.`manfr_part_num` AS `i_part_number`,`ipm`.`name` AS `i_manufacturer` from (((((((`part` `p` join `part_type` `pt` on((`pt`.`id` = `p`.`part_type_id`))) join `manfr` `pm` on((`pm`.`id` = `p`.`manfr_id`))) join `interchange_item` `ii1` on((`ii1`.`part_id` = `p`.`id`))) left join `interchange_item` `ii2` on((`ii2`.`interchange_header_id` = `ii1`.`interchange_header_id`))) left join `part` `ip` on((`ip`.`id` = `ii2`.`part_id`))) join `part_type` `ipt` on((`ipt`.`id` = `ip`.`part_type_id`))) left join `manfr` `ipm` on((`ipm`.`id` = `ip`.`manfr_id`))) where (`p`.`id` <> `ii2`.`part_id`) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `vint_ti`
---
-
-/*!50001 DROP VIEW IF EXISTS `vint_ti`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-
-/*!50001 VIEW `vint_ti` AS select distinct `ii1`.`interchange_header_id` AS `interchange_header_id`,`p`.`id` AS `part_id`,`ip`.`id` AS `ti_part_id` from ((((`part` `p` join `interchange_item` `ii1` on((`ii1`.`part_id` = `p`.`id`))) left join `interchange_item` `ii2` on(((`ii2`.`interchange_header_id` = `ii1`.`interchange_header_id`) and (`ii1`.`part_id` <> `ii2`.`part_id`)))) left join `part` `ip` on((`ip`.`id` = `ii2`.`part_id`))) left join `manfr` `ipm` on((`ipm`.`id` = `ip`.`manfr_id`))) where (`ip`.`manfr_id` = 11) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `vkp`
---
-
-/*!50001 DROP VIEW IF EXISTS `vkp`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-
-/*!50001 VIEW `vkp` AS select distinct `kii`.`part_id` AS `kit_id`,`pii`.`part_id` AS `part_id`,`kc`.`exclude` AS `exclude` from ((((`kit_part_common_component` `kc` join `interchange_item` `ki` on((`ki`.`part_id` = `kc`.`kit_id`))) join `interchange_item` `kii` on((`kii`.`interchange_header_id` = `ki`.`interchange_header_id`))) join `interchange_item` `pi` on((`pi`.`part_id` = `kc`.`part_id`))) join `interchange_item` `pii` on((`pii`.`interchange_header_id` = `pi`.`interchange_header_id`))) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `vmagmi_sop`
---
-
-/*!50001 DROP VIEW IF EXISTS `vmagmi_sop`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-
-/*!50001 VIEW `vmagmi_sop` AS select `ssop`.`oversize_part_id` AS `part_id`,`ssop`.`standard_part_id` AS `standard_part_sku`,group_concat(distinct `ii2`.`part_id` order by `ii2`.`part_id` ASC separator ',') AS `oversize_part_skus` from ((((`standard_oversize_part` `ssop` join `standard_oversize_part` `osop` on((`osop`.`standard_part_id` = `ssop`.`standard_part_id`))) left join `part` `op` on(((`op`.`id` = `osop`.`oversize_part_id`) and (`op`.`manfr_id` = 11)))) left join `interchange_item` `ii` on((`ii`.`part_id` = `op`.`id`))) left join `interchange_item` `ii2` on((`ii2`.`interchange_header_id` = `ii`.`interchange_header_id`))) group by `ssop`.`oversize_part_id`,`ssop`.`standard_part_id` union select `ssop`.`standard_part_id` AS `part_id`,`ssop`.`standard_part_id` AS `standard_part_sku`,group_concat(distinct `ii2`.`part_id` order by `ii2`.`part_id` ASC separator ',') AS `oversize_part_skus` from (((`standard_oversize_part` `ssop` left join `part` `op` on(((`op`.`id` = `ssop`.`oversize_part_id`) and (`op`.`manfr_id` = 11)))) left join `interchange_item` `ii` on((`ii`.`part_id` = `op`.`id`))) left join `interchange_item` `ii2` on((`ii2`.`interchange_header_id` = `ii`.`interchange_header_id`))) group by `ssop`.`standard_part_id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
