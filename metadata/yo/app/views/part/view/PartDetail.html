@@ -53,38 +53,46 @@
   <uib-tab index="0" select="onChangeTab('part_details')">
     <uib-tab-heading>
       <div class="tab-head">
-        <div class="tab-title">
+        <div id="tab-details" class="tab-title">
           <i class="fa fa-bars" aria-hidden="true"></i>
           Part Details
         </div>
       </div>
     </uib-tab-heading>
-    <div role="tabpanel" class="tab-pane tab-part-detail">
+    <div id="details" role="tabpanel" class="tab-pane tab-part-detail">
       <data-ng-include src="'/views/part/view/TabDetails.html'"></data-ng-include>
     </div>
   </uib-tab>
   <uib-tab index="1" select="onChangeTab('critical_dimensions')">
     <uib-tab-heading>
-      <i class="fa fa-arrows" aria-hidden="true"></i>
-      Critical Dimensions
+      <div class="tab-head">
+        <div id="tab-critical-dimensions" class="tab-title">
+          <i class="fa fa-arrows" aria-hidden="true"></i>
+          Critical Dimensions
+        </div>
+      </div>
     </uib-tab-heading>
-    <div role="tabpanel" class="tab-pane tab-part-detail">
+    <div id="critical_dimensions" role="tabpanel" class="tab-pane tab-part-detail">
       <critical-dimensions part="part" descriptors="criticalDimensions"></critical-dimensions>
     </div>
   </uib-tab>
   <uib-tab index="2" select="onChangeTab('turbo_types')">
     <uib-tab-heading>
-      <i class="fa fa-cog" aria-hidden="true"></i>
-      Turbo Types
+      <div class="tab-head">
+        <div id="tab-turbo-types" class="tab-title">
+          <i class="fa fa-cog" aria-hidden="true"></i>
+          Turbo Types
+        </div>
+      </div>
     </uib-tab-heading>
-    <div role="tabpanel" class="tab-pane tab-part-detail">
+    <div id="turbo_types" role="tabpanel" class="tab-pane tab-part-detail">
       <turbo-types part="part"></turbo-types>
     </div>
   </uib-tab>
   <uib-tab index="3" select="onChangeTab('kits')" data-ng-show="part.partType.value == 'turbo'">
     <uib-tab-heading>
       <div class="tab-head">
-        <div class="tab-title">
+        <div id="tab-kits" class="tab-title">
           <i class="fa fa-medkit"></i>
           Kits
         </div>
@@ -93,14 +101,14 @@
         </button>
       </div>
     </uib-tab-heading>
-    <div role="tabpanel" class="tab-pane tab-part-detail">
+    <div id="kits" role="tabpanel" class="tab-pane tab-part-detail">
       <data-ng-include src="'/views/part/view/TabKits.html'"></data-ng-include>
     </div>
   </uib-tab>
   <uib-tab index="4" select="onChangeTab('applications')" data-ng-show="part.partType.value == 'turbo'">
     <uib-tab-heading>
       <div class="tab-head">
-        <div class="tab-title">
+        <div id="tab-applications" class="tab-title">
           <i class="fa fa-paperclip" aria-hidden="true"></i>
           Applications
         </div>
@@ -109,14 +117,14 @@
         </button>
       </div>
     </uib-tab-heading>
-    <div role="tabpanel" class="tab-pane tab-part-detail">
+    <div id="applications" role="tabpanel" class="tab-pane tab-part-detail">
       <data-ng-include src="'/views/part/view/TabApplications.html'"></data-ng-include>
     </div>
   </uib-tab>
   <uib-tab index="5" select="onChangeTab('turbos')" data-ng-show="part.partType.value == 'gasket_kit'">
     <uib-tab-heading>
       <div class="tab-head">
-        <div class="tab-title">
+        <div id="tab-turbos" class="tab-title">
           <i class="fa fa-book" aria-hidden="true"></i>
           Turbos
         </div>
@@ -125,14 +133,14 @@
         </button>
       </div>
     </uib-tab-heading>
-    <div role="tabpanel" class="tab-pane tab-part-detail">
+    <div id="turbos" role="tabpanel" class="tab-pane tab-part-detail">
       <data-ng-include src="'/views/part/view/TabTurbos.html'"></data-ng-include>
     </div>
   </uib-tab>
   <uib-tab index="6" select="onChangeTab('non_standard')" data-ng-show="part.partType.value == 'journal_bearing' || part.partType.value == 'journal_bearing_spacer' || part.partType.value == 'piston_ring'">
     <uib-tab-heading>
       <div class="tab-head">
-        <div class="tab-title">
+        <div id="tab-nonstandard" class="tab-title">
           <i class="fa fa-slack" aria-hidden="true"></i>
           Non Standard
         </div>
@@ -141,14 +149,14 @@
         </button>
       </div>
     </uib-tab-heading>
-    <div role="tabpanel" class="tab-pane  tab-part-detail">
+    <div id="nonstandard" role="tabpanel" class="tab-pane  tab-part-detail">
       <data-ng-include src="'/views/part/view/TabNonstandard.html'"></data-ng-include>
     </div>
   </uib-tab>
   <uib-tab index="7" select="onChangeTab('audit_log')">
     <uib-tab-heading>
       <div class="tab-head">
-        <div class="tab-title">
+        <div id="tab-audit-log" class="tab-title">
           <i class="fa fa-book" aria-hidden="true"></i>
           Audit Log
         </div>
@@ -157,14 +165,14 @@
         </button>
       </div>
     </uib-tab-heading>
-    <div role="tabpanel" class="tab-pane  tab-part-detail">
+    <div id="audit_log" role="tabpanel" class="tab-pane  tab-part-detail">
       <data-ng-include src="'/views/part/view/TabAuditLog.html'"></data-ng-include>
     </div>
   </uib-tab>
   <uib-tab index="8" select="onChangeTab('prices')" data-ng-show="part.manufacturer.name == 'Turbo International'">
     <uib-tab-heading>
       <div class="tab-head">
-        <div class="tab-title">
+        <div id="tab-prices" class="tab-title">
           <i class="fa fa-usd" aria-hidden="true"></i>
           Prices
         </div>
@@ -173,14 +181,14 @@
         </button>
       </div>
     </uib-tab-heading>
-    <div role="tabpanel" class="tab-pane  tab-part-detail">
+    <div id="prices" role="tabpanel" class="tab-pane  tab-part-detail">
       <data-ng-include src="'/views/part/view/TabPrices.html'"></data-ng-include>
     </div>
   </uib-tab>
   <uib-tab index="9" select="onChangeTab('also_bought')" data-ng-show="part.manufacturer.name == 'Turbo International'">
     <uib-tab-heading>
       <div class="tab-head">
-        <div class="tab-title">
+        <div id="tab-also-bought" class="tab-title">
           <i class="fa fa-shopping-cart" aria-hidden="true"></i>
           Also Bought
         </div>
@@ -189,7 +197,7 @@
         </button>
       </div>
     </uib-tab-heading>
-    <div role="tabpanel" class="tab-pane  tab-part-detail">
+    <div id="also_bought" role="tabpanel" class="tab-pane  tab-part-detail">
       <data-ng-include src="'/views/part/view/TabAlsoBought.html'"></data-ng-include>
     </div>
   </uib-tab>

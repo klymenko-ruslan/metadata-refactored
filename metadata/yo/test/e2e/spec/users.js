@@ -27,13 +27,11 @@ describe('Users:', function() {
 
     beforeEach(function() {
       browser.get('http://localhost:8080/security/users');
-      /*
       fltrName.clear();
       fltrUsername.clear();
       fltrEmail.clear();
       browser._selectReset(fltrEnabled);
       browser._selectReset(fltrAuthProvider);
-      */
     });
 
     it('should be displayed', function() {
@@ -175,22 +173,22 @@ describe('Users:', function() {
     describe('search by \'Auth Provider\':', function() {
 
       it('any', function() {
-        browser._selectDropdownbyNum(fltrAuthProvider, 1);
+        browser._selectDropdownbyNum(fltrAuthProvider, 2);
         expect(rows.count()).toBe(25);
       });
 
       it('Local DB', function() {
-        browser._selectDropdownbyNum(fltrAuthProvider, 2);
+        browser._selectDropdownbyNum(fltrAuthProvider, 3);
         expect(rows.count()).toBe(13);
       });
 
       it('TurboInternational AD (LDAP)', function() {
-        browser._selectDropdownbyNum(fltrAuthProvider, 3);
+        browser._selectDropdownbyNum(fltrAuthProvider, 4);
         expect(rows.count()).toBe(3);
       });
 
       it('TurboInternational AD (LDAP SOFT)', function() {
-        browser._selectDropdownbyNum(fltrAuthProvider, 4);
+        browser._selectDropdownbyNum(fltrAuthProvider, 5);
         expect(rows.count()).toBe(13);
       });
 

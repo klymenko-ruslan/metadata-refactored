@@ -3,7 +3,7 @@
 
 'use strict';
 
-fdescribe('Critical dimensions enumerations:', function() {
+describe('Critical dimensions enumerations:', function() {
 
   var bttnAddEnum, bttnAddEnumItem, rowsEnums, firstRowEnums,
     rowsEnumItems, firstRowEnumItems, bttnModifyEnum, bttnDeleteEnum,
@@ -59,10 +59,11 @@ fdescribe('Critical dimensions enumerations:', function() {
     });
 
     it('should display items for the selected enum', function() {
+      firstRowEnums.click();
       expect(rowsEnumItems.count()).toBe(2);
       var secondRowEnum = rowsEnums.get(1);
       secondRowEnum.click();
-      expect(rowsEnumItems.count()).toBe(10);
+      expect(rowsEnumItems.count()).toBe(4);
       firstRowEnums.click();
       expect(rowsEnumItems.count()).toBe(2);
     });
@@ -122,11 +123,11 @@ fdescribe('Critical dimensions enumerations:', function() {
         expect(dlgNewEnum.isDisplayed()).toBeFalsy();
         // Check that enum is displayed in the table.
         var fooRowEnum = rowsEnums.get(7);
-        var firstCell = fooRowEnum.all(by.tagName('td'))
+        var fooCell = fooRowEnum.all(by.tagName('td'))
           .first().all(by.tagName('span')).first();
-        expect(firstCell.isPresent());
-        expect(firstCell.isDisplayed());
-        expect(firstCell.getText()).toBe('foo');
+        expect(fooCell.isPresent());
+        expect(fooCell.isDisplayed());
+        expect(fooCell.getText()).toBe('foo');
         // Delete the enum.
         var bttnDeleteFoo = fooRowEnum.all(by.tagName('td')).last()
           .element(by.tiButton('Delete'));
@@ -153,7 +154,7 @@ fdescribe('Critical dimensions enumerations:', function() {
         // The confirmation dialog should disappear and a row with enum
         // is removed from the table.
         expect(dlgDelEnum.isDisplayed()).toBeFalsy();
-        expect(firstCell.getText()).not.toBe('foo');
+        expect(fooCell.getText()).not.toBe('foo');
       });
 
     });
@@ -205,24 +206,24 @@ fdescribe('Critical dimensions enumerations:', function() {
 
       it('should allow to undo changes', function() {
         expect(firstCellInput.evaluate('cdeModifying.name'))
-          .toBe('yesNoEnum');
+          .toBe('BH_ArmAngleSource');
         firstCellInput.sendKeys('Foo');
         expect(firstCellInput.evaluate('cdeModifying.name'))
-          .toBe('yesNoEnumFoo');
+          .toBe('BH_ArmAngleSourceFoo');
         expect(bttnSaveEnum.isEnabled()).toBeTruthy();
         expect(bttnUndoEnum.isEnabled()).toBeTruthy();
         bttnUndoEnum.click();
         expect(firstCellInput.evaluate('cdeModifying.name'))
-          .toBe('yesNoEnum');
+          .toBe('BH_ArmAngleSource');
       });
 
       it('should allow to save changes', function() {
         // Do a modification.
         expect(firstCellInput.evaluate('cdeModifying.name'))
-          .toBe('yesNoEnum');
+          .toBe('BH_ArmAngleSource');
         firstCellInput.sendKeys('Foo');
         expect(firstCellInput.evaluate('cdeModifying.name'))
-          .toBe('yesNoEnumFoo');
+          .toBe('BH_ArmAngleSourceFoo');
         expect(bttnSaveEnum.isEnabled()).toBeTruthy();
         // Save the modification.
         bttnSaveEnum.click();
@@ -236,13 +237,13 @@ fdescribe('Critical dimensions enumerations:', function() {
         expect(bttnSaveEnum.isDisplayed()).toBeFalsy();
         expect(bttnUndoEnum.isDisplayed()).toBeFalsy();
         expect(bttnCancelEnum.isDisplayed()).toBeFalsy();
-        expect(firstCellTxt.getText()).toBe('yesNoEnumFoo');
+        expect(firstCellTxt.getText()).toBe('BH_ArmAngleSourceFoo');
         // Do modification again to revert the old value.
         bttnModifyEnum.click();
         firstCellInput.clear();
-        firstCellInput.sendKeys('yesNoEnum');
+        firstCellInput.sendKeys('BH_ArmAngleSource');
         bttnSaveEnum.click();
-        expect(firstCellTxt.getText()).toBe('yesNoEnum');
+        expect(firstCellTxt.getText()).toBe('BH_ArmAngleSource');
       });
 
       describe('validation:', function() {

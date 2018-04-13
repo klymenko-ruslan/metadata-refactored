@@ -6,12 +6,13 @@
 var path = require('path');
 var EC = protractor.ExpectedConditions;
 
-describe('Part details:', function() {
+fdescribe('Part details:', function() {
 
   var bttnCreateXRef, bttnWhereUsed, bttnInterchanges, bttnSalesNotes,
-    lblStateActive, lblStateInactive, bttnReindex, bttnRebuildBOM, bttnReload,
-    tabDetails, tabDimensions, tabTurboTypes, tabApplications, tabTurbos,
-    tabNonStandard, tabAuditLog, tabPrices, tabAlsoBought, dlgCreateXRef;
+    lblStateActive, lblStateInactive, bttnReindex,
+    tabDetails, tabDimensions, tabTurboTypes, tabKits, tabApplications,
+    tabTurbos, tabNonStandard, tabAuditLog, tabPrices, tabAlsoBought,
+    dlgCreateXRef;
 
   beforeAll(function() {
     bttnCreateXRef = element(by.tiButton('Create X Ref'));
@@ -21,11 +22,10 @@ describe('Part details:', function() {
     lblStateActive = $('.nav-pills').$$('li').last().$$('strong').first();
     lblStateInactive = $('.nav-pills').$$('li').last().$$('strong').last();
     bttnReindex = element(by.tiButton('Reindex'));
-    bttnRebuildBOM = element(by.tiButton('Rebuild BOM'));
-    bttnReload = element(by.tiButton('Reload'));
     tabDetails = element(by.id('tab-details'));
     tabDimensions = element(by.id('tab-critical-dimensions'));
     tabTurboTypes = element(by.id('tab-turbo-types'));
+    tabKits = element(by.id('tab-kits'));
     tabApplications = element(by.id('tab-applications'));
     tabTurbos = element(by.id('tab-turbos'));
     tabNonStandard = element(by.id('tab-nonstandard'));
@@ -60,12 +60,6 @@ describe('Part details:', function() {
     expect(bttnReindex.isPresent()).toBeTruthy();
     expect(bttnReindex.isDisplayed()).toBeTruthy();
     expect(bttnReindex.isEnabled()).toBeTruthy();
-    expect(bttnRebuildBOM.isPresent()).toBeTruthy();
-    expect(bttnRebuildBOM.isDisplayed()).toBeTruthy();
-    expect(bttnRebuildBOM.isEnabled()).toBeTruthy();
-    expect(bttnReload.isPresent()).toBeTruthy();
-    expect(bttnReload.isDisplayed()).toBeTruthy();
-    expect(bttnReload.isEnabled()).toBeTruthy();
     expect(tabDetails.isPresent()).toBeTruthy();
     expect(tabDetails.isDisplayed()).toBeTruthy();
     expect(tabDetails.isEnabled()).toBeTruthy();
@@ -75,6 +69,9 @@ describe('Part details:', function() {
     expect(tabTurboTypes.isPresent()).toBeTruthy();
     expect(tabTurboTypes.isDisplayed()).toBeTruthy();
     expect(tabTurboTypes.isEnabled()).toBeTruthy();
+    expect(tabKits.isPresent()).toBeTruthy();
+    expect(tabKits.isDisplayed()).toBeFalsy();
+    expect(tabKits.isEnabled()).toBeTruthy();
     expect(tabApplications.isPresent()).toBeTruthy();
     expect(tabApplications.isDisplayed()).toBeFalsy();
     expect(tabTurbos.isPresent()).toBeTruthy();
@@ -90,68 +87,6 @@ describe('Part details:', function() {
     expect(tabAlsoBought.isPresent()).toBeTruthy();
     expect(tabAlsoBought.isDisplayed()).toBeTruthy();
     expect(tabAlsoBought.isEnabled()).toBeTruthy();
-  });
-
-  it('has clickable tabs', function() {
-    expect(tabDetails.getAttribute('aria-expanded')).toEqual('true');
-    expect(tabDimensions.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabTurboTypes.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabApplications.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabTurbos.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabNonStandard.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabAuditLog.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabPrices.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabAlsoBought.getAttribute('aria-expanded')).not.toEqual('true');
-    tabDimensions.click();
-    expect(tabDetails.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabDimensions.getAttribute('aria-expanded')).toEqual('true');
-    expect(tabTurboTypes.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabApplications.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabTurbos.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabNonStandard.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabAuditLog.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabPrices.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabAlsoBought.getAttribute('aria-expanded')).not.toEqual('true');
-    tabTurboTypes.click();
-    expect(tabDetails.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabDimensions.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabTurboTypes.getAttribute('aria-expanded')).toEqual('true');
-    expect(tabApplications.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabTurbos.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabNonStandard.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabAuditLog.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabPrices.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabAlsoBought.getAttribute('aria-expanded')).not.toEqual('true');
-    tabAuditLog.click();
-    expect(tabDetails.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabDimensions.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabTurboTypes.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabApplications.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabTurbos.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabNonStandard.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabAuditLog.getAttribute('aria-expanded')).toEqual('true');
-    expect(tabPrices.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabAlsoBought.getAttribute('aria-expanded')).not.toEqual('true');
-    tabPrices.click();
-    expect(tabDetails.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabDimensions.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabTurboTypes.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabApplications.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabTurbos.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabNonStandard.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabAuditLog.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabPrices.getAttribute('aria-expanded')).toEqual('true');
-    expect(tabAlsoBought.getAttribute('aria-expanded')).not.toEqual('true');
-    tabAlsoBought.click();
-    expect(tabDetails.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabDimensions.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabTurboTypes.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabApplications.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabTurbos.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabNonStandard.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabAuditLog.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabPrices.getAttribute('aria-expanded')).not.toEqual('true');
-    expect(tabAlsoBought.getAttribute('aria-expanded')).toEqual('true');
   });
 
   it('should be possible to press button \'Create X Ref\'', function() {
@@ -180,32 +115,6 @@ describe('Part details:', function() {
 
   it('shoul be possible to press button \'Reindex\'', function() {
     var bttn = bttnReindex;
-    expect(bttn.isPresent()).toBeTruthy();
-    expect(bttn.isDisplayed()).toBeTruthy();
-    expect(bttn.isEnabled()).toBeTruthy();
-    expect(browser.getCurrentUrl()).toBe('http://localhost:8080/part/64956');
-    bttnReindex.click();
-    expect(bttn.isPresent()).toBeTruthy();
-    expect(bttn.isDisplayed()).toBeTruthy();
-    expect(bttn.isEnabled()).toBeTruthy();
-    expect(browser.getCurrentUrl()).toBe('http://localhost:8080/part/64956');
-  });
-
-  it('shoul be possible to press button \'Rebuild BOM\'', function() {
-     var bttn = bttnRebuildBOM;
-    expect(bttn.isPresent()).toBeTruthy();
-    expect(bttn.isDisplayed()).toBeTruthy();
-    expect(bttn.isEnabled()).toBeTruthy();
-    expect(browser.getCurrentUrl()).toBe('http://localhost:8080/part/64956');
-    bttnReindex.click();
-    expect(bttn.isPresent()).toBeTruthy();
-    expect(bttn.isDisplayed()).toBeTruthy();
-    expect(bttn.isEnabled()).toBeTruthy();
-    expect(browser.getCurrentUrl()).toBe('http://localhost:8080/part/64956');
-  });
-
-  it('shoul be possible to press button \'Reload\'', function() {
-     var bttn = bttnReload;
     expect(bttn.isPresent()).toBeTruthy();
     expect(bttn.isDisplayed()).toBeTruthy();
     expect(bttn.isEnabled()).toBeTruthy();
@@ -760,7 +669,7 @@ describe('Part details:', function() {
       expect(rows.count()).toBe(0);
     });
 
- });
+  });
 
   describe('Tab - Prices:', function() {
 
@@ -773,6 +682,7 @@ describe('Part details:', function() {
 
     beforeEach(function() {
       tabPrices.click();
+      // expect(tabPrices.isDisplayed()).toBeTruthy();
       // Activating of tabs is poorly detected by Protractor
       // so line below is a double check that tab was activated
       // and all controls are visible.
@@ -781,7 +691,7 @@ describe('Part details:', function() {
     });
 
     it('should display a records in the table', function() {
-      expect(rows.count()).toBe(10);
+      expect(rows.count()).toBe(12);
     });
 
   });

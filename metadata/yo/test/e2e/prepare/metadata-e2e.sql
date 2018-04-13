@@ -1502,7 +1502,7 @@ CREATE TABLE `changelog` (
   `user_id` bigint(20) NOT NULL,
   `description` varchar(255) NOT NULL,
   `data` longtext,
-  `service` enum('BOM','INTERCHANGE','MAS90SYNC','SALESNOTES','APPLICATIONS','KIT','PART','TURBOMODEL','TURBOTYPE') DEFAULT NULL,
+  `service` enum('BOM','INTERCHANGE','MAS90SYNC','SALESNOTES','APPLICATIONS','KIT','PART','TURBOMODEL','TURBOTYPE','CRITICALDIM','IMAGE') DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `change_date` (`change_date`),
   KEY `user_id` (`user_id`),
