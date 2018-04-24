@@ -42,7 +42,7 @@ public class MetadataAuthenticationProviderIT {
     private final static String DB_PASSWORD = "zoraltemp";
 
     private final static String LDAP_USER = "ldaptest";
-    private final static String LDAP_PASSWORD = "7jFboLWrgzijbfn";
+    private final static String LDAP_PASSWORD = "b%nGAhS10f&JixJ";
 
     @Autowired
     private AuthenticationProvider metadataAuthenticationProvider;

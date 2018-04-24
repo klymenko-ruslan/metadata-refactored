@@ -22,7 +22,7 @@ public class AdIT {
     private final static String SERVER_HOST = "ldap.turbointernational.com";
 
     private final static String USER = "ldaptest@turbointernational.local";
-    private final static String PASSWORD = "7jFboLWrgzijbfn";
+    private final static String PASSWORD = "b%nGAhS10f&JixJ";
 
     @Test
     public void testLDAPAuth() throws NamingException {
