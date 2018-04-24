@@ -1,11 +1,8 @@
 package com.turbointernational.metadata.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -91,7 +88,7 @@ public class PriceService {
         for (Iterator<String> iter = manfrPartNums.iterator(); iter.hasNext();) {
             String partNum = iter.next();
             Prices pp = getProductPrices(null, partNum, prows);
-            retVal.add(new ProductPrices(pp));
+            retVal.add(roundProductPrices(new ProductPrices(pp)));
         }
         return retVal;
     }
@@ -102,14 +99,14 @@ public class PriceService {
         for (Iterator<Long> iter = partIds.iterator(); iter.hasNext();) {
             Long partId = iter.next();
             ProductPrices dto = getProductPricesById(partId, prows);
-            retVal.add(dto);
+            retVal.add(roundProductPrices(dto));
         }
         return retVal;
     }
 
     public ProductPrices getProductPricesById(Long partId) {
         List<PriceRow> prows = getPricesRows();
-        return getProductPricesById(partId, prows);
+        return roundProductPrices(getProductPricesById(partId, prows));
     }
 
     private ProductPrices getProductPricesById(Long partId, List<PriceRow> prows) {
@@ -177,6 +174,17 @@ public class PriceService {
         });
         Prices retVal = new Prices(partId, partNumber, standardPrice, prices);
         return retVal;
+    }
+
+    private ProductPrices roundProductPrices(ProductPrices productPrices) {
+        return new ProductPrices(new Prices(productPrices.getPartId(),
+                productPrices.getPartNum(),
+                productPrices.getStandardPrice().setScale(2, BigDecimal.ROUND_HALF_UP),
+                productPrices.getPrices()
+                             .entrySet()
+                             .stream()
+                             .map(it -> new AbstractMap.SimpleEntry<>(it.getKey(), it.getValue().setScale(2, BigDecimal.ROUND_HALF_UP)))
+                             .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()))));
     }
 
 }
