@@ -179,11 +179,12 @@ public class PriceService {
     private ProductPrices roundProductPrices(ProductPrices productPrices) {
         return new ProductPrices(new Prices(productPrices.getPartId(),
                 productPrices.getPartNum(),
-                productPrices.getStandardPrice().setScale(2, BigDecimal.ROUND_HALF_UP),
-                productPrices.getPrices()
+                productPrices.getStandardPrice() == null ? null : productPrices.getStandardPrice().setScale(2, BigDecimal.ROUND_HALF_UP),
+                productPrices.getPrices() == null ? null :
+                        productPrices.getPrices()
                              .entrySet()
                              .stream()
-                             .map(it -> new AbstractMap.SimpleEntry<>(it.getKey(), it.getValue().setScale(2, BigDecimal.ROUND_HALF_UP)))
+                             .map(it -> new AbstractMap.SimpleEntry<>(it.getKey(), it.getValue() == null ? null : it.getValue().setScale(2, BigDecimal.ROUND_HALF_UP)))
                              .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()))));
     }
 
