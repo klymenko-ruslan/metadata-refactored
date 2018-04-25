@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,7 +53,7 @@ public class MagmiController {
     @RequestMapping(value = "/prices", method = GET)
     @ResponseBody
     @Transactional(noRollbackFor = PartNotFound.class)
-    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
+    @Secured("ROLE_READ")
     public List<ProductPrices> getProductPricesByIdsAsGet(@RequestParam(name = "id") List<Long> partIds)
             throws IOException {
         List<ProductPrices> retVal = priceService.getProductsPricesByIds(partIds);
@@ -63,7 +63,7 @@ public class MagmiController {
     @RequestMapping(value = "/prices/bypn", method = GET)
     @ResponseBody
     @Transactional(noRollbackFor = PartNotFound.class)
-    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
+    @Secured("ROLE_READ")
     public List<ProductPrices> getProductPricesByNumsAsGet(@RequestParam(name = "id") List<String> partNums)
             throws IOException {
         List<ProductPrices> retVal = priceService.getProductsPricesByNums(partNums);
@@ -73,7 +73,7 @@ public class MagmiController {
     @RequestMapping(value = "/prices", method = POST)
     @ResponseBody
     @Transactional(noRollbackFor = PartNotFound.class)
-    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
+    @Secured("ROLE_READ")
     public List<ProductPrices> getProductPricesByIdsAsPost(
             @RequestParam(name = "inputtype", defaultValue = "id") InputTypeEnum inputType, @RequestBody String strJson)
             throws IOException {
@@ -97,7 +97,7 @@ public class MagmiController {
 
     @RequestMapping(value = "/invoice/history", method = GET)
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
+    @Secured("ROLE_READ")
     @JsonView(View.Summary.class)
     public InvoicesChunk getInvoiceHistory(@RequestParam(name = "startDate", required = false) Long startDate,
             @RequestParam(name = "limitDays", defaultValue = "0", required = false) int limitDays) throws SQLException {
@@ -106,7 +106,7 @@ public class MagmiController {
 
     @RequestMapping(value = "/invoice/history/header", method = POST)
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
+    @Secured("ROLE_READ")
     @JsonView(View.Summary.class)
     public List<ArInvoiceHistoryHeaderDto> getInvoiceHistoryHeader(
             @RequestBody List<ArInvoiceHistoryHeaderDto.Key> request) {
@@ -116,7 +116,7 @@ public class MagmiController {
 
     @RequestMapping(value = "/invoice/history/detail", method = POST)
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_MAGMI_EXPORT') or hasIpAddress('127.0.0.1/32')")
+    @Secured("ROLE_READ")
     @JsonView(View.Summary.class)
     public List<ArInvoiceHistoryDetailDto> getInvoiceHistoryDetail(
             @RequestBody List<ArInvoiceHistoryDetailDto.Key> request) {

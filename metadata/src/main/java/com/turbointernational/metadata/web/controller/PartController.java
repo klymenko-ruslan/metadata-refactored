@@ -425,7 +425,6 @@ public class PartController {
 
     }
 
-    // @PreAuthorize("hasRole('ROLE_READ') or hasIpAddress('127.0.0.1/32')")
     @JsonView(View.Detail.class)
     @RequestMapping(value = "/part/{id}", method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody Part getPart(@PathVariable("id") Long id) {

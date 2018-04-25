@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +42,7 @@ public class Mas90SyncController {
     @RequestMapping(value = "/status", method = GET)
     @ResponseBody
     @JsonView(View.Summary.class)
-    @PreAuthorize("hasRole('ROLE_MAS90_SYNC') or hasIpAddress('127.0.0.1/32')")
+    @Secured("ROLE_MAS90_SYNC")
     public Mas90SyncService.SyncProcessStatus status() {
         Mas90SyncService.SyncProcessStatus retVal = mas90SyncService.status();
         return retVal;
@@ -86,7 +85,7 @@ public class Mas90SyncController {
     @ResponseBody
     @Transactional
     @JsonView(View.Summary.class)
-    @PreAuthorize("hasRole('ROLE_MAS90_SYNC') or hasIpAddress('127.0.0.1/32')")
+    @Secured("ROLE_MAS90_SYNC")
     public Mas90SyncService.SyncProcessStatus start(HttpServletResponse response) throws IOException {
         User syncAgent = userDao.findOne(SYNC_AGENT_USER_ID);
         if (syncAgent == null) {
@@ -106,7 +105,7 @@ public class Mas90SyncController {
     @ResponseBody
     @Transactional
     @JsonView(View.Detail.class)
-    @PreAuthorize("hasRole('ROLE_MAS90_SYNC') or hasIpAddress('127.0.0.1/32')")
+    @Secured("ROLE_MAS90_SYNC")
     public Mas90Sync result(@PathVariable("id") Long id) throws IOException {
         Mas90Sync retVal = mas90SyncService.result(id);
         return retVal;
