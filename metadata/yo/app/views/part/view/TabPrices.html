@@ -5,11 +5,11 @@
     <tbody>
     <tr class="row-white" style="border-bottom: 2px solid #000;">
       <td class="text-right" style="padding:2px 0.5em;font-weight:bold;border-right: 1px solid #000;">Standard</td>
-      <td class="text-right" style="padding:2px 0.5em;font-weight:bold;">{{prices.standardPrice | number:3}}</td>
+      <td class="text-right" style="padding:2px 0.5em;font-weight:bold;">{{prices.standardPrice | number:2}}</td>
     </tr>
     <tr data-ng-repeat="(n, v) in prices.prices" data-ng-class-even="'row-gray'" data-ng-class-odd="'row-white'">
       <td class="text-right" style="padding:2px 0.5em;font-weight:bold;border-right: 1px solid #000;">{{n}}</td>
-      <td class="text-right" style="padding:2px 0.5em;">{{v | number:3}}</td>
+      <td class="text-right" style="padding:2px 0.5em;">{{v | number:2}}</td>
     </tr>
     </tbody>
     </table>
