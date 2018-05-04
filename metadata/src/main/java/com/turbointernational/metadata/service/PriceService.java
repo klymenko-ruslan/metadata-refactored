@@ -120,7 +120,7 @@ public class PriceService {
             }
             Prices pp = getProductPrices(partId, partNumber, prows);
             retVal = new ProductPrices(pp);
-        } catch (PartNotFound e) {
+        } catch (EmptyResultDataAccessException | PartNotFound e) {
             retVal = new ProductPrices(partId, null, e.getMessage());
         }
         return retVal;
@@ -142,10 +142,10 @@ public class PriceService {
                     + "p.discountmarkup5 as DiscountMarkupPriceRate5 "
                     + "from im_pricecode as p "
                     + "where p.pricecoderecord in ('', ' ', '0')", (rs, rowNum) -> {
-                        String priceLevel = rs.getString("price_level");
-                        Pricing pricing = Pricing.fromResultSet(rs);
-                        return new PriceRow(priceLevel, pricing);
-                    });
+                String priceLevel = rs.getString("price_level");
+                Pricing pricing = Pricing.fromResultSet(rs);
+                return new PriceRow(priceLevel, pricing);
+            });
             pricesRowsInitedAt = now;
         } else {
             log.debug("Used the cached cachedPricesRows.");
@@ -182,10 +182,10 @@ public class PriceService {
                 productPrices.getStandardPrice() == null ? null : productPrices.getStandardPrice().setScale(2, BigDecimal.ROUND_HALF_UP),
                 productPrices.getPrices() == null ? null :
                         productPrices.getPrices()
-                             .entrySet()
-                             .stream()
-                             .map(it -> new AbstractMap.SimpleEntry<>(it.getKey(), it.getValue() == null ? null : it.getValue().setScale(2, BigDecimal.ROUND_HALF_UP)))
-                             .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()))));
+                                .entrySet()
+                                .stream()
+                                .map(it -> new AbstractMap.SimpleEntry<>(it.getKey(), it.getValue() == null ? null : it.getValue().setScale(2, BigDecimal.ROUND_HALF_UP)))
+                                .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()))));
     }
 
 }
