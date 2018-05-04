@@ -56,7 +56,7 @@ public class Pricing {
                 BigDecimal discountAmount = standardPrice.multiply(pctMultiplier);
                 return standardPrice.subtract(discountAmount);
             default:
-                throw new IllegalStateException("Unknown discount type.");
+                return BigDecimal.ZERO;
             }
         }
     }
