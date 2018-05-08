@@ -5,20 +5,24 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.GetMapping
-import com.turbointernational.metadatarefactored.metadatarefactored.service.*
+import com.turbointernational.metadatarefactored.metadatarefactored.service.AttributeService
 
 /**
  * ruslan.klymenko@zorallabs.com 07.05.18
  */
-@RestController("/attribute")
+@RestController
 class AttributeController(private val attributeService: AttributeService) {
 
-    @PostMapping
+    @PostMapping("/attribute")
     fun postAttribute(@RequestBody attributeDto: AttributeDto) {
         attributeService.createAttribute(attributeDto)
     }
 
-    @GetMapping
+    @GetMapping("/attribute")
     fun getAttribute() = attributeService.getAttributes()
 
 }
+// entitytype in entity- use id
+
+
+// entitytype/{id}/entity/
